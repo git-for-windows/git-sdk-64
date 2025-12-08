@@ -19,6 +19,7 @@
 ;;; Author: Mark H Weaver <mhw@netris.org>
 
 (define-module (srfi srfi-43)
+  #:use-module ((guile) #:select ((vector-copy . guile-vector-copy)))
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-8)
   #:re-export (make-vector vector vector? vector-ref vector-set!
@@ -201,8 +202,6 @@ error for the number of seeds to vary between iterations."
              (vector-set! v i x)
              (loop (- i 1) seeds))))
        v))))
-
-(define guile-vector-copy (@ (guile) vector-copy))
 
 (define vector-copy
   (case-lambda*

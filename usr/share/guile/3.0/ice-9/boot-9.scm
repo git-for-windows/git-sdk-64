@@ -1,6 +1,6 @@
 ;;; -*- mode: scheme; coding: utf-8; -*-
 
-;;;; Copyright (C) 1995-2014, 2016-2024  Free Software Foundation, Inc.
+;;;; Copyright (C) 1995-2014, 2016-2025  Free Software Foundation, Inc.
 ;;;;
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,15 @@
 ;; doesn't make sense!
 (if (current-module)
     (error "re-loading ice-9/boot-9.scm not allowed"))
+
+
+
+;;; {Shared internal state}
+;;;
+;;; Avoids namespace clutter for things that currently can't go in a
+;;; module.
+
+(define %boot-9-shared-internal-state (make-hash-table))
 
 
 
@@ -1552,6 +1561,26 @@ exception that is an instance of @var{rtd}."
   (define &non-continuable
     (make-exception-type '&non-continuable &programming-error '()))
 
+  ;; These need to be shared by read.scm, (ice-9 exceptions), and
+  ;; srfi-207, and for now, for example, we can't load exceptions here.
+  (let* ((&message (make-exception-type '&message &exception '(message)))
+         (&irritants (make-exception-type '&irritants &exception '(irritants)))
+         (&bytestring-error (make-exception-type '&bytestring-error &error '()))
+         (make-bytestring (record-constructor &bytestring-error))
+         (make-message (record-constructor &message))
+         (make-irritants (record-constructor &irritants)))
+    (define (bytestring-error message . irritants)
+      (raise-exception (make-exception (make-bytestring)
+                                       (make-message message)
+                                       (make-irritants irritants))))
+    ;; Needed by (ice-9 exceptions)
+    (hashq-set! %boot-9-shared-internal-state '&message &message)
+    (hashq-set! %boot-9-shared-internal-state '&irritants &irritants)
+    ;; Needed by srfi-207
+    (hashq-set! %boot-9-shared-internal-state '&bytestring-error &bytestring-error)
+    ;; Needed by read.scm and srfi-207
+    (hashq-set! %boot-9-shared-internal-state 'bytestring-error bytestring-error))
+
   ;; Boot definition; overridden later.
   (define-values* (make-exception-from-throw)
     (define make-exception-with-kind-and-args
@@ -2137,12 +2166,15 @@ non-locally, that exit determines the continuation."
                (file-name-separator-at-index? 2)
                (file-name-separator-at-index? 0)))))))
 
-(define (in-vicinity vicinity file)
-  (let ((tail (let ((len (string-length vicinity)))
+(define (in-vicinity directory file)
+  "Concatenate @var{directory} and @var{file}, adding
+@code{file-name-separator-string} (by default slash) in between if it is
+not already present.  This helps create file names."
+  (let ((tail (let ((len (string-length directory)))
                 (if (zero? len)
                     #f
-                    (string-ref vicinity (- len 1))))))
-    (string-append vicinity
+                    (string-ref directory (- len 1))))))
+    (string-append directory
                    (if (or (not tail) (file-name-separator? tail))
                        ""
                        file-name-separator-string)
@@ -4500,6 +4532,7 @@ when none is available, reading FILE-NAME with READER."
     srfi-62  ;; s-expression comments
     srfi-87  ;; => in case clauses
     srfi-105 ;; curly infix expressions
+    srfi-244 ;; define-values
     ))
 
 ;; This table maps module public interfaces to the list of features.

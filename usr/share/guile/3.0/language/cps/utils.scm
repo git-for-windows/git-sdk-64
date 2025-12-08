@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2021, 2023 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2015,2017-2021,2023,2025 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -171,12 +171,15 @@ predecessor."
   "Compute a mapping LABEL->LABEL..., where each key is a reachable
 $kfun and each associated value is the body of the function, as an
 intset."
-  (define (intset-cons i set) (intset-add set i))
-  (define (visit-fun kfun body to-visit)
+  (define (visit-fun kfun body to-visit visited)
+    (define (add-function i to-visit)
+      (if (intset-ref visited i)
+          to-visit
+          (intset-add to-visit i)))
     (intset-fold
      (lambda (label to-visit)
-       (define (return kfun*) (fold intset-cons to-visit kfun*))
-       (define (return1 kfun) (intset-add to-visit kfun))
+       (define (return kfun*) (fold add-function to-visit kfun*))
+       (define (return1 kfun) (add-function kfun to-visit))
        (define (return0) to-visit)
        (match (intmap-ref conts label)
          (($ $kargs _ _ ($ $continue _ _ exp))
@@ -190,20 +193,22 @@ intset."
          (_ (return0))))
      body
      to-visit))
-  (let lp ((to-visit (intset kfun)) (visited empty-intmap))
-    (let ((to-visit (intset-subtract to-visit (intmap-keys visited))))
-      (if (eq? to-visit empty-intset)
-          visited
+  (let lp ((to-visit (intset kfun)) (visited empty-intset) (out empty-intmap))
+    (if (eq? to-visit empty-intset)
+        out
+        (let ((visited (intset-union to-visit visited)))
           (call-with-values
               (lambda ()
                 (intset-fold
-                 (lambda (kfun to-visit visited)
-                   (let ((body (compute-function-body conts kfun)))
-                     (values (visit-fun kfun body to-visit)
-                             (intmap-add visited kfun body))))
+                 (lambda (kfun to-visit visited out)
+                   (let* ((body (compute-function-body conts kfun)))
+                     (values (visit-fun kfun body to-visit visited)
+                             visited
+                             (intmap-add out kfun body))))
                  to-visit
                  empty-intset
-                 visited))
+                 visited
+                 out))
             lp)))))
 
 (define* (compute-successors conts #:optional (kfun (intmap-next conts)))
@@ -400,7 +405,7 @@ by a label, respectively."
       word-ref word-ref/immediate
       untag-char
       vector-length vtable-size bv-length
-      string-length string-ref
+      string-length string-utf8-length string-ref
       symbol-hash)
      '(u64))
     ((untag-fixnum

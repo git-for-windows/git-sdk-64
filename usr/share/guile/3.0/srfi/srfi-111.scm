@@ -32,6 +32,6 @@
   (lambda (box port)
     (display "#<box " port)
     (display (number->string (object-address box) 16) port)
-    (display " value: ")
+    (display " value: " port)
     (write (unbox box) port)
     (display ">" port)))

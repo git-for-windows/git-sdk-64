@@ -33,7 +33,7 @@
             repl-expand repl-optimize repl-optimize-cps
             repl-parse repl-print repl-option-ref repl-option-set!
             repl-default-option-set! repl-default-prompt-set!
-            puts ->string user-error
+            puts ->string user-error flush-all-input
             *warranty* *copying* *version*))
 
 (define *version*
@@ -297,3 +297,10 @@ See <http://www.gnu.org/licenses/lgpl.html>, for more details.")
 
 (define (user-error msg . args)
   (throw 'user-error #f msg args #f))
+
+(define (flush-all-input)
+  (if (and (char-ready?)
+           (not (eof-object? (peek-char))))
+      (begin
+        (read-char)
+        (flush-all-input))))

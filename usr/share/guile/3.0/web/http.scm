@@ -742,40 +742,40 @@ as an ordered alist."
 (define (parse-rfc-822-date str space zone-offset)
   ;; We could verify the day of the week but we don't.
   (cond ((string-match? (substring str 0 space) "aaa, dd aaa dddd dd:dd:dd")
-         (let ((date (parse-non-negative-integer str 5 7))
+         (let ((day (parse-non-negative-integer str 5 7))
                (month (parse-month str 8 11))
                (year (parse-non-negative-integer str 12 16))
                (hour (parse-non-negative-integer str 17 19))
                (minute (parse-non-negative-integer str 20 22))
                (second (parse-non-negative-integer str 23 25)))
-           (make-date 0 second minute hour date month year zone-offset)))
+           (make-date 0 second minute hour day month year zone-offset)))
         ((string-match? (substring str 0 space) "aaa, d aaa dddd dd:dd:dd")
-         (let ((date (parse-non-negative-integer str 5 6))
+         (let ((day (parse-non-negative-integer str 5 6))
                (month (parse-month str 7 10))
                (year (parse-non-negative-integer str 11 15))
                (hour (parse-non-negative-integer str 16 18))
                (minute (parse-non-negative-integer str 19 21))
                (second (parse-non-negative-integer str 22 24)))
-           (make-date 0 second minute hour date month year zone-offset)))
+           (make-date 0 second minute hour day month year zone-offset)))
 
         ;; The next two clauses match dates that have a space instead of
         ;; a leading zero for hours, like " 8:49:37".
         ((string-match? (substring str 0 space) "aaa, dd aaa dddd  d:dd:dd")
-         (let ((date (parse-non-negative-integer str 5 7))
+         (let ((day (parse-non-negative-integer str 5 7))
                (month (parse-month str 8 11))
                (year (parse-non-negative-integer str 12 16))
                (hour (parse-non-negative-integer str 18 19))
                (minute (parse-non-negative-integer str 20 22))
                (second (parse-non-negative-integer str 23 25)))
-           (make-date 0 second minute hour date month year zone-offset)))
+           (make-date 0 second minute hour day month year zone-offset)))
         ((string-match? (substring str 0 space) "aaa, d aaa dddd  d:dd:dd")
-         (let ((date (parse-non-negative-integer str 5 6))
+         (let ((day (parse-non-negative-integer str 5 6))
                (month (parse-month str 7 10))
                (year (parse-non-negative-integer str 11 15))
                (hour (parse-non-negative-integer str 17 18))
                (minute (parse-non-negative-integer str 19 21))
                (second (parse-non-negative-integer str 22 24)))
-           (make-date 0 second minute hour date month year zone-offset)))
+           (make-date 0 second minute hour day month year zone-offset)))
 
         (else
          (bad-header 'date str)         ; prevent tail call
@@ -790,13 +790,13 @@ as an ordered alist."
   (let ((tail (substring str (1+ comma) space)))
     (unless (string-match? tail " dd-aaa-dd dd:dd:dd")
       (bad-header 'date str))
-    (let ((date (parse-non-negative-integer tail 1 3))
+    (let ((day (parse-non-negative-integer tail 1 3))
           (month (parse-month tail 4 7))
           (year (parse-non-negative-integer tail 8 10))
           (hour (parse-non-negative-integer tail 11 13))
           (minute (parse-non-negative-integer tail 14 16))
           (second (parse-non-negative-integer tail 17 19)))
-      (make-date 0 second minute hour date month
+      (make-date 0 second minute hour day month
                  (let* ((now (date-year (current-date)))
                         (then (+ now year (- (modulo now 100)))))
                    (cond ((< (+ then 50) now) (+ then 100))
@@ -811,7 +811,7 @@ as an ordered alist."
 (define (parse-asctime-date str)
   (unless (string-match? str "aaa aaa .d dd:dd:dd dddd")
     (bad-header 'date str))
-  (let ((date (parse-non-negative-integer
+  (let ((day (parse-non-negative-integer
                str
                (if (eqv? (string-ref str 8) #\space) 9 8)
                10))
@@ -820,7 +820,7 @@ as an ordered alist."
         (hour (parse-non-negative-integer str 11 13))
         (minute (parse-non-negative-integer str 14 16))
         (second (parse-non-negative-integer str 17 19)))
-    (make-date 0 second minute hour date month year 0)))
+    (make-date 0 second minute hour day month year 0)))
 
 ;; Convert all date values to GMT time zone, as per RFC 2616 appendix C.
 (define (normalize-date date)

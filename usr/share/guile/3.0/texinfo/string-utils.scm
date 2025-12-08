@@ -52,8 +52,8 @@ character as an argument, and the returned value is sent to the output
 string via @samp{display}.  If @var{replace} is anything else, it is
 sent through the output string via @samp{display}.
 
-Note that te replacement for the matched characters does not need to
-be a single character.  That is what differentiates this function from
+Note that the replacement for the matched characters does not need to be
+a single character.  That is what differentiates this function from
 @samp{string-map}, and what makes it useful for applications such as
 converting @samp{#\\&} to @samp{\"&amp;\"} in web page text.  Some other
 functions in this module are just wrappers around common uses of
@@ -134,7 +134,7 @@ of all the special characters.
                       #\\\\)
 => \"\\\\*\\\\*\\\\*\\\\(Example String\\\\)\\\\*\\\\*\\\\*\"
 
-;; also can escape a singe char...
+;; also can escape a single char...
  (escape-special-chars \"richardt@@vzavenue.net\"
                       #\\@@
                       #\\@@)

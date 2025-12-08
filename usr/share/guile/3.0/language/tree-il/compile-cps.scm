@@ -2385,9 +2385,13 @@ integer."
        ;; if type folding can't prove Y to be an exact integer, then DCE
        ;; would have to leave it in the program for its possible
        ;; effects.
-       (($ <primcall> src 'logand (x ($ <primcall> _ 'lognot (y))))
+       (($ <primcall> src 'lognot (x))
+        (make-primcall src 'logxor (list x (make-const src -1))))
+       (($ <primcall> src 'logand
+           (x ($ <primcall> _ 'logxor (y ($ <const> _ -1)))))
         (make-primcall src 'logsub (list x y)))
-       (($ <primcall> src 'logand (($ <primcall> _ 'lognot (y)) x))
+       (($ <primcall> src 'logand
+           (($ <primcall> _ 'logxor (y ($ <const> _ -1))) x))
         (make-primcall src 'logsub (list x y)))
 
        (($ <primcall> src 'throw ())

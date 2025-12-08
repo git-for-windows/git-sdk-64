@@ -140,6 +140,27 @@ return EXP."
                          ((none) #`(list (1+ pos) '()))
                          (else (error "bad accum" accum))))))))))
 
+;; Generates code for matching a range of characters not between start and end.
+;; E.g.: (cg-not-in-range syntax #\a #\z 'body)
+(define (cg-not-in-range pat accum)
+  (syntax-case pat ()
+    ((start end)
+     (if (not (and (char? (syntax->datum #'start))
+                   (char? (syntax->datum #'end))))
+         (error "range PEG should have characters after it; instead got"
+                #'start #'end))
+     #`(lambda (str len pos)
+         (and (< pos len)
+              (let ((c (string-ref str pos)))
+                (and (or (char<? c start) (char>? c end))
+                     #,(case accum
+                         ((all) #`(list (1+ pos)
+                                        (list 'cg-not-in-range (string c))))
+                         ((name) #`(list (1+ pos) 'cg-not-in-range))
+                         ((body) #`(list (1+ pos) (string c)))
+                         ((none) #`(list (1+ pos) '()))
+                         (else (error "bad accum" accum))))))))))
+
 ;; Generate code to match a pattern and do nothing with the result
 (define (cg-ignore pat accum)
   (syntax-case pat ()
@@ -304,6 +325,7 @@ return EXP."
         (assq-set! peg-compiler-alist symbol function)))
 
 (add-peg-compiler! 'range cg-range)
+(add-peg-compiler! 'not-in-range cg-not-in-range)
 (add-peg-compiler! 'ignore cg-ignore)
 (add-peg-compiler! 'capture cg-capture)
 (add-peg-compiler! 'and cg-and)

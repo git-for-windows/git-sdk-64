@@ -1,5 +1,5 @@
 ;;; Functional name maps
-;;; Copyright (C) 2014, 2015, 2017 Free Software Foundation, Inc.
+;;; Copyright (C) 2014, 2015, 2017, 2024 Free Software Foundation, Inc.
 ;;;
 ;;; This library is free software: you can redistribute it and/or modify
 ;;; it under the terms of the GNU Lesser General Public License as
@@ -454,13 +454,14 @@
                           (lp (if forward? (1+ i) (1- i)) seed ...)))
                       (lp (if forward? (1+ i) (1- i)) seed ...)))
                 (values seed ...)))))))
-    (match set
-      (($ <intset> min shift root)
-       (cond
-        ((not root) (values seed ...))
-        (else (visit-branch root shift min seed ...))))
-      (($ <transient-intset>)
-       (intset-fold f (persistent-intset set) seed ...)))))
+    (let fold ((set set))
+      (match set
+        (($ <intset> min shift root)
+         (cond
+          ((not root) (values seed ...))
+          (else (visit-branch root shift min seed ...))))
+        (($ <transient-intset>)
+         (fold (persistent-intset set)))))))
 
 (define intset-fold
   (case-lambda

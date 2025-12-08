@@ -57,7 +57,7 @@
 ; programs, so that a program has to be either terminated by EOF or an
 ; additional ], too.
 ;
-; For instance, the basic program so just echo one character would be:
+; For instance, the basic program to just echo one character would be:
 ; ,.]
 
 (define (read-brainfuck p)

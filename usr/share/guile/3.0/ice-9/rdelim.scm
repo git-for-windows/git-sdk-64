@@ -23,7 +23,10 @@
 ;;; similar to (scsh rdelim) but somewhat incompatible.
 
 (define-module (ice-9 rdelim)
-  #:export (read-line
+  #:export (for-delimited-from-port
+            for-line-in-file
+            for-rdelim-from-port
+            read-line
             read-line!
             read-delimited
             read-delimited!
@@ -206,3 +209,33 @@ characters to read.  By default, there is no limit."
 	      line)
       (else
        (error "unexpected handle-delim value: " handle-delim)))))
+
+(define* (for-rdelim-from-port port proc rdelim-proc
+                               #:key (stop-pred eof-object?))
+  "Call PROC for every (RDELIM-PROC PORT) from PORT until STOP-PRED returns #t.
+RDELIM-PROC has to advance through PORT with every call."
+  (let loop ((rdelim (rdelim-proc port)))
+    (cond ((stop-pred rdelim)
+           (close-port port))
+          (else
+           (proc rdelim)
+           (loop (rdelim-proc port))))))
+
+(define* (for-delimited-from-port port proc
+                                  #:key (delims "\n") (handle-delim 'trim))
+  "Call PROC for every delimited line from PORT until the eof-object is reached."
+  (for-rdelim-from-port port proc
+                        (lambda (port)
+                          (read-delimited delims port handle-delim))))
+
+(define* (for-line-in-file file proc
+                           #:key (encoding #f) (guess-encoding #f))
+  "Call PROC for every line in FILE until the eof-object is reached.
+FILE must be a filename string.
+
+The line provided to PROC is guaranteed to be a string."
+  (call-with-input-file
+      file
+    (lambda (port)
+      (for-delimited-from-port port proc))
+    #:encoding encoding #:guess-encoding guess-encoding))

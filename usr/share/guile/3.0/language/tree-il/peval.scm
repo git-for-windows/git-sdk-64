@@ -395,6 +395,21 @@ referenced multiple times."
     ;; FIXME: add more cases?
     (else #f)))
 
+(define (inlinable-kwargs-bug-fixup exp)
+  ;; Versions of Guile before 3.0.10 had a bug where they mis-serialized
+  ;; functions with keyword arguments; work around that.  See
+  ;; https://issues.guix.gnu.org/72936.
+  (post-order
+   (match-lambda
+     (($ <lambda-case> src req opt rest (aok? (kw name #f) ...) inits syms body
+         alt)
+      (let ((kw-syms (reverse (list-head (reverse syms) (length kw)))))
+        (make-lambda-case src req opt rest
+                          (cons aok? (map list kw name kw-syms))
+                          inits syms body alt)))
+     (exp exp))
+   exp))
+
 (define* (peval exp #:optional (cenv (current-module)) (env vlist-null)
                 #:key
                 (operator-size-limit 40)
@@ -1110,8 +1125,9 @@ top-level bindings from ENV and return the resulting expression."
                      (lambda (module)
                        (and=> (module-public-interface module)
                               (lambda (iface)
-                                (and=> (module-inlinable-exports iface)
-                                       (lambda (proc) (proc name))))))))
+                                (and=> (and=> (module-inlinable-exports iface)
+                                              (lambda (proc) (proc name)))
+                                       inlinable-kwargs-bug-fixup))))))
          => (lambda (inlined)
               ;; Similar logic to lexical-ref, but we can't enumerate
               ;; uses, and don't know about aliases.

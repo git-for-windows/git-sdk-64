@@ -1,6 +1,6 @@
 ;;; Tree-IL verifier
 
-;; Copyright (C) 2011,2013,2019,2023 Free Software Foundation, Inc.
+;; Copyright (C) 2011,2013,2019,2023,2025 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -246,7 +246,7 @@
        (error "unexpected tree-il" exp)))
     (match (tree-il-srcv exp)
       (#f #t)
-      (#((or #f (? string?)) exact-integer? exact-integer?) #t)
+      (#((or #f (? string?)) (? exact-integer?) (? exact-integer?)) #t)
       (src (error "bad src" src)))
     ;; Return it, why not.
     exp))

@@ -68,7 +68,7 @@
 ;; <Nodeset> lends itself well to processing by functional languages.
 ;;
 ;; A location path is in fact a composite query over an XPath tree or
-;; its branch. A singe step is a combination of a projection, selection
+;; its branch. A single step is a combination of a projection, selection
 ;; or a transitive closure. Multiple steps are combined via join and
 ;; union operations. This insight allows us to @emph{elegantly}
 ;; implement XPath as a sequence of projection and filtering primitives

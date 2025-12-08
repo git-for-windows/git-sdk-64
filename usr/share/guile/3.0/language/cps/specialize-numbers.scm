@@ -561,13 +561,13 @@ BITS indicating the significant bits needed for a variable.  BITS may be
               (specialize-unop cps k src op param a
                                (unbox-u64 a) (box-u64 result))))
 
-           (('logand/immediate (? u64-result?) param (? u64-operand? a))
+           (('logand/immediate (? u64-result?) param a)
             (specialize-unop cps k src 'ulogand/immediate
                              (logand param
                                      (or (sigbits-ref sigbits a) -1)
                                      (1- (ash 1 64)))
                              a
-                             (unbox-u64 a) (box-u64 result)))
+                             (unbox-u64/truncate a) (box-u64 result)))
 
            (((or 'add/immediate 'sub/immediate 'mul/immediate)
              (? s64-result?) (? s64-parameter?) (? s64-operand? a))

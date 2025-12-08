@@ -26,7 +26,7 @@
   #:use-module (system repl common)
   #:use-module (system repl command)
   #:use-module (ice-9 control)
-  #:export (start-repl run-repl))
+  #:export (start-repl run-repl %inhibit-welcome-message))
 
 
 ;;;
@@ -92,13 +92,6 @@
                  *unspecified*)
                 (else ((language-reader lang) port env))))))))
         
-(define (flush-all-input)
-  (if (and (char-ready?)
-           (not (eof-object? (peek-char))))
-      (begin
-        (read-char)
-        (flush-all-input))))
-
 ;; repl-reader is a function defined in boot-9.scm, and is replaced by
 ;; something else if readline has been activated. much of this hoopla is
 ;; to be able to re-use the existing readline machinery.
@@ -126,6 +119,11 @@
 ;;;
 ;;; The repl
 ;;;
+
+;; Provide a hook for users to inhibit the welcome message.
+;; For example, .guile might include
+;; ((@ (system repl repl) %inhibit-welcome-message) #f)
+(define %inhibit-welcome-message (make-parameter #f))
 
 (define* (start-repl #:optional (lang (current-language)) #:key debug)
   (start-repl* lang debug prompting-meta-read))
@@ -158,7 +156,8 @@
   
   (% (with-fluids ((*repl-stack*
                     (cons repl (or (fluid-ref *repl-stack*) '()))))
-       (if (null? (cdr (fluid-ref *repl-stack*)))
+       (if (and (null? (cdr (fluid-ref *repl-stack*)))
+                (not (%inhibit-welcome-message)))
            (repl-welcome repl))
        (let prompt-loop ()
          (let ((exp (prompting-meta-read repl)))

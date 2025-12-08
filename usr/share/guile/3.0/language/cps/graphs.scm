@@ -1,6 +1,6 @@
 ;;; Continuation-passing style (CPS) intermediate language (IL)
 
-;; Copyright (C) 2013-2015, 2017-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2013-2015, 2017-2021, 2025 Free Software Foundation, Inc.
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -227,23 +227,25 @@ connected components in sorted order."
                                             start)
      start))
   (define node-components
-    (intmap-fold (lambda (id nodes out)
-                   (intset-fold (lambda (node out) (intmap-add out node id))
-                                nodes out))
-                 components
-                 empty-intmap))
+    (persistent-intmap
+     (intmap-fold (lambda (id nodes out)
+                    (intset-fold (lambda (node out) (intmap-add! out node id))
+                                 nodes out))
+                  components
+                  empty-intmap)))
   (define (node-component node)
     (intmap-ref node-components node))
   (define (component-successors id nodes)
     (intset-remove
-     (intset-fold (lambda (node out)
-                    (intset-fold
-                     (lambda (successor out)
-                       (intset-add out (node-component successor)))
-                     (intmap-ref edges node)
-                     out))
-                  nodes
-                  empty-intset)
+     (persistent-intset
+      (intset-fold (lambda (node out)
+                     (intset-fold
+                      (lambda (successor out)
+                        (intset-add! out (node-component successor)))
+                      (intmap-ref edges node)
+                      out))
+                   nodes
+                   empty-intset))
      id))
   (define component-edges
     (intmap-map component-successors components))

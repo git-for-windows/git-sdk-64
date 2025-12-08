@@ -54,7 +54,8 @@
 (define bitfield:hungry-eol-escapes? 10)
 (define bitfield:curly-infix? 12)
 (define bitfield:r7rs-symbols? 14)
-(define read-option-bits 16)
+(define bitfield:bytestrings? 16)
+(define read-option-bits 18)
 
 (define read-option-mask #b11)
 (define read-option-inherit #b11)
@@ -87,7 +88,8 @@
             (bool 'square-brackets bitfield:square-brackets?)
             (bool 'hungry-eol-escapes bitfield:hungry-eol-escapes?)
             (bool 'curly-infix bitfield:curly-infix?)
-            (bool 'r7rs-symbols bitfield:r7rs-symbols?))))
+            (bool 'r7rs-symbols bitfield:r7rs-symbols?)
+            (bool 'bytestrings bitfield:bytestrings?))))
 
 (define (set-option options field new)
   (logior (ash new field) (logand options (lognot (ash #b11 field)))))
@@ -114,6 +116,7 @@
   (define (hungry-eol-escapes?) (enabled? bitfield:hungry-eol-escapes?))
   (define (curly-infix?) (enabled? bitfield:curly-infix?))
   (define (r7rs-symbols?) (enabled? bitfield:r7rs-symbols?))
+  (define (bytestrings?) (enabled? bitfield:bytestrings?))
   (define neoteric 0)
   (define (next) (read-char port))
   (define (peek) (peek-char port))
@@ -199,9 +202,9 @@
                                          (strip-annotation (car tail)))
                                  (cons* op x (cdr tail))))))))))
       (cond
-       ((not (eqv? rdelim #\})) ret) ; Only on {...} lists.
-       ((not (pair? ret)) ret)       ; {} => (); {.x} => x
-       ((null? (cdr ret)) (car ret)); {x} => x
+       ((not (eqv? rdelim #\})) ret)    ; Only on {...} lists.
+       ((not (pair? ret)) ret)          ; {} => (); {.x} => x
+       ((null? (cdr ret)) (car ret))    ; {x} => x
        ((and (pair? (cdr ret)) (null? (cddr ret))) ret) ; {x y} => (x y)
        ((extract-infix-list ret))   ; {x + y + ... + z} => (+ x y ... z)
        (else (cons '$nfx$ ret))))   ; {x y . z} => ($nfx$ x y . z)
@@ -403,6 +406,18 @@
   (define (read-srfi-4-vector ch)
     (read-array ch))
 
+  (define (read-srfi-4-vector-or-bytestring)
+    (cond
+     ((not (bytestrings?)) (read-array #\u))
+     ((not (eqv? (peek) #\8)) (read-array #\u))
+     (else
+      (next)
+      (if (eqv? (peek) #\")
+          (read-bytestring-content port)
+          (begin
+            (unread-char #\8 port)
+            (read-array #\u))))))
+
   (define (maybe-read-boolean-tail tail)
     (let ((len (string-length tail)))
       (let lp ((i 0))
@@ -425,6 +440,112 @@
           (begin
             (maybe-read-boolean-tail "alse")
             #f))))
+
+  (define bytestring-error
+    (hashq-ref %boot-9-shared-internal-state 'bytestring-error))
+
+  (define (read-bytestring-content port)
+    ;; Must use port, not (peek)/(next).
+    (let ((ch (read-char port)))
+      (when (eof-object? ch)
+        (bytestring-error "end of input instead of bytestring opening #\\\""))
+      (unless (eqv? ch #\")
+        (bytestring-error "expected bytestring opening #\\\"" ch)))
+    (let lp ((out '()))
+      (let ((ch (read-char port)))
+        (cond
+         ((eof-object? ch)
+          (bytestring-error "unexpected end of input while reading bytestring"))
+         ((eqv? ch #\")
+          (list->typed-array 'vu8 1 (reverse! out)))
+         ((eqv? ch #\\)
+          (let* ((ch (read-char port)))
+            (when (eof-object? ch)
+              (bytestring-error "unexpected end of input within escape sequence"))
+            (case ch
+              ((#\a) (lp (cons 7 out)))
+              ((#\b) (lp (cons 8 out)))
+              ((#\t) (lp (cons 9 out)))
+              ((#\n) (lp (cons 10 out)))
+              ((#\r) (lp (cons 13 out)))
+              ((#\") (lp (cons 34 out)))
+              ((#\\) (lp (cons 92 out)))
+              ((#\|) (lp (cons 124 out)))
+              ((#\x)
+               (define (skip-prefix-zeros)
+                 ;; Leave one zero before a ; to handle \x0;
+                 (let ((ch (peek-char port)))
+                   (cond
+                    ((eof-object? ch) ch)
+                    ((char=? ch #\0)
+                     (let ((zero (read-char port)))
+                       (if (char=? (peek-char port) #\;)
+                           (unread-char zero port)
+                           (skip-prefix-zeros)))))))
+               (define (read-hex which)
+                 (let* ((h (read-char port)))
+                   (when (eof-object? h)
+                     (bytestring-error
+                      (format #f "end of input at ~s bytestring hex escape char" which)))
+                   (case h
+                     ((#\;) h)
+                     ((#\0) 0)
+                     ((#\1) 1)
+                     ((#\2) 2)
+                     ((#\3) 3)
+                     ((#\4) 4)
+                     ((#\5) 5)
+                     ((#\6) 6)
+                     ((#\7) 7)
+                     ((#\8) 8)
+                     ((#\9) 9)
+                     ((#\a #\A) 10)
+                     ((#\b #\B) 11)
+                     ((#\c #\C) 12)
+                     ((#\d #\D) 13)
+                     ((#\e #\E) 14)
+                     ((#\f #\F) 15)
+                     (else
+                      (bytestring-error
+                       (format #f "non-hex ~a character in bytestring hex escape" which)
+                       h)))))
+               (skip-prefix-zeros)
+               (let* ((h1 (read-hex "first"))
+                      (h2 (read-hex "second")))
+                 (if (eqv? h2 #\;)
+                     (lp (cons h1 out))
+                     (let ((term (read-char port)))
+
+                       (unless (char=? term #\;)
+                         (bytestring-error "not bytestring hex escape semicolon" term))
+                       (lp (cons (+ (* 16 h1) h2) out))))))
+              (else ;; newline surrounded by optional interline blanks
+               (define (intraline? ch)
+                 (and (char-whitespace? ch) (not (char=? ch #\newline))))
+               (define (skip-intraline)
+                 (let ((ch (peek-char port)))
+                   (when (and (not (eof-object? ch)) (intraline? ch))
+                     (read-char port)
+                     (skip-intraline))))
+               (cond
+                ((char=? ch #\newline) (skip-intraline) (lp out))
+                ((char-whitespace? ch)
+                 (skip-intraline)
+                 (unless (char=? (read-char port) #\newline)
+                   (bytestring-error "expected newline after backslash and optional spaces" ch))
+                 (skip-intraline)
+                 (lp out))
+                (else
+                 (bytestring-error "unexpected character after bytesstring backslash" ch)))))))
+         (else
+          (let ((i (char->integer ch)))
+            (unless (<= 20 i 127)
+              (bytestring-error "bytestring char not in valid ASCII range" ch))
+            (lp (cons i out))))))))
+
+  ;; For srfi-207
+  (hashq-set! %boot-9-shared-internal-state
+              'read-bytestring-content read-bytestring-content)
 
   (define (read-bytevector)
     (define (expect ch)
@@ -512,8 +633,8 @@
           (error "unexpected end of input while reading array"))
         (values ch
                 (if len
-                  (list lbnd (+ lbnd (1- len)))
-                  lbnd))))
+                    (list lbnd (+ lbnd (1- len)))
+                    lbnd))))
     (define (read-shape ch alt)
       (if (memv ch '(#\@ #\:))
           (let*-values (((ch head) (read-dimension ch))
@@ -602,7 +723,8 @@
         (case ch
           ((#\\) (read-character))
           ((#\() (read-vector))
-          ((#\s #\u #\c) (read-srfi-4-vector ch))
+          ((#\u) (read-srfi-4-vector-or-bytestring))
+          ((#\s #\c) (read-srfi-4-vector ch))
           ((#\f) (read-false-or-srfi-4-vector))
           ((#\v) (read-bytevector))
           ((#\*) (read-bitvector))

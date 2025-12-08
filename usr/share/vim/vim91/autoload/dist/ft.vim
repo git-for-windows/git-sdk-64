@@ -3,7 +3,7 @@ vim9script
 # Vim functions for file type detection
 #
 # Maintainer:		The Vim Project <https://github.com/vim/vim>
-# Last Change:		2025 Nov 11
+# Last Change:		2025 Nov 30
 # Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 # These functions are moved here from runtime/filetype.vim to make startup
@@ -1736,6 +1736,8 @@ const ft_from_ext = {
   # BSDL
   "bsd": "bsdl",
   "bsdl": "bsdl",
+  # Bpftrace
+  "bt": "bpftrace",
   # C3
   "c3": "c3",
   "c3i": "c3",
@@ -2226,6 +2228,8 @@ const ft_from_ext = {
   "ldg": "ledger",
   "ledger": "ledger",
   "journal": "ledger",
+  # Leex
+  "xrl": "leex",
   # Leo
   "leo": "leo",
   # Less
@@ -2705,6 +2709,7 @@ const ft_from_ext = {
   "nut": "squirrel",
   # Starlark
   "ipd": "starlark",
+  "sky": "starlark",
   "star": "starlark",
   "starlark": "starlark",
   # OpenVPN configuration
@@ -3071,6 +3076,8 @@ const ft_from_name = {
   ".editorconfig": "editorconfig",
   # Elinks configuration
   "elinks.conf": "elinks",
+  # Erlang
+  "rebar.config": "erlang",
   # Exim
   "exim.conf": "exim",
   # Exports

@@ -753,6 +753,27 @@
                      (days-before-first-week  date day-of-week-starting-week))
                   7))
 
+;;; Adapted from the reference implementation.
+(define (date-week-number-iso date)
+  "Return a ISO-8601 week number for the @var{date}."
+  ;; The week with the year's first Thursday is week 01.
+  (let* ((first-day-of-the-week (week-day 1 1 (date-year date)))
+         (offset (if (> first-day-of-the-week 4) 0 1))
+         ;; -2: decrement one day to compensate 1-origin of date-year-day,
+         ;; and decrement one more day for Sunday belongs to the previous week.
+         (w (+ (floor-quotient (+ (date-year-day date) first-day-of-the-week -2)
+                               7)
+               offset)))
+    (cond ((zero? w)
+           ;; date belongs to the last week of the previous year
+           (date-week-number-iso (make-date 0 0 0 0 31 12
+                                            (- (date-year date) 1) 0)))
+          ((and (= w 53)
+                (<= (week-day 1 1 (+ (date-year date) 1)) 4))
+           ;; date belongs to the first week of the next year
+           1)
+          (else w))))
+
 (define (current-date . tz-offset)
   (let ((time (current-time time-utc)))
     (time-utc->date
@@ -1043,7 +1064,7 @@
                    (display (padding (date-week-number date 0)
                                      #\0 2) port))))
    (cons #\V (lambda (date pad-with port)
-               (display (padding (date-week-number date 1)
+               (display (padding (date-week-number-iso date)
                                  #\0 2) port)))
    (cons #\w (lambda (date pad-with port)
                (display (date-week-day date) port)))

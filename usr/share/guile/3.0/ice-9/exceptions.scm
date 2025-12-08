@@ -136,8 +136,9 @@
 (define-exception-type &assertion-failure &programming-error
   make-assertion-failure assertion-failure?)
 
-(define-exception-type &message &exception 
-  make-exception-with-message exception-with-message? 
+(define &message (hashq-ref %boot-9-shared-internal-state '&message))
+(define-exception-type-procedures &message &exception
+  make-exception-with-message exception-with-message?
   (message exception-message))
 
 (define-exception-type &warning &exception
@@ -146,7 +147,8 @@
 (define-exception-type &external-error &error
   make-external-error external-error?)
 
-(define-exception-type &irritants &exception
+(define &irritants (hashq-ref %boot-9-shared-internal-state '&irritants))
+(define-exception-type-procedures &irritants &exception
   make-exception-with-irritants exception-with-irritants?
   (irritants exception-irritants))
 

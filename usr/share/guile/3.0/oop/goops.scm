@@ -33,9 +33,10 @@
   #:use-module ((language tree-il primitives)
                 :select (add-interesting-primitive!))
   #:export-syntax (define-class class standard-define-class
-                    define-generic define-accessor define-method
+                    define-generic define-accessor
+                    define-method define-method*
                     define-extended-generic define-extended-generics
-                    method)
+                    method method*)
   #:export ( ;; The root of everything.
             <top>
             <class> <object>
@@ -2024,8 +2025,7 @@ function."
            (else
             (and (memq (car specs) (class-precedence-list (car types)))
                  (lp (cdr specs) (cdr types))))))))))
-  (let ((n (length args))
-        (types (map class-of args)))
+  (let ((types (map class-of args)))
     (let lp ((methods (generic-function-methods gf))
              (applicable '()))
       (if (null? methods)
@@ -2041,6 +2041,42 @@ function."
 
 (define (toplevel-define! name val)
   (module-define! (current-module) name val))
+
+;;;
+;;; The GOOPS API would have been simpler by introducing keyword formals
+;;; in define-method itself, but in order to align with lambda* and
+;;; define*, we introduce method* and define-method* in parallel to
+;;; method and define-method.
+;;;
+;;; There is some code repetition here. The motivation for that is to
+;;; pay some here in order to speed up loading and compilation of larger
+;;; chunks of GOOPS code as well as to make sure that method*:s are as
+;;; efficient as can be.
+;;;
+;;; A more elegant solution would have been to use something akin to
+;;; Mark H. Weavers macro:
+;;;
+;;; (define-syntax define-method*
+;;;   (lambda (x)
+;;;     (syntax-case x ()
+;;;       ((_ (generic arg-spec ... . tail) body ...)
+;;;        (let-values (((required-arg-specs other-arg-specs)
+;;;                      (break (compose keyword? syntax->datum)
+;;;                             #'(arg-spec ...))))
+;;;          #`(define-method (generic #,@required-arg-specs . rest)
+;;;              (apply (lambda* (#,@other-arg-specs . tail)
+;;;                       body ...)
+;;;                     rest)))))))
+;;;
+;;; With the current state of the compiler, this results in slower code
+;;; than the implementation below since the apply call isn't
+;;; eliminated. Note also that it doesn't support the (next-method) call
+;;; as does the following implementation.
+;;;
+;;; If you make changes, bear in mind that define-method* is supposed to
+;;; also be able to handle ordinary methods without keyword formals. See
+;;; the Guile Reference and the module (oop goops keyword-formals).
+;;;
 
 (define-syntax define-method
   (syntax-rules (setter)
@@ -2064,10 +2100,76 @@ function."
          (toplevel-define! 'name (make <generic> #:name 'name)))
        (add-method! name (method args body ...))))))
 
-(define-syntax method
-  (lambda (x)
-    (define (parse-args args)
-      (let lp ((ls args) (formals '()) (specializers '()))
+(define-syntax define-method*
+  (syntax-rules (setter)
+    ((_ ((setter name) . args) body ...)
+     (begin
+       (when (or (not (defined? 'name))
+                 (not (is-a? name <accessor>)))
+         (toplevel-define! 'name
+                           (ensure-accessor
+                            (if (defined? 'name) name #f) 'name)))
+       (add-method! (setter name) (method* args body ...))))
+    ((_ (name . args) body ...)
+     (begin
+       (when (or (not (defined? 'name))
+                 (not name))
+         (toplevel-define! 'name (make <generic> #:name 'name)))
+       (add-method! name (method* args body ...))))))
+
+;;; This section of helpers is used by both the method and method* syntax
+;;;
+(eval-when (expand load eval)
+
+    ;; parse-formals METHOD-FORMALS
+    ;;
+    ;; return (FORMALS SPECIALIZERS KEYWORD-FORMALS)
+    ;;
+    ;; FORMALS is the possibly improper list of specializable formals.
+    ;;
+    ;; SPECIALIZERS is a proper list of the corresponding specializers.
+    ;; Its last element corresponds to the cdr of the last element in
+    ;; METHOD-FORMALS such that the possibly improper list corresponding
+    ;; to FORMALS can be obtained by applying cons* to SPECIALIZERS.
+    ;; The reason for handling it like this is that the specializers are
+    ;; each evaluated to their values and therefore *must* be provided
+    ;; by a cons* in the (make <method> ...) expression.
+    ;;
+    ;; KEYWORD_FORMALS is the part of METHOD-FORMALS which starts with a
+    ;; keyword and corresponds to the keyword-syntax of lambda*. These
+    ;; are not specializable (which also corresponds to CLOS
+    ;; functionality).
+    ;;
+    (define (parse-keyword-formals method-formals)
+      (let lp ((ls method-formals) (formals '()) (specializers '()))
+        (syntax-case ls ()
+          (((f s) . rest)
+           (and (identifier? #'f) (identifier? #'s))
+           (lp #'rest
+               (cons #'f formals)
+               (cons #'s specializers)))
+          ((f . rest)
+           (identifier? #'f)
+           (lp #'rest
+               (cons #'f formals)
+               (cons #'<top> specializers)))
+          ((f . rest)
+           (keyword? (syntax->datum #'f))
+           (list (reverse formals)
+                 (reverse (cons #'<top> specializers)) ;to be cons*:ed
+                 (cons #'f #'rest)))
+          (()
+           (list (reverse formals)
+                 (reverse (cons #''() specializers))
+                 '()))                  ;yes, not #''(); used in tests
+          (tail
+           (identifier? #'tail)
+           (list (append (reverse formals) #'tail)
+                 (reverse (cons #'<top> specializers))
+                 '())))))
+
+    (define (parse-formals method-formals)
+      (let lp ((ls method-formals) (formals '()) (specializers '()))
         (syntax-case ls ()
           (((f s) . rest)
            (and (identifier? #'f) (identifier? #'s))
@@ -2098,43 +2200,135 @@ function."
            (and (free-identifier=? #'x id) id)))
         (_ #f)))
 
-    (define (compute-procedure formals body)
+    (define (compute-procedure formals keyword-formals body)
       (syntax-case body ()
         ((body0 ...)
-         (with-syntax ((formals formals))
-           #'(lambda formals body0 ...)))))
+         (if (null? keyword-formals)
+             (with-syntax ((formals formals))
+               #'(lambda formals body0 ...))
+             (let ((formals (append formals keyword-formals)))
+               (with-syntax ((formals formals))
+                 #'(lambda* formals body0 ...)))))))
 
-    (define (->proper args)
-      (let lp ((ls args) (out '()))
+    ;; ->formal-ids FORMALS
+    ;;
+    ;; convert FORMALS into formal-ids format, which is a cell where the
+    ;; car is the list of car:s in FORMALS and the cdr is the cdr of the
+    ;; last cell in FORMALS, i.e. the final tail.
+    ;;
+    ;; The motivation for this format is to easily determine if FORMALS
+    ;; is improper or not in order to generate the corresponding
+    ;; next-method call.
+    ;;
+    (define (->formal-ids formals)
+      (let lp ((ls formals) (out '()))
         (syntax-case ls ()
-          ((x . xs)        (lp #'xs (cons #'x out)))
-          (()              (reverse out))
-          (tail            (reverse (cons #'tail out))))))
+          ((x . xs) (lp #'xs (cons #'x out)))
+          (()       (cons (reverse out) '()))
+          (tail     (cons (reverse out) #'tail)))))
 
-    (define (compute-make-procedure formals body next-method)
+    ;; compute-keyword-formal-ids FORMALS KEYWORD-FORMALS
+    ;;
+    ;; The main purpose of this beast is to compute the argument list
+    ;; for the actual next-method call for the case where the user calls
+    ;; (next-method). It is invoked in the case where we have keyword
+    ;; formals. Here we have to treat keyword arguments in a special way
+    ;; since we, similar to CLOS, only want to pass on the keyword
+    ;; arguments that were present in the call. We capture those using
+    ;; the rest argument. If not present, we introduce a rest formal.
+    ;;
+    ;; FORMALS is the non-keyword part of the formal arguments.
+    ;; KEYWORD-FORMALS is the part of the formal arguments from the
+    ;; first keyword.
+    ;;
+    ;; return three values:
+    ;;
+    ;; 1. #'lambda
+    ;; 2. the complete formals list
+    ;; 3. the argument list for next-method in formals-ids format as
+    ;;    described above (proper list in CAR, tail in CDR)
+    ;;
+    (define (compute-keyword-formal-ids formals keyword-formals)
+      (define (result formals formal-ids)
+        (values #'lambda* formals formal-ids))
+
+      (define (lp-key ls formals formal-ids)
+        (syntax-case ls ()
+          ((#:rest f)
+           (identifier? #'f)
+           (result (append (reverse formals) #'f)
+                   (cons (reverse formal-ids) #'f)))
+          (()
+           ;; No rest formal is present, so we need to introduce one.
+           (let ((rest-formal (car (generate-temporaries '(rest)))))
+             (result (append (reverse formals) rest-formal)
+                     (cons (reverse formal-ids) rest-formal))))
+          ((f . rest)
+           (lp-key #'rest
+                   (cons #'f formals)   ;keep
+                   formal-ids))         ;filter away
+          (tail
+           (result (append (reverse formals) #'tail)
+                   (cons (reverse formal-ids) #'tail)))))
+
+      (let ((reversed-formals (reverse formals)))
+        (let lp ((ls keyword-formals)
+                 (formals reversed-formals)
+                 (formal-ids reversed-formals))
+        (syntax-case ls ()
+          (((f val) . rest)
+           (lp #'rest (cons #'(f val) formals) (cons #'f formal-ids)))
+          ((#:optional . rest)
+           (lp #'rest (cons #:optional formals) formal-ids))
+          ((#:key . rest)
+           (lp-key #'rest (cons #:key formals) formal-ids))
+          ((#:rest f)
+           (identifier? #'f)
+           (result (append (reverse formals) #'f)
+                   (cons (reverse formal-ids) #'f)))
+          ((f . rest)
+           (lp #'rest (cons #'f formals) (cons #'f formal-ids)))
+          (()
+           (result (reverse formals) (cons (reverse formal-ids) '())))
+          (tail
+           (result (append (reverse formals) #'tail)
+                   (cons (reverse formal-ids) #'tail)))))))
+
+    (define (compute-make-procedure formals keyword-formals body next-method)
       (syntax-case body ()
         ((body ...)
-         (with-syntax ((next-method next-method))
-           (syntax-case formals ()
-             ((formal ...)
-              #'(lambda (real-next-method)
-                  (lambda (formal ...)
-                    (let ((next-method (lambda args
-                                         (if (null? args)
-                                             (real-next-method formal ...)
-                                             (apply real-next-method args)))))
-                      body ...))))
-             (formals
-              (with-syntax (((formal ...) (->proper #'formals)))
-                #'(lambda (real-next-method)
-                    (lambda formals
-                      (let ((next-method (lambda args
-                                           (if (null? args)
-                                               (apply real-next-method formal ...)
-                                               (apply real-next-method args)))))
-                        body ...))))))))))
+         (call-with-values
+             (lambda ()
+               (if (null? keyword-formals)
+                   (values #'lambda
+                           formals
+                           (->formal-ids formals))
+                   (compute-keyword-formal-ids formals keyword-formals)))
+           (lambda (lambda-type formals formal-ids)
+             (with-syntax ((next-method next-method))
+               (syntax-case formals ()
+                 (formals
+                  #`(lambda (real-next-method)
+                      (#,lambda-type    ;lambda or lambda*
+                       formals
+                       (let ((next-method
+                              (lambda args
+                                (if (null? args)
+                                    ;; We have (next-method) and need to
+                                    ;; pass on the arguments to the method.
+                                    #,(if (null? (cdr formal-ids))
+                                          ;; proper list of identifiers
+                                          #`(real-next-method
+                                             #,@(car formal-ids))
+                                          ;; last identifier is a rest list
+                                          #`(apply real-next-method
+                                                   #,@(car formal-ids)
+                                                   #,(cdr formal-ids)))
+                                    ;; user passes arguments to next-method
+                                    (apply real-next-method args)))))
+                         body ...)))))))))))
 
-    (define (compute-procedures formals body)
+    (define (compute-procedures formals keyword-formals body)
       ;; So, our use of this is broken, because it operates on the
       ;; pre-expansion source code. It's equivalent to just searching
       ;; for referent in the datums. Ah well.
@@ -2142,23 +2336,55 @@ function."
         (if id
             ;; return a make-procedure
             (values #'#f
-                    (compute-make-procedure formals body id))
-            (values (compute-procedure formals body)
+                    (compute-make-procedure formals keyword-formals body id))
+            (values (compute-procedure formals keyword-formals body)
                     #'#f))))
+    )
 
+(define-syntax method
+  (lambda (x)
     (syntax-case x ()
-      ((_ args) #'(method args (if #f #f)))
-      ((_ args body0 body1 ...)
-       (with-syntax (((formals (specializer ...)) (parse-args #'args)))
+      ((_ formals) #'(method formals (if #f #f)))
+      ((_ formals body0 body1 ...)
+       (with-syntax (((formals (specializer ...))
+                      (parse-formals #'formals)))
          (call-with-values
              (lambda ()
-               (compute-procedures #'formals #'(body0 body1 ...)))
+               (compute-procedures #'formals
+                                   '()
+                                   #'(body0 body1 ...)))
            (lambda (procedure make-procedure)
              (with-syntax ((procedure procedure)
                            (make-procedure make-procedure))
-               #'(make <method>
+               #`(make <method>
+                   #:specializers (cons* specializer ...) ;yes, this
+                   ;; The cons* is needed to get the value of each
+                   ;; specializer.
+                   #:formals 'formals ;might be improper
+                   #:body '(body0 body1 ...)
+                   #:make-procedure make-procedure
+                   #:procedure procedure)))))))))
+
+(define-syntax method*
+  (lambda (x)
+    (syntax-case x ()
+      ((_ formals) #'(method* formals (if #f #f)))
+      ((_ formals body0 body1 ...)
+       (with-syntax (((formals (specializer ...) keyword-formals)
+                      (parse-keyword-formals #'formals)))
+         (call-with-values
+             (lambda ()
+               (compute-procedures #'formals
+                                   #'keyword-formals
+                                   #'(body0 body1 ...)))
+           (lambda (procedure make-procedure)
+             (with-syntax ((procedure procedure)
+                           (make-procedure make-procedure))
+               #`(make <method>
                    #:specializers (cons* specializer ...)
-                   #:formals 'formals
+                   #:formals (if (null? 'keyword-formals)
+                                 'formals ;might be improper
+                                 (append 'formals 'keyword-formals))
                    #:body '(body0 body1 ...)
                    #:make-procedure make-procedure
                    #:procedure procedure)))))))))

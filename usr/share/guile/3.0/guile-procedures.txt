@@ -1,4 +1,4 @@
-Produced by GNU Guile 3.0.10 from `./libguile/guile-procedures.texi'.
+Produced by GNU Guile 3.0.11 from `./guile-procedures.texi'.
 
 acons
 
@@ -2046,9 +2046,9 @@ conversion_strategy close_on_gc_p
 basename
 
 - Scheme Procedure: basename filename [suffix]
-     Return the base name of the file name FILENAME.  The base name is
-     the file name without any directory components.  If SUFFIX is
-     provided, and is equal to the end of FILENAME, it is removed also.
+     Return the base name of FILENAME.  The base name is the FILENAME
+     without any directory components.  If the SUFFIX matches the end of
+     the base name and is shorter, then it is removed from the result.
 
 canonicalize-path
 
@@ -5710,217 +5710,6 @@ interval_microseconds value_seconds value_microseconds
      Create and return a new pair whose car and cdr are X and Y.  Any
      source properties associated with XORIG are also associated with
      the new pair.
-
-append-reverse
-
-- Scheme Procedure: append-reverse revhead tail
-     Reverse REV-HEAD, append TAIL to it, and return the result.  This
-     is equivalent to `(append (reverse REV-HEAD) TAIL)', but its
-     implementation is more efficient.
-
-          (append-reverse '(1 2 3) '(4 5 6)) ==> (3 2 1 4 5 6)
-
-append-reverse!
-
-- Scheme Procedure: append-reverse! revhead tail
-     Reverse REV-HEAD, append TAIL to it, and return the result.  This
-     is equivalent to `(append! (reverse! REV-HEAD) TAIL)', but its
-     implementation is more efficient.
-
-          (append-reverse! (list 1 2 3) '(4 5 6)) ==> (3 2 1 4 5 6)
-
-     REV-HEAD may be modified in order to produce the result.
-
-concatenate
-
-- Scheme Procedure: concatenate lstlst
-     Construct a list by appending all lists in LSTLST.
-
-     `concatenate' is the same as `(apply append LSTLST)'.  It exists
-     because some Scheme implementations have a limit on the number of
-     arguments a function takes, which the `apply' might exceed.  In
-     Guile there is no such limit.
-
-concatenate!
-
-- Scheme Procedure: concatenate! lstlst
-     Construct a list by appending all lists in LSTLST.  Those lists may
-     be modified to produce the result.
-
-     `concatenate!' is the same as `(apply append! LSTLST)'.  It exists
-     because some Scheme implementations have a limit on the number of
-     arguments a function takes, which the `apply' might exceed.  In
-     Guile there is no such limit.
-
-count
-
-- Scheme Procedure: count pred list1 .  rest
-     Return a count of the number of times PRED returns true when called
-     on elements from the given lists.
-
-     PRED is called with N parameters `(PRED ELEM1 ... ELEMN)', each
-     element being from the corresponding LIST1 ... LSTN.  The first
-     call is with the first element of each list, the second with the
-     second element from each, and so on.
-
-     Counting stops when the end of the shortest list is reached.  At
-     least one list must be non-circular.
-
-delete
-
-- Scheme Procedure: delete x lst [pred]
-     Return a list containing the elements of LST but with those equal
-     to X deleted.  The returned elements will be in the same order as
-     they were in LST.
-
-     Equality is determined by PRED, or `equal?' if not given.  An
-     equality call is made just once for each element, but the order in
-     which the calls are made on the elements is unspecified.
-
-     The equality calls are always `(pred x elem)', ie.: the given X is
-     first.  This means for instance elements greater than 5 can be
-     deleted with `(delete 5 lst <)'.
-
-     LST is not modified, but the returned list might share a common
-     tail with LST.
-
-delete!
-
-- Scheme Procedure: delete! x lst [pred]
-     Return a list containing the elements of LST but with those equal
-     to X deleted.  The returned elements will be in the same order as
-     they were in LST.
-
-     Equality is determined by PRED, or `equal?' if not given.  An
-     equality call is made just once for each element, but the order in
-     which the calls are made on the elements is unspecified.
-
-     The equality calls are always `(pred x elem)', ie.: the given X is
-     first.  This means for instance elements greater than 5 can be
-     deleted with `(delete 5 lst <)'.
-
-     LST may be modified to construct the returned list.
-
-delete-duplicates
-
-- Scheme Procedure: delete-duplicates lst [pred]
-     Return a list containing the elements of LST but without
-     duplicates.
-
-     When elements are equal, only the first in LST is retained.  Equal
-     elements can be anywhere in LST, they don't have to be adjacent.
-     The returned list will have the retained elements in the same order
-     as they were in LST.
-
-     Equality is determined by PRED, or `equal?' if not given.  Calls
-     `(pred x y)' are made with element X being before Y in LST.  A call
-     is made at most once for each combination, but the sequence of the
-     calls across the elements is unspecified.
-
-     LST is not modified, but the return might share a common tail with
-     LST.
-
-     In the worst case, this is an O(N^2) algorithm because it must
-     check each element against all those preceding it.  For long lists
-     it is more efficient to sort and then compare only adjacent
-     elements.
-
-delete-duplicates!
-
-- Scheme Procedure: delete-duplicates! lst [pred]
-     Return a list containing the elements of LST but without
-     duplicates.
-
-     When elements are equal, only the first in LST is retained.  Equal
-     elements can be anywhere in LST, they don't have to be adjacent.
-     The returned list will have the retained elements in the same order
-     as they were in LST.
-
-     Equality is determined by PRED, or `equal?' if not given.  Calls
-     `(pred x y)' are made with element X being before Y in LST.  A call
-     is made at most once for each combination, but the sequence of the
-     calls across the elements is unspecified.
-
-     LST may be modified to construct the returned list.
-
-     In the worst case, this is an O(N^2) algorithm because it must
-     check each element against all those preceding it.  For long lists
-     it is more efficient to sort and then compare only adjacent
-     elements.
-
-length+
-
-- Scheme Procedure: length+ lst
-     Return the length of LST, or `#f' if LST is circular.
-
-list-copy
-
-- Scheme Procedure: list-copy lst
-     Return a copy of the given list LST.
-
-     LST can be a proper or improper list.  And if LST is not a pair
-     then it's treated as the final tail of an improper list and simply
-     returned.
-
-lset-difference!
-
-- Scheme Procedure: lset-difference! equal lst .  rest
-     Return LST with any elements in the lists in REST removed (ie.:
-     subtracted).  For only one LST argument, just that list is
-     returned.
-
-     The given EQUAL procedure is used for comparing elements, called as
-     `(EQUAL elem1 elemN)'.  The first argument is from LST and the
-     second from one of the subsequent lists.  But exactly which calls
-     are made and in what order is unspecified.
-
-          (lset-difference! eqv? (list 'x 'y))           ==> (x y)
-          (lset-difference! eqv? (list 1 2 3) '(3 1))    ==> (2)
-          (lset-difference! eqv? (list 1 2 3) '(3) '(2)) ==> (1)
-
-     `lset-difference!' may modify LST to form its result.
-
-partition
-
-- Scheme Procedure: partition pred list
-     Partition the elements of LIST with predicate PRED.  Return two
-     values: the list of elements satisfying PRED and the list of
-     elements _not_ satisfying PRED.  The order of the output lists
-     follows the order of LIST.  LIST is not mutated.  One of the output
-     lists may share memory with LIST.
-
-partition!
-
-- Scheme Procedure: partition! pred lst
-     Split LST into those elements which do and don't satisfy the
-     predicate PRED.
-
-     The return is two values (see Multiple Values), the first being a
-     list of all elements from LST which satisfy PRED, the second a list
-     of those which do not.
-
-     The elements in the result lists are in the same order as in LST
-     but the order in which the calls `(PRED elem)' are made on the list
-     elements is unspecified.
-
-     LST may be modified to construct the return lists.
-
-remove
-
-- Scheme Procedure: remove pred list
-     Return a list containing all elements from LIST which do not
-     satisfy the predicate PRED.  The elements in the result list have
-     the same order as in LIST.  The order in which PRED is applied to
-     the list elements is not specified.
-
-remove!
-
-- Scheme Procedure: remove! pred list
-     Return a list containing all elements from LIST which do not
-     satisfy the predicate PRED.  The elements in the result list have
-     the same order as in LIST.  The order in which PRED is applied to
-     the list elements is not specified.  LIST may be modified to build
-     the return list.
 
 make-srfi-4-vector
 

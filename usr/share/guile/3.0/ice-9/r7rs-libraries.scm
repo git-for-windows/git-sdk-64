@@ -64,8 +64,10 @@
            ;; FIXME: R7RS (features) isn't quite the same as
            ;; %cond-expand-features; see scheme/base.scm.
            (memq (syntax->datum #'id) %cond-expand-features))))
-      (syntax-case clauses ()
+      (syntax-case clauses (else)
         (() #'())  ; R7RS says this is not specified :-/
+        (((else decl ...))
+         #'(decl ...))
         (((test decl ...) . clauses)
          (if (has-req? #'test)
              #'(decl ...)

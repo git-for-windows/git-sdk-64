@@ -206,13 +206,16 @@ for ‘build-uri’ except there is no scheme."
    ((regexp-exec ipv6-regexp host)
     (false-if-exception (inet-pton AF_INET6 host)))
    (else
-    (let lp ((start 0))
-      (let ((end (string-index host #\. start)))
-        (if end
-            (and (regexp-exec domain-label-regexp
-                              (substring host start end))
-                 (lp (1+ end)))
-            (regexp-exec top-label-regexp host start)))))))
+    (let ((last (1- (string-length host))))
+      (let lp ((start 0))
+        (let ((end (string-index host #\. start)))
+          (if (and end (< end last))
+              (and (regexp-exec domain-label-regexp
+                                (substring host start end))
+                   (lp (1+ end)))
+              (if end
+                  (regexp-exec top-label-regexp (substring host start end))
+                  (regexp-exec top-label-regexp host start)))))))))
 
 (define userinfo-pat
   (string-append "[" letters digits "_.!~*'();:&=+$,-]+"))

@@ -1,6 +1,7 @@
 ;;; Parsing Guile's command-line
 
 ;;; Copyright (C) 1994-1998, 2000-2024 Free Software Foundation, Inc.
+;;; Copyright (C) 2025 Noé Lopez <noelopez@free.fr>
 
 ;;;; This library is free software; you can redistribute it and/or
 ;;;; modify it under the terms of the GNU Lesser General Public
@@ -135,6 +136,7 @@ If FILE begins with `-' the -s switch is mandatory.
                  files.
   --listen[=P]   listen on a local port or a path for REPL clients;
                  if P is not given, the default is local port 37146
+  --statprof[=STYLE] profile using statprof and show results in STYLE
   -q             inhibit loading of user init file
   --use-srfi=LS  load SRFI modules for the SRFIs in LS,
                  which is a list of numbers like \"2,13,14\"
@@ -205,7 +207,8 @@ If FILE begins with `-' the -s switch is mandatory.
         (interactive? #t)
         (inhibit-user-init? #f)
         (turn-on-debugging? #f)
-        (turn-off-debugging? #f))
+        (turn-off-debugging? #f)
+        (statprof #f))
 
     (define (error fmt . args)
       (apply shell-usage usage-name #t
@@ -405,6 +408,21 @@ If FILE begins with `-' the -s switch is mandatory.
                   (error "unknown argument to --listen"))))
               out)))
 
+           ((string=? arg "--statprof") ; run script with statprof
+            (set! statprof 'flat)
+            (parse args out))
+
+           ((string-prefix? "--statprof=" arg) ; run script with statprof
+            (let* ((style (substring arg 11)))
+              (set! statprof
+                    (cond
+                     ((string=? style "flat") 'flat)
+                     ((string=? style "anomalies") 'anomalies)
+                     ((string=? style "tree") 'tree)
+                     (else
+                      (error "unknown argument to --statprof")))))
+            (parse args out))
+
            ((or (string=? arg "-h") (string=? arg "--help"))
             (shell-usage usage-name #f)
             (exit 0))
@@ -464,6 +482,11 @@ If FILE begins with `-' the -s switch is mandatory.
                           (cons ,path %load-compiled-path)))
                  user-load-compiled-path)
 
+          ;; If statprof was requested, start it.
+          ,@(if statprof
+                '(((@ (statprof) statprof-start)))
+                '())
+
           ;; Put accumulated actions in their correct order.
           ,@(reverse! out)
 
@@ -471,6 +494,15 @@ If FILE begins with `-' the -s switch is mandatory.
           ,@(if entry-point
                 `((,entry-point (command-line)))
                 '())
+
+          ;; After doing all actions, stop statprof and print
+          ;; results. Avoid continuing the profiling inside the REPL,
+          ;; since it has ,profile.
+          ,@(if statprof
+                `(((@ (statprof) statprof-stop))
+                  ((@ (statprof) statprof-display) #:style ',statprof))
+                '())
+
           ,(if interactive?
                ;; If we didn't end with a -c or a -s, start the
                ;; repl.

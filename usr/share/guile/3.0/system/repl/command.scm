@@ -229,12 +229,17 @@
                                  (lp (cons x out)))))))
                      (lambda (k . args)
                        (handle-read-error #f k args)))))
-           (lambda (k) #f)))))           ; the abort handler
+           ;; The abort handler:
+           (lambda (k)
+             (flush-all-input)
+             #f)))))
 
     ((_ ((name category) repl . datums) docstring b0 b1 ...)
      (define-meta-command ((name category) repl () . datums)
        docstring b0 b1 ...))
 
+    ;; These cases (with category #f) will only produce functional
+    ;; commands if the name is already in the *command-table*.
     ((_ (name repl (expression0 ...) . datums) docstring b0 b1 ...)
      (define-meta-command ((name #f) repl (expression0 ...) . datums)
        docstring b0 b1 ...))
