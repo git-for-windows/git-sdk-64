@@ -33,7 +33,7 @@
 /*    and: Thomas E. Dickey                        1995-on                  */
 /****************************************************************************/
 
-/* $Id: MKterm.h.awk.in,v 1.89 2025/08/23 15:44:22 tom Exp $ */
+/* $Id: MKterm.h.awk.in,v 1.94 2025/12/26 23:33:14 tom Exp $ */
 
 /*
 **	term.h -- Definition of struct term
@@ -43,7 +43,7 @@
 #define NCURSES_TERM_H_incl 1
 
 #undef  NCURSES_VERSION
-#define NCURSES_VERSION "6.5"
+#define NCURSES_VERSION "6.6"
 
 #include <ncursesw/ncurses_dll.h>
 
@@ -62,7 +62,7 @@ typedef struct screen  SCREEN;
 /* configured with --enable-sp-funcs? */
 #if 1
 #undef  NCURSES_SP_FUNCS
-#define NCURSES_SP_FUNCS 20250927
+#define NCURSES_SP_FUNCS 20251230
 #undef  NCURSES_SP_NAME
 #define NCURSES_SP_NAME(name) name##_sp
 
@@ -113,15 +113,10 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #include <termio.h>
 #define TTY struct termio
 
-#elif (defined(_WIN32) || defined(_WIN64))
+#elif (defined(_WIN32) || defined(_WIN64) || defined(__MINGW32__) || defined(__MINGW64__))
 
-#if 0	/* EXP_WIN32_DRIVER */
-#include <ncursesw/win32_curses.h>
-#define TTY struct winconmode
-#else	/* MINGW32 */
-#include <ncursesw/ncurses_mingw.h>
-#define TTY struct termios
-#endif
+#include <ncursesw/nc_win32.h>
+#define TTY ConsoleMode
 
 #elif 0	/* HAVE_SGTTY_H */
 
@@ -140,7 +135,7 @@ typedef int (*NCURSES_SP_OUTC)(SCREEN*, int);
 #define GET_TTY(fd, buf) tcgetattr(fd, buf)
 #define SET_TTY(fd, buf) tcsetattr(fd, TCSADRAIN, buf)
 /* configured with --enable-exp-win32? */
-#elif 0 && (defined(_WIN32) || defined(_WIN64))
+#elif defined(_WIN32) || defined(_WIN64)
 #define GET_TTY(fd, buf) _nc_console_getmode(_nc_console_fd2handle(fd),buf)
 #define SET_TTY(fd, buf) _nc_console_setmode(_nc_console_fd2handle(fd),buf)
 #elif 0	/* HAVE_SGTTY_H */

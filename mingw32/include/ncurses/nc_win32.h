@@ -31,7 +31,7 @@
  * Author: Thomas Dickey, 2008-on                                           *
  ****************************************************************************/
 
-/* $Id: nc_win32.h.in,v 1.10 2025/08/30 20:58:58 tom Exp $ */
+/* $Id: nc_win32.h.in,v 1.19 2025/12/26 23:32:43 tom Exp $ */
 
 #ifndef NC_WIN32_H
 #define NC_WIN32_H 1
@@ -50,8 +50,8 @@
 #error TERMIOS must not be defined on Windows
 #endif
 
-/* We no longer support WindowsXP.
-   Minimum requirement is Windows Vista or Server2008,
+/*
+   Minimum requirement for named pipes is Windows Vista or Server2008,
    aka Windows NT 6.0
 */
 #ifdef WINVER
@@ -69,63 +69,46 @@
 
 #include <windows.h>
 
+#else /* !USE_NAMED_PIPES */
+
+#ifdef WINVER
+#  if WINVER < 0x0501
+#    error WINVER must at least be 0x0501
+#  endif
+#else
+#  define WINVER 0x0501
+#endif
+
+#include <windows.h>
+
+#undef sleep
+#define sleep(n) Sleep((n) * 1000)
+
+#endif /* USE_NAMED_PIPES */
+
 #if HAVE_SYS_TIME_H
 #include <sys/time.h>		/* for struct timeval */
 #endif
 
-#ifdef _NC_MSC
+#ifdef _MSC_VER
 #include <winsock2.h>		/* for struct timeval */
 #endif
 
 #include <stdint.h>		/* for uint32_t */
 
-#ifdef __cplusplus
-extern "C" {
+/*
+ * Allow for build-override, e.g., MinGW used "cygwin".
+ */
+#ifndef DEFAULT_TERM_ENV
+#define DEFAULT_TERM_ENV "ms-terminal"
 #endif
-
-#include <ncursesw/ncurses_dll.h>
-
-#if !HAVE_CLOCK_GETTIME && !HAVE_GETTIMEOFDAY
-#undef HAVE_GETTIMEOFDAY
-#define HAVE_GETTIMEOFDAY 2
-extern NCURSES_EXPORT(int) _nc_gettimeofday(struct timeval *, void *);
-#endif
-
-#undef wcwidth
-#define wcwidth(ucs)  _nc_wcwidth((wchar_t)(ucs))
-extern NCURSES_EXPORT(int)    _nc_wcwidth(uint32_t);
-
-#ifdef CURSES_PRIV_H	/* test.priv.h just needs the preceding */
-
-#ifdef EVENTLIST_2nd	/* test.priv.h just needs the preceding */
-
-extern NCURSES_EXPORT(HANDLE) _nc_console_handle(int fd);
-extern NCURSES_EXPORT(int)    _nc_console_isatty(int fd);
-extern NCURSES_EXPORT(int)    _nc_console_twait(const SCREEN *sp, HANDLE hdl,int mode,int msec,int *left EVENTLIST_2nd(_nc_eventlist * evl));
-extern NCURSES_EXPORT(void)   _nc_console_selectActiveHandle(void);
-extern NCURSES_EXPORT(void)   _nc_console_set_scrollback(bool normal, CONSOLE_SCREEN_BUFFER_INFO * info);
-extern NCURSES_EXPORT(int)    _nc_console_testmouse(const SCREEN *,HANDLE,int EVENTLIST_2nd(_nc_eventlist*));
-extern NCURSES_EXPORT(int)    _nc_console_keyok(int keycode,int flag);
-extern NCURSES_EXPORT(bool)   _nc_console_keyExist(int keycode);
-extern NCURSES_EXPORT(bool)   _nc_console_checkinit(bool initFlag, bool assumeTermInfo);
-extern NCURSES_EXPORT(bool)   _nc_console_restore(void);
-extern NCURSES_EXPORT(int)    _nc_console_vt_supported(void);
-
-#ifdef _NC_CHECK_MINTTY
-extern NCURSES_EXPORT(int)    _nc_console_checkmintty(int fd, LPHANDLE pMinTTY);
-#endif
-
-#endif /* EVENTLIST_2nd */
-
-#include <ncursesw/term.h>
 
 #undef VALID_TERM_ENV
-#define MS_TERMINAL "ms-terminal"
 #define VALID_TERM_ENV(term_env, no_terminal) \
 	(term_env = (NonEmpty(term_env) \
 		      ? term_env \
 		      : (_nc_console_vt_supported() \
-		         ? MS_TERMINAL \
+		         ? DEFAULT_TERM_ENV \
 		         : no_terminal)), \
 	 NonEmpty(term_env))
 
@@ -145,42 +128,13 @@ extern NCURSES_EXPORT(int)    _nc_console_checkmintty(int fd, LPHANDLE pMinTTY);
 #define CONMODE_NORAW    (ENABLE_PROCESSED_INPUT|ENABLE_LINE_INPUT)
 #define CONMODE_NOCBREAK (ENABLE_LINE_INPUT)
 
-#endif /* CURSES_PRIV_H */
-
-#ifdef __cplusplus
-}
-#endif
-
-#else /* !USE_NAMED_PIPES */
-
-#ifdef WINVER
-#  if WINVER < 0x0501
-#    error WINVER must at least be 0x0501
-#  endif
-#else
-#  define WINVER 0x0501
-#endif
-
-#include <windows.h>
-
-#undef sleep
-#define sleep(n) Sleep((n) * 1000)
-
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>		/* for struct timeval */
-#endif
-
-#ifdef _MSC_VER
-#include <winsock2.h>		/* for struct timeval */
-#endif
-
-#include <stdint.h>		/* for uint32_t */
+#include <ncursesw/ncurses_dll.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include <ncursesw/ncurses_dll.h>
+#if defined(CURSES_PRIV_H) || defined(TEST_PRIV_H)
 
 #if !HAVE_CLOCK_GETTIME && !HAVE_GETTIMEOFDAY
 extern NCURSES_EXPORT(int) _nc_gettimeofday(struct timeval *, void *);
@@ -189,21 +143,19 @@ extern NCURSES_EXPORT(int) _nc_gettimeofday(struct timeval *, void *);
 #define gettimeofday(tv,tz) _nc_gettimeofday(tv,tz)
 #endif
 
+#endif /* defined(CURSES_PRIV_H) || defined(TEST_PRIV_H) */
+
+#if !HAVE_WCWIDTH
 #undef wcwidth
 #define wcwidth(ucs) _nc_wcwidth((wchar_t)(ucs))
 extern NCURSES_EXPORT(int) _nc_wcwidth(uint32_t);
-
-#ifdef __cplusplus
-}
 #endif
 
-#endif /* USE_NAMED_PIPES */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef TTY
+typedef struct
+{
+    DWORD dwFlagIn;
+    DWORD dwFlagOut;
+} ConsoleMode;
 
 #define CON_NUMPAIRS 64
 typedef struct {
@@ -229,17 +181,31 @@ typedef struct {
     CONSOLE_SCREEN_BUFFER_INFO SBI;
     CONSOLE_SCREEN_BUFFER_INFO save_SBI;
     CONSOLE_CURSOR_INFO save_CI;
-    TTY originalMode;
+    ConsoleMode originalMode;
 } ConsoleInfo;
 
 extern NCURSES_EXPORT_VAR(ConsoleInfo) _nc_CONSOLE;
 #define WINCONSOLE _nc_CONSOLE
 
-#endif /* TTY */
-
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef CURSES_PRIV_H	/* test.priv.h just needs the preceding */
+#include <ncursesw/term.h>
+#endif
+
+#if USE_DOS_PATHS
+NCURSES_EXPORT(const char *) _nc_to_dospath(const char *, char *);
+#define FixupPathname(path) \
+	char fixed_pathname[PATH_MAX]; \
+	path = _nc_to_dospath(path, fixed_pathname)
+#define FixupPathname2(path,buffer) \
+	path = _nc_to_dospath(path, buffer)
+#endif
+
+#undef  ttyname
+#define ttyname(fd) NULL
 
 #endif /* _WIN32 || _WIN64 */
 
