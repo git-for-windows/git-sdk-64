@@ -10,7 +10,7 @@ BASEVER, DATESTAMP, DEVPHASE, and REVISION are defined by the
 Makefile.  */
 
 #define version_string "15.2.0"
-#define pkgversion_string "(Rev8, Built by MSYS2 project) "
+#define pkgversion_string "(Rev9, Built by MSYS2 project) "
 
 /* This is the location of the online document giving instructions for
 reporting bugs.  If you distribute a modified version of GCC,
