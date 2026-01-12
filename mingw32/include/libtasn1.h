@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2002-2025 Free Software Foundation, Inc.
+ * Copyright (C) 2002-2026 Free Software Foundation, Inc.
  *
  * This file is part of LIBTASN1.
  *
@@ -67,7 +67,7 @@ extern "C"
  *
  * Version of the library as a string.
  */
-# define ASN1_VERSION "4.20.0"
+# define ASN1_VERSION "4.21.0"
 
 /**
  * ASN1_VERSION_MAJOR:
@@ -81,7 +81,7 @@ extern "C"
  *
  * Minor version number of the library.
  */
-# define ASN1_VERSION_MINOR 20
+# define ASN1_VERSION_MINOR 21
 
 /**
  * ASN1_VERSION_PATCH:
@@ -95,7 +95,7 @@ extern "C"
  *
  * Version number of the library as a number.
  */
-# define ASN1_VERSION_NUMBER 0x041400
+# define ASN1_VERSION_NUMBER 0x041500
 
 
 # if defined __GNUC__ && !defined ASN1_INTERNAL_BUILD
