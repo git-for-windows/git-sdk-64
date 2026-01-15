@@ -76,7 +76,7 @@ extern "C" {
   _CRTIMP int __cdecl _stricmp(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _strcmpi(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _stricmp_l(const char *_Str1,const char *_Str2,_locale_t _Locale);
-  int __cdecl strcoll(const char *_Str1,const char *_Str2);
+  _CRTIMP int __cdecl strcoll(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _strcoll_l(const char *_Str1,const char *_Str2,_locale_t _Locale);
   _CRTIMP int __cdecl _stricoll(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _stricoll_l(const char *_Str1,const char *_Str2,_locale_t _Locale);
@@ -86,7 +86,7 @@ extern "C" {
   _CRTIMP int __cdecl _strnicoll_l(const char *_Str1,const char *_Str2,size_t _MaxCount,_locale_t _Locale);
   size_t __cdecl strcspn(const char *_Str,const char *_Control);
   _CRTIMP char *__cdecl _strerror(const char *_ErrMsg) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  char *__cdecl strerror(int) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
+  _CRTIMP char *__cdecl strerror(int) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP char *__cdecl _strlwr(char *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   char *strlwr_l(char *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   char *__cdecl strncat(char * __restrict__ _Dest,const char * __restrict__ _Source,size_t _Count) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
@@ -101,14 +101,14 @@ extern "C" {
   _CRTIMP char *__cdecl _strrev(char *_Str);
   size_t __cdecl strspn(const char *_Str,const char *_Control);
   _CONST_RETURN char *__cdecl strstr(const char *_Str,const char *_SubStr);
-  char *__cdecl strtok(char * __restrict__ _Str,const char * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
+  _CRTIMP char *__cdecl strtok(char * __restrict__ _Str,const char * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 #pragma push_macro("strtok_r")
 #undef strtok_r
   char *strtok_r(char * __restrict__ _Str, const char * __restrict__ _Delim, char ** __restrict__ __last);
 #pragma pop_macro("strtok_r")
   _CRTIMP char *__cdecl _strupr(char *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP char *_strupr_l(char *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  size_t __cdecl strxfrm(char * __restrict__ _Dst,const char * __restrict__ _Src,size_t _MaxCount);
+  _CRTIMP size_t __cdecl strxfrm(char * __restrict__ _Dst,const char * __restrict__ _Src,size_t _MaxCount);
   _CRTIMP size_t __cdecl _strxfrm_l(char * __restrict__ _Dst,const char * __restrict__ _Src,size_t _MaxCount,_locale_t _Locale);
 
 #ifndef	NO_OLDNAMES
@@ -158,8 +158,8 @@ extern "C" {
   _CONST_RETURN wchar_t *__cdecl wcsrchr(const wchar_t *_Str,wchar_t _Ch);
   size_t __cdecl wcsspn(const wchar_t *_Str,const wchar_t *_Control);
   _CONST_RETURN wchar_t *__cdecl wcsstr(const wchar_t *_Str,const wchar_t *_SubStr);
-  wchar_t *__cdecl wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim,wchar_t ** __restrict__ _Ptr) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  wchar_t *__cdecl _wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
+  _CRTIMP wchar_t *__cdecl wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim,wchar_t ** __restrict__ _Ptr) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
+  _CRTIMP wchar_t *__cdecl _wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 #if defined(_CRT_NON_CONFORMING_WCSTOK) && !defined(__cplusplus)
   #define wcstok _wcstok
 #endif
@@ -179,9 +179,9 @@ extern "C" {
   _CRTIMP wchar_t *_wcslwr_l(wchar_t *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP wchar_t *__cdecl _wcsupr(wchar_t *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP wchar_t *_wcsupr_l(wchar_t *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  size_t __cdecl wcsxfrm(wchar_t * __restrict__ _Dst,const wchar_t * __restrict__ _Src,size_t _MaxCount);
+  _CRTIMP size_t __cdecl wcsxfrm(wchar_t * __restrict__ _Dst,const wchar_t * __restrict__ _Src,size_t _MaxCount);
   _CRTIMP size_t __cdecl _wcsxfrm_l(wchar_t * __restrict__ _Dst,const wchar_t * __restrict__ _Src,size_t _MaxCount,_locale_t _Locale);
-  int __cdecl wcscoll(const wchar_t *_Str1,const wchar_t *_Str2);
+  _CRTIMP int __cdecl wcscoll(const wchar_t *_Str1,const wchar_t *_Str2);
   _CRTIMP int __cdecl _wcscoll_l(const wchar_t *_Str1,const wchar_t *_Str2,_locale_t _Locale);
   _CRTIMP int __cdecl _wcsicoll(const wchar_t *_Str1,const wchar_t *_Str2);
   _CRTIMP int __cdecl _wcsicoll_l(const wchar_t *_Str1,const wchar_t *_Str2,_locale_t _Locale);
