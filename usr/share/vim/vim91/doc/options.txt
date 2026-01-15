@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.1.  Last change: 2025 Dec 13
+*options.txt*	For Vim version 9.1.  Last change: 2026 Jan 11
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1815,13 +1815,19 @@ A jump table for the options with a short description can be found at |Q_op|.
 						  for X-windows, "" otherwise)
 			global
 			{only in GUI versions or when the |+xterm_clipboard|
-			or |+wayland_clipboard| features are included}
+			or |+wayland_clipboard| features or
+			|+clipboard_provider| features are included}
 	This option is a list of comma-separated names.
 	Note: if one of the items is "exclude:", then you can't add an item
 	after that.  Therefore do not append an item with += but use ^= to
 	prepend, e.g.: >
 		set clipboard^=unnamed
 <	When using the GUI see |'go-A'|.
+	When using the |clipboard-providers| feature, only the "unnamed" and
+	"unnamedplus" features will be recognized  If compiled without the
+	|+clipboard| feature but compiled with the |+clipboard_provider|
+	feature, then they will be the only values allowed and the other
+	values will be invalid.
 	These names are recognized:
 
 						*clipboard-unnamed*
@@ -1845,9 +1851,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 			'*'.  If Wayland is being used and the compositor does
 			not support the primary selection then the regular
 			selection is used in its place.  Only available with
-			the |+X11| or
-			|+wayland_clipboard| feature.  Availability can be
-			checked with: >
+			the |+X11| or |+wayland_clipboard| feature.
+			Availability can be checked with: >
 			if has('unnamedplus')
 <
 						*clipboard-autoselect*
@@ -4269,15 +4274,17 @@ A jump table for the options with a short description can be found at |Q_op|.
 
 					*'fsync'* *'fs'* *'nofsync'* *'nofs'*
 'fsync' 'fs'		boolean	(default on)
-			global
+			global or local to buffer |global-local|
 	When on, the library function fsync() will be called after writing a
 	file.  This will flush a file to disk, ensuring that it is safely
 	written even on filesystems which do metadata-only journaling.  This
-	will force the harddrive to spin up on Linux systems running in laptop
-	mode, so it may be undesirable in some situations.  Be warned that
-	turning this off increases the chances of data loss after a crash.  On
-	systems without an fsync() implementation, this variable is always
-	off.
+	will force the hard drive to spin up on Linux systems running in
+	laptop mode, so it may be undesirable in some situations.  Be warned
+	that turning this off increases the chances of data loss after a
+	crash.  On systems without an fsync() implementation, this variable is
+	always off.
+	This is a |global-local| option, so it can be set per buffer, for
+	example when writing to a slow filesystem.
 	Also see 'swapsync' for controlling fsync() on swap files.
 	'fsync' also applies to |writefile()| (unless a flag is used to
 	overrule it) and when writing undo files (see |undo-persistence|).
@@ -4567,6 +4574,12 @@ A jump table for the options with a short description can be found at |Q_op|.
 								*'go-T'*
 	  'T'	Include Toolbar.  Currently only in Win32, GTK+, Motif and
 		Photon GUIs.
+								*'go-s'*
+	  's'	Enable fullscreen mode.  Currently only supported in the
+		MS-Windows GUI version.  When set, the window will occupy the
+		entire screen and remove window decorations.  Define custom
+		mappings to toggle this mode conveniently.  For detailed usage
+		instructions, see |gui-w32-fullscreen|.
 								*'go-r'*
 	  'r'	Right-hand scrollbar is always present.
 								*'go-R'*
@@ -6028,7 +6041,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	When the number of matches exceeds this value, Vim shows ">" instead
 	of the exact count to keep searching fast.
 	Note: larger values may impact performance.
-	The value must be between 1 and 9999.
+	The value must be between 1 and 9999.  See also the |searchcount()|
+	function.
 
 						*'menuitems'* *'mis'*
 'menuitems' 'mis'	number	(default 25)
@@ -6959,6 +6973,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|lambda| or a |Funcref|.  See |option-value-function| for more
 	information.
 
+	It is not allowed to change text or jump to another window while
+	evaluating 'qftf' |textlock|.
+
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
 
@@ -7849,7 +7866,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		"search hit TOP, continuing at BOTTOM" messages are only
 		indicated by a "W" (Mnemonic: Wrapped) letter before the
 		search count statistics.  The maximum limit can be set with
-		the 'maxsearchcount' option.
+		the 'maxsearchcount' option, see also |searchcount()|
+		function.
 
 	This gives you the opportunity to avoid that a change between buffers
 	requires you to hit <Enter>, but still gives as useful a message as
@@ -8126,7 +8144,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	when it is turned off.  It is also reset when 'compatible' is set.
 
 	The 'L' flag in 'cpoptions' alters tab behavior when 'list' is
-	enabled.  See also |ins-expandtab| ans user manual section |30.5| for
+	enabled.  See also |ins-expandtab| and user manual section |30.5| for
 	in-depth explanations.
 
 	If Vim is compiled with the |+vartabs| feature then the value of

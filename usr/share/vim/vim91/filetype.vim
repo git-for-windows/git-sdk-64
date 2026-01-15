@@ -1,7 +1,7 @@
 " Vim support file to detect file types
 "
 " Maintainer:		The Vim Project <https://github.com/vim/vim>
-" Last Change:		2025 Nov 11
+" Last Change:		2026 Jan 11
 " Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 " If the filetype can be detected from extension or file name(the final path component),
@@ -435,7 +435,7 @@ au BufNewFile,BufRead *.app			call dist#ft#FTapp()
 au BufNewFile,BufRead *esmtprc			setf esmtprc
 
 " Fennel
-au BufNewFile,BufRead *.fnl,{,.}fennelrc	setf fennel
+au BufNewFile,BufRead {,.}fennelrc	setf fennel
 
 " Flatpak config
 au BufNewFile,BufRead */flatpak/repo/config	setf dosini
@@ -1127,6 +1127,15 @@ au BufNewFile,BufRead */etc/systemd/system/*.d/.#*	setf systemd
 au BufNewFile,BufRead */etc/systemd/system/.#*		setf systemd
 au BufNewFile,BufRead */.config/systemd/user/*.d/.#*	setf systemd
 au BufNewFile,BufRead */.config/systemd/user/.#*	setf systemd
+" Podman Quadlet files
+au BufNewFile,BufRead */containers/systemd/*.{artifact,build,container,image,kube,network,pod,volume}	setf systemd
+" Podman Quadlet rootless files not already captured by previous line
+au BufNewFile,BufRead */etc/containers/systemd/users/*/*.{artifact,build,container,image,kube,network,pod,volume}	setf systemd
+au BufNewFile,BufRead */etc/containers/systemd/users/*.{artifact,build,container,image,kube,network,pod,volume}	setf systemd
+" Podman Quadlet overrides
+au BufNewFile,BufRead */containers/systemd/*.d/*.conf	setf systemd
+au BufNewFile,BufRead */etc/containers/systemd/users/*/*.d/*.conf		setf systemd
+au BufNewFile,BufRead */etc/containers/systemd/users/*.d/*.conf		setf systemd
 
 " Sudoers
 au BufNewFile,BufRead */etc/sudoers,sudoers.tmp	setf sudoers
@@ -1308,7 +1317,7 @@ au BufNewFile,BufRead *.dtml,*.pt,*.cpt		call dist#ft#FThtml()
 "   zsql (zope sql method)
 au BufNewFile,BufRead *.zsql			call dist#ft#SQL()
 
-" Detect by extention
+" Detect by extension
 au BufNewFile,BufRead *				call dist#ft#DetectFromExt()
 augroup END
 
