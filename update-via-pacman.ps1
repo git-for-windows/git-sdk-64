@@ -154,5 +154,26 @@ if ($pacnew.Length -gt 0) {
 "@
 }
 
+if (!(Test-Path cmd\git.exe -PathType Leaf)) {
+  # This installation does not yet have the split mingw-w64-git package
+  bash -lc @'
+    set -x
+    for d in clangarm64 mingw64 mingw32
+    do
+      test -x /$d/bin/git.exe || continue
+      export PATH=/$d/bin:$PATH
+      case $d in
+      clangarm64) carch=clang-aarch64;;
+      mingw64) carch=x86_64;;
+      mingw32) carch=i686;;
+      esac
+
+      # Install mingw-w64-git-for-windows-addons
+      pacman -S --noconfirm mingw-w64-$carch-git-for-windows-addons || exit 1
+    done
+'@
+  if (!$?) { die "Could not install mingw-w64-git-for-windows-addons" }
+}
+
 # Wrapping up: re-install mingw-w64-git-extra
 bash -lc "pacman -S --overwrite=\* --noconfirm mingw-w64-x86_64-git-extra"
