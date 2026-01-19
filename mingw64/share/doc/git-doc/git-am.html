@@ -656,6 +656,23 @@ message as the commit author date, and uses the time of
 commit creation as the committer date. This allows the
 user to lie about the committer date by using the same
 value as the author date.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+The history walking machinery assumes that commits have
+non-decreasing commit timestamps. You should consider if you really need
+to use this option. Then you should only use this option to override the
+committer date when applying commits on top of a base which commit is
+older (in terms of the commit date) than the oldest patch you are
+applying.
+</td>
+</tr>
+</table>
+</div>
 </dd>
 <dt class="hdlist1">--ignore-date</dt>
 <dd>
@@ -870,7 +887,7 @@ See <a href="git-am.html">git-am(1)</a>.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

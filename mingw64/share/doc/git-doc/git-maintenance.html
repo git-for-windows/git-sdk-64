@@ -454,7 +454,8 @@ pre>code {
 <div class="verseblock">
 <pre class="content"><em>git maintenance</em> run [&lt;options&gt;]
 <em>git maintenance</em> start [--scheduler=&lt;scheduler&gt;]
-<em>git maintenance</em> (stop|register|unregister) [&lt;options&gt;]</pre>
+<em>git maintenance</em> (stop|register|unregister) [&lt;options&gt;]
+<em>git maintenance</em> is-needed [&lt;options&gt;]</pre>
 </div>
 </div>
 </div>
@@ -557,6 +558,18 @@ stop the background maintenance processes from running.</p>
 <p>The <code>unregister</code> subcommand will report an error if the current repository
 is not already registered. Use the <code>--force</code> option to return success even
 when the current repository is not registered.</p>
+</div>
+</dd>
+<dt class="hdlist1">is-needed</dt>
+<dd>
+<p>Check whether maintenance needs to be run without actually running it.
+Exits with a 0 status code if maintenance needs to be run, 1 otherwise.
+Ideally used with the <em>--auto</em> flag.</p>
+<div class="paragraph">
+<p>If one or more <code>--task</code> options are specified, then those tasks are checked
+in that order. Otherwise, the tasks are determined by which
+<code>maintenance.</code><em>&lt;task&gt;</em><code>.enabled</code> config options are true. By default, only
+<code>maintenance.gc.enabled</code> is true.</p>
 </div>
 </dd>
 </dl>
@@ -684,7 +697,9 @@ only if certain thresholds are met. For example, the <code>gc</code> task
 runs when the number of loose objects exceeds the number stored
 in the <code>gc.auto</code> config setting, or when the number of pack-files
 exceeds the <code>gc.autoPackLimit</code> config setting. Not compatible with
-the <code>--schedule</code> option.</p>
+the <code>--schedule</code> option.
+When combined with the <code>is-needed</code> subcommand, check if the required
+thresholds are met without actually running maintenance.</p>
 </dd>
 <dt class="hdlist1">--schedule</dt>
 <dd>
@@ -1161,7 +1176,7 @@ prunable worktrees exceeds the value. The default value is 1.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

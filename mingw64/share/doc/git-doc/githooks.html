@@ -569,19 +569,15 @@ making a commit.  Exiting with a non-zero status from this script
 causes the <code>git</code> <code>commit</code> command to abort before creating a commit.</p>
 </div>
 <div class="paragraph">
-<p>The default <em>pre-commit</em> hook, when enabled, catches introduction
-of lines with trailing whitespaces and aborts the commit when
-such a line is found.</p>
-</div>
-<div class="paragraph">
 <p>All the <code>git</code> <code>commit</code> hooks are invoked with the environment
 variable <code>GIT_EDITOR=:</code> if the command will not bring up an editor
 to modify the commit message.</p>
 </div>
 <div class="paragraph">
-<p>The default <em>pre-commit</em> hook, when enabled&#8212;&#8203;and with the
-<code>hooks.allownonascii</code> config option unset or set to false&#8212;&#8203;prevents
-the use of non-ASCII filenames.</p>
+<p>The default <em>pre-commit</em> hook, when enabled, prevents the introduction
+of non-ASCII filenames and lines with trailing whitespace. The non-ASCII
+check can be turned off by setting the <code>hooks.allownonascii</code> config
+option to <code>true</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1400,7 +1396,7 @@ running passing "1", "1" should not be possible.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

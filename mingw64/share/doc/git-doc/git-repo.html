@@ -452,8 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>repo</code> <code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>)] [<code>-z</code>] [<em>&lt;key&gt;</em>&#8230;&#8203;]
-<code>git</code> <code>repo</code> <code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>)]</pre>
+<pre class="content"><code>git</code> <code>repo</code> <code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>) | <code>-z</code>] [<code>--all</code> | <em>&lt;key&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>repo</code> <code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>) | <code>-z</code>]</pre>
 </div>
 </div>
 </div>
@@ -473,14 +473,14 @@ pre>code {
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>)] [<code>-z</code>] [<em>&lt;key&gt;</em>...]</dt>
+<dt class="hdlist1"><code>info</code> [<code>--format=</code>(<code>keyvalue</code>|<code>nul</code>) | <code>-z</code>] [<code>--all</code> | <em>&lt;key&gt;</em>...]</dt>
 <dd>
 <p>Retrieve metadata-related information about the current repository. Only
 the requested data will be returned based on their keys (see "INFO KEYS"
 section below).</p>
 <div class="paragraph">
 <p>The values are returned in the same order in which their respective keys were
-requested.</p>
+requested. The <code>--all</code> flag requests the values for all the available keys.</p>
 </div>
 <div class="paragraph">
 <p>The output format can be chosen through the flag <code>--format</code>. Two formats are
@@ -508,7 +508,7 @@ This format is better suited for being parsed by another applications than
 </dl>
 </div>
 </dd>
-<dt class="hdlist1"><code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>)]</dt>
+<dt class="hdlist1"><code>structure</code> [<code>--format=</code>(<code>table</code>|<code>keyvalue</code>|<code>nul</code>) | <code>-z</code>]</dt>
 <dd>
 <p>Retrieve statistics about the current repository structure. The
 following kinds of information are reported:</p>
@@ -520,14 +520,14 @@ following kinds of information are reported:</p>
 <li>
 <p>Reachable object counts categorized by type</p>
 </li>
-</ul>
-</div>
+<li>
+<p>Total inflated size of reachable objects by type</p>
+</li>
+<li>
+<p>Total disk size of reachable objects by type</p>
 <div class="paragraph">
 <p>The output format can be chosen through the flag <code>--format</code>. Three formats are
 supported:</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div>
 <div class="dlist">
 <dl>
@@ -551,8 +551,14 @@ key-value pairs instead of a newline. Also uses a newline character as
 the delimiter between the key and value instead of <em>=</em>. Unlike the
 <code>keyvalue</code> format, values containing "unusual" characters are never
 quoted.</p>
+<div class="paragraph">
+<p><code>-z</code> is an alias for <code>--format=nul</code>.</p>
+</div>
 </dd>
 </dl>
+</div>
+</li>
+</ul>
 </div>
 </dd>
 </dl>
@@ -645,7 +651,7 @@ using the <code>nul</code> format:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

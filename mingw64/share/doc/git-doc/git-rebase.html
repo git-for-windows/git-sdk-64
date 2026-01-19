@@ -574,7 +574,7 @@ of the to-be-rebased branch. However, <code>ORIG_HEAD</code> is not guaranteed t
 point to that commit at the end of the rebase if other commands that change
 <code>ORIG_HEAD</code> (like <code>git</code> <code>reset</code>) are used during the rebase. The previous branch
 tip, however, is accessible using the reflog of the current branch (i.e. <code>@</code>{1},
-see <a href="gitrevisions.html">gitrevisions(7)</a>.
+see <a href="gitrevisions.html">gitrevisions(7)</a>).
 </td>
 </tr>
 </table>
@@ -1092,6 +1092,23 @@ Implies <code>--apply</code>.</p>
 <p>Instead of using the current time as the committer date, use
 the author date of the commit being rebased as the committer
 date. This option implies <code>--force-rebase</code>.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+The history walking machinery assumes that commits have
+non-decreasing commit timestamps. You should consider if you really need
+to use this option. Then you should only use this option to override the
+committer date when rebasing commits on top of a base which commit is
+older (in terms of the commit date) than the oldest commit you are
+applying (in terms of the author date).
+</td>
+</tr>
+</table>
+</div>
 </dd>
 <dt class="hdlist1">--ignore-date</dt>
 <dt class="hdlist1">--reset-author-date</dt>
@@ -2463,7 +2480,7 @@ When not configured, the default commit message editor is used instead.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

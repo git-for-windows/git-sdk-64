@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content">(EXPERIMENTAL!) <em>git replay</em> ([--contained] --onto &lt;newbase&gt; | --advance &lt;branch&gt;) &lt;revision-range&gt;&#8230;&#8203;</pre>
+<pre class="content">(EXPERIMENTAL!) <em>git replay</em> ([--contained] --onto &lt;newbase&gt; | --advance &lt;branch&gt;) [--ref-action[=&lt;mode&gt;]] &lt;revision-range&gt;</pre>
 </div>
 </div>
 </div>
@@ -460,11 +460,12 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Takes ranges of commits and replays them onto a new location. Leaves
-the working tree and the index untouched, and updates no references.
-The output of this command is meant to be used as input to
-<code>git</code> <code>update-ref</code> <code>--stdin</code>, which would update the relevant branches
-(see the OUTPUT section below).</p>
+<p>Takes a range of commits and replays them onto a new location. Leaves
+the working tree and the index untouched. By default, updates the
+relevant references using an atomic transaction (all refs update or
+none). Use <code>--ref-action=print</code> to avoid automatic ref updates and
+instead get update commands that can be piped to <code>git</code> <code>update-ref</code> <code>--stdin</code>
+(see the <a href="#output">OUTPUT</a> section below).</p>
 </div>
 <div class="paragraph">
 <p>THIS COMMAND IS EXPERIMENTAL. THE BEHAVIOR MAY CHANGE.</p>
@@ -481,10 +482,9 @@ The output of this command is meant to be used as input to
 <p>Starting point at which to create the new commits.  May be any
 valid commit, and not just an existing branch name.</p>
 <div class="paragraph">
-<p>When <code>--onto</code> is specified, the update-ref command(s) in the output will
-update the branch(es) in the revision range to point at the new
-commits, similar to the way how <code>git</code> <code>rebase</code> <code>--update-refs</code> updates
-multiple branches in the affected range.</p>
+<p>When <code>--onto</code> is specified, the branch(es) in the revision range will be
+updated to point at the new commits, similar to the way <code>git</code> <code>rebase</code> <code>--update-refs</code>
+updates multiple branches in the affected range.</p>
 </div>
 </dd>
 <dt class="hdlist1">--advance &lt;branch&gt;</dt>
@@ -492,18 +492,45 @@ multiple branches in the affected range.</p>
 <p>Starting point at which to create the new commits; must be a
 branch name.</p>
 <div class="paragraph">
-<p>When <code>--advance</code> is specified, the update-ref command(s) in the output
-will update the branch passed as an argument to <code>--advance</code> to point at
-the new commits (in other words, this mimics a cherry-pick operation).</p>
+<p>The history is replayed on top of the &lt;branch&gt; and &lt;branch&gt; is updated to
+point at the tip of the resulting history. This is different from <code>--onto</code>,
+which uses the target only as a starting point without updating it.</p>
+</div>
+</dd>
+<dt class="hdlist1">--contained</dt>
+<dd>
+<p>Update all branches that point at commits in
+&lt;revision-range&gt;. Requires <code>--onto</code>.</p>
+</dd>
+<dt class="hdlist1">--ref-action[=&lt;mode&gt;]</dt>
+<dd>
+<p>Control how references are updated. The mode can be:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>update</code> (default): Update refs directly using an atomic transaction.
+All refs are updated or none are (all-or-nothing behavior).</p>
+</li>
+<li>
+<p><code>print</code>: Output update-ref commands for pipeline use. This is the
+traditional behavior where output can be piped to <code>git</code> <code>update-ref</code> <code>--stdin</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The default mode can be configured via the <code>replay.refAction</code> configuration variable.</p>
 </div>
 </dd>
 <dt class="hdlist1">&lt;revision-range&gt;</dt>
 <dd>
-<p>Range of commits to replay. More than one &lt;revision-range&gt; can
-be passed, but in <code>--advance</code> <em>&lt;branch&gt;</em> mode, they should have
-a single tip, so that it&#8217;s clear where &lt;branch&gt; should point
-to. See "Specifying Ranges" in <a href="git-rev-parse.html">git-rev-parse(1)</a> and the
-"Commit Limiting" options below.</p>
+<p>Range of commits to replay; see "Specifying Ranges" in
+<a href="git-rev-parse.html">git-rev-parse(1)</a>. In <code>--advance</code> <em>&lt;branch&gt;</em> mode, the
+range should have a single tip, so that it&#8217;s clear to which tip the
+advanced &lt;branch&gt; should point.</p>
 </dd>
 </dl>
 </div>
@@ -1819,11 +1846,15 @@ is the string that will be shown instead of the default one.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_output">OUTPUT</h2>
+<h2 id="output">OUTPUT</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When there are no conflicts, the output of this command is usable as
-input to <code>git</code> <code>update-ref</code> <code>--stdin</code>.  It is of the form:</p>
+<p>By default, or with <code>--ref-action=update</code>, this command produces no output on
+success, as refs are updated directly using an atomic transaction.</p>
+</div>
+<div class="paragraph">
+<p>When using <code>--ref-action=print</code>, the output is usable as input to
+<code>git</code> <code>update-ref</code> <code>--stdin</code>. It is of the form:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1838,10 +1869,14 @@ the shape of the history being replayed.  When using <code>--advance</code>, the
 number of refs updated is always one, but for <code>--onto</code>, it can be one
 or more (rebasing multiple branches simultaneously is supported).</p>
 </div>
+<div class="paragraph">
+<p>There is no stderr output on conflicts; see the <a href="#exit-status">EXIT
+STATUS</a> section below.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_exit_status">EXIT STATUS</h2>
+<h2 id="exit-status">EXIT STATUS</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>For a successful, non-conflicted replay, the exit status is 0.  When
@@ -1859,7 +1894,18 @@ is something other than 0 or 1.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git replay --onto target origin/main..mybranch
+<pre>$ git replay --onto target origin/main..mybranch</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The refs are updated atomically and no output is produced on success.</p>
+</div>
+<div class="paragraph">
+<p>To see what would be updated without actually updating:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ git replay --ref-action=print --onto target origin/main..mybranch
 update refs/heads/mybranch ${NEW_mybranch_HASH} ${OLD_mybranch_HASH}</pre>
 </div>
 </div>
@@ -1868,15 +1914,14 @@ update refs/heads/mybranch ${NEW_mybranch_HASH} ${OLD_mybranch_HASH}</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git replay --advance target origin/main..mybranch
-update refs/heads/target ${NEW_target_HASH} ${OLD_target_HASH}</pre>
+<pre>$ git replay --advance target origin/main..mybranch</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Note that the first two examples replay the exact same commits and on
 top of the exact same new base, they only differ in that the first
-provides instructions to make mybranch point at the new commits and
-the second provides instructions to make target point at them.</p>
+updates mybranch to point at the new commits and the second updates
+target to point at them.</p>
 </div>
 <div class="paragraph">
 <p>What if you have a stack of branches, one depending upon another, and
@@ -1884,11 +1929,12 @@ you&#8217;d really like to rebase the whole set?</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git replay --contained --onto origin/main origin/main..tipbranch
-update refs/heads/branch1 ${NEW_branch1_HASH} ${OLD_branch1_HASH}
-update refs/heads/branch2 ${NEW_branch2_HASH} ${OLD_branch2_HASH}
-update refs/heads/tipbranch ${NEW_tipbranch_HASH} ${OLD_tipbranch_HASH}</pre>
+<pre>$ git replay --contained --onto origin/main origin/main..tipbranch</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>All three branches (<code>branch1</code>, <code>branch2</code>, and <code>tipbranch</code>) are updated
+atomically.</p>
 </div>
 <div class="paragraph">
 <p>When calling <code>git</code> <code>replay</code>, one does not need to specify a range of
@@ -1897,10 +1943,7 @@ do:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>$ git replay --onto origin/main ^base branch1 branch2 branch3
-update refs/heads/branch1 ${NEW_branch1_HASH} ${OLD_branch1_HASH}
-update refs/heads/branch2 ${NEW_branch2_HASH} ${OLD_branch2_HASH}
-update refs/heads/branch3 ${NEW_branch3_HASH} ${OLD_branch3_HASH}</pre>
+<pre>$ git replay --onto origin/main ^base branch1 branch2 branch3</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1922,7 +1965,7 @@ that they have in common, but that does not need to be the case.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

@@ -713,6 +713,208 @@ local file system, unregistering the repository.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_recommended_config_values">RECOMMENDED CONFIG VALUES</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As part of both <code>scalar</code> <code>clone</code> and <code>scalar</code> <code>register</code>, certain Git config
+values are set to optimize for large repositories or cross-platform support.
+These options are updated in new Git versions according to the best known
+advice for large repositories, and users can get the latest recommendations
+by running <code>scalar</code> <code>reconfigure</code> [<code>--all</code>].</p>
+</div>
+<div class="paragraph">
+<p>This section lists justifications for the config values that are set in the
+latest version.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">am.keepCR=true</dt>
+<dd>
+<p>This setting is important for cross-platform development across Windows
+and non-Windows platforms and keeping carriage return (<code>\r</code>) characters
+in certain workflows.</p>
+</dd>
+<dt class="hdlist1">commitGraph.changedPaths=true</dt>
+<dd>
+<p>This setting helps the background maintenance steps that compute the
+serialized commit-graph to also store changed-path Bloom filters. This
+accelerates file history commands and allows users to automatically
+benefit without running a foreground command.</p>
+</dd>
+<dt class="hdlist1">commitGraph.generationVersion=1</dt>
+<dd>
+<p>While the preferred version is 2 for performance reasons, existing users
+that had version 1 by default will need special care in upgrading to
+version 2. This is likely to change in the future as the upgrade story
+solidifies.</p>
+</dd>
+<dt class="hdlist1">core.autoCRLF=false</dt>
+<dd>
+<p>This removes the transformation of worktree files to add CRLF line
+endings when only LF line endings exist. This is removed for performance
+reasons. Repositories that use tools that care about CRLF line endings
+should commit the necessary files with those line endings instead.</p>
+</dd>
+<dt class="hdlist1">core.logAllRefUpdates=true</dt>
+<dd>
+<p>This enables the reflog on all branches. While this is a performance
+cost for large repositories, it is frequently an important data source
+for users to get out of bad situations or to seek support from experts.</p>
+</dd>
+<dt class="hdlist1">core.safeCRLF=false</dt>
+<dd>
+<p>Similar to <code>core.autoCRLF=false</code>, this disables checks around whether
+the CRLF conversion is reversible. This is a performance improvement,
+but can be dangerous if <code>core.autoCRLF</code> is reenabled by the user.</p>
+</dd>
+<dt class="hdlist1">credential.https://dev.azure.com.useHttpPath=true</dt>
+<dd>
+<p>This setting enables the <code>credential.useHttpPath</code> feature only for web
+URLs for Azure DevOps. This is important for users interacting with that
+service using multiple organizations and thus multiple credential
+tokens.</p>
+</dd>
+<dt class="hdlist1">feature.experimental=false</dt>
+<dd>
+<p>This disables the "experimental" optimizations grouped under this
+feature config. The expectation is that all valuable optimizations are
+also set explicitly by Scalar config, and any differences are
+intentional. Notable differences include several bitmap-related config
+options which are disabled for client-focused Scalar repos.</p>
+</dd>
+<dt class="hdlist1">feature.manyFiles=false</dt>
+<dd>
+<p>This disables the "many files" optimizations grouped under this feature
+config. The expectation is that all valuable optimizations are also set
+explicitly by Scalar config, and any differences are intentional.</p>
+</dd>
+<dt class="hdlist1">fetch.showForcedUpdates=false</dt>
+<dd>
+<p>This disables the check at the end of <code>git</code> <code>fetch</code> that notifies the user
+if the ref update was a forced update (one where the previous position
+is not reachable from the latest position). This check can be very
+expensive in large repositories, so is disabled and replaced with an
+advice message. Set <code>advice.fetchShowForcedUpdates=false</code> to disable
+this advice message.</p>
+</dd>
+<dt class="hdlist1">fetch.unpackLimit=1</dt>
+<dd>
+<p>This setting prevents Git from unpacking packfiles into loose objects
+as they are downloaded from the server. The default limit of 100 was
+intended as a way to prevent performance issues from too many packfiles,
+but Scalar uses background maintenance to group packfiles and cover them
+with a multi-pack-index, removing this issue.</p>
+</dd>
+<dt class="hdlist1">fetch.writeCommitGraph=false</dt>
+<dd>
+<p>This config setting was created to help users automatically update their
+commit-graph files as they perform fetches. However, this takes time
+from foreground fetches and pulls and Scalar uses background maintenance
+for this function instead.</p>
+</dd>
+<dt class="hdlist1">gc.auto=0</dt>
+<dd>
+<p>This disables automatic garbage collection, since Scalar uses background
+maintenance to keep the repository data in good shape.</p>
+</dd>
+<dt class="hdlist1">gui.GCWarning=false</dt>
+<dd>
+<p>Since Scalar disables garbage collection by setting <code>gc.auto=0</code>, the
+<code>git-gui</code> tool may start to warn about this setting. Disable this
+warning as Scalar&#8217;s background maintenance configuration makes the
+warning irrelevant.</p>
+</dd>
+<dt class="hdlist1">index.skipHash=true</dt>
+<dd>
+<p>Disable computing the hash of the index contents as it is being written.
+This assists with performance, especially for large index files.</p>
+</dd>
+<dt class="hdlist1">index.threads=true</dt>
+<dd>
+<p>This tells Git to automatically detect how many threads it should use
+when reading the index due to the default value of <code>core.preloadIndex</code>,
+which enables parallel index reads. This explicit setting also enables
+<code>index.recordOffsetTable=true</code> to speed up parallel index reads.</p>
+</dd>
+<dt class="hdlist1">index.version=4</dt>
+<dd>
+<p>This index version adds compression to the path names, reducing the size
+of the index in a significant way for large repos. This is an important
+performance boost.</p>
+</dd>
+<dt class="hdlist1">log.excludeDecoration=refs/prefetch/*</dt>
+<dd>
+<p>Since Scalar enables background maintenance with the <code>incremental</code>
+strategy, this setting avoids polluting <code>git</code> <code>log</code> output with refs
+stored by the background prefetch operations.</p>
+</dd>
+<dt class="hdlist1">merge.renames=true</dt>
+<dd>
+<p>When computing merges in large repos, it is particularly important to
+detect renames to maximize the potential for a result that will validate
+correctly. Users performing merges locally are more likely to be doing
+so because a server-side merge (via pull request or similar) resulted in
+conflicts. While this is the default setting, it is set specifically to
+override a potential change to <code>diff.renames</code> which a user may set for
+performance reasons.</p>
+</dd>
+<dt class="hdlist1">merge.stat=false</dt>
+<dd>
+<p>This disables a diff output after computing a merge. This improves
+performance of <code>git</code> <code>merge</code> for large repos while reducing noisy output.</p>
+</dd>
+<dt class="hdlist1">pack.useBitmaps=false</dt>
+<dd>
+<p>This disables the use of .<code>bitmap</code> files attached to packfiles. Bitmap
+files are optimized for server-side use, not client-side use. Scalar
+disables this to avoid some performance issues that can occur if a user
+accidentally creates .<code>bitmap</code> files.</p>
+</dd>
+<dt class="hdlist1">pack.usePathWalk=true</dt>
+<dd>
+<p>This enables the <code>--path-walk</code> option to <code>git</code> <code>pack-objects</code> by default.
+This can accelerate the computation and compression of packfiles created
+by <code>git</code> <code>push</code> and other repack operations.</p>
+</dd>
+<dt class="hdlist1">receive.autoGC=false</dt>
+<dd>
+<p>Similar to <code>gc.auto</code>, this setting is disabled in preference of
+background maintenance.</p>
+</dd>
+<dt class="hdlist1">status.aheadBehind=false</dt>
+<dd>
+<p>This disables the ahead/behind calculation that would normally happen
+during a <code>git</code> <code>status</code> command. This information is frequently ignored by
+users but can be expensive to calculate in large repos that receive
+thousands of commits per day. The calculation is replaced with an advice
+message that can be disabled by disabling the <code>advice.statusAheadBehind</code>
+config.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following settings are different based on which platform is in use:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">core.untrackedCache=(true|false)</dt>
+<dd>
+<p>The untracked cache feature is important for performance benefits on
+large repositories, but has demonstrated some bugs on Windows
+filesystems. Thus, this is set for other platforms but disabled on
+Windows.</p>
+</dd>
+<dt class="hdlist1">http.sslBackend=schannel</dt>
+<dd>
+<p>On Windows, the <code>openssl</code> backend has some issues with certain types of
+remote providers and certificate types. Override the default setting to
+avoid these common problems.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -731,7 +933,7 @@ local file system, unregistering the repository.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git pull</em> [&lt;options&gt;] [&lt;repository&gt; [&lt;refspec&gt;&#8230;&#8203;]]</pre>
+<pre class="content"><code>git</code> <code>pull</code> [<em>&lt;options&gt;</em>] [<em>&lt;repository&gt;</em> [<em>&lt;refspec&gt;</em>&#8230;&#8203;]]</pre>
 </div>
 </div>
 </div>
@@ -497,8 +497,8 @@ or <code>pull.ff</code> with your preferred behaviour.</p>
 </div>
 <div class="paragraph">
 <p>If there&#8217;s a merge conflict during the merge or rebase that you don&#8217;t
-want to handle, you can safely abort it with <code>git</code> <code>merge</code> <code>--abort</code> or <code>git</code>
-<code>--rebase</code> <code>abort</code>.</p>
+want to handle, you can safely abort it with <code>git</code> <code>merge</code> <code>--abort</code> or
+<code>git</code> <code>rebase</code> <code>--abort</code>.</p>
 </div>
 </div>
 </div>
@@ -507,7 +507,7 @@ want to handle, you can safely abort it with <code>git</code> <code>merge</code>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;repository&gt;</dt>
+<dt class="hdlist1"><em>&lt;repository&gt;</em></dt>
 <dd>
 <p>The "remote" repository to pull from.  This can be either
 a URL (see the section <a href="#URLS">GIT URLS</a> below) or the name
@@ -518,33 +518,33 @@ See <a href="#UPSTREAM-BRANCHES">UPSTREAM BRANCHES</a> below for more on how to
 configure upstreams.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;refspec&gt;</dt>
+<dt class="hdlist1"><em>&lt;refspec&gt;</em></dt>
 <dd>
 <p>Which branch or other reference(s) to fetch and integrate into the
 current branch, for example <code>main</code> in <code>git</code> <code>pull</code> <code>origin</code> <code>main</code>.
 Defaults to the configured upstream for the current branch.</p>
 <div class="paragraph">
 <p>This can be a branch, tag, or other collection of reference(s).
-See <a href="#fetch-refspec">&lt;refspec</a>&gt; below under "Options related to fetching"
+See <a href="#fetch-refspec"><em>&lt;refspec&gt;</em></a> below under "Options related to fetching"
 for the full syntax, and <a href="#DEFAULT-BEHAVIOUR">DEFAULT BEHAVIOUR</a> below
 for how <code>git</code> <code>pull</code> uses this argument to determine which remote branch
 to integrate.</p>
 </div>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>This is passed to both underlying git-fetch to squelch reporting of
 during transfer, and underlying git-merge to squelch output during
 merging.</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
-<p>Pass --verbose to git-fetch and git-merge.</p>
+<p>Pass <code>--verbose</code> to git-fetch and git-merge.</p>
 </dd>
-<dt class="hdlist1">--recurse-submodules[=(yes|on-demand|no)]</dt>
-<dt class="hdlist1">--no-recurse-submodules</dt>
+<dt class="hdlist1"><code>--recurse-submodules</code>[<code>=</code>(<code>yes</code>|<code>on-demand</code>|<code>no</code>)]</dt>
+<dt class="hdlist1"><code>--no-recurse-submodules</code></dt>
 <dd>
 <p>This option controls if new commits of populated submodules should
 be fetched, and if the working trees of active submodules should be
@@ -610,7 +610,7 @@ case of a merge conflict.</p>
 <dd>
 <p>Only update to the new history if there is no divergent local
 history.  This is the default when no method for reconciling
-divergent histories is provided (via the --rebase=* flags).</p>
+divergent histories is provided (via the <code>--rebase</code> flags).</p>
 </dd>
 <dt class="hdlist1"><code>--ff</code></dt>
 <dt class="hdlist1"><code>--no-ff</code></dt>
@@ -670,6 +670,11 @@ understand how the signoffs are used in that project.</p>
 <div class="paragraph">
 <p>The <code>--no-signoff</code> option can be used to countermand an earlier <code>--signoff</code>
 option on the command line.</p>
+</div>
+<div class="paragraph">
+<p>Git does not (and will not) have a configuration variable to enable
+the <code>--signoff</code> command line option by default; see the
+<code>commit.signoff</code> entry in <a href="gitfaq.html">gitfaq(7)</a> for more details.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>--stat</code></dt>
@@ -771,29 +776,42 @@ this by default exists or will be added.</p>
 <p>Only useful when merging.</p>
 </div>
 </dd>
-<dt class="hdlist1">-r</dt>
-<dt class="hdlist1">--rebase[=(false|true|merges|interactive)]</dt>
+<dt class="hdlist1"><code>-r</code></dt>
+<dt class="hdlist1"><code>--rebase</code>[<code>=</code>(<code>true</code>|<code>merges</code>|<code>false</code>|<code>interactive</code>)]</dt>
 <dd>
-<p>When true, rebase the current branch on top of the upstream
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>true</code></dt>
+<dd>
+<p>rebase the current branch on top of the upstream
 branch after fetching. If there is a remote-tracking branch
 corresponding to the upstream branch and the upstream branch
 was rebased since last fetched, the rebase uses that information
-to avoid rebasing non-local changes.</p>
-<div class="paragraph">
-<p>When set to <code>merges</code>, rebase using <code>git</code> <code>rebase</code> <code>--rebase-merges</code> so that
+to avoid rebasing non-local changes. This is the default.</p>
+</dd>
+<dt class="hdlist1"><code>merges</code></dt>
+<dd>
+<p>rebase using <code>git</code> <code>rebase</code> <code>--rebase-merges</code> so that
 the local merge commits are included in the rebase (see
 <a href="git-rebase.html">git-rebase(1)</a> for details).</p>
-</div>
-<div class="paragraph">
-<p>When false, merge the upstream branch into the current branch.</p>
-</div>
-<div class="paragraph">
-<p>When <code>interactive</code>, enable the interactive mode of rebase.</p>
+</dd>
+<dt class="hdlist1"><code>false</code></dt>
+<dd>
+<p>merge the upstream branch into the current branch.</p>
+</dd>
+<dt class="hdlist1"><code>interactive</code></dt>
+<dd>
+<p>enable the interactive mode of rebase.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
 <p>See <code>pull.rebase</code>, <code>branch.</code><em>&lt;name&gt;</em><code>.rebase</code> and <code>branch.autoSetupRebase</code> in
 <a href="git-config.html">git-config(1)</a> if you want to make <code>git</code> <code>pull</code> always use
 <code>--rebase</code> instead of merging.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -811,9 +829,9 @@ unless you have read <a href="git-rebase.html">git-rebase(1)</a> carefully.
 </table>
 </div>
 </dd>
-<dt class="hdlist1">--no-rebase</dt>
+<dt class="hdlist1"><code>--no-rebase</code></dt>
 <dd>
-<p>This is shorthand for --rebase=false.</p>
+<p>This is shorthand for <code>--rebase=false</code>.</p>
 </dd>
 </dl>
 </div>
@@ -822,26 +840,26 @@ unless you have read <a href="git-rebase.html">git-rebase(1)</a> carefully.
 <h3 id="_options_related_to_fetching">Options related to fetching</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--all</dt>
-<dt class="hdlist1">--no-all</dt>
+<dt class="hdlist1"><code>--all</code></dt>
+<dt class="hdlist1"><code>--no-all</code></dt>
 <dd>
 <p>Fetch all remotes, except for the ones that has the
 <code>remote.</code><em>&lt;name&gt;</em><code>.skipFetchAll</code> configuration variable set.
 This overrides the configuration variable <code>fetch.all</code>.</p>
 </dd>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--append</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--append</code></dt>
 <dd>
 <p>Append ref names and object names of fetched refs to the
 existing contents of .<code>git/FETCH_HEAD</code>.  Without this
 option old data in .<code>git/FETCH_HEAD</code> will be overwritten.</p>
 </dd>
-<dt class="hdlist1">--atomic</dt>
+<dt class="hdlist1"><code>--atomic</code></dt>
 <dd>
 <p>Use an atomic transaction to update local refs. Either all refs are
 updated, or on error, no refs are updated.</p>
 </dd>
-<dt class="hdlist1">--depth=&lt;depth&gt;</dt>
+<dt class="hdlist1"><code>--depth=</code><em>&lt;depth&gt;</em></dt>
 <dd>
 <p>Limit fetching to the specified number of commits from the tip of
 each remote branch history. If fetching to a <em>shallow</em> repository
@@ -849,24 +867,24 @@ created by <code>git</code> <code>clone</code> with <code>--depth=</code><em>&lt
 <a href="git-clone.html">git-clone(1)</a>), deepen or shorten the history to the specified
 number of commits. Tags for the deepened commits are not fetched.</p>
 </dd>
-<dt class="hdlist1">--deepen=&lt;depth&gt;</dt>
+<dt class="hdlist1"><code>--deepen=</code><em>&lt;depth&gt;</em></dt>
 <dd>
-<p>Similar to --depth, except it specifies the number of commits
+<p>Similar to <code>--depth</code>, except it specifies the number of commits
 from the current shallow boundary instead of from the tip of
 each remote branch history.</p>
 </dd>
-<dt class="hdlist1">--shallow-since=&lt;date&gt;</dt>
+<dt class="hdlist1"><code>--shallow-since=</code><em>&lt;date&gt;</em></dt>
 <dd>
 <p>Deepen or shorten the history of a shallow repository to
-include all reachable commits after &lt;date&gt;.</p>
+include all reachable commits after <em>&lt;date&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--shallow-exclude=&lt;ref&gt;</dt>
+<dt class="hdlist1"><code>--shallow-exclude=</code><em>&lt;ref&gt;</em></dt>
 <dd>
 <p>Deepen or shorten the history of a shallow repository to
 exclude commits reachable from a specified remote branch or tag.
 This option can be specified multiple times.</p>
 </dd>
-<dt class="hdlist1">--unshallow</dt>
+<dt class="hdlist1"><code>--unshallow</code></dt>
 <dd>
 <p>If the source repository is complete, convert a shallow
 repository to a complete one, removing all the limitations
@@ -876,14 +894,14 @@ imposed by shallow repositories.</p>
 the current repository has the same history as the source repository.</p>
 </div>
 </dd>
-<dt class="hdlist1">--update-shallow</dt>
+<dt class="hdlist1"><code>--update-shallow</code></dt>
 <dd>
 <p>By default when fetching from a shallow repository,
 <code>git</code> <code>fetch</code> refuses refs that require updating
-.git/shallow. This option updates .git/shallow and accepts such
+.<code>git/shallow</code>. This option updates .<code>git/shallow</code> and accepts such
 refs.</p>
 </dd>
-<dt class="hdlist1">--negotiation-tip=&lt;commit|glob&gt;</dt>
+<dt class="hdlist1"><code>--negotiation-tip=</code>(<em>&lt;commit&gt;</em>|<em>&lt;glob&gt;</em>)</dt>
 <dd>
 <p>By default, Git will report, to the server, commits reachable
 from all local refs to find common commits in an attempt to
@@ -907,97 +925,97 @@ configuration variables documented in <a href="git-config.html">git-config(1)</a
 <code>--negotiate-only</code> option below.</p>
 </div>
 </dd>
-<dt class="hdlist1">--negotiate-only</dt>
+<dt class="hdlist1"><code>--negotiate-only</code></dt>
 <dd>
 <p>Do not fetch anything from the server, and instead print the
-ancestors of the provided <code>--negotiation-tip=*</code> arguments,
+ancestors of the provided <code>--negotiation-tip=</code> arguments,
 which we have in common with the server.</p>
 <div class="paragraph">
-<p>This is incompatible with <code>--recurse-submodules=</code>[<code>yes</code>|<code>on-demand</code>].
+<p>This is incompatible with <code>--recurse-submodules=</code>(<code>yes</code>|<code>on-demand</code>).
 Internally this is used to implement the <code>push.negotiate</code> option, see
 <a href="git-config.html">git-config(1)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Show what would be done, without making any changes.</p>
 </dd>
-<dt class="hdlist1">--porcelain</dt>
+<dt class="hdlist1"><code>--porcelain</code></dt>
 <dd>
 <p>Print the output to standard output in an easy-to-parse format for
 scripts. See section OUTPUT in <a href="git-fetch.html">git-fetch(1)</a> for details.</p>
 <div class="paragraph">
-<p>This is incompatible with <code>--recurse-submodules=</code>[<code>yes</code>|<code>on-demand</code>] and takes
+<p>This is incompatible with <code>--recurse-submodules=</code>(<code>yes</code>|<code>on-demand</code>) and takes
 precedence over the <code>fetch.output</code> config option.</p>
 </div>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
-<p>When <em>git fetch</em> is used with <em>&lt;src&gt;</em><code>:</code><em>&lt;dst&gt;</em> refspec, it may
+<p>When <code>git</code> <code>fetch</code> is used with <em>&lt;src&gt;</em><code>:</code><em>&lt;dst&gt;</em> refspec, it may
 refuse to update the local branch as discussed
 in the <em>&lt;refspec&gt;</em> part of the <a href="git-fetch.html">git-fetch(1)</a>
 documentation.
 This option overrides that check.</p>
 </dd>
-<dt class="hdlist1">-k</dt>
-<dt class="hdlist1">--keep</dt>
+<dt class="hdlist1"><code>-k</code></dt>
+<dt class="hdlist1"><code>--keep</code></dt>
 <dd>
 <p>Keep downloaded pack.</p>
 </dd>
-<dt class="hdlist1">--prefetch</dt>
+<dt class="hdlist1"><code>--prefetch</code></dt>
 <dd>
 <p>Modify the configured refspec to place all refs into the
 <code>refs/prefetch/</code> namespace. See the <code>prefetch</code> task in
 <a href="git-maintenance.html">git-maintenance(1)</a>.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--prune</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--prune</code></dt>
 <dd>
 <p>Before fetching, remove any remote-tracking references that no
 longer exist on the remote.  Tags are not subject to pruning
 if they are fetched only because of the default tag
-auto-following or due to a --tags option.  However, if tags
+auto-following or due to a <code>--tags</code> option.  However, if tags
 are fetched due to an explicit refspec (either on the command
 line or in the remote configuration, for example if the remote
-was cloned with the --mirror option), then they are also
+was cloned with the <code>--mirror</code> option), then they are also
 subject to pruning. Supplying <code>--prune-tags</code> is a shorthand for
 providing the tag refspec.</p>
 </dd>
-<dt class="hdlist1">--no-tags</dt>
+<dt class="hdlist1"><code>--no-tags</code></dt>
 <dd>
 <p>By default, tags that point at objects that are downloaded
 from the remote repository are fetched and stored locally.
 This option disables this automatic tag following. The default
-behavior for a remote may be specified with the remote.&lt;name&gt;.tagOpt
+behavior for a remote may be specified with the <code>remote.</code><em>&lt;name&gt;</em><code>.tagOpt</code>
 setting. See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--refmap=&lt;refspec&gt;</dt>
+<dt class="hdlist1"><code>--refmap=</code><em>&lt;refspec&gt;</em></dt>
 <dd>
 <p>When fetching refs listed on the command line, use the
 specified refspec (can be given more than once) to map the
 refs to remote-tracking branches, instead of the values of
-<code>remote.*.fetch</code> configuration variables for the remote
+<code>remote.</code><em>&lt;name&gt;</em><code>.fetch</code> configuration variables for the remote
 repository.  Providing an empty <em>&lt;refspec&gt;</em> to the
 <code>--refmap</code> option causes Git to ignore the configured
 refspecs and rely entirely on the refspecs supplied as
 command-line arguments. See section on "Configured Remote-tracking
 Branches" for details.</p>
 </dd>
-<dt class="hdlist1">-t</dt>
-<dt class="hdlist1">--tags</dt>
+<dt class="hdlist1"><code>-t</code></dt>
+<dt class="hdlist1"><code>--tags</code></dt>
 <dd>
 <p>Fetch all tags from the remote (i.e., fetch remote tags
 <code>refs/tags/*</code> into local tags with the same name), in addition
 to whatever else would otherwise be fetched.  Using this
-option alone does not subject tags to pruning, even if --prune
+option alone does not subject tags to pruning, even if <code>--prune</code>
 is used (though tags may be pruned anyway if they are also the
 destination of an explicit refspec; see <code>--prune</code>).</p>
 </dd>
-<dt class="hdlist1">-j</dt>
-<dt class="hdlist1">--jobs=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>-j</code> <em>&lt;n&gt;</em></dt>
+<dt class="hdlist1"><code>--jobs=</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>Number of parallel children to be used for all forms of fetching.</p>
+<p>Parallelize all forms of fetching up to <em>&lt;n&gt;</em> jobs at a time.</p>
 <div class="paragraph">
 <p>If the <code>--multiple</code> option was specified, the different remotes will be fetched
 in parallel. If multiple submodules are fetched, they will be fetched in
@@ -1009,7 +1027,7 @@ parallel. To control them independently, use the config settings
 default fetches are performed sequentially, not in parallel.</p>
 </div>
 </dd>
-<dt class="hdlist1">--set-upstream</dt>
+<dt class="hdlist1"><code>--set-upstream</code></dt>
 <dd>
 <p>If the remote is fetched successfully, add upstream
 (tracking) reference, used by argument-less
@@ -1017,25 +1035,25 @@ default fetches are performed sequentially, not in parallel.</p>
 see <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> and <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> in
 <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--upload-pack &lt;upload-pack&gt;</dt>
+<dt class="hdlist1"><code>--upload-pack</code> <em>&lt;upload-pack&gt;</em></dt>
 <dd>
 <p>When given, and the repository to fetch from is handled
-by <em>git fetch-pack</em>, <code>--exec=</code><em>&lt;upload-pack&gt;</em> is passed to
+by <code>git</code> <code>fetch-pack</code>, <code>--exec=</code><em>&lt;upload-pack&gt;</em> is passed to
 the command to specify non-default path for the command
 run on the other end.</p>
 </dd>
-<dt class="hdlist1">--progress</dt>
+<dt class="hdlist1"><code>--progress</code></dt>
 <dd>
 <p>Progress status is reported on the standard error stream
-by default when it is attached to a terminal, unless -q
+by default when it is attached to a terminal, unless <code>-q</code>
 is specified. This flag forces progress status even if the
 standard error stream is not directed to a terminal.</p>
 </dd>
-<dt class="hdlist1">-o &lt;option&gt;</dt>
-<dt class="hdlist1">--server-option=&lt;option&gt;</dt>
+<dt class="hdlist1"><code>-o</code> <em>&lt;option&gt;</em></dt>
+<dt class="hdlist1"><code>--server-option=</code><em>&lt;option&gt;</em></dt>
 <dd>
 <p>Transmit the given string to the server when communicating using
-protocol version 2.  The given string must not contain a NUL or LF
+protocol version 2.  The given string must not contain a <em>NUL</em> or <em>LF</em>
 character.  The server&#8217;s handling of server options, including
 unknown ones, is server-specific.
 When multiple <code>--server-option=</code><em>&lt;option&gt;</em> are given, they are all
@@ -1044,32 +1062,32 @@ When no <code>--server-option=</code><em>&lt;option&gt;</em> is given from the c
 the values of configuration variable <code>remote.</code><em>&lt;name&gt;</em><code>.serverOption</code>
 are used instead.</p>
 </dd>
-<dt class="hdlist1">--show-forced-updates</dt>
+<dt class="hdlist1"><code>--show-forced-updates</code></dt>
 <dd>
 <p>By default, git checks if a branch is force-updated during
-fetch. This can be disabled through fetch.showForcedUpdates, but
-the --show-forced-updates option guarantees this check occurs.
+fetch. This can be disabled through <code>fetch.showForcedUpdates</code>, but
+the <code>--show-forced-updates</code> option guarantees this check occurs.
 See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--no-show-forced-updates</dt>
+<dt class="hdlist1"><code>--no-show-forced-updates</code></dt>
 <dd>
 <p>By default, git checks if a branch is force-updated during
-fetch. Pass --no-show-forced-updates or set fetch.showForcedUpdates
+fetch. Pass <code>--no-show-forced-updates</code> or set <code>fetch.showForcedUpdates</code>
 to false to skip this check for performance reasons. If used during
-<em>git-pull</em> the --ff-only option will still check for forced updates
+<code>git-pull</code> the <code>--ff-only</code> option will still check for forced updates
 before attempting a fast-forward update. See <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">-4</dt>
-<dt class="hdlist1">--ipv4</dt>
+<dt class="hdlist1"><code>-4</code></dt>
+<dt class="hdlist1"><code>--ipv4</code></dt>
 <dd>
 <p>Use IPv4 addresses only, ignoring IPv6 addresses.</p>
 </dd>
-<dt class="hdlist1">-6</dt>
-<dt class="hdlist1">--ipv6</dt>
+<dt class="hdlist1"><code>-6</code></dt>
+<dt class="hdlist1"><code>--ipv6</code></dt>
 <dd>
 <p>Use IPv6 addresses only, ignoring IPv4 addresses.</p>
 </dd>
-<dt class="hdlist1">&lt;repository&gt;</dt>
+<dt class="hdlist1"><em>&lt;repository&gt;</em></dt>
 <dd>
 <p>The "remote" repository that is the source of a fetch
 or pull operation.  This parameter can be either a URL
@@ -1080,27 +1098,27 @@ of a remote (see the section <a href="#REMOTES">REMOTES</a> below).</p>
 </div>
 <div id="fetch-refspec" class="dlist">
 <dl>
-<dt class="hdlist1">&lt;refspec&gt;</dt>
+<dt class="hdlist1"><em>&lt;refspec&gt;</em></dt>
 <dd>
 <p>Specifies which refs to fetch and which local refs to update.
-When no &lt;refspec&gt;s appear on the command line, the refs to fetch
+When no <em>&lt;refspec&gt;</em>s appear on the command line, the refs to fetch
 are read from <code>remote.</code><em>&lt;repository&gt;</em><code>.fetch</code> variables instead
 (see the section "CONFIGURED REMOTE-TRACKING BRANCHES"
 in <a href="git-fetch.html">git-fetch(1)</a>).</p>
 <div class="paragraph">
-<p>The format of a &lt;refspec&gt; parameter is an optional plus
-<code>+</code>, followed by the source &lt;src&gt;, followed
-by a colon <code>:</code>, followed by the destination &lt;dst&gt;.
-The colon can be omitted when &lt;dst&gt; is empty.  &lt;src&gt; is
+<p>The format of a <em>&lt;refspec&gt;</em> parameter is an optional plus
+<code>+</code>, followed by the source <em>&lt;src&gt;</em>, followed
+by a colon <code>:</code>, followed by the destination <em>&lt;dst&gt;</em>.
+The colon can be omitted when <em>&lt;dst&gt;</em> is empty.  <em>&lt;src&gt;</em> is
 typically a ref, or a glob pattern with a single <code>*</code> that is used
 to match a set of refs, but it can also be a fully spelled hex object
 name.</p>
 </div>
 <div class="paragraph">
-<p>A &lt;refspec&gt; may contain a <code>*</code> in its &lt;src&gt; to indicate a simple pattern
+<p>A <em>&lt;refspec&gt;</em> may contain a <code>*</code> in its <em>&lt;src&gt;</em> to indicate a simple pattern
 match. Such a refspec functions like a glob that matches any ref with the
-pattern. A pattern &lt;refspec&gt; must have one and only one <code>*</code> in both the &lt;src&gt; and
-&lt;dst&gt;. It will map refs to the destination by replacing the <code>*</code> with the
+pattern. A pattern <em>&lt;refspec&gt;</em> must have one and only one <code>*</code> in both the <em>&lt;src&gt;</em> and
+<em>&lt;dst&gt;</em>. It will map refs to the destination by replacing the <code>*</code> with the
 contents matched from the source.</p>
 </div>
 <div class="paragraph">
@@ -1111,7 +1129,7 @@ considered to match if it matches at least one positive refspec, and does
 not match any negative refspec. Negative refspecs can be useful to restrict
 the scope of a pattern refspec so that it will not include specific refs.
 Negative refspecs can themselves be pattern refspecs. However, they may only
-contain a &lt;src&gt; and do not specify a &lt;dst&gt;. Fully spelled out hex object
+contain a <em>&lt;src&gt;</em> and do not specify a <em>&lt;dst&gt;</em>. Fully spelled out hex object
 names are also not supported.</p>
 </div>
 <div class="paragraph">
@@ -1119,8 +1137,8 @@ names are also not supported.</p>
 it requests fetching everything up to the given tag.</p>
 </div>
 <div class="paragraph">
-<p>The remote ref that matches &lt;src&gt;
-is fetched, and if &lt;dst&gt; is not an empty string, an attempt
+<p>The remote ref that matches <em>&lt;src&gt;</em>
+is fetched, and if <em>&lt;dst&gt;</em> is not an empty string, an attempt
 is made to update the local ref that matches it.</p>
 </div>
 <div class="paragraph">
@@ -1129,7 +1147,7 @@ namespace it&#8217;s being fetched to, the type of object being fetched, and
 whether the update is considered to be a fast-forward. Generally, the
 same rules apply for fetching as when pushing, see the <em>&lt;refspec&gt;</em>...
 section of <a href="git-push.html">git-push(1)</a> for what those are. Exceptions to those
-rules particular to <em>git fetch</em> are noted below.</p>
+rules particular to <code>git</code> <code>fetch</code> are noted below.</p>
 </div>
 <div class="paragraph">
 <p>Until Git version 2.20, and unlike when pushing with
@@ -1188,19 +1206,19 @@ must know this is the expected usage pattern for a branch.
 <div class="title">Note</div>
 </td>
 <td class="content">
-There is a difference between listing multiple &lt;refspec&gt;
-directly on <em>git pull</em> command line and having multiple
+There is a difference between listing multiple <em>&lt;refspec&gt;</em>
+directly on <code>git</code> <code>pull</code> command line and having multiple
 <code>remote.</code><em>&lt;repository&gt;</em><code>.fetch</code> entries in your configuration
-for a &lt;repository&gt; and running a
-<em>git pull</em> command without any explicit &lt;refspec&gt; parameters.
-&lt;refspec&gt;s listed explicitly on the command line are always
+for a <em>&lt;repository&gt;</em> and running a
+<code>git</code> <code>pull</code> command without any explicit <em>&lt;refspec&gt;</em> parameters.
+<em>&lt;refspec&gt;</em>s listed explicitly on the command line are always
 merged into the current branch after fetching.  In other words,
-if you list more than one remote ref, <em>git pull</em> will create
+if you list more than one remote ref, <code>git</code> <code>pull</code> will create
 an Octopus merge.  On the other hand, if you do not list any
-explicit &lt;refspec&gt; parameter on the command line, <em>git pull</em>
-will fetch all the &lt;refspec&gt;s it finds in the
+explicit <em>&lt;refspec&gt;</em> parameter on the command line, <code>git</code> <code>pull</code>
+will fetch all the <em>&lt;refspec&gt;</em>s it finds in the
 <code>remote.</code><em>&lt;repository&gt;</em><code>.fetch</code> configuration and merge
-only the first &lt;refspec&gt; found into the current branch.
+only the first <em>&lt;refspec&gt;</em> found into the current branch.
 This is because making an
 Octopus from remote refs is rarely done, while keeping track
 of multiple remote heads in one-go by fetching more than one
@@ -1443,8 +1461,8 @@ following format:</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>Push:</code> lines are used by <em>git push</em> and
-<code>Pull:</code> lines are used by <em>git pull</em> and <em>git fetch</em>.
+<p><code>Push:</code> lines are used by <code>git</code> <code>push</code> and
+<code>Pull:</code> lines are used by <code>git</code> <code>pull</code> and <code>git</code> <code>fetch</code>.
 Multiple <code>Push:</code> and <code>Pull:</code> lines may
 be specified for additional branch mappings.</p>
 </div>
@@ -1519,7 +1537,7 @@ respectively".</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The upstream is stored in .<code>git/config</code>, in the "remote" and "merge"
+<p>The upstream is stored in .<code>git/config</code>, in the "<code>remote</code>" and "<code>merge</code>"
 fields. For example, if <code>main</code>'s upstream is <code>origin/main</code>:</p>
 </div>
 <div class="listingblock">
@@ -1848,9 +1866,9 @@ $ git pull origin</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Normally the branch merged in is the HEAD of the remote repository,
-but the choice is determined by the branch.&lt;name&gt;.remote and
-branch.&lt;name&gt;.merge options; see <a href="git-config.html">git-config(1)</a> for details.</p>
+<p>Normally the branch merged in is the <code>HEAD</code> of the remote repository,
+but the choice is determined by the <code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> and
+<code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> options; see <a href="git-config.html">git-config(1)</a> for details.</p>
 </div>
 </li>
 <li>
@@ -1861,7 +1879,7 @@ branch.&lt;name&gt;.merge options; see <a href="git-config.html">git-config(1)</
 </div>
 </div>
 <div class="paragraph">
-<p>This leaves a copy of <code>next</code> temporarily in FETCH_HEAD, and
+<p>This leaves a copy of <code>next</code> temporarily in <code>FETCH_HEAD</code>, and
 updates the remote-tracking branch <code>origin/next</code>.
 The same can be done by invoking fetch and merge:</p>
 </div>
@@ -1876,7 +1894,7 @@ $ git merge origin/next</pre>
 </div>
 <div class="paragraph">
 <p>If you tried a pull which resulted in complex conflicts and
-would want to start over, you can recover with <em>git reset</em>.</p>
+would want to start over, you can recover with <code>git</code> <code>reset</code>.</p>
 </div>
 </div>
 </div>
@@ -1926,7 +1944,7 @@ The delta reveals regions of X that are similar to Y to the attacker.</p>
 <h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Using --recurse-submodules can only fetch new commits in already checked
+<p>Using <code>--recurse-submodules</code> can only fetch new commits in already checked
 out submodules right now. When e.g. upstream added a new submodule in the
 just fetched commits of the superproject the submodule itself cannot be
 fetched, making it impossible to check out that submodule later without
@@ -1954,7 +1972,7 @@ version.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

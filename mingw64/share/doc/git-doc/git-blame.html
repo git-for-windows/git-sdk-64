@@ -765,6 +765,42 @@ option.</p>
 <p>Ignore whitespace when comparing the parent&#8217;s version and
 the child&#8217;s to find where the lines came from.</p>
 </dd>
+<dt class="hdlist1"><code>--diff-algorithm=</code>(<code>patience</code>|<code>minimal</code>|<code>histogram</code>|<code>myers</code>)</dt>
+<dd>
+<p>Choose a diff algorithm. The variants are as follows:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>default</code></dt>
+<dt class="hdlist1"><code>myers</code></dt>
+<dd>
+<p>The basic greedy diff algorithm. Currently, this is the default.</p>
+</dd>
+<dt class="hdlist1"><code>minimal</code></dt>
+<dd>
+<p>Spend extra time to make sure the smallest possible diff is
+produced.</p>
+</dd>
+<dt class="hdlist1"><code>patience</code></dt>
+<dd>
+<p>Use "patience diff" algorithm when generating patches.</p>
+</dd>
+<dt class="hdlist1"><code>histogram</code></dt>
+<dd>
+<p>This algorithm extends the patience algorithm to "support
+low-occurrence common elements".</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For instance, if you configured the <code>diff.algorithm</code> variable to a
+non-default value and want to use the default one, then you
+have to use <code>--diff-algorithm=default</code> option.</p>
+</div>
+</dd>
 <dt class="hdlist1">--abbrev=&lt;n&gt;</dt>
 <dd>
 <p>Instead of using the default 7+1 hexadecimal digits as the
@@ -1100,7 +1136,7 @@ another commit with a <em>?</em> in the output of <a href="git-blame.html">git-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>

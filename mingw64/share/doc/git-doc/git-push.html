@@ -452,12 +452,12 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git push</em> [--all | --branches | --mirror | --tags] [--follow-tags] [--atomic] [-n | --dry-run] [--receive-pack=&lt;git-receive-pack&gt;]
-           [--repo=&lt;repository&gt;] [-f | --force] [-d | --delete] [--prune] [-q | --quiet] [-v | --verbose]
-           [-u | --set-upstream] [-o &lt;string&gt; | --push-option=&lt;string&gt;]
-           [--[no-]signed|--signed=(true|false|if-asked)]
-           [--force-with-lease[=&lt;refname&gt;[:&lt;expect&gt;]] [--force-if-includes]]
-           [--no-verify] [&lt;repository&gt; [&lt;refspec&gt;&#8230;&#8203;]]</pre>
+<pre class="content"><code>git</code> <code>push</code> [<code>--all</code> | <code>--branches</code> | <code>--mirror</code> | <code>--tags</code>] [<code>--follow-tags</code>] [<code>--atomic</code>] [<code>-n</code> | <code>--dry-run</code>] [<code>--receive-pack=</code><em>&lt;git-receive-pack&gt;</em>]
+	 [<code>--repo=</code><em>&lt;repository&gt;</em>] [<code>-f</code> | <code>--force</code>] [<code>-d</code> | <code>--delete</code>] [<code>--prune</code>] [<code>-q</code> | <code>--quiet</code>] [<code>-v</code> | <code>--verbose</code>]
+	 [<code>-u</code> | <code>--set-upstream</code>] [<code>-o</code> <em>&lt;string&gt;</em> | <code>--push-option=</code><em>&lt;string&gt;</em>]
+	 [<code>--</code>[<code>no-</code>]<code>signed</code> | <code>--signed=</code>(<code>true</code>|<code>false</code>|<code>if-asked</code>)]
+	 [<code>--force-with-lease</code>[<code>=</code><em>&lt;refname&gt;</em>[<code>:</code><em>&lt;expect&gt;</em>]] [<code>--force-if-includes</code>]]
+	 [<code>--no-verify</code>] [<em>&lt;repository&gt;</em> [<em>&lt;refspec&gt;</em>&#8230;&#8203;]]</pre>
 </div>
 </div>
 </div>
@@ -489,7 +489,7 @@ or <code>origin</code> if there&#8217;s no configured upstream.</p>
 or the <code>--all</code>, <code>--mirror</code>, or <code>--tags</code> options</p>
 </li>
 <li>
-<p>The <code>remote.*.push</code> configuration for the repository being pushed to</p>
+<p>The <code>remote.</code><em>&lt;name&gt;</em><code>.push</code> configuration for the repository being pushed to</p>
 </li>
 <li>
 <p>The <code>push.default</code> configuration. The default is <code>push.default=simple</code>,
@@ -512,22 +512,22 @@ documentation for <a href="git-receive-pack.html">git-receive-pack(1)</a>.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_options">OPTIONS<a id="OPTIONS"></a></h2>
+<h2 id="OPTIONS">OPTIONS</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;repository&gt;</dt>
+<dt class="hdlist1"><em>&lt;repository&gt;</em></dt>
 <dd>
 <p>The "remote" repository that is the destination of a push
 operation.  This parameter can be either a URL
 (see the section <a href="#URLS">GIT URLS</a> below) or the name
 of a remote (see the section <a href="#REMOTES">REMOTES</a> below).</p>
 </dd>
-<dt class="hdlist1">&lt;refspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;refspec&gt;</em>...</dt>
 <dd>
 <p>Specify what destination ref to update with what source object.</p>
 <div class="paragraph">
-<p>The format for a refspec is [+]&lt;src&gt;[:&lt;dst&gt;], for example <code>main</code>,
+<p>The format for a refspec is [<code>+</code>]<em>&lt;src&gt;</em>[<code>:</code><em>&lt;dst&gt;</em>], for example <code>main</code>,
 <code>main:other</code>, or <code>HEAD^:refs/heads/main</code>.</p>
 </div>
 <div class="paragraph">
@@ -553,7 +553,7 @@ as well as various other special refspec forms:</p>
 <li>
 <p><em>&lt;src&gt;</em> without a <code>:</code><em>&lt;dst&gt;</em> means to update the same ref as the
 <em>&lt;src&gt;</em>, unless the <code>remote.</code><em>&lt;repository&gt;</em><code>.push</code> configuration specifies a
-different &lt;dst&gt;. For example, if <code>main</code> is a branch, then the refspec
+different <em>&lt;dst&gt;</em>. For example, if <code>main</code> is a branch, then the refspec
 <code>main</code> expands to <code>main:refs/heads/main</code>.</p>
 </li>
 <li>
@@ -573,9 +573,9 @@ the local side, the remote side is updated if a branch of the same name
 already exists on the remote side.</p>
 </li>
 <li>
-<p>&lt;src&gt; may contain a * to indicate a simple pattern match.
+<p><em>&lt;src&gt;</em> may contain a <code>*</code> to indicate a simple pattern match.
 This works like a glob that matches any ref matching the pattern.
-There must be only one * in both the <em>&lt;src&gt;</em> and <em>&lt;dst&gt;</em>.
+There must be only one <code>*</code> in both the <em>&lt;src&gt;</em> and <em>&lt;dst&gt;</em>.
 It will map refs to the destination by replacing the * with the
 contents matched from the source. For example, <code>refs/heads/*:refs/heads/*</code>
 will push all branches.</p>
@@ -618,13 +618,13 @@ wanted to push to.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--all</dt>
-<dt class="hdlist1">--branches</dt>
+<dt class="hdlist1"><code>--all</code></dt>
+<dt class="hdlist1"><code>--branches</code></dt>
 <dd>
 <p>Push all branches (i.e. refs under <code>refs/heads/</code>); cannot be
 used with other &lt;refspec&gt;.</p>
 </dd>
-<dt class="hdlist1">--prune</dt>
+<dt class="hdlist1"><code>--prune</code></dt>
 <dd>
 <p>Remove remote branches that don&#8217;t have a local counterpart. For example
 a remote branch <code>tmp</code> will be removed if a local branch with the same
@@ -633,7 +633,7 @@ name doesn&#8217;t exist any more. This also respects refspecs, e.g.
 make sure that remote <code>refs/tmp/foo</code> will be removed if <code>refs/heads/foo</code>
 doesn&#8217;t exist.</p>
 </dd>
-<dt class="hdlist1">--mirror</dt>
+<dt class="hdlist1"><code>--mirror</code></dt>
 <dd>
 <p>Instead of naming each ref to push, specifies that all
 refs under <code>refs/</code> (which includes but is not
@@ -645,30 +645,30 @@ will be removed from the remote end.  This is the default
 if the configuration option <code>remote.</code><em>&lt;remote&gt;</em><code>.mirror</code> is
 set.</p>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Do everything except actually send the updates.</p>
 </dd>
-<dt class="hdlist1">--porcelain</dt>
+<dt class="hdlist1"><code>--porcelain</code></dt>
 <dd>
 <p>Produce machine-readable output.  The output status line for each ref
 will be tab-separated and sent to stdout instead of stderr.  The full
 symbolic names of the refs will be given.</p>
 </dd>
-<dt class="hdlist1">-d</dt>
-<dt class="hdlist1">--delete</dt>
+<dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--delete</code></dt>
 <dd>
 <p>All listed refs are deleted from the remote repository. This is
 the same as prefixing all refs with a colon.</p>
 </dd>
-<dt class="hdlist1">--tags</dt>
+<dt class="hdlist1"><code>--tags</code></dt>
 <dd>
 <p>All refs under <code>refs/tags</code> are pushed, in
 addition to refspecs explicitly listed on the command
 line.</p>
 </dd>
-<dt class="hdlist1">--follow-tags</dt>
+<dt class="hdlist1"><code>--follow-tags</code></dt>
 <dd>
 <p>Push all the refs that would be pushed without this option,
 and also push annotated tags in <code>refs/tags</code> that are missing
@@ -677,32 +677,47 @@ reachable from the refs being pushed.  This can also be specified
 with configuration variable <code>push.followTags</code>.  For more
 information, see <code>push.followTags</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--signed</dt>
-<dt class="hdlist1">--no-signed</dt>
-<dt class="hdlist1">--signed=(true|false|if-asked)</dt>
+<dt class="hdlist1"><code>--signed</code></dt>
+<dt class="hdlist1"><code>--no-signed</code></dt>
+<dt class="hdlist1"><code>--signed=</code>(<code>true</code>|<code>false</code>|<code>if-asked</code>)</dt>
 <dd>
 <p>GPG-sign the push request to update refs on the receiving
 side, to allow it to be checked by the hooks and/or be
-logged.  If <code>false</code> or <code>--no-signed</code>, no signing will be
-attempted.  If <code>true</code> or <code>--signed</code>, the push will fail if the
-server does not support signed pushes.  If set to <code>if-asked</code>,
-sign if and only if the server supports signed pushes.  The push
+logged. Possible values are:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>false</code></dt>
+<dt class="hdlist1"><code>--no-signed</code></dt>
+<dd>
+<p>no signing will be attempted.</p>
+</dd>
+<dt class="hdlist1"><code>true</code></dt>
+<dt class="hdlist1"><code>--signed</code></dt>
+<dd>
+<p>the push will fail if the server does not support signed pushes.</p>
+</dd>
+<dt class="hdlist1"><code>if-asked</code></dt>
+<dd>
+<p>sign if and only if the server supports signed pushes.  The push
 will also fail if the actual call to <code>gpg</code> <code>--sign</code> fails.  See
 <a href="git-receive-pack.html">git-receive-pack(1)</a> for the details on the receiving end.</p>
 </dd>
-<dt class="hdlist1">--atomic</dt>
-<dt class="hdlist1">--no-atomic</dt>
+</dl>
+</div>
+</dd>
+<dt class="hdlist1"><code>--atomic</code></dt>
+<dt class="hdlist1"><code>--no-atomic</code></dt>
 <dd>
 <p>Use an atomic transaction on the remote side if available.
 Either all refs are updated, or on error, no refs are updated.
 If the server does not support atomic pushes the push will fail.</p>
 </dd>
-<dt class="hdlist1">-o &lt;option&gt;</dt>
-<dt class="hdlist1">--push-option=&lt;option&gt;</dt>
+<dt class="hdlist1"><code>-o</code> <em>&lt;option&gt;</em></dt>
+<dt class="hdlist1"><code>--push-option=</code><em>&lt;option&gt;</em></dt>
 <dd>
 <p>Transmit the given string to the server, which passes them to
 the pre-receive as well as the post-receive hook. The given string
-must not contain a NUL or LF character.
+must not contain a <em>NUL</em> or <em>LF</em> character.
 When multiple <code>--push-option=</code><em>&lt;option&gt;</em> are given, they are
 all sent to the other side in the order listed on the
 command line.
@@ -710,24 +725,24 @@ When no <code>--push-option=</code><em>&lt;option&gt;</em> is given from the com
 line, the values of configuration variable <code>push.pushOption</code>
 are used instead.</p>
 </dd>
-<dt class="hdlist1">--receive-pack=&lt;git-receive-pack&gt;</dt>
-<dt class="hdlist1">--exec=&lt;git-receive-pack&gt;</dt>
+<dt class="hdlist1"><code>--receive-pack=</code><em>&lt;git-receive-pack&gt;</em></dt>
+<dt class="hdlist1"><code>--exec=</code><em>&lt;git-receive-pack&gt;</em></dt>
 <dd>
 <p>Path to the <em>git-receive-pack</em> program on the remote
 end.  Sometimes useful when pushing to a remote
 repository over ssh, and you do not have the program in
-a directory on the default $PATH.</p>
+a directory on the default <code>$PATH</code>.</p>
 </dd>
-<dt class="hdlist1">--force-with-lease</dt>
-<dt class="hdlist1">--no-force-with-lease</dt>
-<dt class="hdlist1">--force-with-lease=&lt;refname&gt;</dt>
-<dt class="hdlist1">--force-with-lease=&lt;refname&gt;:&lt;expect&gt;</dt>
+<dt class="hdlist1"><code>--force-with-lease</code></dt>
+<dt class="hdlist1"><code>--no-force-with-lease</code></dt>
+<dt class="hdlist1"><code>--force-with-lease=</code><em>&lt;refname&gt;</em></dt>
+<dt class="hdlist1"><code>--force-with-lease=</code><em>&lt;refname&gt;</em><code>:</code><em>&lt;expect&gt;</em></dt>
 <dd>
-<p>Usually, "git push" refuses to update a remote ref that is
+<p>Usually, <code>git</code> <code>push</code> refuses to update a remote ref that is
 not an ancestor of the local ref used to overwrite it.</p>
 <div class="paragraph">
 <p>This option overrides this restriction if the current value of the
-remote ref is the expected value.  "git push" fails otherwise.</p>
+remote ref is the expected value.  <code>git</code> <code>push</code> fails otherwise.</p>
 </div>
 <div class="paragraph">
 <p>Imagine that you have to rebase what you have already published.
@@ -753,12 +768,12 @@ for them.</p>
 </div>
 <div class="paragraph">
 <p><code>--force-with-lease=</code><em>&lt;refname&gt;</em>, without specifying the expected value, will
-protect the named ref (alone), if it is going to be updated, by
+protect <em>&lt;refname&gt;</em> (alone), if it is going to be updated, by
 requiring its current value to be the same as the remote-tracking
 branch we have for it.</p>
 </div>
 <div class="paragraph">
-<p><code>--force-with-lease=</code><em>&lt;refname&gt;</em><code>:</code><em>&lt;expect&gt;</em> will protect the named ref (alone),
+<p><code>--force-with-lease=</code><em>&lt;refname&gt;</em><code>:</code><em>&lt;expect&gt;</em> will protect <em>&lt;refname&gt;</em> (alone),
 if it is going to be updated, by requiring its current value to be
 the same as the specified value <em>&lt;expect&gt;</em> (which is allowed to be
 different from the remote-tracking branch we have for the refname,
@@ -773,7 +788,7 @@ still experimental and their semantics may change as we gain experience
 with this feature.</p>
 </div>
 <div class="paragraph">
-<p>"--no-force-with-lease" will cancel all the previous --force-with-lease on the
+<p><code>--no-force-with-lease</code> will cancel all the previous <code>--force-with-lease</code> on the
 command line.</p>
 </div>
 <div class="paragraph">
@@ -796,7 +811,7 @@ willing to clobber.</p>
 background for you a way to mitigate this is to simply set up another
 remote:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>git remote add origin-push $(git config remote.origin.url)
 git fetch origin-push</pre>
@@ -806,7 +821,7 @@ git fetch origin-push</pre>
 <p>Now when the background process runs <code>git</code> <code>fetch</code> <code>origin</code> the references
 on <code>origin-push</code> won&#8217;t be updated, and thus commands like:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>git push --force-with-lease origin-push</pre>
 </div>
@@ -817,7 +832,7 @@ is of course entirely defeated by something that runs <code>git</code> <code>fet
 <code>--all</code>, in that case you&#8217;d need to either disable it or do something
 more tedious like:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
 <pre>git fetch              # update 'master' from remote
 git tag base master    # mark our base point
@@ -842,20 +857,20 @@ implicitly updated in the background are integrated locally before
 allowing a forced update.</p>
 </div>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Usually, <code>git</code> <code>push</code> will refuse to update a branch that is not an
 ancestor of the commit being pushed.</p>
 <div class="paragraph">
 <p>This flag disables that check, the other safety checks in PUSH RULES
-below, and the checks in --force-with-lease. It can cause the remote
+below, and the checks in <code>--force-with-lease</code>. It can cause the remote
 repository to lose commits; use it with care.</p>
 </div>
 <div class="paragraph">
 <p>Note that <code>--force</code> applies to all the refs that are pushed, hence
 using it with <code>push.default</code> set to <code>matching</code> or with multiple push
-destinations configured with <code>remote.*.push</code> may overwrite refs
+destinations configured with <code>remote.</code><em>&lt;name&gt;</em><code>.push</code> may overwrite refs
 other than the current branch (including local refs that are
 strictly behind their remote counterpart).  To force a push to only
 one branch, use a <code>+</code> in front of the refspec to push (e.g <code>git</code> <code>push</code>
@@ -863,8 +878,8 @@ one branch, use a <code>+</code> in front of the refspec to push (e.g <code>git<
 <em>&lt;refspec&gt;</em>... section above for details.</p>
 </div>
 </dd>
-<dt class="hdlist1">--force-if-includes</dt>
-<dt class="hdlist1">--no-force-if-includes</dt>
+<dt class="hdlist1"><code>--force-if-includes</code></dt>
+<dt class="hdlist1"><code>--no-force-if-includes</code></dt>
 <dd>
 <p>Force an update only if the tip of the remote-tracking ref
 has been integrated locally.</p>
@@ -884,82 +899,99 @@ a "no-op".</p>
 <p>Specifying <code>--no-force-if-includes</code> disables this behavior.</p>
 </div>
 </dd>
-<dt class="hdlist1">--repo=&lt;repository&gt;</dt>
+<dt class="hdlist1"><code>--repo=</code><em>&lt;repository&gt;</em></dt>
 <dd>
-<p>This option is equivalent to the &lt;repository&gt; argument. If both
+<p>This option is equivalent to the <em>&lt;repository&gt;</em> argument. If both
 are specified, the command-line argument takes precedence.</p>
 </dd>
-<dt class="hdlist1">-u</dt>
-<dt class="hdlist1">--set-upstream</dt>
+<dt class="hdlist1"><code>-u</code></dt>
+<dt class="hdlist1"><code>--set-upstream</code></dt>
 <dd>
 <p>For every branch that is up to date or successfully pushed, add
 upstream (tracking) reference, used by argument-less
 <a href="git-pull.html">git-pull(1)</a> and other commands. For more information,
 see <code>branch.</code><em>&lt;name&gt;</em><code>.merge</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--thin</dt>
-<dt class="hdlist1">--no-thin</dt>
+<dt class="hdlist1"><code>--thin</code></dt>
+<dt class="hdlist1"><code>--no-thin</code></dt>
 <dd>
 <p>These options are passed to <a href="git-send-pack.html">git-send-pack(1)</a>. A thin transfer
 significantly reduces the amount of sent data when the sender and
 receiver share many of the same objects in common. The default is
 <code>--thin</code>.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Suppress all output, including the listing of updated refs,
 unless an error occurs. Progress is not reported to the standard
 error stream.</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Run verbosely.</p>
 </dd>
-<dt class="hdlist1">--progress</dt>
+<dt class="hdlist1"><code>--progress</code></dt>
 <dd>
 <p>Progress status is reported on the standard error stream
-by default when it is attached to a terminal, unless -q
+by default when it is attached to a terminal, unless <code>-q</code>
 is specified. This flag forces progress status even if the
 standard error stream is not directed to a terminal.</p>
 </dd>
-<dt class="hdlist1">--no-recurse-submodules</dt>
-<dt class="hdlist1">--recurse-submodules=check|on-demand|only|no</dt>
+<dt class="hdlist1"><code>--no-recurse-submodules</code></dt>
+<dt class="hdlist1"><code>--recurse-submodules=</code>(<code>check</code>|<code>on-demand</code>|<code>only</code>|<code>no</code>)</dt>
 <dd>
 <p>May be used to make sure all submodule commits used by the
 revisions to be pushed are available on a remote-tracking branch.
-If <em>check</em> is used Git will verify that all submodule commits that
+Possible values are:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>check</code></dt>
+<dd>
+<p>       Git will verify that all submodule commits that
 changed in the revisions to be pushed are available on at least one
 remote of the submodule. If any commits are missing the push will
-be aborted and exit with non-zero status. If <em>on-demand</em> is used
-all submodules that changed in the revisions to be pushed will be
-pushed. If on-demand was not able to push all necessary revisions it will
-also be aborted and exit with non-zero status. If <em>only</em> is used all
-submodules will be pushed while the superproject is left
-unpushed. A value of <em>no</em> or using <code>--no-recurse-submodules</code> can be used
-to override the push.recurseSubmodules configuration variable when no
-submodule recursion is required.</p>
+be aborted and exit with non-zero status.</p>
+</dd>
+<dt class="hdlist1"><code>on-demand</code></dt>
+<dd>
+<p>all submodules that changed in the revisions to be pushed will be
+pushed. If <code>on-demand</code> was not able to push all necessary revisions it will
+also be aborted and exit with non-zero status.</p>
+</dd>
+<dt class="hdlist1"><code>only</code></dt>
+<dd>
+<p>all submodules will be pushed while the superproject is left
+unpushed.</p>
+</dd>
+<dt class="hdlist1"><code>no</code></dt>
+<dd>
+<p>override the <code>push.recurseSubmodules</code> configuration variable when no
+submodule recursion is required. Similar to using <code>--no-recurse-submodules</code>.</p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
-<p>When using <em>on-demand</em> or <em>only</em>, if a submodule has a
-"push.recurseSubmodules={on-demand,only}" or "submodule.recurse" configuration,
-further recursion will occur. In this case, "only" is treated as "on-demand".</p>
+<p>When using <code>on-demand</code> or <code>only</code>, if a submodule has a
+<code>push.recurseSubmodules=</code>(<code>on-demand</code>|<code>only</code>) or <code>submodule.recurse</code> configuration,
+further recursion will occur. In this case, <code>only</code> is treated as <code>on-demand</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--verify</dt>
-<dt class="hdlist1">--no-verify</dt>
+<dt class="hdlist1"><code>--verify</code></dt>
+<dt class="hdlist1"><code>--no-verify</code></dt>
 <dd>
 <p>Toggle the pre-push hook (see <a href="githooks.html">githooks(5)</a>).  The
-default is --verify, giving the hook a chance to prevent the
-push.  With --no-verify, the hook is bypassed completely.</p>
+default is <code>--verify</code>, giving the hook a chance to prevent the
+push.  With <code>--no-verify</code>, the hook is bypassed completely.</p>
 </dd>
-<dt class="hdlist1">-4</dt>
-<dt class="hdlist1">--ipv4</dt>
+<dt class="hdlist1"><code>-4</code></dt>
+<dt class="hdlist1"><code>--ipv4</code></dt>
 <dd>
 <p>Use IPv4 addresses only, ignoring IPv6 addresses.</p>
 </dd>
-<dt class="hdlist1">-6</dt>
-<dt class="hdlist1">--ipv6</dt>
+<dt class="hdlist1"><code>-6</code></dt>
+<dt class="hdlist1"><code>--ipv6</code></dt>
 <dd>
 <p>Use IPv6 addresses only, ignoring IPv4 addresses.</p>
 </dd>
@@ -1195,8 +1227,8 @@ following format:</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>Push:</code> lines are used by <em>git push</em> and
-<code>Pull:</code> lines are used by <em>git pull</em> and <em>git fetch</em>.
+<p><code>Push:</code> lines are used by <code>git</code> <code>push</code> and
+<code>Pull:</code> lines are used by <code>git</code> <code>pull</code> and <code>git</code> <code>fetch</code>.
 Multiple <code>Push:</code> and <code>Pull:</code> lines may
 be specified for additional branch mappings.</p>
 </div>
@@ -1271,7 +1303,7 @@ respectively".</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The upstream is stored in .<code>git/config</code>, in the "remote" and "merge"
+<p>The upstream is stored in .<code>git/config</code>, in the "<code>remote</code>" and "<code>merge</code>"
 fields. For example, if <code>main</code>'s upstream is <code>origin/main</code>:</p>
 </div>
 <div class="listingblock">
@@ -1337,7 +1369,7 @@ representing the status of a single ref. Each line is of the form:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>If --porcelain is used, then each line of the output is of the form:</p>
+<p>If <code>--porcelain</code> is used, then each line of the output is of the form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1345,12 +1377,12 @@ representing the status of a single ref. Each line is of the form:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The status of up-to-date refs is shown only if --porcelain or --verbose
+<p>The status of up-to-date refs is shown only if <code>--porcelain</code> or <code>--verbose</code>
 option is used.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">flag</dt>
+<dt class="hdlist1"><em>&lt;flag&gt;</em></dt>
 <dd>
 <p>A single character indicating the status of the ref:</p>
 <div class="dlist">
@@ -1382,7 +1414,7 @@ option is used.</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1">summary</dt>
+<dt class="hdlist1"><em>&lt;summary&gt;</em></dt>
 <dd>
 <p>For a successfully pushed ref, the summary shows the old and new
 values of the ref in a form suitable for using as an argument to
@@ -1573,7 +1605,7 @@ push will be accepted.</p>
 </div>
 <div class="paragraph">
 <p>Alternatively, you can rebase your change between X and B on top of A,
-with "git pull --rebase", and push the result back.  The rebase will
+with <code>git</code> <code>pull</code> <code>--rebase</code>, and push the result back.  The rebase will
 create a new commit D that builds the change between X and B on top of
 A.</p>
 </div>
@@ -1592,12 +1624,12 @@ accepted.</p>
 <p>There is another common situation where you may encounter non-fast-forward
 rejection when you try to push, and it is possible even when you are
 pushing into a repository nobody else pushes into. After you push commit
-A yourself (in the first picture in this section), replace it with "git
-commit --amend" to produce commit B, and you try to push it out, because
+A yourself (in the first picture in this section), replace it with <code>git</code>
+<code>commit</code> <code>--amend</code> to produce commit B, and you try to push it out, because
 forgot that you have pushed A out already. In such a case, and only if
 you are certain that nobody in the meantime fetched your earlier commit A
-(and started building on top of it), you can run "git push --force" to
-overwrite it. In other words, "git push --force" is a method reserved for
+(and started building on top of it), you can run <code>git</code> <code>push</code> <code>--force</code> to
+overwrite it. In other words, <code>git</code> <code>push</code> <code>--force</code> is a method reserved for
 a case where you do mean to lose history.</p>
 </div>
 </div>
@@ -1620,13 +1652,13 @@ the configured upstream (<code>branch.</code><em>&lt;name&gt;</em><code>.merge</
 variable) if it has the same name as the current branch, and
 errors out without pushing otherwise.</p>
 <div class="paragraph">
-<p>The default behavior of this command when no &lt;refspec&gt; is given can be
+<p>The default behavior of this command when no <em>&lt;refspec&gt;</em> is given can be
 configured by setting the <code>push</code> option of the remote, or the <code>push.default</code>
 configuration variable.</p>
 </div>
 <div class="paragraph">
 <p>For example, to default to pushing only the current branch to <code>origin</code>
-use <code>git</code> <code>config</code> <code>remote.origin.push</code> <code>HEAD</code>.  Any valid &lt;refspec&gt; (like
+use <code>git</code> <code>config</code> <code>remote.origin.push</code> <code>HEAD</code>.  Any valid <em>&lt;refspec&gt;</em> (like
 the ones in the examples below) can be configured as the default for
 <code>git</code> <code>push</code> <code>origin</code>.</p>
 </div>
@@ -1634,7 +1666,7 @@ the ones in the examples below) can be configured as the default for
 <dt class="hdlist1"><code>git</code> <code>push</code> <code>origin</code> <code>:</code></dt>
 <dd>
 <p>Push "matching" branches to <code>origin</code>. See
-&lt;refspec&gt; in the <a href="#OPTIONS">OPTIONS</a> section above for a
+<em>&lt;refspec&gt;</em> in the <a href="#OPTIONS">OPTIONS</a> section above for a
 description of "matching" branches.</p>
 </dd>
 <dt class="hdlist1"><code>git</code> <code>push</code> <code>origin</code> <code>master</code></dt>
@@ -1779,19 +1811,19 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">push.autoSetupRemote</dt>
+<dt class="hdlist1"><code>push.autoSetupRemote</code></dt>
 <dd>
-<p>If set to "true" assume <code>--set-upstream</code> on default push when no
+<p>If set to <code>true</code> assume <code>--set-upstream</code> on default push when no
 upstream tracking exists for the current branch; this option
-takes effect with push.default options <em>simple</em>, <em>upstream</em>,
-and <em>current</em>. It is useful if by default you want new branches
+takes effect with <code>push.default</code> options <code>simple</code>, <code>upstream</code>,
+and <code>current</code>. It is useful if by default you want new branches
 to be pushed to the default remote (like the behavior of
-<em>push.default=current</em>) and you also want the upstream tracking
+<code>push.default=current</code>) and you also want the upstream tracking
 to be set. Workflows most likely to benefit from this option are
-<em>simple</em> central workflows where all branches are expected to
+<code>simple</code> central workflows where all branches are expected to
 have the same name on the remote.</p>
 </dd>
-<dt class="hdlist1">push.default</dt>
+<dt class="hdlist1"><code>push.default</code></dt>
 <dd>
 <p>Defines the action <code>git</code> <code>push</code> should take if no refspec is
 given (whether from the command-line, config, or elsewhere).
@@ -1801,30 +1833,35 @@ specific workflows; for instance, in a purely central workflow
 <code>upstream</code> is probably what you want.  Possible values are:</p>
 <div class="openblock">
 <div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p><code>nothing</code> - do not push anything (error out) unless a refspec is
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>nothing</code></dt>
+<dd>
+<p>do not push anything (error out) unless a refspec is
 given. This is primarily meant for people who want to
 avoid mistakes by always being explicit.</p>
-</li>
-<li>
-<p><code>current</code> - push the current branch to update a branch with the same
+</dd>
+<dt class="hdlist1"><code>current</code></dt>
+<dd>
+<p>push the current branch to update a branch with the same
 name on the receiving end.  Works in both central and non-central
 workflows.</p>
-</li>
-<li>
-<p><code>upstream</code> - push the current branch back to the branch whose
+</dd>
+<dt class="hdlist1"><code>upstream</code></dt>
+<dd>
+<p>push the current branch back to the branch whose
 changes are usually integrated into the current branch (which is
 called <code>@</code>{upstream}).  This mode only makes sense if you are
 pushing to the same repository you would normally pull from
 (i.e. central workflow).</p>
-</li>
-<li>
-<p><code>tracking</code> - This is a deprecated synonym for <code>upstream</code>.</p>
-</li>
-<li>
-<p><code>simple</code> - push the current branch with the same name on the remote.</p>
+</dd>
+<dt class="hdlist1"><code>tracking</code></dt>
+<dd>
+<p>this is a deprecated synonym for <code>upstream</code>.</p>
+</dd>
+<dt class="hdlist1"><code>simple</code></dt>
+<dd>
+<p>push the current branch with the same name on the remote.</p>
 <div class="paragraph">
 <p>If you are working on a centralized workflow (pushing to the same repository you
 pull from, which is typically <code>origin</code>), then you need to configure an upstream
@@ -1834,18 +1871,19 @@ branch with the same name.</p>
 <p>This mode is the default since Git 2.0, and is the safest option suited for
 beginners.</p>
 </div>
-</li>
-<li>
-<p><code>matching</code> - push all branches having the same name on both ends.
+</dd>
+<dt class="hdlist1"><code>matching</code></dt>
+<dd>
+<p>push all branches having the same name on both ends.
 This makes the repository you are pushing to remember the set of
-branches that will be pushed out (e.g. if you always push <em>maint</em>
-and <em>master</em> there and no other branches, the repository you push
-to will have these two branches, and your local <em>maint</em> and
-<em>master</em> will be pushed there).</p>
+branches that will be pushed out (e.g. if you always push <code>maint</code>
+and <code>master</code> there and no other branches, the repository you push
+to will have these two branches, and your local <code>maint</code> and
+<code>master</code> will be pushed there).</p>
 <div class="paragraph">
 <p>To use this mode effectively, you have to make sure <em>all</em> the
 branches you would push out are ready to be pushed out before
-running <em>git push</em>, as the whole point of this mode is to allow you
+running <code>git</code> <code>push</code>, as the whole point of this mode is to allow you
 to push all of the branches in one go.  If you usually finish work
 on only one branch and push out the result, while other branches are
 unfinished, this mode is not for you.  Also this mode is not
@@ -1857,33 +1895,33 @@ branches outside your control.</p>
 <p>This used to be the default, but not since Git 2.0 (<code>simple</code> is the
 new default).</p>
 </div>
-</li>
-</ul>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">push.followTags</dt>
+<dt class="hdlist1"><code>push.followTags</code></dt>
 <dd>
 <p>If set to true, enable <code>--follow-tags</code> option by default.  You
 may override this configuration at time of push by specifying
 <code>--no-follow-tags</code>.</p>
 </dd>
-<dt class="hdlist1">push.gpgSign</dt>
+<dt class="hdlist1"><code>push.gpgSign</code></dt>
 <dd>
-<p>May be set to a boolean value, or the string <em>if-asked</em>. A true
+<p>May be set to a boolean value, or the string <code>if-asked</code>. A true
 value causes all pushes to be GPG signed, as if <code>--signed</code> is
-passed to <a href="git-push.html">git-push(1)</a>. The string <em>if-asked</em> causes
+passed to <a href="git-push.html">git-push(1)</a>. The string <code>if-asked</code> causes
 pushes to be signed if the server supports it, as if
-<code>--signed=if-asked</code> is passed to <em>git push</em>. A false value may
+<code>--signed=if-asked</code> is passed to <code>git</code> <code>push</code>. A false value may
 override a value from a lower-priority config file. An explicit
 command-line flag always overrides this config option.</p>
 </dd>
-<dt class="hdlist1">push.pushOption</dt>
+<dt class="hdlist1"><code>push.pushOption</code></dt>
 <dd>
 <p>When no <code>--push-option=</code><em>&lt;option&gt;</em> argument is given from the
-command line, <code>git</code> <code>push</code> behaves as if each &lt;value&gt; of
-this variable is given as <code>--push-option=</code><em>&lt;value&gt;</em>.</p>
+command line, <code>git</code> <code>push</code> behaves as if each <em>&lt;option&gt;</em> of
+this variable is given as <code>--push-option=</code><em>&lt;option&gt;</em>.</p>
 <div class="paragraph">
 <p>This is a multi-valued variable, and an empty value can be used in a
 higher priority configuration file (e.g. .<code>git/config</code> in a
@@ -1909,33 +1947,33 @@ This will result in only b (a and c are cleared).</pre>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">push.recurseSubmodules</dt>
+<dt class="hdlist1"><code>push.recurseSubmodules</code></dt>
 <dd>
-<p>May be "check", "on-demand", "only", or "no", with the same behavior
-as that of "push --recurse-submodules".
-If not set, <em>no</em> is used by default, unless <em>submodule.recurse</em> is
-set (in which case a <em>true</em> value means <em>on-demand</em>).</p>
+<p>May be <code>check</code>, <code>on-demand</code>, <code>only</code>, or <code>no</code>, with the same behavior
+as that of <code>push</code> <code>--recurse-submodules</code>.
+If not set, <code>no</code> is used by default, unless <code>submodule.recurse</code> is
+set (in which case a <code>true</code> value means <code>on-demand</code>).</p>
 </dd>
-<dt class="hdlist1">push.useForceIfIncludes</dt>
+<dt class="hdlist1"><code>push.useForceIfIncludes</code></dt>
 <dd>
-<p>If set to "true", it is equivalent to specifying
+<p>If set to <code>true</code>, it is equivalent to specifying
 <code>--force-if-includes</code> as an option to <a href="git-push.html">git-push(1)</a>
 in the command line. Adding <code>--no-force-if-includes</code> at the
 time of push overrides this configuration setting.</p>
 </dd>
-<dt class="hdlist1">push.negotiate</dt>
+<dt class="hdlist1"><code>push.negotiate</code></dt>
 <dd>
-<p>If set to "true", attempt to reduce the size of the packfile
+<p>If set to <code>true</code>, attempt to reduce the size of the packfile
 sent by rounds of negotiation in which the client and the
-server attempt to find commits in common. If "false", Git will
+server attempt to find commits in common. If <code>false</code>, Git will
 rely solely on the server&#8217;s ref advertisement to find commits
 in common.</p>
 </dd>
-<dt class="hdlist1">push.useBitmaps</dt>
+<dt class="hdlist1"><code>push.useBitmaps</code></dt>
 <dd>
-<p>If set to "false", disable use of bitmaps for "git push" even if
-<code>pack.useBitmaps</code> is "true", without preventing other git operations
-from using bitmaps. Default is true.</p>
+<p>If set to <code>false</code>, disable use of bitmaps for <code>git</code> <code>push</code> even if
+<code>pack.useBitmaps</code> is <code>true</code>, without preventing other git operations
+from using bitmaps. Default is <code>true</code>.</p>
 </dd>
 </dl>
 </div>
@@ -1952,7 +1990,7 @@ from using bitmaps. Default is true.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-17 18:25:15 UTC
+Last updated 2026-01-16 13:05:23 UTC
 </div>
 </div>
 </body>
