@@ -62,7 +62,7 @@ extern "C" {
 /* The version of cryptoki we implement.  The revision is changed with
    each modification of this file.  */
 #define CRYPTOKI_VERSION_MAJOR                  3
-#define CRYPTOKI_VERSION_MINOR                  1
+#define CRYPTOKI_VERSION_MINOR                  2
 #define CRYPTOKI_VERSION_REVISION               0
 #define CRYPTOKI_LEGACY_VERSION_MAJOR           2
 #define CRYPTOKI_LEGACY_VERSION_MINOR           40
@@ -205,6 +205,7 @@ extern "C" {
 
 #define ck_function_list _CK_FUNCTION_LIST
 #define ck_function_list_3_0 _CK_FUNCTION_LIST_3_0
+#define ck_function_list_3_2 _CK_FUNCTION_LIST_3_2
 
 #define ck_createmutex_t CK_CREATEMUTEX
 #define ck_destroymutex_t CK_DESTROYMUTEX
@@ -405,6 +406,26 @@ extern "C" {
 #define i_v_ptr pIV
 #define digest_mechanism DigestMechanism
 #define sequence_number ulSequenceNumber
+
+#define ck_hedge_type_t CK_HEDGE_TYPE
+#define ck_ml_dsa_parameter_set_type_t CK_ML_DSA_PARAMETER_SET_TYPE
+#define ck_ml_kem_parameter_set_type_t CK_ML_KEM_PARAMETER_SET_TYPE
+#define ck_session_validation_flags_type_t CK_SESSION_VALIDATION_FLAGS_TYPE
+#define ck_slh_dsa_parameter_set_type_t CK_SLH_DSA_PARAMETER_SET_TYPE
+#define ck_trust_t CK_TRUST
+#define ck_validation_authority_type_t CK_VALIDATION_AUTHORITY_TYPE
+#define ck_validation_type_t CK_VALIDATION_TYPE
+#define ck_xmssmt_parameter_set_type_t CK_XMSSMT_PARAMETER_SET_TYPE
+#define ck_xmss_parameter_set_type_t CK_XMSS_PARAMETER_SET_TYPE
+
+#define version_num ulVersion
+#define object_handle hObject
+#define additional_object_handle hAdditionalObject
+#define hedge_variant hedgeVariant
+#define context_ptr pContext
+#define context_len ulContextLen
+#define session_hash_ptr pSessionHash
+#define session_hash_len ulSessionHashLen
 #endif        /* CRYPTOKI_COMPAT */
 
 
@@ -542,6 +563,33 @@ extern "C" {
 #define CKA_HSS_LMS_TYPES                       (0x61AUL)
 #define CKA_HSS_LMOTS_TYPES                     (0x61BUL)
 #define CKA_HSS_KEYS_REMAINING                  (0x61CUL)
+#define CKA_PARAMETER_SET                       (0x61DUL)
+#define CKA_OBJECT_VALIDATION_FLAGS             (0x61EUL)
+#define CKA_VALIDATION_TYPE                     (0x61FUL)
+#define CKA_VALIDATION_VERSION                  (0x620UL)
+#define CKA_VALIDATION_LEVEL                    (0x621UL)
+#define CKA_VALIDATION_MODULE_ID                (0x622UL)
+#define CKA_VALIDATION_FLAG                     (0x623UL)
+#define CKA_VALIDATION_AUTHORITY_TYPE           (0x624UL)
+#define CKA_VALIDATION_COUNTRY                  (0x625UL)
+#define CKA_VALIDATION_CERTIFICATE_IDENTIFIER   (0x626UL)
+#define CKA_VALIDATION_CERTIFICATE_URI          (0x627UL)
+#define CKA_VALIDATION_VENDOR_URI               (0x628UL)
+#define CKA_VALIDATION_PROFILE                  (0x629UL)
+#define CKA_ENCAPSULATE_TEMPLATE                (0x62AUL)
+#define CKA_DECAPSULATE_TEMPLATE                (0x62BUL)
+#define CKA_TRUST_SERVER_AUTH                   (0x62CUL)
+#define CKA_TRUST_CLIENT_AUTH                   (0x62DUL)
+#define CKA_TRUST_CODE_SIGNING                  (0x62EUL)
+#define CKA_TRUST_EMAIL_PROTECTION              (0x62FUL)
+#define CKA_TRUST_IPSEC_IKE                     (0x630UL)
+#define CKA_TRUST_TIME_STAMPING                 (0x631UL)
+#define CKA_TRUST_OCSP_SIGNING                  (0x632UL)
+#define CKA_ENCAPSULATE                         (0x633UL)
+#define CKA_DECAPSULATE                         (0x634UL)
+#define CKA_HASH_OF_CERTIFICATE                 (0x635UL)
+#define CKA_PUBLIC_CRC64_VALUE                  (0x636UL)
+#define CKA_SEED                                (0x637UL)
 #define CKA_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
 
 /* CK_CERTIFICATE_CATEGORY */
@@ -614,6 +662,9 @@ extern "C" {
 #define CKF_EC_NAMEDCURVE                       (1UL << 23)
 #define CKF_EC_UNCOMPRESS                       (1UL << 24)
 #define CKF_EC_COMPRESS                         (1UL << 25)
+#define CKF_EC_CURVENAME                        (1UL << 26)
+#define CKF_ENCAPSULATE                         (1UL << 28)
+#define CKF_DECAPSULATE                         (1UL << 29)
 
 #define CKF_HW                                  (1UL << 0)
 #define CKF_MESSAGE_ENCRYPT                     (1UL << 1)
@@ -650,6 +701,7 @@ extern "C" {
 
 #define CKF_RW_SESSION                          (1UL << 1)
 #define CKF_SERIAL_SESSION                      (1UL << 2)
+#define CKF_ASYNC_SESSION                       (1UL << 3)
 
 #define CKF_RNG                                 (1UL << 0)
 #define CKF_WRITE_PROTECTED                     (1UL << 1)
@@ -670,12 +722,19 @@ extern "C" {
 #define CKF_SO_PIN_LOCKED                       (1UL << 22)
 #define CKF_SO_PIN_TO_BE_CHANGED                (1UL << 23)
 #define CKF_ERROR_STATE                         (1UL << 24)
+#define CKF_SEED_RANDOM_REQUIRED                (1UL << 25)
+#define CKF_ASYNC_SESSION_SUPPORTED             (1UL << 26)
 
 /* CK_HW_FEATURE_TYPE */
 #define CKH_MONOTONIC_COUNTER                   (1UL)
 #define CKH_CLOCK                               (2UL)
 #define CKH_USER_INTERFACE                      (3UL)
 #define CKH_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
+
+/* CK_HEDGE_TYPE */
+#define CKH_HEDGE_PREFERRED                     (0UL)
+#define CKH_HEDGE_REQUIRED                      (1UL)
+#define CKH_DETERMINISTIC_REQUIRED              (2UL)
 
 /* CK_JAVA_MIDP_SECURITY_DOMAIN */
 #define CK_SECURITY_DOMAIN_UNSPECIFIED          (0UL)
@@ -746,6 +805,11 @@ extern "C" {
 #define CKK_SHA512_256_HMAC                     (0x44UL)
 #define CKK_SHA512_T_HMAC                       (0x45UL)
 #define CKK_HSS                                 (0x46UL)
+#define CKK_XMSS                                (0x47UL)
+#define CKK_XMSSMT                              (0x48UL)
+#define CKK_ML_KEM                              (0x49UL)
+#define CKK_ML_DSA                              (0x4AUL)
+#define CKK_SLH_DSA                             (0x4BUL)
 #define CKK_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
 
 /* CK_MECHANISM_TYPE */
@@ -764,6 +828,7 @@ extern "C" {
 #define CKM_SHA1_RSA_X9_31                      (0xcUL)
 #define CKM_RSA_PKCS_PSS                        (0xdUL)
 #define CKM_SHA1_RSA_PKCS_PSS                   (0xeUL)
+#define CKM_ML_KEM_KEY_PAIR_GEN                 (0xfUL)
 #define CKM_DSA_KEY_PAIR_GEN                    (0x10UL)
 #define CKM_DSA                                 (0x11UL)
 #define CKM_DSA_SHA1                            (0x12UL)
@@ -771,16 +836,43 @@ extern "C" {
 #define CKM_DSA_SHA256                          (0x14UL)
 #define CKM_DSA_SHA384                          (0x15UL)
 #define CKM_DSA_SHA512                          (0x16UL)
+#define CKM_ML_KEM                              (0x17UL)
 #define CKM_DSA_SHA3_224                        (0x18UL)
 #define CKM_DSA_SHA3_256                        (0x19UL)
 #define CKM_DSA_SHA3_384                        (0x1AUL)
 #define CKM_DSA_SHA3_512                        (0x1BUL)
+#define CKM_ML_DSA_KEY_PAIR_GEN                 (0x1CUL)
+#define CKM_ML_DSA                              (0x1DUL)
+#define CKM_HASH_ML_DSA                         (0x1FUL)
 #define CKM_DH_PKCS_KEY_PAIR_GEN                (0x20UL)
 #define CKM_DH_PKCS_DERIVE                      (0x21UL)
+#define CKM_HASH_ML_DSA_SHA224                  (0x23UL)
+#define CKM_HASH_ML_DSA_SHA256                  (0x24UL)
+#define CKM_HASH_ML_DSA_SHA384                  (0x25UL)
+#define CKM_HASH_ML_DSA_SHA512                  (0x26UL)
+#define CKM_HASH_ML_DSA_SHA3_224                (0x27UL)
+#define CKM_HASH_ML_DSA_SHA3_256                (0x28UL)
+#define CKM_HASH_ML_DSA_SHA3_384                (0x29UL)
+#define CKM_HASH_ML_DSA_SHA3_512                (0x2AUL)
+#define CKM_HASH_ML_DSA_SHAKE128                (0x2BUL)
+#define CKM_HASH_ML_DSA_SHAKE256                (0x2CUL)
+#define CKM_SLH_DSA_KEY_PAIR_GEN                (0x2DUL)
+#define CKM_SLH_DSA                             (0x2EUL)
 #define CKM_X9_42_DH_KEY_PAIR_GEN               (0x30UL)
 #define CKM_X9_42_DH_DERIVE                     (0x31UL)
 #define CKM_X9_42_DH_HYBRID_DERIVE              (0x32UL)
 #define CKM_X9_42_MQV_DERIVE                    (0x33UL)
+#define CKM_HASH_SLH_DSA                        (0x34UL)
+#define CKM_HASH_SLH_DSA_SHA224                 (0x36UL)
+#define CKM_HASH_SLH_DSA_SHA256                 (0x37UL)
+#define CKM_HASH_SLH_DSA_SHA384                 (0x38UL)
+#define CKM_HASH_SLH_DSA_SHA512                 (0x39UL)
+#define CKM_HASH_SLH_DSA_SHA3_224               (0x3AUL)
+#define CKM_HASH_SLH_DSA_SHA3_256               (0x3BUL)
+#define CKM_HASH_SLH_DSA_SHA3_384               (0x3CUL)
+#define CKM_HASH_SLH_DSA_SHA3_512               (0x3DUL)
+#define CKM_HASH_SLH_DSA_SHAKE128               (0x3EUL)
+#define CKM_HASH_SLH_DSA_SHAKE256               (0x3FUL)
 #define CKM_SHA256_RSA_PKCS                     (0x40UL)
 #define CKM_SHA384_RSA_PKCS                     (0x41UL)
 #define CKM_SHA512_RSA_PKCS                     (0x42UL)
@@ -801,6 +893,8 @@ extern "C" {
 #define CKM_SHA512_T_HMAC                       (0x51UL)
 #define CKM_SHA512_T_HMAC_GENERAL               (0x52UL)
 #define CKM_SHA512_T_KEY_DERIVATION             (0x53UL)
+#define CKM_TLS12_EXTENDED_MASTER_KEY_DERIVE    (0x56UL)
+#define CKM_TLS12_EXTENDED_MASTER_KEY_DERIVE_DH (0x57UL)
 #define CKM_SHA3_256_RSA_PKCS                   (0x60UL)
 #define CKM_SHA3_384_RSA_PKCS                   (0x61UL)
 #define CKM_SHA3_512_RSA_PKCS                   (0x62UL)
@@ -1190,6 +1284,13 @@ extern "C" {
 #define CKM_IKE1_EXTENDED_DERIVE                (0x4031UL)
 #define CKM_HSS_KEY_PAIR_GEN                    (0x4032UL)
 #define CKM_HSS                                 (0x4033UL)
+#define CKM_XMSS_KEY_PAIR_GEN                   (0x4034UL)
+#define CKM_XMSSMT_KEY_PAIR_GEN                 (0x4035UL)
+#define CKM_XMSS                                (0x4036UL)
+#define CKM_XMSSMT                              (0x4037UL)
+#define CKM_ECDH_X_AES_KEY_WRAP                 (0x4038UL)
+#define CKM_ECDH_COF_AES_KEY_WRAP               (0x4039UL)
+#define CKM_PUB_KEY_FROM_PRIV_KEY               (0x403AUL)
 #define CKM_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
 
 /* CK_NOTIFICATION */
@@ -1207,6 +1308,8 @@ extern "C" {
 #define CKO_MECHANISM                           (7UL)
 #define CKO_OTP_KEY                             (8UL)
 #define CKO_PROFILE                             (9UL)
+#define CKO_VALIDATION                          (0xaUL)
+#define CKO_TRUST                               (0xbUL)
 #define CKO_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
 
 /* CK_OTP_PARAM_TYPE */
@@ -1230,6 +1333,30 @@ extern "C" {
 #define CKP_PKCS5_PBKD2_HMAC_SHA512_224         (7UL)
 #define CKP_PKCS5_PBKD2_HMAC_SHA512_256         (8UL)
 
+/* CK_ML_DSA_PARAMETER_SET_TYPE */
+#define CKP_ML_DSA_44                           (1UL)
+#define CKP_ML_DSA_65                           (2UL)
+#define CKP_ML_DSA_87                           (3UL)
+
+/* CK_ML_KEM_PARAMETER_SET_TYPE */
+#define CKP_ML_KEM_512                          (1UL)
+#define CKP_ML_KEM_768                          (2UL)
+#define CKP_ML_KEM_1024                         (3UL)
+
+/* CK_SLH_DSA_PARAMETER_SET_TYPE */
+#define CKP_SLH_DSA_SHA2_128S                   (1UL)
+#define CKP_SLH_DSA_SHAKE_128S                  (2UL)
+#define CKP_SLH_DSA_SHA2_128F                   (3UL)
+#define CKP_SLH_DSA_SHAKE_128F                  (4UL)
+#define CKP_SLH_DSA_SHA2_192S                   (5UL)
+#define CKP_SLH_DSA_SHAKE_192S                  (6UL)
+#define CKP_SLH_DSA_SHA2_192F                   (7UL)
+#define CKP_SLH_DSA_SHAKE_192F                  (8UL)
+#define CKP_SLH_DSA_SHA2_256S                   (9UL)
+#define CKP_SLH_DSA_SHAKE_256S                  (0xaUL)
+#define CKP_SLH_DSA_SHA2_256F                   (0xbUL)
+#define CKP_SLH_DSA_SHAKE_256F                  (0xcUL)
+
 /* CK_PKCS5_PBKDF2_SALT_SOURCE_TYPE */
 #define CKZ_SALT_SPECIFIED                      (0x1UL)
 
@@ -1239,6 +1366,7 @@ extern "C" {
 #define CK_SP800_108_COUNTER                    (2UL)
 #define CK_SP800_108_DKM_LENGTH                 (3UL)
 #define CK_SP800_108_BYTE_ARRAY                 (4UL)
+#define CK_SP800_108_KEY_HANDLE                 (5UL)
 
 /* CK_PROFILE_ID */
 #define CKP_INVALID_ID                          (0UL)
@@ -1363,6 +1491,12 @@ extern "C" {
 #define CKR_TOKEN_RESOURCE_EXCEEDED             (0x201UL)
 #define CKR_OPERATION_CANCEL_FAILED             (0x202UL)
 #define CKR_KEY_EXHAUSTED                       (0x203UL)
+#define CKR_PENDING                             (0x204UL)
+#define CKR_SESSION_ASYNC_NOT_SUPPORTED         (0x205UL)
+#define CKR_SEED_RANDOM_REQUIRED                (0x206UL)
+#define CKR_OPERATION_NOT_VALIDATED             (0x207UL)
+#define CKR_TOKEN_NOT_INITIALIZED               (0x208UL)
+#define CKR_PARAMETER_SET_NOT_SUPPORTED         (0x209UL)
 #define CKR_VENDOR_DEFINED                      ((unsigned long) (1UL << 31))
 
 /* CK_SP800_108_DKM_LENGTH_METHOD */
@@ -1376,10 +1510,32 @@ extern "C" {
 #define CKS_RW_USER_FUNCTIONS                   (3UL)
 #define CKS_RW_SO_FUNCTIONS                     (4UL)
 
+/* CK_SESSION_VALIDATION_FLAGS_TYPE */
+#define CKS_LAST_VALIDATION_OK                  (1UL)
+
+/* CK_TRUST */
+#define CKT_TRUST_UNKNOWN                       (0UL)
+#define CKT_TRUSTED                             (1UL)
+#define CKT_TRUST_ANCHOR                        (2UL)
+#define CKT_NOT_TRUSTED                         (3UL)
+#define CKT_TRUST_MUST_VERIFY_TRUST             (4UL)
+
 /* CK_USER_TYPE */
 #define CKU_SO                                  (0UL)
 #define CKU_USER                                (1UL)
 #define CKU_CONTEXT_SPECIFIC                    (2UL)
+
+/* CK_VALIDATION_AUTHORITY_TYPE */
+#define CKV_AUTHORITY_TYPE_UNSPECIFIED          (0UL)
+#define CKV_AUTHORITY_TYPE_NIST_CMVP            (1UL)
+#define CKV_AUTHORITY_TYPE_COMMON_CRITERIA      (2UL)
+
+/* CK_VALIDATION_TYPE */
+#define CKV_TYPE_UNSPECIFIED                    (0UL)
+#define CKV_TYPE_SOFTWARE                       (1UL)
+#define CKV_TYPE_HARDWARE                       (2UL)
+#define CKV_TYPE_FIRMWARE                       (3UL)
+#define CKV_TYPE_HYBRID                         (4UL)
 
 /* Attribute and other constants related to OTP */
 #define CK_OTP_FORMAT_DECIMAL                   (0UL)
@@ -1432,6 +1588,16 @@ typedef unsigned long ck_x2ratchet_kdf_type_t;
 typedef unsigned long ck_x3dh_kdf_type_t;
 typedef unsigned long ck_x9_42_dh_kdf_type_t;
 typedef unsigned long ck_xeddsa_hash_type_t;
+typedef unsigned long ck_hedge_type_t;
+typedef unsigned long ck_ml_dsa_parameter_set_type_t;
+typedef unsigned long ck_ml_kem_parameter_set_type_t;
+typedef unsigned long ck_session_validation_flags_type_t;
+typedef unsigned long ck_slh_dsa_parameter_set_type_t;
+typedef unsigned long ck_trust_t;
+typedef unsigned long ck_validation_authority_type_t;
+typedef unsigned long ck_validation_type_t;
+typedef unsigned long ck_xmssmt_parameter_set_type_t;
+typedef unsigned long ck_xmss_parameter_set_type_t;
 
 typedef ck_mechanism_type_t ck_sp800_108_prf_type_t;
 typedef ck_otp_param_type_t ck_param_type;
@@ -1588,6 +1754,14 @@ struct ck_aria_cbc_encrypt_data_params {
   unsigned long length;
 };
 
+struct ck_async_data {
+  unsigned long version_num;
+  unsigned char *value;
+  unsigned long value_len;
+  ck_object_handle_t object_handle;
+  ck_object_handle_t additional_object_handle;
+};
+
 struct ck_camellia_cbc_encrypt_data_params {
   unsigned char iv[16];
   unsigned char *data_params;
@@ -1614,6 +1788,17 @@ struct ck_ccm_params {
   unsigned char *nonce;
   unsigned long nonce_len;
   unsigned char *aad;
+  unsigned long aad_len;
+  unsigned long mac_len;
+};
+
+struct ck_ccm_wrap_params {
+  unsigned long data_len;
+  unsigned char *nonce_ptr;
+  unsigned long nonce_len;
+  unsigned long nonce_fixed_bits;
+  ck_generator_function_t nonce_generator;
+  unsigned char *aad_ptr;
   unsigned long aad_len;
   unsigned long mac_len;
 };
@@ -1713,6 +1898,16 @@ struct ck_gcm_params {
   unsigned long tag_bits;
 };
 
+struct ck_gcm_wrap_params {
+  unsigned char *iv_ptr;
+  unsigned long iv_len;
+  unsigned long iv_fixed_bits;
+  ck_generator_function_t iv_generator;
+  unsigned char *aad_ptr;
+  unsigned long aad_len;
+  unsigned long tag_bits;
+};
+
 struct ck_gostr3410_derive_params {
   ck_ec_kdf_type_t kdf;
   unsigned char *public_data;
@@ -1727,6 +1922,13 @@ struct ck_gostr3410_key_wrap_params {
   unsigned char *ukm_ptr;
   unsigned long ukm_len;
   ck_object_handle_t key;
+};
+
+struct ck_hash_sign_additional_context {
+  ck_hedge_type_t hedge_variant;
+  unsigned char *context_ptr;
+  unsigned long context_len;
+  ck_mechanism_type_t hash;
 };
 
 struct ck_hkdf_params {
@@ -1896,6 +2098,12 @@ struct ck_seed_cbc_encrypt_data_params {
   unsigned long length;
 };
 
+struct ck_sign_additional_context {
+  ck_hedge_type_t hedge_variant;
+  unsigned char *context_ptr;
+  unsigned long context_len;
+};
+
 struct ck_skipjack_private_wrap_params {
   unsigned long password_len;
   unsigned char *password_ptr;
@@ -1946,6 +2154,13 @@ struct ck_sp800_108_feedback_kdf_params {
   unsigned char *iv_ptr;
   unsigned long additional_derived_keys_len;
   struct ck_derived_key *additional_derived_keys;
+};
+
+struct ck_tls12_extended_master_key_derive_params {
+  ck_mechanism_type_t prf_hash_mechanism;
+  unsigned char *session_hash_ptr;
+  unsigned long session_hash_len;
+  struct ck_version *version_ptr;
 };
 
 struct ck_sp800_108_kdf_params {
@@ -2194,6 +2409,7 @@ struct ck_wtls_prf_params {
 /* Forward reference.  */
 struct ck_function_list;
 struct ck_function_list_3_0;
+struct ck_function_list_3_2;
 
 #define _CK_DECLARE_FUNCTION(name, args)        \
 typedef ck_rv_t (*CK_ ## name) args;                \
@@ -2614,6 +2830,79 @@ _CK_DECLARE_FUNCTION (C_VerifyMessageNext,
 _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
 		      (ck_session_handle_t session));
 
+_CK_DECLARE_FUNCTION (C_EncapsulateKey,
+                      (ck_session_handle_t session,
+                       struct ck_mechanism *mechanism,
+                       ck_object_handle_t public_key,
+                       struct ck_attribute *templ,
+                       unsigned long attribute_count,
+                       unsigned char *ciphertext,
+                       unsigned long *ciphertext_len,
+                       ck_object_handle_t *key_ptr));
+_CK_DECLARE_FUNCTION (C_DecapsulateKey,
+                      (ck_session_handle_t session,
+                       struct ck_mechanism *mechanism,
+                       ck_object_handle_t private_key,
+                       struct ck_attribute *templ,
+                       unsigned long attribute_count,
+                       unsigned char *ciphertext,
+                       unsigned long *ciphertext_len,
+                       ck_object_handle_t *key_ptr));
+_CK_DECLARE_FUNCTION (C_VerifySignatureInit,
+                      (ck_session_handle_t session,
+                       struct ck_mechanism *mechanism,
+                       ck_object_handle_t key,
+                       unsigned char *signature,
+                       unsigned long signature_len));
+_CK_DECLARE_FUNCTION (C_VerifySignature,
+                      (ck_session_handle_t session,
+                       unsigned char *data,
+                       unsigned long data_len));
+_CK_DECLARE_FUNCTION (C_VerifySignatureUpdate,
+                      (ck_session_handle_t session,
+		       unsigned char *part,
+                       unsigned long part_len));
+_CK_DECLARE_FUNCTION (C_VerifySignatureFinal,
+                      (ck_session_handle_t session));
+_CK_DECLARE_FUNCTION (C_GetSessionValidationFlags,
+                      (ck_session_handle_t session,
+                       ck_session_validation_flags_type_t type,
+                       ck_flags_t *flags_ptr));
+_CK_DECLARE_FUNCTION (C_AsyncComplete,
+                      (ck_session_handle_t session,
+                       unsigned char *function_name,
+                       struct ck_async_data *result));
+_CK_DECLARE_FUNCTION (C_AsyncGetID,
+                      (ck_session_handle_t session,
+                       unsigned char *function_name,
+                       unsigned long *id_ptr));
+_CK_DECLARE_FUNCTION (C_AsyncJoin,
+                      (ck_session_handle_t session,
+                       unsigned char *function_name,
+                       unsigned long id,
+                       unsigned char *data,
+                       unsigned long data_len));
+_CK_DECLARE_FUNCTION (C_WrapKeyAuthenticated,
+                      (ck_session_handle_t session,
+                       struct ck_mechanism *mechanism,
+                       ck_object_handle_t wrapping_key,
+                       ck_object_handle_t key,
+                       unsigned char *associated_data,
+                       unsigned long associated_data_len,
+                       unsigned char *wrapped_key,
+                       unsigned long *wrapped_key_len));
+_CK_DECLARE_FUNCTION (C_UnwrapKeyAuthenticated,
+                      (ck_session_handle_t session,
+                       struct ck_mechanism *mechanism,
+                       ck_object_handle_t unwrapping_key,
+                       unsigned char *wrapped_key,
+                       unsigned long wrapped_key_len,
+                       struct ck_attribute *templ,
+                       unsigned long attribute_count,
+                       unsigned char *associated_data,
+                       unsigned long associated_data_len,
+                       ck_object_handle_t *key_ptr));
+
 #define CK_FUNCTION_LIST_ \
   struct ck_version version; \
   CK_C_Initialize C_Initialize; \
@@ -2683,7 +2972,47 @@ _CK_DECLARE_FUNCTION (C_MessageVerifyFinal,
   CK_C_GenerateRandom C_GenerateRandom; \
   CK_C_GetFunctionStatus C_GetFunctionStatus; \
   CK_C_CancelFunction C_CancelFunction; \
-  CK_C_WaitForSlotEvent C_WaitForSlotEvent; \
+  CK_C_WaitForSlotEvent C_WaitForSlotEvent;
+
+#define CK_FUNCTION_LIST_3_0_ \
+  CK_C_GetInterfaceList C_GetInterfaceList; \
+  CK_C_GetInterface C_GetInterface; \
+  CK_C_LoginUser C_LoginUser; \
+  CK_C_SessionCancel C_SessionCancel; \
+  CK_C_MessageEncryptInit C_MessageEncryptInit; \
+  CK_C_EncryptMessage C_EncryptMessage; \
+  CK_C_EncryptMessageBegin C_EncryptMessageBegin; \
+  CK_C_EncryptMessageNext C_EncryptMessageNext; \
+  CK_C_MessageEncryptFinal C_MessageEncryptFinal; \
+  CK_C_MessageDecryptInit C_MessageDecryptInit; \
+  CK_C_DecryptMessage C_DecryptMessage; \
+  CK_C_DecryptMessageBegin C_DecryptMessageBegin; \
+  CK_C_DecryptMessageNext C_DecryptMessageNext; \
+  CK_C_MessageDecryptFinal C_MessageDecryptFinal; \
+  CK_C_MessageSignInit C_MessageSignInit; \
+  CK_C_SignMessage C_SignMessage; \
+  CK_C_SignMessageBegin C_SignMessageBegin; \
+  CK_C_SignMessageNext C_SignMessageNext; \
+  CK_C_MessageSignFinal C_MessageSignFinal; \
+  CK_C_MessageVerifyInit C_MessageVerifyInit; \
+  CK_C_VerifyMessage C_VerifyMessage; \
+  CK_C_VerifyMessageBegin C_VerifyMessageBegin; \
+  CK_C_VerifyMessageNext C_VerifyMessageNext; \
+  CK_C_MessageVerifyFinal C_MessageVerifyFinal;
+
+#define CK_FUNCTION_LIST_3_2_ \
+  CK_C_EncapsulateKey C_EncapsulateKey; \
+  CK_C_DecapsulateKey C_DecapsulateKey; \
+  CK_C_VerifySignatureInit C_VerifySignatureInit; \
+  CK_C_VerifySignature C_VerifySignature; \
+  CK_C_VerifySignatureUpdate C_VerifySignatureUpdate; \
+  CK_C_VerifySignatureFinal C_VerifySignatureFinal; \
+  CK_C_GetSessionValidationFlags C_GetSessionValidationFlags; \
+  CK_C_AsyncComplete C_AsyncComplete; \
+  CK_C_AsyncGetID C_AsyncGetID; \
+  CK_C_AsyncJoin C_AsyncJoin; \
+  CK_C_WrapKeyAuthenticated C_WrapKeyAuthenticated; \
+  CK_C_UnwrapKeyAuthenticated C_UnwrapKeyAuthenticated;
 
 struct ck_function_list
 {
@@ -2693,32 +3022,14 @@ struct ck_function_list
 struct ck_function_list_3_0
 {
   CK_FUNCTION_LIST_
+  CK_FUNCTION_LIST_3_0_
+};
 
-  /* PKCS #11 3.0 functions */
-  CK_C_GetInterfaceList C_GetInterfaceList;
-  CK_C_GetInterface C_GetInterface;
-  CK_C_LoginUser C_LoginUser;
-  CK_C_SessionCancel C_SessionCancel;
-  CK_C_MessageEncryptInit C_MessageEncryptInit;
-  CK_C_EncryptMessage C_EncryptMessage;
-  CK_C_EncryptMessageBegin C_EncryptMessageBegin;
-  CK_C_EncryptMessageNext C_EncryptMessageNext;
-  CK_C_MessageEncryptFinal C_MessageEncryptFinal;
-  CK_C_MessageDecryptInit C_MessageDecryptInit;
-  CK_C_DecryptMessage C_DecryptMessage;
-  CK_C_DecryptMessageBegin C_DecryptMessageBegin;
-  CK_C_DecryptMessageNext C_DecryptMessageNext;
-  CK_C_MessageDecryptFinal C_MessageDecryptFinal;
-  CK_C_MessageSignInit C_MessageSignInit;
-  CK_C_SignMessage C_SignMessage;
-  CK_C_SignMessageBegin C_SignMessageBegin;
-  CK_C_SignMessageNext C_SignMessageNext;
-  CK_C_MessageSignFinal C_MessageSignFinal;
-  CK_C_MessageVerifyInit C_MessageVerifyInit;
-  CK_C_VerifyMessage C_VerifyMessage;
-  CK_C_VerifyMessageBegin C_VerifyMessageBegin;
-  CK_C_VerifyMessageNext C_VerifyMessageNext;
-  CK_C_MessageVerifyFinal C_MessageVerifyFinal;
+struct ck_function_list_3_2
+{
+  CK_FUNCTION_LIST_
+  CK_FUNCTION_LIST_3_0_
+  CK_FUNCTION_LIST_3_2_
 };
 
 
@@ -2811,6 +3122,10 @@ typedef struct ck_function_list_3_0 CK_FUNCTION_LIST_3_0;
 typedef struct ck_function_list_3_0 *CK_FUNCTION_LIST_3_0_PTR;
 typedef struct ck_function_list_3_0 **CK_FUNCTION_LIST_3_0_PTR_PTR;
 
+typedef struct ck_function_list_3_2 CK_FUNCTION_LIST_3_2;
+typedef struct ck_function_list_3_2 *CK_FUNCTION_LIST_3_2_PTR;
+typedef struct ck_function_list_3_2 **CK_FUNCTION_LIST_3_2_PTR_PTR;
+
 typedef struct ck_c_initialize_args CK_C_INITIALIZE_ARGS;
 typedef struct ck_c_initialize_args *CK_C_INITIALIZE_ARGS_PTR;
 
@@ -2827,6 +3142,9 @@ typedef struct ck_aes_ctr_params *CK_AES_CTR_PARAMS_PTR;
 
 typedef struct ck_gcm_params CK_GCM_PARAMS;
 typedef struct ck_gcm_params *CK_GCM_PARAMS_PTR;
+
+typedef struct ck_gcm_wrap_params CK_GCM_WRAP_PARAMS;
+typedef struct ck_gcm_wrap_params *CK_GCM_WRAP_PARAMS_PTR;
 
 typedef struct ck_chacha20_params CK_CHACHA20_PARAMS;
 typedef struct ck_chacha20_params *CK_CHACHA20_PARAMS_PTR;
@@ -2861,6 +3179,9 @@ typedef struct ck_aes_gcm_params *CK_AES_GCM_PARAMS_PTR;
 typedef struct ck_aria_cbc_encrypt_data_params CK_ARIA_CBC_ENCRYPT_DATA_PARAMS;
 typedef struct ck_aria_cbc_encrypt_data_params *CK_ARIA_CBC_ENCRYPT_DATA_PARAMS_PTR;
 
+typedef struct ck_async_data CK_ASYNC_DATA;
+typedef struct ck_async_data *CK_ASYNC_DATA_PTR;
+
 typedef struct ck_camellia_cbc_encrypt_data_params CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS;
 typedef struct ck_camellia_cbc_encrypt_data_params *CK_CAMELLIA_CBC_ENCRYPT_DATA_PARAMS_PTR;
 
@@ -2872,6 +3193,9 @@ typedef struct ck_ccm_message_params *CK_CCM_MESSAGE_PARAMS_PTR;
 
 typedef struct ck_ccm_params CK_CCM_PARAMS;
 typedef struct ck_ccm_params *CK_CCM_PARAMS_PTR;
+
+typedef struct ck_ccm_wrap_params CK_CCM_WRAP_PARAMS;
+typedef struct ck_ccm_wrap_params *CK_CCM_WRAP_PARAMS_PTR;
 
 typedef struct ck_cms_sig_params CK_CMS_SIG_PARAMS;
 typedef struct ck_cms_sig_params *CK_CMS_SIG_PARAMS_PTR;
@@ -2899,6 +3223,9 @@ typedef struct ck_gostr3410_derive_params *CK_GOSTR3410_DERIVE_PARAMS_PTR;
 
 typedef struct ck_gostr3410_key_wrap_params CK_GOSTR3410_KEY_WRAP_PARAMS;
 typedef struct ck_gostr3410_key_wrap_params *CK_GOSTR3410_KEY_WRAP_PARAMS_PTR;
+
+typedef struct ck_hash_sign_additional_context CK_HASH_SIGN_ADDITIONAL_CONTEXT;
+typedef struct ck_hash_sign_additional_context *CK_HASH_SIGN_ADDITIONAL_CONTEXT_PTR;
 
 typedef struct ck_hkdf_params CK_HKDF_PARAMS;
 typedef struct ck_hkdf_params *CK_HKDF_PARAMS_PTR;
@@ -2945,6 +3272,9 @@ typedef struct ck_rsa_aes_key_wrap_params *CK_RSA_AES_KEY_WRAP_PARAMS_PTR;
 typedef struct ck_seed_cbc_encrypt_data_params CK_SEED_CBC_ENCRYPT_DATA_PARAMS;
 typedef struct ck_seed_cbc_encrypt_data_params *CK_SEED_CBC_ENCRYPT_DATA_PARAMS_PTR;
 
+typedef struct ck_sign_additional_context CK_SIGN_ADDITIONAL_CONTEXT;
+typedef struct ck_sign_additional_context *CK_SIGN_ADDITIONAL_CONTEXT_PTR;
+
 typedef struct ck_skipjack_private_wrap_params CK_SKIPJACK_PRIVATE_WRAP_PARAMS;
 typedef struct ck_skipjack_private_wrap_params *CK_SKIPJACK_PRIVATE_WRAP_PARAMS_PTR;
 
@@ -2962,6 +3292,9 @@ typedef struct ck_sp800_108_feedback_kdf_params *CK_SP800_108_FEEDBACK_KDF_PARAM
 
 typedef struct ck_sp800_108_kdf_params CK_SP800_108_KDF_PARAMS;
 typedef struct ck_sp800_108_kdf_params *CK_SP800_108_KDF_PARAMS_PTR;
+
+typedef struct ck_tls12_extended_master_key_derive_params CK_TLS12_EXTENDED_MASTER_KEY_DERIVE_PARAMS;
+typedef struct ck_tls12_extended_master_key_derive_params *CK_TLS12_EXTENDED_MASTER_KEY_DERIVE_PARAMS_PTR;
 
 typedef struct ck_x2ratchet_initialize_params CK_X2RATCHET_INITIALIZE_PARAMS;
 typedef struct ck_x2ratchet_initialize_params *CK_X2RATCHET_INITIALIZE_PARAMS_PTR;
@@ -3149,6 +3482,7 @@ typedef struct ck_wtls_random_data *CK_WTLS_RANDOM_DATA_PTR;
 
 #undef ck_function_list
 #undef ck_function_list_3_0
+#undef ck_function_list_3_2
 
 #undef ck_c_initialize_args
 #undef ck_createmutex_t
@@ -3348,6 +3682,24 @@ typedef struct ck_wtls_random_data *CK_WTLS_RANDOM_DATA_PTR;
 #undef i_v_ptr
 #undef digest_mechanism
 #undef sequence_number
+#undef ck_hedge_type_t
+#undef ck_ml_dsa_parameter_set_type_t
+#undef ck_ml_kem_parameter_set_type_t
+#undef ck_session_validation_flags_type_t
+#undef ck_slh_dsa_parameter_set_type_t
+#undef ck_trust_t
+#undef ck_validation_authority_type_t
+#undef ck_validation_type_t
+#undef ck_xmssmt_parameter_set_type_t
+#undef ck_xmss_parameter_set_type_t
+#undef version_num
+#undef object_handle
+#undef additional_object_handle
+#undef hedge_variant
+#undef context_ptr
+#undef context_len
+#undef session_hash_ptr
+#undef session_hash_len
 #endif        /* CRYPTOKI_COMPAT */
 
 /* System dependencies.  */
