@@ -444,7 +444,7 @@ pre>code {
 <h1>git-reset(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-reset - Reset current HEAD to the specified state</p>
+<p>git-reset - Set `HEAD` or the index to a known state</p>
 </div>
 </div>
 <div id="content">
@@ -452,10 +452,10 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
+<pre class="content"><code>git</code> <code>reset</code> [<code>--soft</code> | <code>--mixed</code> [<code>-N</code>] | <code>--hard</code> | <code>--merge</code> | <code>--keep</code>] [<code>-q</code>] [<em>&lt;commit&gt;</em>]
+<code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>&#8230;&#8203;
 <code>git</code> <code>reset</code> [<code>-q</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<em>&lt;tree-ish&gt;</em>]
 <code>git</code> <code>reset</code> (<code>--patch</code> | <code>-p</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]
-<code>git</code> <code>reset</code> [<code>--soft</code> | <code>--mixed</code> [<code>-N</code>] | <code>--hard</code> | <code>--merge</code> | <code>--keep</code>] [<code>-q</code>] [<em>&lt;commit&gt;</em>]
 <code>DEPRECATED:</code> <code>git</code> <code>reset</code> [<code>-q</code>] [<code>--stdin</code> [<code>-z</code>]] [<em>&lt;tree-ish&gt;</em>]</pre>
 </div>
 </div>
@@ -464,90 +464,69 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the first three forms, copy entries from <em>&lt;tree-ish&gt;</em> to the index.
-In the last form, set the current branch head (<code>HEAD</code>) to <em>&lt;commit&gt;</em>,
-optionally modifying index and working tree to match.
-The <em>&lt;tree-ish&gt;</em>/<em>&lt;commit&gt;</em> defaults to <code>HEAD</code> in all forms.</p>
+<p><code>git</code> <code>reset</code> does either of the following:</p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>git</code> <code>reset</code> [<em>&lt;mode&gt;</em>] <em>&lt;commit&gt;</em> changes which commit <code>HEAD</code> points to. This
+makes it possible to undo various Git operations, for example commit, merge,
+rebase, and pull.</p>
+</li>
+<li>
+<p>When you specify files or directories or pass <code>--patch</code>, <code>git</code> <code>reset</code> updates
+the staged version of the specified files.</p>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
-<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<em>&lt;tree-ish&gt;</em>]</dt>
-<dd>
-<p>These forms reset the index entries for all paths that match the
-<em>&lt;pathspec&gt;</em> to their state at <em>&lt;tree-ish&gt;</em>.  (It does not affect
-the working tree or the current branch.)</p>
-<div class="paragraph">
-<p>This means that <code>git</code> <code>reset</code> <em>&lt;pathspec&gt;</em> is the opposite of <code>git</code> <code>add</code>
-<em>&lt;pathspec&gt;</em>. This command is equivalent to
-<code>git</code> <code>restore</code> [<code>--source=</code><em>&lt;tree-ish&gt;</em>] <code>--staged</code> <em>&lt;pathspec&gt;</em>....</p>
-</div>
-<div class="paragraph">
-<p>After running <code>git</code> <code>reset</code> <em>&lt;pathspec&gt;</em> to update the index entry, you can
-use <a href="git-restore.html">git-restore(1)</a> to check the contents out of the index to
-the working tree. Alternatively, using <a href="git-restore.html">git-restore(1)</a>
-and specifying a commit with <code>--source</code>, you
-can copy the contents of a path out of a commit to the index and to the
-working tree in one go.</p>
-</div>
-</dd>
-<dt class="hdlist1"><code>git</code> <code>reset</code> (<code>--patch</code> | <code>-p</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
-<dd>
-<p>Interactively select hunks in the difference between the index
-and <em>&lt;tree-ish&gt;</em> (defaults to <code>HEAD</code>).  The chosen hunks are applied
-in reverse to the index.</p>
-<div class="paragraph">
-<p>This means that <code>git</code> <code>reset</code> <code>-p</code> is the opposite of <code>git</code> <code>add</code> <code>-p</code>, i.e.
-you can use it to selectively reset hunks. See the "Interactive Mode"
-section of <a href="git-add.html">git-add(1)</a> to learn how to operate the <code>--patch</code> mode.</p>
-</div>
-</dd>
 <dt class="hdlist1"><code>git</code> <code>reset</code> [<em>&lt;mode&gt;</em>] [<em>&lt;commit&gt;</em>]</dt>
 <dd>
-<p>This form resets the current branch head to <em>&lt;commit&gt;</em> and
-possibly updates the index (resetting it to the tree of <em>&lt;commit&gt;</em>) and
-the working tree depending on <em>&lt;mode&gt;</em>. Before the operation, <code>ORIG_HEAD</code>
-is set to the tip of the current branch. If <em>&lt;mode&gt;</em> is omitted,
-defaults to <code>--mixed</code>. The <em>&lt;mode&gt;</em> must be one of the following:</p>
+<p>Set the current branch head (<code>HEAD</code>) to point at <em>&lt;commit&gt;</em>.
+Depending on <em>&lt;mode&gt;</em>, also update the working directory and/or index
+to match the contents of <em>&lt;commit&gt;</em>.
+<em>&lt;commit&gt;</em> defaults to <code>HEAD</code>.
+Before the operation, <code>ORIG_HEAD</code> is set to the tip of the current branch.</p>
+<div class="paragraph">
+<p>The <em>&lt;mode&gt;</em> must be one of the following (default <code>--mixed</code>):</p>
+</div>
 <div class="openblock">
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>--soft</code></dt>
-<dd>
-<p>Does not touch the index file or the working tree at all (but
-resets the head to <em>&lt;commit&gt;</em>, just like all modes do). This leaves
-all your changed files "Changes to be committed", as <code>git</code> <code>status</code>
-would put it.</p>
-</dd>
 <dt class="hdlist1"><code>--mixed</code></dt>
 <dd>
-<p>Resets the index but not the working tree (i.e., the changed files
-are preserved but not marked for commit) and reports what has not
-been updated. This is the default action.</p>
+<p>Leave your working directory unchanged.
+Update the index to match the new <code>HEAD</code>, so nothing will be staged.</p>
 <div class="paragraph">
-<p>If <code>-N</code> is specified, removed paths are marked as intent-to-add (see
+<p>If <code>-N</code> is specified, mark removed paths as intent-to-add (see
 <a href="git-add.html">git-add(1)</a>).</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>--soft</code></dt>
+<dd>
+<p>Leave your working tree files and the index unchanged.
+For example, if you have no staged changes, you can use
+<code>git</code> <code>reset</code> <code>--soft</code> <code>HEAD~5</code>; <code>git</code> <code>commit</code>
+to combine the last 5 commits into 1 commit. This works even with
+changes in the working tree, which are left untouched, but such usage
+can lead to confusion.</p>
+</dd>
 <dt class="hdlist1"><code>--hard</code></dt>
 <dd>
-<p>Resets the index and working tree. Any changes to tracked files in the
-working tree since <em>&lt;commit&gt;</em> are discarded.  Any untracked files or
-directories in the way of writing any tracked files are simply deleted.</p>
+<p>Overwrite all files and directories with the version from <em>&lt;commit&gt;</em>,
+and may overwrite untracked files. Tracked files not in <em>&lt;commit&gt;</em> are
+removed so that the working tree matches <em>&lt;commit&gt;</em>.
+Update the index to match the new <code>HEAD</code>, so nothing will be staged.</p>
 </dd>
 <dt class="hdlist1"><code>--merge</code></dt>
 <dd>
-<p>Resets the index and updates the files in the working tree that are
-different between <em>&lt;commit&gt;</em> and <code>HEAD</code>, but keeps those which are
+<p>Reset the index and update the files in the working tree that are
+different between <em>&lt;commit&gt;</em> and <code>HEAD</code>, but keep those which are
 different between the index and working tree (i.e. which have changes
 which have not been added).
+Mainly exists to reset unmerged index entries, like those left behind by
+<code>git</code> <code>am</code> <code>-3</code> or <code>git</code> <code>switch</code> <code>-m</code> in certain situations.
 If a file that is different between <em>&lt;commit&gt;</em> and the index has
 unstaged changes, reset is aborted.</p>
-<div class="paragraph">
-<p>In other words, <code>--merge</code> does something like a <code>git</code> <code>read-tree</code> <code>-u</code> <code>-m</code> <em>&lt;commit&gt;</em>,
-but carries forward unmerged index entries.</p>
-</div>
 </dd>
 <dt class="hdlist1"><code>--keep</code></dt>
 <dd>
@@ -569,7 +548,37 @@ the submodules' <code>HEAD</code> to be detached at that commit.</p>
 </div>
 </div>
 </dd>
+<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] <em>&lt;pathspec&gt;</em>...</dt>
+<dt class="hdlist1"><code>git</code> <code>reset</code> [<code>-q</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]] [<em>&lt;tree-ish&gt;</em>]</dt>
+<dd>
+<p>For all specified files or directories, set the staged version to
+the version from the given commit or tree (which defaults to <code>HEAD</code>).</p>
+<div class="paragraph">
+<p>This means that <code>git</code> <code>reset</code> <em>&lt;pathspec&gt;</em> is the opposite of <code>git</code> <code>add</code>
+<em>&lt;pathspec&gt;</em>: it unstages all changes to the specified file(s) or
+directories. This is equivalent to <code>git</code> <code>restore</code> <code>--staged</code> <em>&lt;pathspec&gt;</em>....</p>
+</div>
+<div class="paragraph">
+<p>In this mode, <code>git</code> <code>reset</code> updates only the index (without updating the <code>HEAD</code> or
+working tree files). If you want to update the files as well as the index
+entries, use <a href="git-restore.html">git-restore(1)</a>.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>git</code> <code>reset</code> (<code>--patch</code> | <code>-p</code>) [<em>&lt;tree-ish&gt;</em>] [<code>--</code>] [<em>&lt;pathspec&gt;</em>...]</dt>
+<dd>
+<p>Interactively select changes from the difference between the index
+and the specified commit or tree (which defaults to <code>HEAD</code>).
+The index is modified using the chosen changes.</p>
+<div class="paragraph">
+<p>This means that <code>git</code> <code>reset</code> <code>-p</code> is the opposite of <code>git</code> <code>add</code> <code>-p</code>, i.e.
+you can use it to selectively unstage changes. See the "Interactive Mode"
+section of <a href="git-add.html">git-add(1)</a> to learn how to use the <code>--patch</code> option.</p>
+</div>
+</dd>
 </dl>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>See "Reset, restore and revert" in <a href="git.html">git(1)</a> for the differences
@@ -1172,7 +1181,7 @@ entries:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-16 13:05:23 UTC
+Last updated 2026-01-23 12:47:00 UTC
 </div>
 </div>
 </body>

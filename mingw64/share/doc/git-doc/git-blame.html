@@ -452,11 +452,11 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git blame</em> [-c] [-b] [-l] [--root] [-t] [-f] [-n] [-s] [-e] [-p] [-w] [--incremental]
-            [-L &lt;range&gt;] [-S &lt;revs-file&gt;] [-M] [-C] [-C] [-C] [--since=&lt;date&gt;]
-            [--ignore-rev &lt;rev&gt;] [--ignore-revs-file &lt;file&gt;]
-            [--color-lines] [--color-by-age] [--progress] [--abbrev=&lt;n&gt;]
-            [ --contents &lt;file&gt; ] [&lt;rev&gt; | --reverse &lt;rev&gt;..&lt;rev&gt;] [--] &lt;file&gt;</pre>
+<pre class="content"><code>git</code> <code>blame</code> [<code>-c</code>] [<code>-b</code>] [<code>-l</code>] [<code>--root</code>] [<code>-t</code>] [<code>-f</code>] [<code>-n</code>] [<code>-s</code>] [<code>-e</code>] [<code>-p</code>] [<code>-w</code>] [<code>--incremental</code>]
+	  [<code>-L</code> <em>&lt;range&gt;</em>] [<code>-S</code> <em>&lt;revs-file&gt;</em>] [<code>-M</code>] [<code>-C</code>] [<code>-C</code>] [<code>-C</code>] [<code>--since=</code><em>&lt;date&gt;</em>]
+	  [<code>--ignore-rev</code> <em>&lt;rev&gt;</em>] [<code>--ignore-revs-file</code> <em>&lt;file&gt;</em>]
+	  [<code>--color-lines</code>] [<code>--color-by-age</code>] [<code>--progress</code>] [<code>--abbrev=</code><em>&lt;n&gt;</em>]
+	  [ <code>--contents</code> <em>&lt;file&gt;</em> ] [<em>&lt;rev&gt;</em> | <code>--reverse</code> <em>&lt;rev&gt;</em><code>..</code><em>&lt;rev&gt;</em>] [<code>--</code>] <em>&lt;file&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -480,7 +480,7 @@ lines that were copied and pasted from another file, etc., see the
 </div>
 <div class="paragraph">
 <p>The report does not tell you anything about lines which have been deleted or
-replaced; you need to use a tool such as <em>git diff</em> or the "pickaxe"
+replaced; you need to use a tool such as <code>git</code> <code>diff</code> or the "pickaxe"
 interface briefly mentioned in the following paragraph.</p>
 </div>
 <div class="paragraph">
@@ -505,24 +505,24 @@ ea4c7f9bf69e781dd0cd88d2bccb2bf5cc15c9a7 git-blame: Make the output</pre>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-b</dt>
+<dt class="hdlist1"><code>-b</code></dt>
 <dd>
 <p>Show blank SHA-1 for boundary commits.  This can also
 be controlled via the <code>blame.blankBoundary</code> config option.</p>
 </dd>
-<dt class="hdlist1">--root</dt>
+<dt class="hdlist1"><code>--root</code></dt>
 <dd>
 <p>Do not treat root commits as boundaries.  This can also be
 controlled via the <code>blame.showRoot</code> config option.</p>
 </dd>
-<dt class="hdlist1">--show-stats</dt>
+<dt class="hdlist1"><code>--show-stats</code></dt>
 <dd>
 <p>Include additional statistics at the end of blame output.</p>
 </dd>
-<dt class="hdlist1">-L &lt;start&gt;,&lt;end&gt;</dt>
-<dt class="hdlist1">-L :&lt;funcname&gt;</dt>
+<dt class="hdlist1"><code>-L</code> <em>&lt;start&gt;</em><code>,</code><em>&lt;end&gt;</em></dt>
+<dt class="hdlist1"><code>-L</code> <code>:</code><em>&lt;funcname&gt;</em></dt>
 <dd>
-<p>Annotate only the line range given by <em>&lt;start&gt;,&lt;end&gt;</em>,
+<p>Annotate only the line range given by <em>&lt;start&gt;</em><code>,</code><em>&lt;end&gt;</em>,
 or by the function name regex <em>&lt;funcname&gt;</em>.
 May be specified multiple times. Overlapping ranges are allowed.</p>
 <div class="paragraph">
@@ -572,100 +572,100 @@ works out patch hunk headers (see <em>Defining a custom hunk-header</em>
 in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </div>
 </dd>
-<dt class="hdlist1">-l</dt>
+<dt class="hdlist1"><code>-l</code></dt>
 <dd>
 <p>Show long rev (Default: off).</p>
 </dd>
-<dt class="hdlist1">-t</dt>
+<dt class="hdlist1"><code>-t</code></dt>
 <dd>
 <p>Show raw timestamp (Default: off).</p>
 </dd>
-<dt class="hdlist1">-S &lt;revs-file&gt;</dt>
+<dt class="hdlist1"><code>-S</code> <em>&lt;revs-file&gt;</em></dt>
 <dd>
-<p>Use revisions from revs-file instead of calling <a href="git-rev-list.html">git-rev-list(1)</a>.</p>
+<p>Use revisions from <em>&lt;revs-file&gt;</em> instead of calling
+<a href="git-rev-list.html">git-rev-list(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--reverse &lt;rev&gt;..&lt;rev&gt;</dt>
+<dt class="hdlist1"><code>--reverse</code> <em>&lt;start&gt;</em><code>..</code><em>&lt;end&gt;</em></dt>
 <dd>
 <p>Walk history forward instead of backward. Instead of showing
 the revision in which a line appeared, this shows the last
 revision in which a line has existed. This requires a range of
-revision like START..END where the path to blame exists in
-START.  <code>git</code> <code>blame</code> <code>--reverse</code> <code>START</code> is taken as <code>git</code> <code>blame</code>
-<code>--reverse</code> <code>START</code><code>..</code><code>HEAD</code> for convenience.</p>
+revision like <em>&lt;start&gt;</em><code>..</code><em>&lt;end&gt;</em> where the path to blame exists in
+<em>&lt;start&gt;</em>.  <code>git</code> <code>blame</code> <code>--reverse</code> <em>&lt;start&gt;</em> is taken as <code>git</code> <code>blame</code>
+<code>--reverse</code> <em>&lt;start&gt;</em><code>..</code><code>HEAD</code> for convenience.</p>
 </dd>
-<dt class="hdlist1">--first-parent</dt>
+<dt class="hdlist1"><code>--first-parent</code></dt>
 <dd>
 <p>Follow only the first parent commit upon seeing a merge
 commit. This option can be used to determine when a line
 was introduced to a particular integration branch, rather
 than when it was introduced to the history overall.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--porcelain</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--porcelain</code></dt>
 <dd>
 <p>Show in a format designed for machine consumption.</p>
 </dd>
-<dt class="hdlist1">--line-porcelain</dt>
+<dt class="hdlist1"><code>--line-porcelain</code></dt>
 <dd>
 <p>Show the porcelain format, but output commit information for
 each line, not just the first time a commit is referenced.
-Implies --porcelain.</p>
+Implies <code>--porcelain</code>.</p>
 </dd>
-<dt class="hdlist1">--incremental</dt>
+<dt class="hdlist1"><code>--incremental</code></dt>
 <dd>
 <p>Show the result incrementally in a format designed for
 machine consumption.</p>
 </dd>
-<dt class="hdlist1">--encoding=&lt;encoding&gt;</dt>
+<dt class="hdlist1"><code>--encoding=</code><em>&lt;encoding&gt;</em></dt>
 <dd>
-<p>Specifies the encoding used to output author names
+<p>Specify the encoding used to output author names
 and commit summaries. Setting it to <code>none</code> makes blame
 output unconverted data. For more information see the
 discussion about encoding in the <a href="git-log.html">git-log(1)</a>
 manual page.</p>
 </dd>
-<dt class="hdlist1">--contents &lt;file&gt;</dt>
+<dt class="hdlist1"><code>--contents</code> <em>&lt;file&gt;</em></dt>
 <dd>
-<p>Annotate using the contents from the named file, starting from &lt;rev&gt;
-if it is specified, and HEAD otherwise. You may specify <em>-</em> to make
+<p>Annotate using the contents from <em>&lt;file&gt;</em>, starting from <em>&lt;rev&gt;</em>
+if it is specified, and <code>HEAD</code> otherwise. You may specify <code>-</code> to make
 the command read from the standard input for the file contents.</p>
 </dd>
-<dt class="hdlist1">--date &lt;format&gt;</dt>
+<dt class="hdlist1"><code>--date</code> <em>&lt;format&gt;</em></dt>
 <dd>
-<p>Specifies the format used to output dates. If --date is not
-provided, the value of the blame.date config variable is
-used. If the blame.date config variable is also not set, the
+<p>Specify the format used to output dates. If <code>--date</code> is not
+provided, the value of the <code>blame.date</code> config variable is
+used. If the <code>blame.date</code> config variable is also not set, the
 iso format is used. For supported values, see the discussion
-of the --date option at <a href="git-log.html">git-log(1)</a>.</p>
+of the <code>--date</code> option at <a href="git-log.html">git-log(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--progress</dt>
-<dt class="hdlist1">--no-progress</dt>
+<dt class="hdlist1"><code>--progress</code></dt>
+<dt class="hdlist1"><code>--no-progress</code></dt>
 <dd>
-<p>Progress status is reported on the standard error stream
-by default when it is attached to a terminal. This flag
-enables progress reporting even if not attached to a
-terminal. Can&#8217;t use <code>--progress</code> together with <code>--porcelain</code>
-or <code>--incremental</code>.</p>
+<p>Enable progress reporting on the standard error stream even if
+not attached to a terminal. By default, progress status is
+reported only when it is attached. You can&#8217;t use <code>--progress</code>
+together with <code>--porcelain</code> or <code>--incremental</code>.</p>
 </dd>
-<dt class="hdlist1">-M[&lt;num&gt;]</dt>
+<dt class="hdlist1"><code>-M</code>[<em>&lt;num&gt;</em>]</dt>
 <dd>
 <p>Detect moved or copied lines within a file. When a commit
 moves or copies a block of lines (e.g. the original file
-has A and then B, and the commit changes it to B and then
-A), the traditional <em>blame</em> algorithm notices only half of
+has <em>A</em> and then <em>B</em>, and the commit changes it to <em>B</em> and then
+<em>A</em>), the traditional <code>blame</code> algorithm notices only half of
 the movement and typically blames the lines that were moved
-up (i.e. B) to the parent and assigns blame to the lines that
-were moved down (i.e. A) to the child commit.  With this
+up (i.e. <em>B</em>) to the parent and assigns blame to the lines that
+were moved down (i.e. <em>A</em>) to the child commit.  With this
 option, both groups of lines are blamed on the parent by
 running extra passes of inspection.</p>
 <div class="paragraph">
-<p>&lt;num&gt; is optional but it is the lower bound on the number of
+<p><em>&lt;num&gt;</em> is optional, but it is the lower bound on the number of
 alphanumeric characters that Git must detect as moving/copying
 within a file for it to associate those lines with the parent
 commit. The default value is 20.</p>
 </div>
 </dd>
-<dt class="hdlist1">-C[&lt;num&gt;]</dt>
+<dt class="hdlist1"><code>-C</code>[<em>&lt;num&gt;</em>]</dt>
 <dd>
 <p>In addition to <code>-M</code>, detect lines moved or copied from other
 files that were modified in the same commit.  This is
@@ -676,15 +676,15 @@ files in the commit that creates the file. When this
 option is given three times, the command additionally
 looks for copies from other files in any commit.</p>
 <div class="paragraph">
-<p>&lt;num&gt; is optional but it is the lower bound on the number of
+<p><em>&lt;num&gt;</em> is optional, but it is the lower bound on the number of
 alphanumeric characters that Git must detect as moving/copying
 between files for it to associate those lines with the parent
 commit. And the default value is 40. If there are more than one
-<code>-C</code> options given, the &lt;num&gt; argument of the last <code>-C</code> will
+<code>-C</code> options given, the <em>&lt;num&gt;</em> argument of the last <code>-C</code> will
 take effect.</p>
 </div>
 </dd>
-<dt class="hdlist1">--ignore-rev &lt;rev&gt;</dt>
+<dt class="hdlist1"><code>--ignore-rev</code> <em>&lt;rev&gt;</em></dt>
 <dd>
 <p>Ignore changes made by the revision when assigning blame, as if the
 change never happened.  Lines that were changed or added by an ignored
@@ -695,72 +695,72 @@ is set, then lines that were changed by an ignored commit and attributed to
 another commit will be marked with a ? in the blame output.  If the
 <code>blame.markUnblamableLines</code> config option is set, then those lines touched
 by an ignored commit that we could not attribute to another revision are
-marked with a <em>*</em>. In the porcelain modes, we print <em>ignored</em> and
-<em>unblamable</em> on a newline respectively.</p>
+marked with a <code>*</code>. In the porcelain modes, we print <code>ignored</code> and
+<code>unblamable</code> on a newline respectively.</p>
 </dd>
-<dt class="hdlist1">--ignore-revs-file &lt;file&gt;</dt>
+<dt class="hdlist1"><code>--ignore-revs-file</code> <em>&lt;file&gt;</em></dt>
 <dd>
-<p>Ignore revisions listed in <code>file</code>, which must be in the same format as an
+<p>Ignore revisions listed in <em>&lt;file&gt;</em>, which must be in the same format as an
 <code>fsck.skipList</code>.  This option may be repeated, and these files will be
 processed after any files specified with the <code>blame.ignoreRevsFile</code> config
 option.  An empty file name, "", will clear the list of revs from
 previously processed files.</p>
 </dd>
-<dt class="hdlist1">--color-lines</dt>
+<dt class="hdlist1"><code>--color-lines</code></dt>
 <dd>
 <p>Color line annotations in the default format differently if they come from
 the same commit as the preceding line. This makes it easier to distinguish
 code blocks introduced by different commits. The color defaults to cyan and
 can be adjusted using the <code>color.blame.repeatedLines</code> config option.</p>
 </dd>
-<dt class="hdlist1">--color-by-age</dt>
+<dt class="hdlist1"><code>--color-by-age</code></dt>
 <dd>
-<p>Color line annotations depending on the age of the line in the default format.
-The <code>color.blame.highlightRecent</code> config option controls what color is used for
-each range of age.</p>
+<p>Color line annotations depending on the age of the line in
+the default format.  The <code>color.blame.highlightRecent</code> config
+option controls what color is used for each range of age.</p>
 </dd>
-<dt class="hdlist1">-h</dt>
+<dt class="hdlist1"><code>-h</code></dt>
 <dd>
 <p>Show help message.</p>
 </dd>
-<dt class="hdlist1">-c</dt>
+<dt class="hdlist1"><code>-c</code></dt>
 <dd>
 <p>Use the same output mode as <a href="git-annotate.html">git-annotate(1)</a> (Default: off).</p>
 </dd>
-<dt class="hdlist1">--score-debug</dt>
+<dt class="hdlist1"><code>--score-debug</code></dt>
 <dd>
 <p>Include debugging information related to the movement of
 lines between files (see <code>-C</code>) and lines moved within a
 file (see <code>-M</code>).  The first number listed is the score.
 This is the number of alphanumeric characters detected
 as having been moved between or within files.  This must be above
-a certain threshold for <em>git blame</em> to consider those lines
+a certain threshold for <code>git</code> <code>blame</code> to consider those lines
 of code to have been moved.</p>
 </dd>
-<dt class="hdlist1">-f</dt>
-<dt class="hdlist1">--show-name</dt>
+<dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--show-name</code></dt>
 <dd>
 <p>Show the filename in the original commit.  By default
 the filename is shown if there is any line that came from a
 file with a different name, due to rename detection.</p>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--show-number</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--show-number</code></dt>
 <dd>
 <p>Show the line number in the original commit (Default: off).</p>
 </dd>
-<dt class="hdlist1">-s</dt>
+<dt class="hdlist1"><code>-s</code></dt>
 <dd>
 <p>Suppress the author name and timestamp from the output.</p>
 </dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--show-email</dt>
+<dt class="hdlist1"><code>-e</code></dt>
+<dt class="hdlist1"><code>--show-email</code></dt>
 <dd>
 <p>Show the author email instead of the author name (Default: off).
 This can also be controlled via the <code>blame.showEmail</code> config
 option.</p>
 </dd>
-<dt class="hdlist1">-w</dt>
+<dt class="hdlist1"><code>-w</code></dt>
 <dd>
 <p>Ignore whitespace when comparing the parent&#8217;s version and
 the child&#8217;s to find where the lines came from.</p>
@@ -801,11 +801,11 @@ non-default value and want to use the default one, then you
 have to use <code>--diff-algorithm=default</code> option.</p>
 </div>
 </dd>
-<dt class="hdlist1">--abbrev=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--abbrev=</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>Instead of using the default 7+1 hexadecimal digits as the
-abbreviated object name, use &lt;m&gt;+1 digits, where &lt;m&gt; is at
-least &lt;n&gt; but ensures the commit object names are unique.
+<p>Instead of using the default <em>7+1</em> hexadecimal digits as the
+abbreviated object name, use <em>&lt;m&gt;+1</em> digits, where <em>&lt;m&gt;</em> is at
+least <em>&lt;n&gt;</em> but ensures the commit object names are unique.
 Note that 1 column
 is used for a caret to mark the boundary commit.</p>
 </dd>
@@ -871,21 +871,21 @@ at least once for each commit:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>the author name ("author"), email ("author-mail"), time
-("author-time"), and time zone ("author-tz"); similarly
+<p>the author name (<code>author</code>), email (<code>author-mail</code>), time
+(<code>author-time</code>), and time zone (<code>author-tz</code>); similarly
 for committer.</p>
 </li>
 <li>
 <p>the filename in the commit that the line is attributed to.</p>
 </li>
 <li>
-<p>the first line of the commit log message ("summary").</p>
+<p>the first line of the commit log message (<code>summary</code>).</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>The contents of the actual line are output after the above
-header, prefixed by a TAB. This is to allow adding more
+header, prefixed by a <em>TAB</em>. This is to allow adding more
 header elements later.</p>
 </div>
 <div class="paragraph">
@@ -893,7 +893,7 @@ header elements later.</p>
 already been seen. For example, two lines that are blamed to the same
 commit will both be shown, but the details for that commit will be shown
 only once. Information which is specific to individual lines will not be
-grouped together, like revs to be marked <em>ignored</em> or <em>unblamable</em>. This
+grouped together, like revs to be marked <code>ignored</code> or <code>unblamable</code>. This
 is more efficient, but may require more state be kept by the reader. The
 <code>--line-porcelain</code> option can be used to output full commit information
 for each line, allowing simpler (but less efficient) usage like:</p>
@@ -912,7 +912,7 @@ sort | uniq -c | sort -rn</pre>
 <h2 id="_specifying_ranges">SPECIFYING RANGES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unlike <em>git blame</em> and <em>git annotate</em> in older versions of git, the extent
+<p>Unlike <code>git</code> <code>blame</code> and <code>git</code> <code>annotate</code> in older versions of git, the extent
 of the annotation can be limited to both line ranges and revision
 ranges. The <code>-L</code> option, which limits annotation to a range of lines, may be
 specified multiple times.</p>
@@ -943,7 +943,7 @@ git blame -L 40,+21 foo</pre>
 <div class="paragraph">
 <p>When you are not interested in changes older than version
 v2.6.18, or changes older than 3 weeks, you can use revision
-range specifiers similar to <em>git rev-list</em>:</p>
+range specifiers similar to <code>git</code> <code>rev-list</code>:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1000,10 +1000,8 @@ annotated.</p>
 <ol class="arabic">
 <li>
 <p>Each blame entry always starts with a line of:</p>
-<div class="literalblock">
-<div class="content">
-<pre>&lt;40-byte-hex-sha1&gt; &lt;sourceline&gt; &lt;resultline&gt; &lt;num-lines&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><em>&lt;40-byte-hex-sha1&gt;</em> <em>&lt;sourceline&gt;</em> <em>&lt;resultline&gt;</em> <em>&lt;num-lines&gt;</em></pre>
 </div>
 <div class="paragraph">
 <p>Line numbers count from 1.</p>
@@ -1018,10 +1016,8 @@ email, committer, dates, summary, etc.).</p>
 <li>
 <p>Unlike the Porcelain format, the filename information is always
 given and terminates the entry:</p>
-<div class="literalblock">
-<div class="content">
-<pre>"filename" &lt;whitespace-quoted-filename-goes-here&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>filename</code> <em>&lt;whitespace-quoted-filename-goes-here&gt;</em></pre>
 </div>
 <div class="paragraph">
 <p>and thus it is really quite easy to parse for some line- and word-oriented
@@ -1035,8 +1031,8 @@ parser (which should be quite natural for most scripting languages).</p>
 </td>
 <td class="content">
 For people who do parsing: to make it more robust, just ignore any
-lines between the first and last one ("&lt;sha1&gt;" and "filename" lines)
-where you do not recognize the tag words (or care about that particular
+lines between the first and last one (<em>&lt;40-byte-hex-sha1&gt;</em> and <code>filename</code>
+lines) where you do not recognize the tag words (or care about that particular
 one) at the beginning of the "extended information" lines. That way, if
 there is ever added information (like the commit encoding or extended
 commit commentary), a blame viewer will not care.
@@ -1136,7 +1132,7 @@ another commit with a <em>?</em> in the output of <a href="git-blame.html">git-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-16 13:05:23 UTC
+Last updated 2026-01-23 12:47:00 UTC
 </div>
 </div>
 </body>
