@@ -49,11 +49,11 @@ OSSL_CRMF_PBMPARAMETER *OSSL_CRMF_pbmp_new(OSSL_LIB_CTX *libctx, size_t saltlen,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The algorithms for the OWF (one-way function) and for the MAC (message authentication code) may be any with a NID defined in <i>&lt;openssl/objects.h&gt;</i>. As specified by RFC 4210, these should include NID_hmac_sha1.</p>
+<p>The algorithms for the OWF (one-way function) and for the MAC (message authentication code) may be any with a NID defined in <i>&lt;openssl/objects.h&gt;</i>. For backward compatibility with RFC 4210, these should include NID_hmac_sha1.</p>
 
-<p>RFC 4210 recommends that the salt SHOULD be at least 8 bytes (64 bits) long, where 16 bytes is common.</p>
+<p>RFC 4210 recommended that the salt SHOULD be at least 8 bytes (64 bits) long, where 16 bytes is common.</p>
 
-<p>The iteration count must be at least 100, as stipulated by RFC 4211, and is limited to at most 100000 to avoid DoS through manipulated or otherwise malformed input.</p>
+<p>The iteration count must be at least 100, as stipulated by RFC 4211, and is limited to at most 100000 to avoid DoS through manipulated or otherwise malformed input. See RFC 9045 for currently suggested values.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

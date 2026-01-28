@@ -124,6 +124,8 @@ int OSSL_DECODER_export(OSSL_DECODER_INSTANCE *decoder_inst,
 
 <p>OSSL_DECODER_export() is a fallback function for constructors that cannot use the data they get directly for diverse reasons. It takes the same decode instance <i>decoder_inst</i> that the constructor got and an object <i>reference</i>, unpacks the object which it refers to, and exports it by creating an <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that it then passes to <i>export_cb</i>, along with <i>export_arg</i>.</p>
 
+<p>Note that functions OSSL_DECODER_CTX_set_selection(), OSSL_DECODER_CTX_set_output_type(), OSSL_DECODER_CTX_set_output_structure(), OSSL_DECODER_CTX_add_encoder(), OSSL_DECODER_CTX_add_extra(), OSSL_DECODER_CTX_set_construct(), OSSL_DECODER_CTX_set_construct_data(), and OSSL_DECODER_CTX_set_cleanup() shouldn&#39;t be used after the context is finalised, in particular after calling the function OSSL_DECODER_CTX_new_for_pkey().</p>
+
 <h2 id="Constructor">Constructor</h2>
 
 <p>A <b>OSSL_DECODER_CONSTRUCT</b> gets the following arguments:</p>

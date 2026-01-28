@@ -42,7 +42,7 @@ EVP_SKEY *EVP_SKEY_import(OSSL_LIB_CTX *libctx, const char *skeymgmtname,
                           const char *propquery,
                           int selection, const OSSL_PARAM *params);
 EVP_SKEY *EVP_SKEY_import_raw_key(OSSL_LIB_CTX *libctx, const char *skeymgmtname,
-                                  unsigned char *key, size_t *len,
+                                  unsigned char *key, size_t len,
                                   const char *propquery);
 int EVP_SKEY_export(const EVP_SKEY *skey, int selection,
                     OSSL_CALLBACK *export_cb, void *export_cbarg);
@@ -69,7 +69,7 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 
 <p>The EVP_SKEY_import() function allocates an empty <b>EVP_SKEY</b> structure which is used by OpenSSL to store symmetric keys, assigns the <b>EVP_SKEYMGMT</b> object associated with the key, and initializes the object from the <b>params</b> argument.</p>
 
-<p>The EVP_SKEY_import_raw_key() function is a helper that creates an <b>EVP_SKEY</b> object containing the raw byte representation of the symmetric keys.</p>
+<p>The EVP_SKEY_import_raw_key() function is a helper that creates an <b>EVP_SKEY</b> object containing the raw byte representation of the symmetric keys from the buffer <i>key</i> having length <i>len</i>. The <i>skeymgmtname</i> defines the name of the target <b>EVP_SKEYMGMT</b> for the newly created key.</p>
 
 <p>The EVP_SKEY_export() function extracts values from a key <i>skey</i> using the <i>selection</i>. <i>selection</i> is described below. It uses a callback <i>export_cb</i> that gets passed the value of <i>export_cbarg</i>. See <a href="../man7/openssl-core.h.html">openssl-core.h(7)</a> for more information about the callback. Note that the <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that is passed to the callback is not persistent after the callback returns.</p>
 
@@ -129,7 +129,7 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 
 <p>EVP_SKEY_export() and EVP_SKEY_get0_raw_key() return 1 for success and 0 on failure.</p>
 
-<p>EVP_SKEY_get0_skeymgmt_name() and EVP_SKEY_get0_provider_name() return the names of the associated EVP_SKEYMGMT object and its provider correspondigly.</p>
+<p>EVP_SKEY_get0_skeymgmt_name() and EVP_SKEY_get0_provider_name() return the names of the associated EVP_SKEYMGMT object and its provider correspondingly.</p>
 
 <p>EVP_SKEY_is_a() returns 1 if <i>skey</i> has the key type <i>name</i>, otherwise 0.</p>
 
@@ -145,7 +145,7 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

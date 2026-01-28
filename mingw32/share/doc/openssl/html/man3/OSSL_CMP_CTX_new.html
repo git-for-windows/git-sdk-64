@@ -227,14 +227,14 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 <dt id="OSSL_CMP_OPT_DIGEST_ALGNID"><b>OSSL_CMP_OPT_DIGEST_ALGNID</b></dt>
 <dd>
 
-<p>The NID of the digest algorithm to be used in RFC 4210&#39;s MSG_SIG_ALG for signature-based message protection and Proof-of-Possession (POPO). Default is SHA256.</p>
+<p>The NID of the digest algorithm to be used in RFC 9810&#39;s MSG_SIG_ALG for signature-based message protection and Proof-of-Possession (POPO). Default is SHA256.</p>
 
 </dd>
-<dt id="OSSL_CMP_OPT_OWF_ALGNID-The-NID-of-the-digest-algorithm-to-be-used-as-one-way-function-OWF-for-MAC-based-message-protection-with-password-based-MAC-PBM-.-See-RFC-4210-section-5.1.3.1-for-details.-Default-is-SHA256"><b>OSSL_CMP_OPT_OWF_ALGNID</b> The NID of the digest algorithm to be used as one-way function (OWF) for MAC-based message protection with password-based MAC (PBM). See RFC 4210 section 5.1.3.1 for details. Default is SHA256.</dt>
+<dt id="OSSL_CMP_OPT_OWF_ALGNID-The-NID-of-the-digest-algorithm-to-be-used-as-one-way-function-OWF-for-MAC-based-message-protection-with-password-based-MAC-PBM-.-See-RFC-9810-section-5.1.3.1-for-details.-Default-is-SHA256"><b>OSSL_CMP_OPT_OWF_ALGNID</b> The NID of the digest algorithm to be used as one-way function (OWF) for MAC-based message protection with password-based MAC (PBM). See RFC 9810 section 5.1.3.1 for details. Default is SHA256.</dt>
 <dd>
 
 </dd>
-<dt id="OSSL_CMP_OPT_MAC_ALGNID-The-NID-of-the-MAC-algorithm-to-be-used-for-message-protection-with-PBM.-Default-is-HMAC-SHA1-as-per-RFC-4210"><b>OSSL_CMP_OPT_MAC_ALGNID</b> The NID of the MAC algorithm to be used for message protection with PBM. Default is HMAC-SHA1 as per RFC 4210.</dt>
+<dt id="OSSL_CMP_OPT_MAC_ALGNID-The-NID-of-the-MAC-algorithm-to-be-used-for-message-protection-with-PBM.-Default-is-HMAC-SHA1-for-backward-compatibility-with-RFC-4210"><b>OSSL_CMP_OPT_MAC_ALGNID</b> The NID of the MAC algorithm to be used for message protection with PBM. Default is HMAC-SHA1, for backward compatibility with RFC 4210.</dt>
 <dd>
 
 </dd>
@@ -253,7 +253,7 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 <dt id="OSSL_CMP_OPT_DISABLE_CONFIRM"><b>OSSL_CMP_OPT_DISABLE_CONFIRM</b></dt>
 <dd>
 
-<p>Do not confirm enrolled certificates, to cope with broken servers not supporting implicit confirmation correctly. <b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 4210.</p>
+<p>Do not confirm enrolled certificates, to cope with broken servers not supporting implicit confirmation correctly. <b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 9810.</p>
 
 </dd>
 <dt id="OSSL_CMP_OPT_UNPROTECTED_SEND"><b>OSSL_CMP_OPT_UNPROTECTED_SEND</b></dt>
@@ -265,7 +265,7 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 <dt id="OSSL_CMP_OPT_UNPROTECTED_ERRORS"><b>OSSL_CMP_OPT_UNPROTECTED_ERRORS</b></dt>
 <dd>
 
-<p>Accept unprotected error responses which are either explicitly unprotected or where protection verification failed. Applies to regular error messages as well as certificate responses (IP/CP/KUP) and revocation responses (RP) with rejection. <b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 4210.</p>
+<p>Accept unprotected error responses which are either explicitly unprotected or where protection verification failed. Applies to regular error messages as well as certificate responses (IP/CP/KUP) and revocation responses (RP) with rejection. <b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 9810.</p>
 
 </dd>
 <dt id="OSSL_CMP_OPT_IGNORE_KEYUSAGE"><b>OSSL_CMP_OPT_IGNORE_KEYUSAGE</b></dt>
@@ -351,7 +351,7 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 
 <p>OSSL_CMP_CTX_set1_secretValue() sets in <i>ctx</i> the byte string <i>sec</i> of length <i>len</i> to use as pre-shared secret, or clears it if the <i>sec</i> argument is NULL. If present, this secret is used to create MAC-based authentication and integrity protection (rather than applying signature-based protection) of outgoing messages and to verify authenticity and integrity of incoming messages that have MAC-based protection (protectionAlg = <code>MSG_MAC_ALG</code>).</p>
 
-<p>OSSL_CMP_CTX_set1_referenceValue() sets the given referenceValue <i>ref</i> with length <i>len</i> in the given <i>ctx</i> or clears it if the <i>ref</i> argument is NULL. According to RFC 4210 section 5.1.1, if no value for the sender field in CMP message headers can be determined (i.e., no CMP signer certificate and no subject DN is set via OSSL_CMP_CTX_set1_subjectName() then the sender field will contain the NULL-DN and the senderKID field of the CMP message header must be set. When signature-based protection is used the senderKID will be set to the subjectKeyIdentifier of the CMP signer certificate as far as present. If not present or when MAC-based protection is used the <i>ref</i> value is taken as the fallback value for the senderKID.</p>
+<p>OSSL_CMP_CTX_set1_referenceValue() sets the given referenceValue <i>ref</i> with length <i>len</i> in the given <i>ctx</i> or clears it if the <i>ref</i> argument is NULL. According to RFC 9810 section 5.1.1, if no value for the sender field in CMP message headers can be determined (i.e., no CMP signer certificate and no subject DN is set via OSSL_CMP_CTX_set1_subjectName() then the sender field will contain the NULL-DN and the senderKID field of the CMP message header must be set. When signature-based protection is used the senderKID will be set to the subjectKeyIdentifier of the CMP signer certificate as far as present. If not present or when MAC-based protection is used the <i>ref</i> value is taken as the fallback value for the senderKID.</p>
 
 <p>OSSL_CMP_CTX_set1_recipient() sets the recipient name that will be used in the PKIHeader of CMP request messages, i.e. the X509 name of the (CA) server.</p>
 
@@ -450,7 +450,7 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>CMP is defined in RFC 4210 (and CRMF in RFC 4211).</p>
+<p>CMP is defined in RFC 9810 (and CRMF in RFC 4211).</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 

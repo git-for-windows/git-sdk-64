@@ -20,6 +20,7 @@
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -139,6 +140,8 @@ int i2d_TYPE_bio(BIO *bp, TYPE *a);</code></pre>
 
 <p><b>i2d_<i>TYPE</i>_bio</b>() and <b>i2d_<i>TYPE</i>_fp</b>(), as well as i2d_ASN1_bio_stream(), return 1 for success and 0 if an error occurs.</p>
 
+<p>On error, these functions may record the error in the OpenSSL error queue. That error queue can be inspected with the <b>ERR</b> family of functions, such as <a href="../man3/ERR_print_errors.html">ERR_print_errors(3)</a> and <a href="../man3/ERR_peek_last_error_all.html">ERR_peek_last_error_all(3)</a>.</p>
+
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
 <p>Allocate and encode the DER encoding of an X509 structure:</p>
@@ -228,6 +231,10 @@ if (d2i_X509(&amp;x, &amp;p, len) == NULL)
 <p><b>i2d_<i>TYPE</i></b>() will not return an error in many versions of OpenSSL, if mandatory fields are not initialized due to a programming error then the encoded structure may contain invalid data or omit the fields entirely and will not be parsed by <b>d2i_<i>TYPE</i></b>(). This may be fixed in future so code should not assume that <b>i2d_<i>TYPE</i></b>() will always succeed.</p>
 
 <p>Any function which encodes a structure (<b>i2d_<i>TYPE</i></b>(), <b>i2d_<i>TYPE</i>_bio</b>() or <b>i2d_<i>TYPE</i>_fp</b>()) may return a stale encoding if the structure has been modified after deserialization or previous serialization. This is because some objects cache the encoding for efficiency reasons.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p>ERR_print_errors(3), ERR_peek_last_error_all(3)</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

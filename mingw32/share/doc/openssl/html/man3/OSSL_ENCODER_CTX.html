@@ -21,6 +21,7 @@
     </ul>
   </li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#NOTES-AND-BUGS">NOTES AND BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -110,6 +111,8 @@ int OSSL_ENCODER_CTX_set_cleanup(OSSL_ENCODER_CTX *ctx,
 
 <p>OSSL_ENCODER_CTX_set_cleanup() sets the constructor data <i>cleanup</i> function. This is called by <a href="../man3/OSSL_ENCODER_CTX_free.html">OSSL_ENCODER_CTX_free(3)</a>.</p>
 
+<p>Note that functions OSSL_ENCODER_CTX_set_selection(), OSSL_ENCODER_CTX_set_output_type(), OSSL_ENCODER_CTX_set_output_structure(), OSSL_ENCODER_CTX_add_encoder(), OSSL_ENCODER_CTX_add_extra(), OSSL_ENCODER_CTX_set_construct(), OSSL_ENCODER_CTX_set_construct_data(), and OSSL_ENCODER_CTX_set_cleanup() shouldn&#39;t be used after the context is finalised, in particular after calling the function OSSL_ENCODER_CTX_new_for_pkey().</p>
+
 <h2 id="Constructor">Constructor</h2>
 
 <p>A <b>OSSL_ENCODER_CONSTRUCT</b> gets the following arguments:</p>
@@ -163,6 +166,10 @@ int OSSL_ENCODER_CTX_set_cleanup(OSSL_ENCODER_CTX *ctx,
 <p>OSSL_ENCODER_INSTANCE_get_output_type() returns a string with the name of the output type.</p>
 
 <p>OSSL_ENCODER_INSTANCE_get_output_structure() returns a string with the name of the output structure.</p>
+
+<h1 id="NOTES-AND-BUGS">NOTES AND BUGS</h1>
+
+<p>The chain mechanism in ENCODE is not yet completely implemented. It affects functions such as OSSL_ENCODER_CTX_add_extra and the inner processing loop.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

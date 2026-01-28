@@ -49,6 +49,8 @@ void SSL_CTX_set_cert_verify_callback(SSL_CTX *ctx,
 
 <p>In any case a viable verification result value must be reflected in the <b>error</b> member of <i>x509_store_ctx</i>, which can be done using <a href="../man3/X509_STORE_CTX_set_error.html">X509_STORE_CTX_set_error(3)</a>. This is particularly important in case the <i>callback</i> allows the connection to continue (by returning 1). Note that the verification status in the store context is a possibly durable indication of the chain&#39;s validity! This gets recorded in the SSL session (and thus also in session tickets) and the validity of the originally presented chain is then visible on resumption, even though no chain is presented int that case. Moreover, the calling application will be informed about the detailed result of the verification procedure and may elect to base further decisions on it.</p>
 
+<p><i>callback</i> may call <a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a> to run the built-in verification function. This may be useful if application wishes to dynamically reconfigure <i>x509_store_ctx</i> before verification, or postprocess the result. In this case, <a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a> will set the <b>error</b> member as described above.</p>
+
 <p>Within <i>x509_store_ctx</i>, <i>callback</i> has access to the <i>verify_callback</i> function set using <a href="../man3/SSL_CTX_set_verify.html">SSL_CTX_set_verify(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>

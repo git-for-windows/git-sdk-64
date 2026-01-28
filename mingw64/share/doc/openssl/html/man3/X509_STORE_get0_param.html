@@ -41,11 +41,11 @@ STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <p>X509_STORE_get0_param() retrieves an internal pointer to the verification parameters for <i>xs</i>. The returned pointer must not be freed by the calling application</p>
 
-<p>X509_STORE_get1_objects() returns a snapshot of all objects in the store&#39;s X509 cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The caller is responsible for freeing the returned list.</p>
+<p>X509_STORE_get1_objects() returns a snapshot of all objects in the store&#39;s X509 cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The caller is responsible for freeing the returned list, using sk_X509_OBJECT_pop_free(sk, X509_OBJECT_free).</p>
 
 <p>X509_STORE_get0_objects() retrieves an internal pointer to the store&#39;s X509 object cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The returned pointer must not be freed by the calling application. If the store is shared across multiple threads, it is not safe to use the result of this function. Use X509_STORE_get1_objects() instead, which avoids this problem.</p>
 
-<p>X509_STORE_get1_all_certs() returns a list of all certificates in the store. The caller is responsible for freeing the returned list.</p>
+<p>X509_STORE_get1_all_certs() returns a list of all certificates in the store. The caller is responsible for freeing the returned list with OSSL_STACK_OF_X509_free().</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -61,7 +61,7 @@ STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/X509_STORE_new.html">X509_STORE_new(3)</a></p>
+<p><a href="../man3/DEFINE_STACK_OF.html">DEFINE_STACK_OF(3)</a>, <a href="../man3/X509_STORE_new.html">X509_STORE_new(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

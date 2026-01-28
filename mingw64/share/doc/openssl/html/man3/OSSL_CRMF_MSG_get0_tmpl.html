@@ -88,7 +88,7 @@ int OSSL_CRMF_MSG_centralkeygen_requested(const OSSL_CRMF_MSG *crm,
 
 <p>OSSL_CRMF_CERTID_get0_issuer retrieves the issuer name of the given CertId <i>cid</i>, which must be of ASN.1 type GEN_DIRNAME.</p>
 
-<p>OSSL_CRMF_ENCRYPTEDKEY_get1_encCert() decrypts the certificate in the given encryptedKey <i>ecert</i>, using the private key <i>pkey</i>, library context <i>libctx</i> and property query string <i>propq</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>). This is needed for the indirect POPO method as in RFC 4210 section 5.2.8.2. The function returns the decrypted certificate as a copy, leaving its ownership with the caller, who is responsible for freeing it.</p>
+<p>OSSL_CRMF_ENCRYPTEDKEY_get1_encCert() decrypts the certificate in the given encryptedKey <i>ecert</i>, using the private key <i>pkey</i>, library context <i>libctx</i> and property query string <i>propq</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>). This is needed for the indirect POPO method as in RFC 9810 section 5.2.8.3.2. The function returns the decrypted certificate as a copy, leaving its ownership with the caller, who is responsible for freeing it.</p>
 
 <p>OSSL_CRMF_ENCRYPTEDKEY_get1_pkey() decrypts the private key in <i>encryptedKey</i>. If <i>encryptedKey</i> is not of type <b>OSSL_CRMF_ENCRYPTEDKEY_ENVELOPEDDATA</b>, decryption uses the private key <i>pkey</i>. The library context <i>libctx</i> and property query <i>propq</i> are taken into account as usual. The rest of this paragraph is relevant only if CMS support not disabled for the OpenSSL build and <i>encryptedKey</i> is of type case <b>OSSL_CRMF_ENCRYPTEDKEY_ENVELOPEDDATA</b>. Decryption uses the <i>secret</i> parameter if not NULL; otherwise uses the private key &lt;pkey&gt; and the certificate <i>cert</i> related to <i>pkey</i>, where <i>cert</i> is recommended to be given if available. On success, the function verifies the decrypted data as signed data, using the trust store <i>ts</i> and any untrusted certificates in <i>extra</i>. Doing so, it checks for the purpose &quot;CMP Key Generation Authority&quot; (cmKGA).</p>
 
@@ -96,7 +96,7 @@ int OSSL_CRMF_MSG_centralkeygen_requested(const OSSL_CRMF_MSG *crm,
 
 <p>OSSL_CRMF_ENCRYPTEDVALUE_decrypt() decrypts the encrypted value in the given encryptedValue <i>enc</i>, using the private key <i>pkey</i>, library context <i>libctx</i> and property query string <i>propq</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>).</p>
 
-<p>OSSL_CRMF_ENCRYPTEDVALUE_get1_encCert() decrypts the certificate in the given encryptedValue <i>ecert</i>, using the private key <i>pkey</i>, library context <i>libctx</i> and property query string <i>propq</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>). This is needed for the indirect POPO method as in RFC 4210 section 5.2.8.2. The function returns the decrypted certificate as a copy, leaving its ownership with the caller, who is responsible for freeing it.</p>
+<p>OSSL_CRMF_ENCRYPTEDVALUE_get1_encCert() decrypts the certificate in the given encryptedValue <i>ecert</i>, using the private key <i>pkey</i>, library context <i>libctx</i> and property query string <i>propq</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>). This is needed for the indirect POPO method as in RFC 9810 section 5.2.8.3.2. The function returns the decrypted certificate as a copy, leaving its ownership with the caller, who is responsible for freeing it.</p>
 
 <p>OSSL_CRMF_MSG_get_certReqId() retrieves the certReqId of <i>crm</i>.</p>
 

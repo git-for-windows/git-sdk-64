@@ -245,15 +245,17 @@
 <p>Check currently detected capabilities</p>
 
 <pre><code>$ openssl info -cpusettings
-OPENSSL_riscvcap=ZBA_ZBB_ZBC_ZBS_V</code></pre>
+OPENSSL_riscvcap=RV64GC_ZBA_ZBB_ZBC_ZBS_V vlen:256</code></pre>
+
+<p>Note: The first word in the displayed capabilities is the RISC-V base architecture value, which is derived from the compiler configuration. It is therefore not overridable by the environment variable. When the V extension is given the riscv_vlen value is always displayed, there is no way to override the riscv_vlen by the environment variable.</p>
 
 <p>Disables all instruction set extensions:</p>
 
-<pre><code>OPENSSL_riscvcap=&quot;rv64gc&quot;</code></pre>
+<pre><code>export OPENSSL_riscvcap=&quot;rv64gc&quot;</code></pre>
 
 <p>Only enable the vector extension:</p>
 
-<pre><code>OPENSSL_riscvcap=&quot;rv64gc_v&quot;</code></pre>
+<pre><code>export OPENSSL_riscvcap=&quot;rv64gc_v&quot;</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

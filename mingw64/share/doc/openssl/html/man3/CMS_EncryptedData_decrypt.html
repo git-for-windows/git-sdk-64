@@ -40,7 +40,7 @@ BIO *CMS_EnvelopedData_decrypt(CMS_EnvelopedData *env, BIO *detached_data,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>CMS_EncryptedData_decrypt() decrypts a <i>cms</i> EncryptedData object using the symmetric <i>key</i> of size <i>keylen</i> bytes. <i>out</i> is a BIO to write the content to and <i>flags</i> is an optional set of flags. <i>dcont</i> is used in the rare case where the encrypted content is detached. It will normally be set to NULL.</p>
+<p>CMS_EncryptedData_decrypt() decrypts a <i>cms</i> EncryptedData object using the symmetric <i>key</i> of size <i>keylen</i> bytes. AEAD cipher algorithms are not supported. <i>out</i> is a BIO to write the content to and <i>flags</i> is an optional set of flags. <i>dcont</i> is used in the rare case where the encrypted content is detached. It will normally be set to NULL.</p>
 
 <p>The following flags can be passed in the <i>flags</i> parameter.</p>
 

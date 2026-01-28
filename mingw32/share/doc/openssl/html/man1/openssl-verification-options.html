@@ -469,7 +469,7 @@
 
 <h3 id="Extended-Key-Usage">Extended Key Usage</h3>
 
-<p>The extKeyUsage (EKU) extension places additional restrictions on certificate use. If this extension is present (whether critical or not) in an end-entity certficiate, the key is allowed only for the uses specified, while the special EKU <b>anyExtendedKeyUsage</b> allows for all uses.</p>
+<p>The extKeyUsage (EKU) extension places additional restrictions on certificate use. If this extension is present (whether critical or not) in an end-entity certificate, the key is allowed only for the uses specified, while the special EKU <b>anyExtendedKeyUsage</b> allows for all uses.</p>
 
 <p>Note that according to RFC 5280 section 4.2.1.12, the Extended Key Usage extension will appear only in end-entity certificates, and consequently the standard certification path validation described in its section 6 does not include EKU checks for CA certificates. The CA/Browser Forum requires for TLS server, S/MIME, and code signing use the presence of respective EKUs in subordinate CA certificates (while excluding them for root CA certificates), while taking over from RFC 5280 the certificate validity concept and certificate path validation.</p>
 
@@ -504,7 +504,7 @@
 <dt id="Netscape-SSL-Server-nssslserver"><b>Netscape SSL Server</b> (<code>nssslserver</code>)</dt>
 <dd>
 
-<p>In addition to what has been described for <b>sslserver</b>, for a Netscape SSL client to connect to an SSL server, its EE certficate must have the <b>keyEncipherment</b> bit set if the keyUsage extension is present. This isn&#39;t always valid because some cipher suites use the key for digital signing. Otherwise it is the same as a normal SSL server.</p>
+<p>In addition to what has been described for <b>sslserver</b>, for a Netscape SSL client to connect to an SSL server, its EE certificate must have the <b>keyEncipherment</b> bit set if the keyUsage extension is present. This isn&#39;t always valid because some cipher suites use the key for digital signing. Otherwise it is the same as a normal SSL server.</p>
 
 </dd>
 <dt id="Common-S-MIME-Checks"><b>Common S/MIME Checks</b></dt>
@@ -520,13 +520,13 @@
 <dt id="S-MIME-Signing-smimesign"><b>S/MIME Signing</b> (<code>smimesign</code>)</dt>
 <dd>
 
-<p>In addition to the common S/MIME checks, for target certficiates the key usage must allow for <code>digitalSignature</code> and/or <b>nonRepudiation</b>.</p>
+<p>In addition to the common S/MIME checks, for target certificates the key usage must allow for <code>digitalSignature</code> and/or <b>nonRepudiation</b>.</p>
 
 </dd>
 <dt id="S-MIME-Encryption-smimeencrypt"><b>S/MIME Encryption</b> (<code>smimeencrypt</code>)</dt>
 <dd>
 
-<p>In addition to the common S/MIME checks, for target certficiates the key usage must allow for <code>keyEncipherment</code>.</p>
+<p>In addition to the common S/MIME checks, for target certificates the key usage must allow for <code>keyEncipherment</code>.</p>
 
 </dd>
 <dt id="CRL-Signing-crlsign"><b>CRL Signing</b> (<code>crlsign</code>)</dt>
@@ -534,7 +534,7 @@
 
 <p>For target certificates, the key usage must allow for <code>cRLSign</code>.</p>
 
-<p>For all other certifcates the normal CA checks apply. Except in this case the basicConstraints extension must be present.</p>
+<p>For all other certificates the normal CA checks apply. Except in this case the basicConstraints extension must be present.</p>
 
 </dd>
 <dt id="OCSP-Helper-ocsphelper"><b>OCSP Helper</b> (<code>ocsphelper</code>)</dt>
@@ -542,7 +542,7 @@
 
 <p>For target certificates, no checks are performed at this stage, but special checks apply; see <a href="../man3/OCSP_basic_verify.html">OCSP_basic_verify(3)</a>.</p>
 
-<p>For all other certifcates the normal CA checks apply.</p>
+<p>For all other certificates the normal CA checks apply.</p>
 
 </dd>
 <dt id="Timestamp-Signing-timestampsign"><b>Timestamp Signing</b> (<code>timestampsign</code>)</dt>
@@ -550,7 +550,7 @@
 
 <p>For target certificates, if the key usage extension is present, it must include <code>digitalSignature</code> and/or <code>nonRepudiation</code> and must not include other bits. The EKU extension must be present and contain <code>timeStamping</code> only. Moreover, it must be marked as critical.</p>
 
-<p>For all other certifcates the normal CA checks apply.</p>
+<p>For all other certificates the normal CA checks apply.</p>
 
 </dd>
 <dt id="Code-Signing-codesign"><b>Code Signing</b> (<code>codesign</code>)</dt>
@@ -558,7 +558,7 @@
 
 <p>For target certificates, the key usage extension must be present and marked critical and include &lt;digitalSignature&gt;, but must not include <code>keyCertSign</code> nor <code>cRLSign</code>. The EKU extension must be present and contain <code>codeSign</code>, but must not include <code>anyExtendedKeyUsage</code> nor <code>serverAuth</code>.</p>
 
-<p>For all other certifcates the normal CA checks apply.</p>
+<p>For all other certificates the normal CA checks apply.</p>
 
 </dd>
 </dl>

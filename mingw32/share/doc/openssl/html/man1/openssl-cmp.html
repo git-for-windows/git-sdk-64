@@ -49,7 +49,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>openssl-cmp - Certificate Management Protocol (CMP, RFC 4210) application</p>
+<p>openssl-cmp - Certificate Management Protocol (CMP, RFCs 9810 and 9811) application</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -105,7 +105,7 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>cmp</b> command is a client implementation for the Certificate Management Protocol (CMP) as defined in RFC4210. It can be used to request certificates from a CA server, update their certificates, request certificates to be revoked, and perform other types of CMP requests.</p>
+<p>The <b>cmp</b> command is a client implementation for the Certificate Management Protocol (CMP) as defined in RFCs 9810 and its HTTP(S) transfer as defined in RFC 9811. It can be used to request certificates from a CA server, update their certificates, request certificates to be revoked, and perform other types of CMP requests.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -348,7 +348,7 @@
 <dt id="disable_confirm"><b>-disable_confirm</b></dt>
 <dd>
 
-<p>Do not send certificate confirmation message for newly enrolled certificate without requesting implicit confirmation to cope with broken servers not supporting implicit confirmation correctly. <b>WARNING:</b> This leads to behavior violating RFC 4210.</p>
+<p>Do not send certificate confirmation message for newly enrolled certificate without requesting implicit confirmation to cope with broken servers not supporting implicit confirmation correctly. <b>WARNING:</b> This leads to behavior violating RFC 9810.</p>
 
 </dd>
 <dt id="certout-filename"><b>-certout</b> <i>filename</i></dt>
@@ -550,7 +550,7 @@
 </li>
 </ul>
 
-<p><b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 4210, e.g.:</p>
+<p><b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 9810, e.g.:</p>
 
 <ul>
 
@@ -651,7 +651,7 @@
 <dt id="secret-arg"><b>-secret</b> <i>arg</i></dt>
 <dd>
 
-<p>Provides the source of a secret value to use with MAC-based message protection. This takes precedence over the <b>-cert</b> and <b>-key</b> options. The secret is used for creating MAC-based protection of outgoing messages and for validating incoming messages that have MAC-based protection. The algorithm used by default is Password-Based Message Authentication Code (PBM) as defined in RFC 4210 section 5.1.3.1.</p>
+<p>Provides the source of a secret value to use with MAC-based message protection. This takes precedence over the <b>-cert</b> and <b>-key</b> options. The secret is used for creating MAC-based protection of outgoing messages and for validating incoming messages that have MAC-based protection. The algorithm used by default is Password-Based Message Authentication Code (PBM) as defined in RFC 9810 section 5.1.3.1.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
 
@@ -667,7 +667,7 @@
 
 <p>The issuer of this certificate is used as one of the recipient fallback values and as fallback issuer entry in the certificate template of IR/CR/KUR messages.</p>
 
-<p>When performing signature-based message protection, this &quot;protection certificate&quot;, also called &quot;signer certificate&quot;, will be included first in the extraCerts field of outgoing messages and the signature is done with the corresponding key. In Initialization Request (IR) messages this can be used for authenticating using an external entity certificate as defined in appendix E.7 of RFC 4210.</p>
+<p>When performing signature-based message protection, this &quot;protection certificate&quot;, also called &quot;signer certificate&quot;, will be included first in the extraCerts field of outgoing messages and the signature is done with the corresponding key. In Initialization Request (IR) messages this can be used for authenticating using an external entity certificate as defined in appendix D.7 of RFC 9810.</p>
 
 <p>For Key Update Request (KUR) messages this is also used as the certificate to be updated if the <b>-oldcert</b> option is not given.</p>
 
@@ -703,13 +703,13 @@
 <dt id="digest-name"><b>-digest</b> <i>name</i></dt>
 <dd>
 
-<p>Specifies name of supported digest to use in RFC 4210&#39;s MSG_SIG_ALG and as the one-way function (OWF) in <code>MSG_MAC_ALG</code>. If applicable, this is used for message protection and proof-of-possession (POPO) signatures. To see the list of supported digests, use <code>openssl list -digest-commands</code>. Defaults to <code>sha256</code>.</p>
+<p>Specifies name of supported digest to use in RFC 9810&#39;s MSG_SIG_ALG and as the one-way function (OWF) in <code>MSG_MAC_ALG</code>. If applicable, this is used for message protection and proof-of-possession (POPO) signatures. To see the list of supported digests, use <code>openssl list -digest-commands</code>. Defaults to <code>sha256</code>.</p>
 
 </dd>
 <dt id="mac-name"><b>-mac</b> <i>name</i></dt>
 <dd>
 
-<p>Specifies the name of the MAC algorithm in <code>MSG_MAC_ALG</code>. To get the names of supported MAC algorithms use <code>openssl list -mac-algorithms</code> and possibly combine such a name with the name of a supported digest algorithm, e.g., hmacWithSHA256. Defaults to <code>hmac-sha1</code> as per RFC 4210.</p>
+<p>Specifies the name of the MAC algorithm in <code>MSG_MAC_ALG</code>. To get the names of supported MAC algorithms use <code>openssl list -mac-algorithms</code> and possibly combine such a name with the name of a supported digest algorithm, e.g., hmacWithSHA256. Defaults to <code>hmac-sha1</code>, for backward compatibility with RFC 4210.</p>
 
 </dd>
 <dt id="extracerts-filenames-uris"><b>-extracerts</b> <i>filenames</i>|<i>uris</i></dt>
@@ -925,7 +925,7 @@
 <dt id="reqout_only-filename"><b>-reqout_only</b> <i>filename</i></dt>
 <dd>
 
-<p>Save the first CMP requests created by the client to the given file and exit. Any options related to CMP servers and their responses are ignored.</p>
+<p>Save the first CMP requests created by the client to the given file and exit. Any options related to CMP servers and their responses are ignored. This option does not combine with the <b>-port</b> option.</p>
 
 <p>This option is useful for supporting offline scenarios where the certificate request (or any other CMP request) is produced beforehand and sent out later.</p>
 
@@ -1133,7 +1133,7 @@
 <dt id="send_unprot_err"><b>-send_unprot_err</b></dt>
 <dd>
 
-<p>In case of negative responses, server shall send unprotected error messages, certificate responses (IP/CP/KUP), and revocation responses (RP). WARNING: This setting leads to behavior violating RFC 4210.</p>
+<p>In case of negative responses, server shall send unprotected error messages, certificate responses (IP/CP/KUP), and revocation responses (RP). WARNING: This setting leads to behavior violating RFC 9810.</p>
 
 </dd>
 <dt id="accept_unprotected"><b>-accept_unprotected</b></dt>
@@ -1151,7 +1151,7 @@
 <dt id="accept_raverified"><b>-accept_raverified</b></dt>
 <dd>
 
-<p>Accept RAVERIFED as proof of possession (POPO).</p>
+<p>Accept RAVERIFIED as proof of possession (POPO).</p>
 
 </dd>
 </dl>

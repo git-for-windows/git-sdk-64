@@ -35,7 +35,7 @@
 
 <p>The different algorithms names correspond to the parameter sets defined in <a href="https://csrc.nist.gov/pubs/fips/204/final">FIPS 204</a> Section 4 Table 1. (The signatures range in size from ~2.5K to ~4.5K depending on the type chosen). There are 3 different security categories also depending on the type.</p>
 
-<p><a href="../man3/EVP_SIGNATURE_fetch.html">EVP_SIGNATURE_fetch(3)</a> can be used to explicitely fetch one of the 3 algorithms which can then be used with <a href="../man3/EVP_PKEY_sign_message_init.html">EVP_PKEY_sign_message_init(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify_message_init.html">EVP_PKEY_verify_message_init(3)</a>, and <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a> to perform one-shot message signing or signature verification.</p>
+<p><a href="../man3/EVP_SIGNATURE_fetch.html">EVP_SIGNATURE_fetch(3)</a> can be used to explicitly fetch one of the 3 algorithms which can then be used with <a href="../man3/EVP_PKEY_sign_message_init.html">EVP_PKEY_sign_message_init(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify_message_init.html">EVP_PKEY_verify_message_init(3)</a>, and <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a> to perform one-shot message signing or signature verification.</p>
 
 <p>The normal signing process (called Pure ML-DSA Signature Generation) encodes the message internally as 0x00 || len(ctx) || ctx || message. where <b>ctx</b> is some optional value of size 0x00..0xFF. This process is defined in <a href="https://csrc.nist.gov/pubs/fips/204/final">FIPS 204</a> Algorithm 2 step 10 and Algorithm 3 step 5. OpenSSL also allows the message to not be encoded which is required for testing. OpenSSL does not support Pre Hash ML-DSA Signature Generation, but this may be done by the user by doing Pre hash encoding externally and then choosing the option to not encode the message.</p>
 
@@ -89,7 +89,7 @@
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>For backwards compatability reasons EVP_DigestSignInit_ex(), EVP_DigestSign(), EVP_DigestVerifyInit_ex() and EVP_DigestVerify() may also be used, but the digest passed in <i>mdname</i> must be NULL.</p>
+<p>For backwards compatibility reasons EVP_DigestSignInit_ex(), EVP_DigestSign(), EVP_DigestVerifyInit_ex() and EVP_DigestVerify() may also be used, but the digest passed in <i>mdname</i> must be NULL.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 

@@ -67,6 +67,8 @@ int OSSL_DECODER_CTX_set_passphrase_cb(OSSL_DECODER_CTX *ctx,
 
 <p>If no suitable decoder implementation is found, OSSL_DECODER_CTX_new_for_pkey() still creates a <b>OSSL_DECODER_CTX</b>, but with no associated decoder (<a href="../man3/OSSL_DECODER_CTX_get_num_decoders.html">OSSL_DECODER_CTX_get_num_decoders(3)</a> returns zero). This helps the caller to distinguish between an error when creating the <b>OSSL_ENCODER_CTX</b> and missing encoder implementation, and allows it to act accordingly.</p>
 
+<p>Note that OSSL_DECODER_CTX_new_for_pkey() finalises the OSSL_DECODER_CTX; after that the OSSL_DECODER_CTX_set_* and OSSL_DECODER_CTX_add_* functions described in <a href="../man3/OSSL_DECODER_CTX.html">OSSL_DECODER_CTX(3)</a> shouldn&#39;t be called.</p>
+
 <p>OSSL_DECODER_CTX_set_passphrase() gives the implementation a pass phrase to use when decrypting the encoded private key. Alternatively, a pass phrase callback may be specified with the following functions.</p>
 
 <p>OSSL_DECODER_CTX_set_pem_password_cb(), OSSL_DECODER_CTX_set_passphrase_ui() and OSSL_DECODER_CTX_set_passphrase_cb() set up a callback method that the implementation can use to prompt for a pass phrase, giving the caller the choice of preferred pass phrase callback form. These are called indirectly, through an internal <a href="../man3/OSSL_PASSPHRASE_CALLBACK.html">OSSL_PASSPHRASE_CALLBACK(3)</a> function.</p>

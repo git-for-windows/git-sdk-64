@@ -97,7 +97,7 @@ int OSSL_CMP_SRV_CTX_set_grant_implicit_confirm(OSSL_CMP_SRV_CTX *srv_ctx,
 
 <p>OSSL_CMP_SRV_process_request() implements the generic aspects of a CMP server. Its arguments are the <b>OSSL_CMP_SRV_CTX</b> <i>srv_ctx</i> and the CMP request message <i>req</i>. It does the typical generic checks on <i>req</i>, calls the respective callback function (if present) for more specific processing, and then assembles a result message, which may be a CMP error message. If after return of the function the expression <i>OSSL_CMP_CTX_get_status(OSSL_CMP_SRV_CTX_get0_cmp_ctx(srv_ctx))</i> yields -1 then the function has closed the current transaction, which may be due to normal successful end of the transaction or due to an error.</p>
 
-<p>OSSL_CMP_CTX_server_perform() is an interface to OSSL_CMP_SRV_process_request() that can be used by a CMP client in the same way as <a href="../man3/OSSL_CMP_MSG_http_perform.html">OSSL_CMP_MSG_http_perform(3)</a>. The <b>OSSL_CMP_SRV_CTX</b> must be set as <i>transfer_cb_arg</i> of <i>client_ctx</i>.</p>
+<p>OSSL_CMP_CTX_server_perform() is an interface to OSSL_CMP_SRV_process_request() that can be used by a CMP client in the same way as <a href="../man3/OSSL_CMP_MSG_http_perform.html">OSSL_CMP_MSG_http_perform(3)</a>. In particular, the first parameter <i>client_ctx</i> is the <b>OSSL_CMP_CTX</b> of the client. The <b>OSSL_CMP_SRV_CTX</b> must be set as <i>transfer_cb_arg</i> of <i>client_ctx</i>.</p>
 
 <p>OSSL_CMP_SRV_CTX_new() creates and initializes an <b>OSSL_CMP_SRV_CTX</b> structure associated with the library context <i>libctx</i> and property query string <i>propq</i>, both of which may be NULL to select the defaults.</p>
 
@@ -121,7 +121,7 @@ int OSSL_CMP_SRV_CTX_set_grant_implicit_confirm(OSSL_CMP_SRV_CTX *srv_ctx,
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>CMP is defined in RFC 4210 (and CRMF in RFC 4211).</p>
+<p>CMP is defined in RFC 9810 (and CRMF in RFC 4211).</p>
 
 <p>So far the CMP server implementation is limited to one request per CMP message (and consequently to at most one response component per CMP message).</p>
 

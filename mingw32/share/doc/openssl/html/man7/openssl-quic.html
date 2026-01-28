@@ -26,6 +26,7 @@
   <li><a href="#QUIC-SPECIFIC-APIS">QUIC-SPECIFIC APIS</a></li>
   <li><a href="#THREAD-ASSISTED-MODE">THREAD ASSISTED MODE</a></li>
   <li><a href="#APPLICATION-DRIVEN-EVENT-LOOPS">APPLICATION-DRIVEN EVENT LOOPS</a></li>
+  <li><a href="#WINDOWS-APPLICATION-NOTES">WINDOWS APPLICATION NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -359,7 +360,7 @@
 <dt id="SSL_accept_connection-3"><a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a></dt>
 <dd>
 
-<p>Accepts a new incoming connection for a listner SSL object. A new SSL object representing the accepted connection is created and returned on success. If no incoming connection is available and the listener SSL object is configured in nonblocking mode, NULL is returned.</p>
+<p>Accepts a new incoming connection for a listener SSL object. A new SSL object representing the accepted connection is created and returned on success. If no incoming connection is available and the listener SSL object is configured in nonblocking mode, NULL is returned.</p>
 
 </dd>
 <dt id="SSL_get_accept_connection_queue_len-3"><a href="../man3/SSL_get_accept_connection_queue_len.html">SSL_get_accept_connection_queue_len(3)</a></dt>
@@ -627,13 +628,19 @@
 </li>
 </ul>
 
+<h1 id="WINDOWS-APPLICATION-NOTES">WINDOWS APPLICATION NOTES</h1>
+
+<p>QUIC protocol uses UDP sockets. The recvfrom() function on Windows may fail with <code>WSAECONNRESET</code> error causing OpenSSL QUIC stack to enter permanent error, which prevents further communication over QUIC protocol. Applications should disable SIO_UDP_CONNRESET and SIO_UDP_NETRESET error notification on UDP sockets they pass to OpenSSL QUIC stack. More details can be found here: https://learn.microsoft.com/en-us/windows/win32/winsock/winsock-ioctls#sio_udp_connreset-opcode-setting-i-t3</p>
+
+<p>OpenSSL attempts to always disable SIO_UDP_CONNRESET and SIO_UDP_NETRESET on UDP sockets it receives from application, but no error is reported back if the respective <code>WSAIoctl()</code> calls fail. Robust application should set those options itself so it can handle error notifications from <code>WSAIoctl()</code> properly.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/SSL_handle_events.html">SSL_handle_events(3)</a>, <a href="../man3/SSL_get_event_timeout.html">SSL_get_event_timeout(3)</a>, <a href="../man3/SSL_net_read_desired.html">SSL_net_read_desired(3)</a>, <a href="../man3/SSL_net_write_desired.html">SSL_net_write_desired(3)</a>, <a href="../man3/SSL_get_rpoll_descriptor.html">SSL_get_rpoll_descriptor(3)</a>, <a href="../man3/SSL_get_wpoll_descriptor.html">SSL_get_wpoll_descriptor(3)</a>, <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a>, <a href="../man3/SSL_shutdown_ex.html">SSL_shutdown_ex(3)</a>, <a href="../man3/SSL_set1_initial_peer_addr.html">SSL_set1_initial_peer_addr(3)</a>, <a href="../man3/SSL_stream_conclude.html">SSL_stream_conclude(3)</a>, <a href="../man3/SSL_stream_reset.html">SSL_stream_reset(3)</a>, <a href="../man3/SSL_get_stream_read_state.html">SSL_get_stream_read_state(3)</a>, <a href="../man3/SSL_get_stream_read_error_code.html">SSL_get_stream_read_error_code(3)</a>, <a href="../man3/SSL_get_conn_close_info.html">SSL_get_conn_close_info(3)</a>, <a href="../man3/SSL_get0_connection.html">SSL_get0_connection(3)</a>, <a href="../man3/SSL_get_stream_type.html">SSL_get_stream_type(3)</a>, <a href="../man3/SSL_get_stream_id.html">SSL_get_stream_id(3)</a>, <a href="../man3/SSL_new_stream.html">SSL_new_stream(3)</a>, <a href="../man3/SSL_accept_stream.html">SSL_accept_stream(3)</a>, <a href="../man3/SSL_set_incoming_stream_policy.html">SSL_set_incoming_stream_policy(3)</a>, <a href="../man3/SSL_set_default_stream_mode.html">SSL_set_default_stream_mode(3)</a>, <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, <a href="../man3/SSL_new_listener_from.html">SSL_new_listener_from(3)</a>, <a href="../man3/SSL_is_listener.html">SSL_is_listener(3)</a>, <a href="../man3/SSL_get0_listener.html">SSL_get0_listener(3)</a>, <a href="../man3/SSL_listen.html">SSL_listen(3)</a>, <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>, <a href="../man3/SSL_get_accept_connection_queue_len.html">SSL_get_accept_connection_queue_len(3)</a>, <a href="../man3/SSL_new_domain.html">SSL_new_domain(3)</a>, <a href="../man3/SSL_is_domain.html">SSL_is_domain(3)</a>, <a href="../man3/SSL_get0_domain.html">SSL_get0_domain(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2022-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2022-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
