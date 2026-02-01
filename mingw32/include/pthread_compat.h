@@ -60,6 +60,16 @@
 #ifndef WIN_PTHREADS_PTHREAD_COMPAT_H
 #define WIN_PTHREADS_PTHREAD_COMPAT_H
 
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#define WINPTHREADS_STATIC_ASSERT(expr, msg) static_assert ((expr), msg)
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+#define WINPTHREADS_STATIC_ASSERT(expr, msg) static_assert ((expr), msg)
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define WINPTHREADS_STATIC_ASSERT(expr, msg) _Static_assert ((expr), msg)
+#else
+#define WINPTHREADS_STATIC_ASSERT(expr, msg) extern int winpthreads_static_assert[((expr) ? 1 : -1)]
+#endif
+
 #if defined(_USE_32BIT_TIME_T)
 #define WINPTHREADS_TIME_BITS 32
 #else
@@ -104,9 +114,24 @@ typedef unsigned short mode_t;
 
 #elif _MSC_VER
 
+/**
+ * If package which includes this header file is using autoconf and calls
+ * AC_TYPE_PID_T macro, the check for pid_t will fail and it will define pid_t
+ * as a macro in config.h - this eventually results in compilation error.
+ *
+ * Luckily, it defines it to the same base type, so we can simply undefine it.
+ */
 #ifdef _WIN64
+#ifdef pid_t
+WINPTHREADS_STATIC_ASSERT (sizeof (pid_t) == sizeof(__int64), "pid_t is defined as a macro with mismatching base type");
+#undef pid_t
+#endif
 typedef __int64 pid_t;
 #else
+#ifdef pid_t
+WINPTHREADS_STATIC_ASSERT (sizeof (pid_t) == sizeof(int), "pid_t is defined as a macro with mismatching base type");
+#undef pid_t
+#endif
 typedef int     pid_t;
 #endif
 
