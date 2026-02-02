@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
 <html>
-<!-- Created on July, 8 2025 by texi2html 1.78a -->
+<!-- Created on November, 11 2025 by texi2html 1.78a -->
 <!--
 Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
             Karl Berry  <karl@freefriends.org>
@@ -49,12 +49,16 @@ ul.toc {list-style: none}
 <ul class="toc">
   <li><a name="TOC1" href="#SEC1">1. Introduction</a></li>
   <li><a name="TOC2" href="#SEC2">2. The <code>autosprintf</code> class</a></li>
-  <li><a name="TOC3" href="#SEC3">3. Using <code>autosprintf</code> in own programs</a></li>
-  <li><a name="TOC4" href="#SEC4">A. Licenses</a>
+  <li><a name="TOC3" href="#SEC3">3. Using <code>autosprintf</code> in own programs</a>
   <ul class="toc">
-    <li><a name="TOC5" href="#SEC5">A.1 GNU LESSER GENERAL PUBLIC LICENSE</a></li>
-    <li><a name="TOC6" href="#SEC10">A.2 GNU GENERAL PUBLIC LICENSE</a></li>
-    <li><a name="TOC7" href="#SEC14">A.3 GNU Free Documentation License</a></li>
+    <li><a name="TOC4" href="#SEC4">3.1 Source code changes</a></li>
+    <li><a name="TOC5" href="#SEC5">3.2 Build system changes</a></li>
+  </ul></li>
+  <li><a name="TOC6" href="#SEC6">A. Licenses</a>
+  <ul class="toc">
+    <li><a name="TOC7" href="#SEC7">A.1 GNU LESSER GENERAL PUBLIC LICENSE</a></li>
+    <li><a name="TOC8" href="#SEC12">A.2 GNU GENERAL PUBLIC LICENSE</a></li>
+    <li><a name="TOC9" href="#SEC16">A.3 GNU Free Documentation License</a></li>
   </ul>
 </li>
 </ul>
@@ -135,27 +139,52 @@ given <code>ostream</code>.
 <a name="SEC3"></a>
 <h1 class="chapter"> <a href="#TOC3">3. Using <code>autosprintf</code> in own programs</a> </h1>
 
-<p>To use the <code>autosprintf</code> class in your programs, you need to add
+<p>To use the <code>autosprintf</code> class in your programs, you need to make
+changes in the source code and in the build system.
+</p>
+
+<a name="Source-code-changes"></a>
+<a name="SEC4"></a>
+<h2 class="section"> <a href="#TOC4">3.1 Source code changes</a> </h2>
+
+<p>In source code files that shall use <code>autosprintf</code>, add
 </p>
 <table><tr><td>&nbsp;</td><td><pre class="smallexample">#include &quot;autosprintf.h&quot;
 using gnu::autosprintf;
 </pre></td></tr></table>
 
-<p>to your source code.
-The include file defines the class <code>autosprintf</code>, in a namespace called
+<p>The include file defines the class <code>autosprintf</code>, in a namespace called
 <code>gnu</code>. The &lsquo;<samp>using</samp>&rsquo; statement makes it possible to use the class
 without the (otherwise natural) <code>gnu::</code> prefix.
 </p>
+
+<a name="Build-system-changes"></a>
+<a name="SEC5"></a>
+<h2 class="section"> <a href="#TOC5">3.2 Build system changes</a> </h2>
+
+<p>When compiling your program with <code>g++</code>, use the warning option <code>-Wall</code>.
+This is needed so that you get a compiler warning when attempting to pass
+an <code>std::string</code> as argument.
+For example, if you accidentally write
+</p><table><tr><td>&nbsp;</td><td><pre class="smallexample">std::string s = ...;
+cout &lt;&lt; autosprintf (&quot;Look at %s\n&quot;, s);
+</pre></td></tr></table>
+<p>you want to get a compiler warning about passing an <code>std::string</code> through
+a variadic argument list, so that you can correct your code to
+</p><table><tr><td>&nbsp;</td><td><pre class="smallexample">std::string s = ...;
+cout &lt;&lt; autosprintf (&quot;Look at %s\n&quot;, s.c_str ());
+</pre></td></tr></table>
+
 <p>When linking your program, you need to link with <code>libasprintf</code>, because
-that's where the class is defined. In projects using GNU <code>autoconf</code>,
+that's where the class is defined.  In projects that use GNU <code>autoconf</code>,
 this means adding &lsquo;<samp>AC_LIB_LINKFLAGS([asprintf])</samp>&rsquo; to <code>configure.in</code>
 or <code>configure.ac</code>, and using the @LIBASPRINTF@ Makefile variable that
 it provides.
 </p>
 
 <a name="Licenses"></a>
-<a name="SEC4"></a>
-<h1 class="appendix"> <a href="#TOC4">A. Licenses</a> </h1>
+<a name="SEC6"></a>
+<h1 class="appendix"> <a href="#TOC6">A. Licenses</a> </h1>
 
 <p>The files of this package are covered by the licenses indicated in each
 particular file or directory.  Here is a summary:
@@ -166,7 +195,7 @@ The <code>libasprintf</code> library is covered by the
 GNU Lesser General Public License (LGPL), either version 2.1 of the
 License, or (at your option) any later version published by the
 Free Software Foundation (FSF).
-A copy of the license is included in <a href="#SEC5">GNU LESSER GENERAL PUBLIC LICENSE</a>.
+A copy of the license is included in <a href="#SEC7">GNU LESSER GENERAL PUBLIC LICENSE</a>.
 
 </li><li>
 This manual is free documentation.  It is dually licensed under the
@@ -179,21 +208,21 @@ GNU Free Documentation License (FDL), either version 1.2 of the
 License, or (at your option) any later version published by the
 Free Software Foundation (FSF); with no Invariant Sections, with no
 Front-Cover Text, and with no Back-Cover Texts.
-A copy of the license is included in <a href="#SEC14">GNU Free Documentation License</a>.
+A copy of the license is included in <a href="#SEC16">GNU Free Documentation License</a>.
 <br>
 This manual is covered by the GNU GPL.  You can redistribute it and/or
 modify it under the terms of the GNU General Public License (GPL), either
 version 2 of the License, or (at your option) any later version published
 by the Free Software Foundation (FSF).
-A copy of the license is included in <a href="#SEC10">GNU GENERAL PUBLIC LICENSE</a>.
+A copy of the license is included in <a href="#SEC12">GNU GENERAL PUBLIC LICENSE</a>.
 </li></ul>
 
 
 
 
 <a name="GNU-LGPL"></a>
-<a name="SEC5"></a>
-<h2 class="appendixsec"> <a href="#TOC5">A.1 GNU LESSER GENERAL PUBLIC LICENSE</a> </h2>
+<a name="SEC7"></a>
+<h2 class="appendixsec"> <a href="#TOC7">A.1 GNU LESSER GENERAL PUBLIC LICENSE</a> </h2>
 <p align="center"> Version 2.1, February 1999
 </p>
 
@@ -208,7 +237,7 @@ as the successor of the GNU Library Public License, version 2, hence the
 version number 2.1.]
 </pre></td></tr></table>
 
-<a name="SEC6"></a>
+<a name="SEC8"></a>
 <h3 class="subheading"> Preamble </h3>
 
 <p>  The licenses for most software are designed to take away your
@@ -311,7 +340,7 @@ modification follow.  Pay close attention to the difference between a
 former contains code derived from the library, whereas the latter must
 be combined with the library in order to run.
 </p>
-<a name="SEC7"></a>
+<a name="SEC9"></a>
 <h3 class="subheading"> TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION </h3>
 
 <ol>
@@ -690,11 +719,11 @@ SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGES.
 </li></ol>
 
-<a name="SEC8"></a>
+<a name="SEC10"></a>
 <h3 class="subheading"> END OF TERMS AND CONDITIONS </h3>
 
 
-<a name="SEC9"></a>
+<a name="SEC11"></a>
 <h3 class="subheading"> How to Apply These Terms to Your New Libraries </h3>
 
 <p>  If you develop a new library, and you want it to be of the greatest
@@ -742,8 +771,8 @@ Moe Ghoul, President of Vice
 
 </p>
 <a name="GNU-GPL"></a>
-<a name="SEC10"></a>
-<h2 class="appendixsec"> <a href="#TOC6">A.2 GNU GENERAL PUBLIC LICENSE</a> </h2>
+<a name="SEC12"></a>
+<h2 class="appendixsec"> <a href="#TOC8">A.2 GNU GENERAL PUBLIC LICENSE</a> </h2>
 <p align="center"> Version 2, June 1991
 </p>
 
@@ -754,7 +783,7 @@ Everyone is permitted to copy and distribute verbatim copies
 of this license document, but changing it is not allowed.
 </pre></td></tr></table>
 
-<a name="SEC11"></a>
+<a name="SEC13"></a>
 <h2 class="heading"> Preamble </h2>
 
 <p>  The licenses for most software are designed to take away your
@@ -805,7 +834,7 @@ patent must be licensed for everyone's free use or not licensed at all.
 <p>  The precise terms and conditions for copying, distribution and
 modification follow.
 </p>
-<a name="SEC12"></a>
+<a name="SEC14"></a>
 <h2 class="heading"> TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION </h2>
 
 <ol>
@@ -1052,7 +1081,7 @@ POSSIBILITY OF SUCH DAMAGES.
 
 
 
-<a name="SEC13"></a>
+<a name="SEC15"></a>
 <h2 class="heading"> Appendix: How to Apply These Terms to Your New Programs </h2>
 
 <p>  If you develop a new program, and you want it to be of the greatest
@@ -1117,8 +1146,8 @@ Public License instead of this License.
 
 </p>
 <a name="GNU-FDL"></a>
-<a name="SEC14"></a>
-<h2 class="appendixsec"> <a href="#TOC7">A.3 GNU Free Documentation License</a> </h2>
+<a name="SEC16"></a>
+<h2 class="appendixsec"> <a href="#TOC9">A.3 GNU Free Documentation License</a> </h2>
 <p align="center"> Version 1.3, 3 November 2008
 </p>
 
@@ -1579,7 +1608,7 @@ provided the MMC is eligible for relicensing.
 </li></ol>
 
 
-<a name="SEC15"></a>
+<a name="SEC17"></a>
 <h2 class="heading"> ADDENDUM: How to use this License for your documents </h2>
 
 <p>To use this License in a document you have written, include a copy of
@@ -1616,7 +1645,7 @@ to permit their use in free software.
 
 <p>
  <font size="-1">
-  This document was generated by <em>Bruno Haible</em> on <em>July, 8 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+  This document was generated by <em>Bruno Haible</em> on <em>November, 11 2025</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
  </font>
  <br>
 

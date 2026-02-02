@@ -2,7 +2,7 @@
 # All rights reserved. This program is free software; you can redistribute
 # it and/or modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::GSSAPI 2.1900;
+package Authen::SASL::Perl::GSSAPI 2.2000;
 
 use strict;
 use warnings;
@@ -228,7 +228,7 @@ Authen::SASL::Perl::GSSAPI - GSSAPI (Kerberosv5) Authentication class
 
 =head1 VERSION
 
-version 2.1900
+version 2.2000
 
 =head1 SYNOPSIS
 

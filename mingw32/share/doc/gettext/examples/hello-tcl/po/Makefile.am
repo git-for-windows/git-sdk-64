@@ -58,7 +58,6 @@ MSGMERGE_OPTIONS =
 MSGINIT_OPTIONS =
 
 MSGMERGE = @MSGMERGE@
-MSGMERGE_UPDATE = @MSGMERGE@ --update
 MSGMERGE_FOR_MSGFMT_OPTION = @MSGMERGE_FOR_MSGFMT_OPTION@
 MSGINIT = msginit
 MSGCONV = msgconv
@@ -75,8 +74,6 @@ ALL_LINGUAS != if test -f $(srcdir)/LINGUAS; then \
                fi
 # This is computed as $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(lang).po)
 POFILES != for lang in $(ALL_LINGUAS); do echo $(srcdir)/$$lang.po; done
-# This is computed as $(foreach lang, $(ALL_LINGUAS), $(lang).po-update)
-UPDATEPOFILES != for lang in $(ALL_LINGUAS); do echo $$lang.po-update; done
 # This is computed as $(foreach lang, $(ALL_LINGUAS), $(lang).nop)
 DUMMYPOFILES != for lang in $(ALL_LINGUAS); do echo $$lang.nop; done
 # This is computed as $(foreach lang, $(ALL_LINGUAS), $(srcdir)/$(frob $(lang)).msg)
@@ -84,9 +81,9 @@ DUMMYPOFILES != for lang in $(ALL_LINGUAS); do echo $$lang.nop; done
 MSGFILES != tab=`printf '\t'`; \
             for lang in $(ALL_LINGUAS); do \
               frobbedlang=`echo $$lang | sed -e 's/\..*$$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`; \
-              echo 1>&3 "$$frobbedlang.msg: $$lang.po"; \
-              echo 1>&3 "$${tab}@echo \"\$$(MSGFMT) -c --tcl -d \$$(srcdir) -l $$lang \$$(srcdir)/$$lang.po\"; \\"; \
-              echo 1>&3 "$${tab}\$$(MSGFMT) -c --tcl -d \"\$$(srcdir)\" -l $$lang \$$(srcdir)/$$lang.po || { rm -f \"\$$(srcdir)/$$frobbedlang.msg\"; exit 1; }"; \
+              echo 1>&3 "$$frobbedlang.msg: $$lang.po \$$(srcdir)/\$$(DOMAIN).pot"; \
+              echo 1>&3 "$${tab}@echo \"\$$(MSGMERGE) \$$(MSGMERGE_FOR_MSGFMT_OPTION) -o $$lang.gpo \$$(srcdir)/$$lang.po \$$(srcdir)/\$$(DOMAIN).pot && \$$(MSGFMT) -c --tcl -d \$$(srcdir) -l $$lang $$lang.gpo; rm -f $$lang.gpo\"; \\"; \
+              echo 1>&3 "$${tab}\$$(MSGMERGE) \$$(MSGMERGE_FOR_MSGFMT_OPTION) -o $$lang.gpo \$$(srcdir)/$$lang.po \$$(srcdir)/\$$(DOMAIN).pot && \$$(MSGFMT) -c --tcl -d \"\$$(srcdir)\" -l $$lang $$lang.gpo || { rm -f \"\$$(srcdir)/$$frobbedlang.msg\"; exit 1; }; rm -f $$lang.gpo"; \
               echo $(srcdir)/$$frobbedlang.msg; \
             done 3> .tcl-rules
 # Include the generated rules that cannot be formulated as a simple rule.
@@ -114,11 +111,66 @@ INST_LINGUAS != for presentlang in $(ALL_LINGUAS); do \
 # This is computed as $(foreach lang, $(INST_LINGUAS), $(frob $(lang)).msg)
 CATALOGS != for lang in $(INST_LINGUAS); do \
               frobbedlang=`echo $$lang | sed -e 's/\..*$$//' -e 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'`; \
-              echo $$frobbedlang.gmo; \
+              echo $$frobbedlang.msg; \
             done
 
-SUFFIXES = .nop .po-create .po-update
+SUFFIXES = .po .gpo .nop .po-create
 
+# Which files appear in release tarballs?
+#
+# The .msg files appear in release tarballs, because the GNU Coding Standards
+# say in
+# <https://www.gnu.org/prep/standards/html_node/Utilities-in-Makefiles.html>:
+#   "The configure script and the Makefile rules for building and installation
+#    should not use any utilities directly except these:
+#      awk ... true"
+# and 'msgfmt' is not in this list.  In other words, when a user - who does not
+# have the GNU gettext tools installed - does "make && make install", it should
+# install the .msg files.  The only way to achieve this is to include them in
+# the release tarballs.
+#
+# The .pot file appears in release tarballs, because it is needed when a
+# translator runs "msginit" to start working on a PO file or when a web-based
+# PO editor prepares the initial PO file for a translator.  Translators and
+# translation projects should not have to run 'xgettext' on some source code;
+# that's not their business, and they would not be in a good position to deal
+# with errors.
+#
+# The .po files appear in release tarballs, because
+#   - They are part of the source code of the .msg files, and it would be a bad
+#     idea to include the (generated) .msg files without their corresponding
+#     source code. Even if the .po files can be found on some translation
+#     project's site or in some separate git repository, users and distributors
+#     should not have to go that far, to hunt them down.
+#   - The .po file is needed when a translator runs "msginit" to continue
+#     working on a PO file (in packages that do not use a web-based translation
+#     project).
+# These .po files are those that the translators submitted or committed in
+# version control, or a translation project's daemon committed on behalf of the
+# translators.
+# Up until 2025, we included the *merged* .po files in the release tarballs.
+# These merged .po files, that we now name .gpo files in this Makefile,
+# are neither source code nor entirely generated files: They are a mix of
+# source code (from the translators) and generated parts (from the .pot file).
+# This caused two problems:
+#   * Regarding the tarballs: They are "non-source" files in the sense of
+#     <https://www.gnu.org/prep/standards/html_node/Releases.html>.
+#     Distributors who want to make sure that they rebuild everything from
+#     source had a problem here.
+#     Also, small changes in the package caused massive line number changes
+#     in the .po files.
+#   * Regarding version control:
+#     Packages that put the .po files under version control had changes in
+#     all .po files nearly each time "make dist" was invoked. Leading to
+#       - Lots of modified files shown by "git status",
+#       - Frequent merge conflicts when merging between branches,
+#       - A voluminous version control history.
+#     Whereas packages that do not put the .po files under version control
+#     had to fetch them from somewhere (usually a translation project),
+#     meaning that an 'autopull.sh' step was needed before the 'autogen.sh'
+#     step of the package's build system.
+# Instead, now, we include the original .po files in the release tarballs.
+#
 # The .pot file, stamp-po, .po files, and .msg files appear in release tarballs.
 # The GNU Coding Standards say in
 # <https://www.gnu.org/prep/standards/html_node/Makefile-Basics.html>:
@@ -128,6 +180,22 @@ SUFFIXES = .nop .po-create .po-update
 #    So Makefile rules to update them should put the updated files in the
 #    source directory."
 # Therefore we put these files in the source directory, not the build directory.
+
+# This target fetches the PO files, produced by translators, from a
+# translations project's site on the internet, and generates the associated
+# LINGUAS file (for packages that use such a translations project and where
+# this translation project does not already commit the PO files and the LINGUAS
+# file into the version control repository of the package automatically).
+.PHONY: fetch-po
+fetch-po:
+	cd $(srcdir) && @SHELL@ ./fetch-po
+
+# This target creates a merged PO file (mostly for debugging purposes).
+.po.gpo:
+	@lang=`echo $* | sed -e 's,.*/,,'`; \
+	echo "rm -f $${lang}.gpo && $(MSGMERGE) $(MSGMERGE_FOR_MSGFMT_OPTION) $(MSGMERGE_OPTIONS) -o $${lang}.gpo $(srcdir)/$${lang}.po $(srcdir)/$(DOMAIN).pot"; \
+	rm -f $${lang}.gpo && \
+	$(MSGMERGE) $(MSGMERGE_FOR_MSGFMT_OPTION) $(MSGMERGE_OPTIONS) -o $${lang}.gpo $(srcdir)/$${lang}.po $(srcdir)/$(DOMAIN).pot
 
 
 all-local: all-local-@USE_NLS@
@@ -147,8 +215,12 @@ all-local-no:
 # file is not under version control, "make" will update the $(DOMAIN).pot and
 # the $(CATALOGS), but subsequent invocations of "make" will do nothing. This
 # timestamp would not be necessary if updating the $(CATALOGS) would always
-# touch them; however, the rule for $(POFILES) has been designed to not touch
-# files that don't need to be changed.
+# touch them; however, the rule for $(DOMAIN).pot-update has been designed to
+# not touch $(srcdir)/$(DOMAIN).pot if it doesn't need to be changed.
+#
+# Note: The name 'stamp-po' is a bit misleading. It does *not* designate a
+# timestamp for the *.po files. Rather it is a timestamp for all generated
+# files in this directory.
 $(srcdir)/stamp-po: $(srcdir)/$(DOMAIN).pot
 	test ! -f $(srcdir)/$(DOMAIN).pot || \
 	  test -z "$(MSGFILES)" || $(MAKE) $(MSGFILES)
@@ -234,25 +306,11 @@ $(DOMAIN).pot-update: $(POTFILES_DEPS)
 $(srcdir)/$(DOMAIN).pot:
 	$(MAKE) $(DOMAIN).pot-update
 
-# This target rebuilds a PO file if $(DOMAIN).pot has changed.
-# Note that a PO file is not touched if it doesn't need to be changed.
-$(POFILES): $(srcdir)/$(DOMAIN).pot
+# This target attempts to build a PO file.
+$(POFILES):
 	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	if test -f "$(srcdir)/$${lang}.po"; then \
-	  test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
-	  echo "$${cdcmd}$(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot"; \
-	  cd $(srcdir) \
-	    && { case `$(MSGMERGE_UPDATE) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
-	           '' | 0.[0-9] | 0.[0-9].* | 0.10 | 0.10.*) \
-	             $(MSGMERGE_UPDATE) $(MSGMERGE_OPTIONS) $${lang}.po $(DOMAIN).pot;; \
-	           0.1[1-5] | 0.1[1-5].*) \
-	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) $${lang}.po $(DOMAIN).pot;; \
-	           0.1[6-7] | 0.1[6-7].*) \
-	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --previous $${lang}.po $(DOMAIN).pot;; \
-	           *) \
-	             $(MSGMERGE_UPDATE) --quiet $(MSGMERGE_OPTIONS) --lang=$${lang} --previous $${lang}.po $(DOMAIN).pot;; \
-	         esac; \
-	       }; \
+	  : ; \
 	else \
 	  $(MAKE) $${lang}.po-create; \
 	fi
@@ -290,7 +348,7 @@ DISTCLEANFILES = .tcl-rules
 
 MOSTLYCLEANFILES =
 MOSTLYCLEANFILES += stamp-poT
-MOSTLYCLEANFILES += core core.* *.stackdump $(DOMAIN).po $(DOMAIN).1po $(DOMAIN).2po *.new.po
+MOSTLYCLEANFILES += core core.* *.stackdump $(DOMAIN).po $(DOMAIN).1po $(DOMAIN).2po *.gpo *.new.po
 MOSTLYCLEANFILES += *.o
 
 MAINTAINERCLEANFILES = $(DOMAIN).pot stamp-po $(MSGFILES)
@@ -302,6 +360,10 @@ EXTRA_DIST = remove-potcdate.sed LINGUAS $(POFILES) $(MSGFILES)
 distdir1:
 	$(MAKE) update-po
 	$(MAKE) $(srcdir)/stamp-po
+	@for file in fetch-po; do \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  cp -p $$d/$$file $(distdir)/$$file || exit 1; \
+	done
 	@if test -f $(srcdir)/$(DOMAIN).pot; then \
 	  for file in $(DOMAIN).pot stamp-po; do \
 	    if test -f $$file; then d=.; else d=$(srcdir); fi; \
@@ -314,9 +376,11 @@ distdir1:
 	  esac; \
 	fi
 
+# This rule updates all generated files in this directory.
+# Note: The name 'update-po' is a bit misleading. It does *not* modify the *.po
+# files. But we can't rename it easily, because it's a documented target.
 update-po: Makefile
 	$(MAKE) $(DOMAIN).pot-update
-	test -z "$(UPDATEPOFILES)" || $(MAKE) $(UPDATEPOFILES)
 	$(MAKE) update-msg
 
 # General rule for creating PO files.
@@ -325,41 +389,6 @@ update-po: Makefile
 	@lang=`echo $@ | sed -e 's/\.po-create$$//'`; \
 	echo "File $$lang.po does not exist. If you are a translator, you can create it through 'msginit'." 1>&2; \
 	exit 1
-
-# General rule for updating PO files.
-
-.nop.po-update:
-	@lang=`echo $@ | sed -e 's/\.po-update$$//'`; \
-	tmpdir=`pwd`; \
-	echo "$$lang:"; \
-	test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
-	echo "$${cdcmd}$(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --lang=$$lang --previous $$lang.po $(DOMAIN).pot -o $$lang.new.po"; \
-	cd $(srcdir); \
-	if { case `$(MSGMERGE) --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
-	       '' | 0.[0-9] | 0.[0-9].* | 0.10 | 0.10.*) \
-	         $(MSGMERGE) $(MSGMERGE_OPTIONS) -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
-	       0.1[1-5] | 0.1[1-5].*) \
-	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
-	       0.1[6-7] | 0.1[6-7].*) \
-	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
-	       *) \
-	         $(MSGMERGE) --quiet $(MSGMERGE_OPTIONS) --lang=$$lang --previous -o $$tmpdir/$$lang.new.po $$lang.po $(DOMAIN).pot;; \
-	     esac; \
-	   }; then \
-	  if cmp $$lang.po $$tmpdir/$$lang.new.po >/dev/null 2>&1; then \
-	    rm -f $$tmpdir/$$lang.new.po; \
-	  else \
-	    if mv -f $$tmpdir/$$lang.new.po $$lang.po; then \
-	      :; \
-	    else \
-	      echo "msgmerge for $$lang.po failed: cannot move $$tmpdir/$$lang.new.po to $$lang.po" 1>&2; \
-	      exit 1; \
-	    fi; \
-	  fi; \
-	else \
-	  echo "msgmerge for $$lang.po failed!" 1>&2; \
-	  rm -f $$tmpdir/$$lang.new.po; \
-	fi
 
 $(DUMMYPOFILES):
 

@@ -13,6 +13,7 @@ rm -rf autom4te.cache
 rm -f m4/nls.m4
 rm -f m4/po.m4
 rm -f m4/progtest.m4
+rm -f po/fetch-po
 rm -f po/remove-potcdate.sed
 
 # Brought in by explicit copy.

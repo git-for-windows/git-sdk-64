@@ -31,7 +31,8 @@ cp -p ${ACLOCALDIR-$GETTEXT_TOPSRCDIR/gettext-runtime/gnulib-m4}/lib-ld.m4 m4/li
 cp -p ${ACLOCALDIR-$GETTEXT_TOPSRCDIR/gettext-runtime/gnulib-m4}/lib-link.m4 m4/lib-link.m4
 cp -p ${ACLOCALDIR-$GETTEXT_TOPSRCDIR/gettext-runtime/gnulib-m4}/lib-prefix.m4 m4/lib-prefix.m4
 cp -p ${GETTEXTSRCDIR-$GETTEXT_TOPSRCDIR/build-aux}/config.rpath config.rpath
-cp -p ${GETTEXTSRCPODIR-$GETTEXT_TOPSRCDIR/gettext-runtime/po}/remove-potcdate.sed po/remove-potcdate.sed
+cp -p ${GETTEXTSRCPODIR-$GETTEXT_TOPSRCDIR/gettext-tools/wizard/po-templates/traditional}/fetch-po po/fetch-po
+cp -p ${GETTEXTSRCPODIR-$GETTEXT_TOPSRCDIR/gettext-tools/wizard/po-templates/traditional}/remove-potcdate.sed po/remove-potcdate.sed
 
 aclocal -I m4
 

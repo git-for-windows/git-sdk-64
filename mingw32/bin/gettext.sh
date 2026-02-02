@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 2003-2025 Free Software Foundation, Inc.
+# Copyright (C) 2003-2026 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+# Written by Bruno Haible.
 
 # Find a way to echo strings without interpreting backslash.
 if test "X`(echo '\t') 2>/dev/null`" = 'X\t'; then
@@ -48,7 +49,7 @@ if test -z "${ZSH_VERSION+set}"; then
     gettext.sh | */gettext.sh | *\\gettext.sh)
       progname=$0
       package=gettext-runtime
-      version=0.26
+      version=1.0
       # func_usage
       # outputs to stdout the --help usage message.
       func_usage ()
@@ -61,11 +62,11 @@ if test -z "${ZSH_VERSION+set}"; then
       func_version ()
       {
         echo "$progname (GNU $package) $version"
-        echo "Copyright (C) 2003-2025 Free Software Foundation, Inc.
+        echo "Copyright (C) 2003-2026 Free Software Foundation, Inc.
 License GPLv2+: GNU GPL version 2 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law."
-        echo "Written by" "Bruno Haible"
+        printf 'Written by %s.\n' "Bruno Haible"
       }
       if test $# = 1; then
         case "$1" in

@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (C) 1995-2025 Free Software Foundation, Inc.
+# Copyright (C) 1995-2026 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
+# Written by Ulrich Drepper, Bruno Haible, and Daiki Ueno.
 
 # This file is meant for authors or maintainers which want to
 # internationalize their package with the help of GNU gettext.  For
@@ -22,8 +23,8 @@
 
 progname=$0
 package=gettext-tools
-version=0.26
-archive_version=0.26
+version=1.0
+archive_version=1.0
 
 # Set variables
 # - gettext_datadir     directory where the data files are stored.
@@ -206,11 +207,11 @@ or by email to <bug-gettext@gnu.org>."
 func_version ()
 {
   echo "$progname (GNU $package) $version"
-  echo "Copyright (C) 1995-2025 Free Software Foundation, Inc.
+  echo "Copyright (C) 1995-2026 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law."
-  echo "Written by" "Ulrich Drepper"
+  printf 'Written by %s and %s.\n' "Ulrich Drepper" "Bruno Haible"
 }
 
 # func_fatal_error message
@@ -283,7 +284,7 @@ unset CLICOLOR_FORCE GREP_OPTIONS
       --version | --versio | --versi | --vers | --ver | --ve | --v )
         func_version
         exit 0 ;;
-      -- ) # Stop option prcessing
+      -- ) # Stop option processing
         shift; break ;;
       -* )
         echo "gettextize: unknown option $1" 1>&2
@@ -757,6 +758,20 @@ You can then remove $podir/Makevars.template.
           please="$please
 Please create $podir/Makevars from the template in $podir/Makevars.template.
 You can then remove $podir/Makevars.template.
+"
+        fi
+        ;;
+      fetch-po)
+        if test -f "$srcdir/$podir/$file"; then
+          # This file may already be customized. Don't overwrite it.
+          :
+        else
+          if $do_changelog; then
+            func_poChangeLog_add_entry "	* $file: New file, from gettext-${version}."
+          fi
+          func_linkorcopy $file "$gettext_datadir/po/$file" "$podir/$file"
+          please="$please
+Please customize $podir/fetch-po, if appropriate.
 "
         fi
         ;;

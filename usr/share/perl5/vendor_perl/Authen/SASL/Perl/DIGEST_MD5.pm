@@ -5,7 +5,7 @@
 
 # See http://www.ietf.org/rfc/rfc2831.txt for details
 
-package Authen::SASL::Perl::DIGEST_MD5 2.1900;
+package Authen::SASL::Perl::DIGEST_MD5 2.2000;
 
 use strict;
 use warnings;
@@ -756,7 +756,7 @@ Authen::SASL::Perl::DIGEST_MD5 - (DEPRECATED) Digest MD5 Authentication class
 
 =head1 VERSION
 
-version 2.1900
+version 2.2000
 
 =head1 SYNOPSIS
 

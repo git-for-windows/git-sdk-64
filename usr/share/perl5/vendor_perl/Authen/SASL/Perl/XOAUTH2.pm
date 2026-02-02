@@ -4,9 +4,10 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::XOAUTH2 2.1900;
+package Authen::SASL::Perl::XOAUTH2 2.2000;
 
 use strict;
+use warnings;
 use vars qw(@ISA);
 use JSON::PP;
 
@@ -57,7 +58,7 @@ Authen::SASL::Perl::XOAUTH2 - XOAUTH2 Authentication class
 
 =head1 VERSION
 
-version 2.1900
+version 2.2000
 
 =head1 SYNOPSIS
 

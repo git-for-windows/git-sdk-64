@@ -2,7 +2,7 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl 2.1900;
+package Authen::SASL::Perl 2.2000;
 
 use strict;
 use warnings;
