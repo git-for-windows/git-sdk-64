@@ -276,7 +276,7 @@ sed -e 's/[ 	]*#.*//' -e '/^[ 	]*$/d' |
 				;;
 			esac
 			rule="$file: $objs \$(MODULE_${mods_upper}_LDEPS)"
-			rule="$rule; $ccld $objs $libs \$(BLDLIBRARY) -o $file"
+			rule="$rule; $ccld $objs \$(BLDLIBRARY) $libs -o $file"
 			echo "$rule" >>$rulesf
 		done
 	done

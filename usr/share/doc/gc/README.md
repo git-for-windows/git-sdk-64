@@ -1,6 +1,6 @@
 # Boehm-Demers-Weiser Garbage Collector
 
-This is version 8.2.10 of a conservative garbage
+This is version 8.2.12 of a conservative garbage
 collector for C and C++.
 
 
@@ -532,7 +532,7 @@ GitHub.
  * Copyright (c) 1991-1996 by Xerox Corporation.  All rights reserved.
  * Copyright (c) 1996-1999 by Silicon Graphics.  All rights reserved.
  * Copyright (c) 1999-2011 by Hewlett-Packard Development Company.
- * Copyright (c) 2008-2021 Ivan Maidanski
+ * Copyright (c) 2008-2025 Ivan Maidanski
 
 The files pthread_stop_world.c, pthread_support.c and some others are also
 

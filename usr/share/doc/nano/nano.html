@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 8.7.
+<p>This manual documents GNU <code>nano</code>, version 8.7.1.
 </p>
 
 
@@ -164,7 +164,8 @@ a command straight into a buffer, and then edit it.
 <li><a href="#Search-and-Replace" accesskey="6">Search and Replace</a></li>
 <li><a href="#Using-the-Mouse" accesskey="7">Using the Mouse</a></li>
 <li><a href="#Anchors" accesskey="8">Anchors</a></li>
-<li><a href="#Limitations" accesskey="9">Limitations</a></li>
+<li><a href="#Exit-status" accesskey="9">Exit status</a></li>
+<li><a href="#Limitations">Limitations</a></li>
 </ul>
 <hr>
 <div class="section" id="Screen-Layout">
@@ -349,8 +350,18 @@ and are always visualized (on the right-hand side) in the mini bar.
 </p>
 <hr>
 </div>
+<div class="section" id="Exit-status">
+<span id="Exit-status-1"></span><h3 class="section">3.9 Exit status</h3>
+
+<p>The exit status is <code>0</code> when <code>nano</code> finished normally,
+<code>1</code> when an invalid option or option argument was given,
+and <code>2</code> when the last open buffer was discarded
+(with <kbd>^O^Q</kbd> or <kbd>^X^Q</kbd>).
+</p>
+<hr>
+</div>
 <div class="section" id="Limitations">
-<span id="Limitations-1"></span><h3 class="section">3.9 Limitations</h3>
+<span id="Limitations-1"></span><h3 class="section">3.10 Limitations</h3>
 
 <p>The recording and playback of keyboard macros works correctly only on a
 terminal emulator, not on a Linux console (VT), because the latter does
@@ -584,7 +595,10 @@ instead of always at the edge of the screen.
 </dd>
 <dt><span><samp>-b</samp></span></dt>
 <dt><span><samp>--breaklonglines</samp></span></dt>
-<dd><p>Automatically hard-wrap the current line when it becomes overlong.
+<dd><p>Automatically hard-wrap the current line when it becomes overlong,
+that is: when the line becomes wider than the value given with <samp>-r</samp>
+(<samp>--fill</samp>).  The default value for <samp>-r</samp> is the terminal&rsquo;s
+width minus eight.
 (This option is the opposite of <samp>-w</samp> (<samp>--nowrap</samp>) &mdash;
 the last one given takes effect.)
 </p>
@@ -1010,7 +1024,9 @@ closing brackets, can end sentences.  The default value is
 </p>
 </dd>
 <dt><span><code>set breaklonglines</code></span></dt>
-<dd><p>Automatically hard-wrap the current line when it becomes overlong.
+<dd><p>Automatically hard-wrap the current line when it becomes overlong &mdash; that
+is: when the line becomes wider than the value given with <code>set fill</code>
+(which defaults to the width of the terminal minus eight).
 </p>
 </dd>
 <dt><span><code>set casesensitive</code></span></dt>
@@ -2044,9 +2060,8 @@ it from DOS/Mac format.  Converting is the default.
 </p>
 </dd>
 <dt><span><code>discardbuffer</code></span></dt>
-<dd><p>When about to write a file, discard the current buffer without saving.
-(This function is bound by default only when option <samp>--saveonexit</samp>
-is in effect.)
+<dd><p>Discards the current buffer without saving (when in the Write Out menu).
+When it was the last buffer, then <code>nano</code> exits with error status 2.
 </p>
 </dd>
 <dt><span><code>browser</code></span></dt>

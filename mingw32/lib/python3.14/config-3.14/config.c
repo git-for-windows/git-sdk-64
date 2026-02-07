@@ -1,4 +1,4 @@
-/* Generated automatically from ../Python-3.14.2/Modules/config.c.in by makesetup. */
+/* Generated automatically from ../Python-3.14.3/Modules/config.c.in by makesetup. */
 /* Module configuration */
 
 /* !!! !!! !!! This file is edited by the makesetup script !!! !!! !!! */
