@@ -1,5 +1,5 @@
 /* Compiler compatibility macros
-   Copyright (C) 1991-2025 Free Software Foundation, Inc.
+   Copyright (C) 1991-2026 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
 This program is free software; you can redistribute it and/or modify
@@ -154,7 +154,7 @@ So instead we use the macro below and test it against specific values.  */
    before GCC 3.3, but as of 3.3 we need to add the `nonnull'
    attribute to retain this behavior.  */
 #ifndef ATTRIBUTE_PRINTF
-#define ATTRIBUTE_PRINTF(m, n) __attribute__ ((__format__ (gnu_printf, m, n))) ATTRIBUTE_NONNULL(m)
+#define ATTRIBUTE_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n))) ATTRIBUTE_NONNULL(m)
 #define ATTRIBUTE_PRINTF_1 ATTRIBUTE_PRINTF(1, 2)
 #define ATTRIBUTE_PRINTF_2 ATTRIBUTE_PRINTF(2, 3)
 #define ATTRIBUTE_PRINTF_3 ATTRIBUTE_PRINTF(3, 4)
@@ -182,7 +182,7 @@ So instead we use the macro below and test it against specific values.  */
    NULL format specifier was allowed as of gcc 3.3.  */
 #ifndef ATTRIBUTE_NULL_PRINTF
 # if (GCC_VERSION >= 3003)
-#  define ATTRIBUTE_NULL_PRINTF(m, n) __attribute__ ((__format__ (gnu_printf, m, n)))
+#  define ATTRIBUTE_NULL_PRINTF(m, n) __attribute__ ((__format__ (__printf__, m, n)))
 # else
 #  define ATTRIBUTE_NULL_PRINTF(m, n)
 # endif /* GNUC >= 3.3 */
