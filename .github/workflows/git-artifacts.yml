@@ -77,7 +77,8 @@ jobs:
           git tag -m "Snapshot build" "$tag_name" FETCH_HEAD &&
           git bundle create bundle-artifacts/git.bundle origin/main.."$tag_name" &&
 
-          sh -x /usr/src/build-extra/please.sh mention feature "Snapshot of $(git show -s  --pretty='tformat:%h (%s, %ad)' --date=short FETCH_HEAD)" &&
+          snapshot="$(git show -s  --pretty='tformat:%h (%s, %ad)' --date=short FETCH_HEAD)" &&
+          (cd /usr/src/build-extra && node ./add-release-note.js --commit feature "Snapshot of $snapshot") &&
           git -C /usr/src/build-extra bundle create "$PWD/bundle-artifacts/build-extra.bundle" origin/main..main
       - name: 'Publish bundle-artifacts'
         uses: actions/upload-artifact@v6
