@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "homepage_uri" => "https://github.com/ruby/typeprof", "source_code_uri" => "https://github.com/ruby/typeprof" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Yusuke Endoh".freeze]
-  s.date = "2025-09-16"
+  s.date = "2025-12-17"
   s.description = "TypeProf performs a type analysis of non-annotated Ruby code.\n\nIt abstractly executes input Ruby code in a level of types instead of values, gathers what types are passed to and returned by methods, and prints the analysis result in RBS format, a standard type description format for Ruby 3.0.\n".freeze
   s.email = ["mame@ruby-lang.org".freeze]
   s.executables = ["typeprof".freeze]

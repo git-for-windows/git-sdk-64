@@ -3732,7 +3732,7 @@ module Prism
     # Represents the predicate of the case statement. This can be either `nil` or any [non-void expressions](https://github.com/ruby/prism/blob/main/docs/parsing_rules.md#non-void-expression).
     #
     #     case true; when false; end
-    #     ^^^^
+    #          ^^^^
     attr_reader :predicate
 
     # Represents the conditions of the case statement.

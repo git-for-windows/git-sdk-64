@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("3.4.") or
-    raise "ruby lib version (3.4.6) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (3.4.8) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/3.4.0/i386-mingw32")
@@ -21,8 +21,8 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "3"
   CONFIG["MINOR"] = "4"
-  CONFIG["TEENY"] = "6"
-  CONFIG["PATCHLEVEL"] = "54"
+  CONFIG["TEENY"] = "8"
+  CONFIG["PATCHLEVEL"] = "72"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
   CONFIG["prefix"] = (TOPDIR || DESTDIR + "/mingw32")

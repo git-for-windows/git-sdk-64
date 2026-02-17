@@ -25,7 +25,7 @@ module Prism
 
     # The patch version of prism that we are expecting to find in the serialized
     # strings.
-    PATCH_VERSION = 1
+    PATCH_VERSION = 2
 
     # Deserialize the dumped output from a request to parse or parse_file.
     #
@@ -397,6 +397,7 @@ module Prism
         :conditional_while_predicate,
         :constant_path_colon_colon_constant,
         :def_endless,
+        :def_endless_parameters,
         :def_endless_setter,
         :def_name,
         :def_params_term,

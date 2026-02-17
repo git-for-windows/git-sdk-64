@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "bug_tracker_uri" => "https://github.com/ruby/json/issues", "changelog_uri" => "https://github.com/ruby/json/blob/master/CHANGES.md", "documentation_uri" => "https://ruby.github.io/json/doc/index.html", "homepage_uri" => "https://ruby.github.io/json", "source_code_uri" => "https://github.com/ruby/json", "wiki_uri" => "https://github.com/ruby/json/wiki" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Florian Frank".freeze]
-  s.date = "2025-09-16"
+  s.date = "2025-12-17"
   s.description = "This is a JSON implementation as a Ruby extension in C.".freeze
   s.email = "flori@ping.de".freeze
   s.extra_rdoc_files = ["README.md".freeze]

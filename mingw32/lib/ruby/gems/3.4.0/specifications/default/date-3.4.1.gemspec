@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.metadata = { "changelog_uri" => "https://github.com/ruby/date/releases" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Tadayoshi Funaba".freeze]
-  s.date = "2025-09-16"
+  s.date = "2025-12-17"
   s.description = "A subclass of Object includes Comparable module for handling dates.".freeze
   s.email = [nil]
   s.extensions = ["ext/date/extconf.rb".freeze]
