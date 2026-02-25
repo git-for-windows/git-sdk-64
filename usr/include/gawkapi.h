@@ -3,7 +3,8 @@
  */
 
 /*
- * copyright (c) 2012-2019, 2021-2024, the free software foundation, inc.
+ * copyright (c) 2012-2019, 2021-2024, 2026
+ * the Free Software Foundation, Inc.
  *
  * This file is part of GAWK, the GNU implementation of the
  * AWK Programming Language.
@@ -304,7 +305,7 @@ typedef struct awk_two_way_processor {
 } awk_two_way_processor_t;
 
 #define gawk_api_major_version 4
-#define gawk_api_minor_version 0
+#define gawk_api_minor_version 1
 
 /* Current version of the API. */
 enum {
