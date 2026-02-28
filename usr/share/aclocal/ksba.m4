@@ -9,7 +9,7 @@
 # WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# Last-changed: 2024-06-13
+# Last-changed: 2025-09-25
 
 dnl
 dnl Find gpgrt-config, which uses .pc file
@@ -130,7 +130,7 @@ AC_DEFUN([AM_PATH_KSBA],
   fi
 
   use_gpgrt_config=""
-  if test x"$GPGRT_CONFIG" != x -a "$GPGRT_CONFIG" != "no"; then
+  if test x"$GPGRT_CONFIG" != x && test "$GPGRT_CONFIG" != "no"; then
     if $GPGRT_CONFIG ksba --exists; then
       KSBA_CONFIG="$GPGRT_CONFIG ksba"
       AC_MSG_NOTICE([Use gpgrt-config as ksba-config])
