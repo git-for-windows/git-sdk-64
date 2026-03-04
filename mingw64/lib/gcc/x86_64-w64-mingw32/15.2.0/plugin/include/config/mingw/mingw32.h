@@ -241,7 +241,6 @@ along with GCC; see the file COPYING3.  If not see
 /* For native mingw-version we need to take care that NATIVE_SYSTEM_HEADER_DIR
    macro contains POSIX-style path.  See bug 52947.  */
 #undef NATIVE_SYSTEM_HEADER_DIR
-#define NATIVE_SYSTEM_HEADER_DIR "D:/M/msys64/mingw64/include"
 
 /* Output STRING, a string representing a filename, to FILE.
    We canonicalize it to be in Unix format (backslashes are replaced
