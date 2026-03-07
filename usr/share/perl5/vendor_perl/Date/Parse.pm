@@ -6,46 +6,46 @@ package Date::Parse;
 
 require 5.000;
 use strict;
-use vars qw($VERSION @ISA @EXPORT);
 use Time::Local;
 use Carp;
 use Time::Zone;
 use Exporter;
 
-@ISA = qw(Exporter);
-@EXPORT = qw(&strtotime &str2time &strptime);
+our @ISA = qw(Exporter);
+our @EXPORT = qw(&strtotime &str2time &strptime);
 
-$VERSION = "2.33";
+our $VERSION = '2.34'; # VERSION: generated
+# ABSTRACT: Parse date strings into time values
 
 my %month = (
-	january		=> 0,
-	february	=> 1,
-	march		=> 2,
-	april		=> 3,
-	may		=> 4,
-	june		=> 5,
-	july		=> 6,
-	august		=> 7,
-	september	=> 8,
-	sept		=> 8,
-	october		=> 9,
-	november	=> 10,
-	december	=> 11,
-	);
+    january   => 0,
+    february  => 1,
+    march     => 2,
+    april     => 3,
+    may       => 4,
+    june      => 5,
+    july      => 6,
+    august    => 7,
+    september => 8,
+    sept      => 8,
+    october   => 9,
+    november  => 10,
+    december  => 11,
+    );
 
 my %day = (
-	sunday		=> 0,
-	monday		=> 1,
-	tuesday		=> 2,
-	tues		=> 2,
-	wednesday	=> 3,
-	wednes		=> 3,
-	thursday	=> 4,
-	thur		=> 4,
-	thurs		=> 4,
-	friday		=> 5,
-	saturday	=> 6,
-	);
+    sunday    => 0,
+    monday    => 1,
+    tuesday   => 2,
+    tues      => 2,
+    wednesday => 3,
+    wednes    => 3,
+    thursday  => 4,
+    thur      => 4,
+    thurs     => 4,
+    friday    => 5,
+    saturday  => 6,
+    );
 
 my @suf = (qw(th st nd rd th th th th th th)) x 3;
 @suf[11,12,13] = qw(th th th);
@@ -62,9 +62,9 @@ my $strptime = <<'ESQ';
  my $sufpat = join("|", reverse sort map { lc $_ } @$suf_ref);
 
  my %ampm = (
-	'a' => 0,  # AM
-	'p' => 12, # PM
-	);
+    'a' => 0,  # AM
+    'p' => 12, # PM
+    );
 
  my($AM, $PM) = (0,12);
 
@@ -88,9 +88,15 @@ sub {
   # Time: 12:00 or 12:00:00 with optional am/pm
 
   return unless $dtstr =~ /\S/;
-  
+
   if ($dtstr =~ s/\s(\d{4})([-:]?)(\d\d?)\2(\d\d?)(?:[-Tt ](\d\d?)(?:([-:]?)(\d\d?)(?:\6(\d\d?)(?:[.,](\d+))?)?)?)?(?=\D)/ /) {
     ($year,$month,$day,$hh,$mm,$ss,$frac) = ($1,$3-1,$4,$5,$7,$8,$9);
+  }
+
+  # default C++ boost timestamp is effectively %Y-%b-%d %H:%M:%S.%f
+  # details: https://svn.boost.org/trac/boost/ticket/8839
+  if ($dtstr =~ s/\s(\d{4})([-:]?)(\w{3,})\2(\d\d?)(?:[-Tt ](\d\d?)(?:([-:]?)(\d\d?)(?:\6(\d\d?)(?:[.,](\d+))?)?)?)?(?=\D)/ /) {
+    ($year,$month,$day,$hh,$mm,$ss,$frac) = ($1,$month{$3},$4,$5,$7,$8,$9);
   }
 
   unless (defined $hh) {
@@ -101,13 +107,13 @@ sub {
     }
 
     # Time: 12 am
-    
+
     elsif ($dtstr =~ s#\s(\d\d?)\s*([ap])\.?m?\.?\s# #o) {
       ($hh,$mm,$ss) = ($1,0,0);
       $merid = $ampm{$2};
     }
   }
-    
+
   if (defined $hh and $hh <= 12 and $dtstr =~ s# ([ap])\.?m?\.?\s# #o) {
     $merid = $ampm{$1};
   }
@@ -115,22 +121,22 @@ sub {
 
   unless (defined $year) {
     # Date: 12-June-96 (using - . or /)
-    
+
     if ($dtstr =~ s#\s(\d\d?)([\-\./])($monpat)(\2(\d\d+))?\s# #o) {
       ($month,$day) = ($month{$3},$1);
       $year = $5 if $5;
     }
-    
+
     # Date: 12-12-96 (using '-', '.' or '/' )
-    
+
     elsif ($dtstr =~ s#\s(\d+)([\-\./])(\d\d?)(\2(\d+))?\s# #o) {
       ($month,$day) = ($1 - 1,$3);
 
       if ($5) {
-	$year = $5;
-	# Possible match for 1995-01-24 (short mainframe date format);
-	($year,$month,$day) = ($1, $3 - 1, $5) if $month > 12;
-	return if length($year) > 2 and $year < 1901;
+    $year = $5;
+    # Possible match for 1995-01-24 (short mainframe date format);
+    ($year,$month,$day) = ($1, $3 - 1, $5) if $month > 12;
+    return if length($year) > 2 and $year < 1901;
       }
     }
     elsif ($dtstr =~ s#\s(\d+)\s*($sufpat)?\s*($monpat)# #o) {
@@ -207,7 +213,7 @@ sub {
 }
 ESQ
 
-use vars qw($day_ref $mon_ref $suf_ref $obj);
+our ($day_ref, $mon_ref, $suf_ref, $obj);
 
 sub gen_parser
 {
@@ -234,7 +240,7 @@ sub str2time
  my @t = strptime(@_);
 
  return undef
-	unless @t;
+    unless @t;
 
  my($ss,$mm,$hh,$day,$month,$year,$zone, $century) = @t;
  my @lt  = localtime(time);
@@ -247,20 +253,20 @@ sub str2time
  $ss = int $ss;
 
  $month = $lt[4]
-	unless(defined $month);
+    unless(defined $month);
 
  $day  = $lt[3]
-	unless(defined $day);
+    unless(defined $day);
 
  $year = ($month > $lt[4]) ? ($lt[5] - 1) : $lt[5]
-	unless(defined $year);
+    unless(defined $year);
 
  # we were given a 4 digit year, so let's keep using those
  $year += 1900 if defined $century;
 
  return undef
-	unless($month <= 11 && $day >= 1 && $day <= 31
-		&& $hh <= 23 && $mm <= 59 && $ss <= 59);
+    unless($month <= 11 && $day >= 1 && $day <= 31
+        && $hh <= 23 && $mm <= 59 && $ss <= 59);
 
  my $result;
 
@@ -273,7 +279,7 @@ sub str2time
      if !defined $result
         or $result == -1
            && join("",$ss,$mm,$hh,$day,$month,$year)
-     	        ne "595923311169";
+                ne "595923311169";
    $result -= $zone;
  }
  else {
@@ -285,7 +291,7 @@ sub str2time
      if !defined $result
         or $result == -1
            && join("",$ss,$mm,$hh,$day,$month,$year)
-     	        ne join("",(localtime(-1))[0..5]);
+                ne join("",(localtime(-1))[0..5]);
  }
 
  return $result + $frac;
@@ -295,18 +301,26 @@ sub str2time
 
 __END__
 
+=pod
+
+=encoding UTF-8
 
 =head1 NAME
 
 Date::Parse - Parse date strings into time values
 
+=head1 VERSION
+
+version 2.34
+
 =head1 SYNOPSIS
 
-	use Date::Parse;
-	
-	$time = str2time($date);
-	
-	($ss,$mm,$hh,$day,$month,$year,$zone) = strptime($date);
+    use Date::Parse;
+
+    my $date = "Wed, 16 Jun 94 07:29:35 CST";
+    my $time = str2time($date);
+
+    my ($ss,$mm,$hh,$day,$month,$year,$zone) = strptime($date);
 
 =head1 DESCRIPTION
 
@@ -330,13 +344,17 @@ failure.
 
 =back
 
+=head1 NAME
+
+Date::Parse - Parse date strings into time values
+
 =head1 MULTI-LANGUAGE SUPPORT
 
 Date::Parse is capable of parsing dates in several languages, these include
 English, French, German and Italian.
 
-	$lang = Date::Language->new('German');
-	$lang->str2time("25 Jun 1996 21:09:55 +0100");
+    $lang = Date::Language->new('German');
+    $lang->str2time("25 Jun 1996 21:09:55 +0100");
 
 =head1 EXAMPLE DATES
 
@@ -344,7 +362,7 @@ Below is a sample list of dates that are known to be parsable with Date::Parse
 
  1995:01:24T09:08:17.1823213           ISO-8601
  1995-01-24T09:08:17.1823213
- Wed, 16 Jun 94 07:29:35 CST           Comma and day name are optional 
+ Wed, 16 Jun 94 07:29:35 CST           Comma and day name are optional
  Thu, 13 Oct 94 10:13:13 -0700
  Wed, 9 Nov 1994 09:50:32 -0500 (EST)  Text in ()'s will be ignored.
  21 dec 17:05                          Will be parsed in the current time zone
@@ -352,13 +370,7 @@ Below is a sample list of dates that are known to be parsable with Date::Parse
  21/dec 17:05
  21/dec/93 17:05
  1999 10:02:18 "GMT"
- 16 Nov 94 22:28:20 PST 
-
-=head1 LIMITATION
-
-Date::Parse uses L<Time::Local> internally, so is limited to only parsing dates
-which result in valid values for Time::Local::timelocal. This generally means dates
-between 1901-12-17 00:00:00 GMT and 2038-01-16 23:59:59 GMT
+ 16 Nov 94 22:28:20 PST
 
 =head1 BUGS
 
@@ -384,5 +396,15 @@ Copyright (c) 1995-2009 Graham Barr. This program is free
 software; you can redistribute it and/or modify it under the same terms
 as Perl itself.
 
-=cut
+=head1 AUTHOR
 
+Graham <gbarr@pobox.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2020 by Graham Barr.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

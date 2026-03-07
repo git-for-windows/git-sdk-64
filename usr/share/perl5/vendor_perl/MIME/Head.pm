@@ -142,7 +142,7 @@ my $singleton_headers =
      'content-id',
     ];
 
-# The presence of a duplicated parameters in one of the following
+# The presence of a duplicated or empty parameters in one of the following
 # headers in a given MIME entity could indicate an ambiguous parse and
 # hence a security risk
 my $singleton_parameter_headers =
@@ -159,7 +159,7 @@ my $singleton_parameter_headers =
 #------------------------------
 
 ### The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.515";
+$VERSION = "5.517";
 
 ### Sanity (we put this test after our own version, for CPAN::):
 use Mail::Header 1.06 ();
@@ -223,6 +223,9 @@ sub ambiguous_content {
 
     foreach my $hdr (@$singleton_parameter_headers) {
         if ($self->mime_attr($hdr . '.@duplicate_parameters')) {
+            return 1;
+        }
+        if ($self->mime_attr($hdr . '.@empty_parameters')) {
             return 1;
         }
     }
@@ -732,10 +735,31 @@ would return:
 
     [ 'boundary' ]
 
-A duplicate "boundary" tag should be treated as a security risk, as should
-duplicate Content-Type headers in a message.  Since such messages cannot
-be parsed unambiguously, we strongly recommend that they never be
+Similarly he special sub-field tag C<@empty_parameters> (which can never be
+a real tag) returns an arrayref of tags that had an empty parameter value
+in the header, or C<undef> if no such tags were found. For example, given
+the header:
+
+    Content-Type: multipart/mixed; boundary=;
+
+Then:
+
+    $head->mime_attr('content-type.@emtpy_parameters')
+
+would return:
+
+    [ 'boundary' ]
+
+A duplicate or empty "boundary" tag should be treated as a security risk, as
+should duplicate Content-Type headers in a message.  Since such messages
+cannot be parsed unambiguously, we strongly recommend that they never be
 delivered to end-users.
+
+Note also that a parameter explicitly set to blank via something like:
+
+    Content-Type: application/octet-stream; boundary=""
+
+I<will> populate C<@empty_parameters>
 
 =cut
 

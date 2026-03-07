@@ -1,4 +1,4 @@
-*version9.txt*	For Vim version 9.2.  Last change: 2026 Feb 16
+*version9.txt*	For Vim version 9.2.  Last change: 2026 Mar 02
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -52585,10 +52585,16 @@ work in progress.
 Popups ~
 ------
 - Support for transparency, see |popup-opacity|.
+- 'previewpopup' supports the same values as 'completepopup' (except for
+  "align").
 
 Other ~
 -----
-The new |xdg.vim| script for full XDG compatibility is included
+- The new |xdg.vim| script for full XDG compatibility is included.
+- |ConPTY| support is considered stable as of Windows 11.
+- Support for "dap" channel mode for the |debug-adapter-protocol|.
+- |status-line| can use several lines, see 'statuslineopt'.
+- New "leadtab" value for the 'listchars' setting.
 
 							*changed-9.3*
 Changed~
@@ -52597,6 +52603,17 @@ Changed~
 							*added-9.3*
 Added ~
 -----
+Various syntax, indent and other plugins were added.
+
+Autocommands: ~
+
+|SessionLoadPre|	before loading a |Session| file
+
+Options: ~
+
+'statuslineopt'		Extra options for the 'statusline', e.g. use the
+			"maxheight" suboption to use several lines.
+'winhighlight'		Window-local highlight group mappings.
 
 ==============================================================================
 PATCHES						*patches-9.3* *bug-fixes-9.3*

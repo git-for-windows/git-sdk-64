@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/d/S/B/src/Python-3.12.12
-abs_builddir=	/d/S/B/src/Python-3.12.12
+abs_srcdir=	/d/S/B/src/Python-3.12.13
+abs_builddir=	/d/S/B/src/Python-3.12.13
 
 
 CC=		gcc

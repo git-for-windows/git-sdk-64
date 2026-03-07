@@ -80,7 +80,7 @@ use MIME::Tools qw(:config :msgs);
 #------------------------------
 
 # The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.515";
+$VERSION = "5.517";
 
 
 #------------------------------
@@ -220,6 +220,7 @@ sub parse_params {
     my ($self, $raw) = @_;
     my %params;
     my %dup_params;
+    my %empty_params;
     my %rfc2231params;
     my %rfc2231encoding_is_used;
     my $param;
@@ -242,8 +243,8 @@ sub parse_params {
 	$raw =~ m/\G[^;]*(\;$SPCZ)+/og or last;             # skip leading separator
 	$raw =~ m/\G($PARAMNAME)\s*=\s*/og or last;      # give up if not a param
 	$param = lc($1);
-	$raw =~ m/\G(?:$QUOTED_STRING|($ENCTOKEN)|($TOKEN)|($BADTOKEN))/g or last;   # give up if no value"
-	my ($qstr, $enctoken, $token, $badtoken) = ($1, $2, $3, $4, $5);
+	$raw =~ m/\G(?:$QUOTED_STRING|($ENCTOKEN)|($TOKEN)|($BADTOKEN)|())/g or last;
+	my ($qstr, $enctoken, $token, $badtoken, $empty_value) = ($1, $2, $3, $4, $5);
 	if (defined($qstr)) {
             # unescape
 	    $qstr =~ s/\\(.)/$1/g;
@@ -264,7 +265,8 @@ sub parse_params {
 	}
 	$val = defined($qstr) ? $qstr :
 	    (defined($enctoken) ? $enctoken :
-	     (defined($badtoken) ? $badtoken : $token));
+	     (defined($badtoken) ? $badtoken :
+              (defined($token) ? $token : $empty_value)));
 
 	# Do RFC 2231 processing
 	# Pick out the parts of the parameter
@@ -291,6 +293,9 @@ sub parse_params {
             }
             $params{$param} = $val;
 	}
+        if (($val // '') eq '') {
+            $empty_params{$param} = 1;
+        }
     }
 
     # Extract reconstructed parameters
@@ -316,6 +321,9 @@ sub parse_params {
 		$params{$param} = '=?' . $enc . '?Q?' . $val . '?=';
 	    }
 	}
+        if ($params{$param} eq '') {
+            $empty_params{$param} = 1;
+        }
 	debug "   field param <$param> = <$params{$param}>";
     }
 
@@ -324,6 +332,13 @@ sub parse_params {
     # name of a real parameter
     if (%dup_params) {
         $params{'@duplicate_parameters'} = [ sort(keys(%dup_params)) ];
+    }
+
+    # If there are any empty parameters, store them in the
+    # special key '@empty_parameters' which should never be the
+    # name of a real parameter
+    if (%empty_params) {
+        $params{'@empty_parameters'} = [ sort(keys(%empty_params)) ];
     }
     # Done:
     \%params;

@@ -4,18 +4,25 @@
 ## Traditional date format is: DoW DD{eta} MoY Year (%A %o %B %Y)
 ##
 ## Matthew Musgrove <muskrat@mindless.com>
-## Translations gratiously provided by Menelaos Stamatelos <men@kwsn.net>
+## Translations graciously provided by Menelaos Stamatelos <men@kwsn.net>
 ## This module returns unicode (utf8) encoded characters.  You will need to
 ## take the necessary steps for this to display correctly.
 ##
 
 package Date::Language::Greek;
 
+use strict;
+use warnings;
 use utf8;
+
 use Date::Language ();
-use vars qw(@ISA @DoW @DoWs @MoY @MoYs @AMPM @Dsuf %MoY %DoW $VERSION);
-@ISA = qw(Date::Language);
-$VERSION = "1.00";
+
+use base 'Date::Language';
+
+our $VERSION = '2.34'; # VERSION: generated
+# ABSTRACT: Greek localization for Date::Format
+
+our (@DoW, @DoWs, @MoY, @MoYs, @AMPM, @Dsuf, %MoY, %DoW);
 
 @DoW = (
 "\x{039a}\x{03c5}\x{03c1}\x{03b9}\x{03b1}\x{03ba}\x{03ae}",
@@ -70,10 +77,7 @@ $VERSION = "1.00";
 
 @Dsuf = ("\x{03b7}" x 31);
 
-@MoY{@MoY}  = (0 .. scalar(@MoY));
-@MoY{@MoYs} = (0 .. scalar(@MoYs));
-@DoW{@DoW}  = (0 .. scalar(@DoW));
-@DoW{@DoWs} = (0 .. scalar(@DoWs));
+Date::Language::_build_lookups();
 
 # Formatting routines
 
@@ -87,5 +91,29 @@ sub format_p { $_[0]->[2] >= 12 ?  $AMPM[1] : $AMPM[0] }
 
 1;
 
+__END__
 
+=pod
 
+=encoding UTF-8
+
+=head1 NAME
+
+Date::Language::Greek - Greek localization for Date::Format
+
+=head1 VERSION
+
+version 2.34
+
+=head1 AUTHOR
+
+Graham <gbarr@pobox.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2020 by Graham Barr.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
