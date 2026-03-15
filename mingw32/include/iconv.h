@@ -1,4 +1,4 @@
-/* Copyright (C) 1999-2024 Free Software Foundation, Inc.
+/* Copyright (C) 1999-2026 Free Software Foundation, Inc.
    This file is part of the GNU LIBICONV Library.
 
    The GNU LIBICONV Library is free software; you can redistribute it
@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-#define _LIBICONV_VERSION 0x0112    /* version number: (major<<8) + minor */
+#define _LIBICONV_VERSION 0x0113    /* version number: (major<<8) + minor */
 extern __declspec (dllimport) int _libiconv_version; /* Likewise */
 
 #ifdef __cplusplus
