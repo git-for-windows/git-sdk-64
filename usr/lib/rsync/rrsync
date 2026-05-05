@@ -46,6 +46,7 @@ long_opts = {
   'compare-dest': 2,
   'compress-choice': 1,
   'compress-level': 1,
+  'compress-threads': 1,
   'copy-dest': 2,
   'copy-devices': -1,
   'copy-unsafe-links': 0,
@@ -59,6 +60,7 @@ long_opts = {
   'delete-during': 0,
   'delete-excluded': 0,
   'delete-missing-args': 0,
+  'dirs': 0,
   'existing': 0,
   'fake-super': 0,
   'files-from': 3,
@@ -300,6 +302,7 @@ def validated_arg(opt, arg, typ=3, wild=False):
     if arg.startswith('./'):
         arg = arg[1:]
     arg = arg.replace('//', '/')
+    arg = arg.lstrip('/')
     if args.dir != '/':
         if HAS_DOT_DOT_RE.search(arg):
             die("do not use .. in", opt, "(anchor the path at the root of your restricted dir)")

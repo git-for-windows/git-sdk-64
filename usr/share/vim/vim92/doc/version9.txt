@@ -1,4 +1,4 @@
-*version9.txt*	For Vim version 9.2.  Last change: 2026 Apr 21
+*version9.txt*	For Vim version 9.2.  Last change: 2026 May 02
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -52587,6 +52587,7 @@ Popups ~
 - Support for transparency, see |popup-opacity|.
 - 'previewpopup' supports the same values as 'completepopup' (except for
   "align").
+- Support "opacity" setting for 'completepopup' option.
 
 Diff mode ~
 ---------
@@ -52616,13 +52617,19 @@ Other ~
 - Allow mouse clickable regions in the 'statusline', 'tabline' and the
   'tabpanel' using the |stl-%[FuncName]| atom.
 - Enable reflow support in the |:terminal|.
-- Added "scroll" and "scrollbar" sub-options to 'tabpanelopt' so the
-  tabpanel can scroll when the tab list exceeds the visible screen
-  height.
+- Enabled scrolling for the tabpanel when the tab page list exceeds the screen
+  height.  Also added the "scrollbar" sub-option to 'tabpanelopt'.
+- Added the "noinsert" value to the 'wildmode' option for symmetry with the
+  'completeopt' option
+- Channel can handle |Blob| messages |channel-open-options|.
+- Added the "u" flag to 'shortmess' to silence undo/redo messages: |shm-u|
+- |:command-completion-customlist| can return a list of dictionaries with
+  kind/menu/info/abbr for the popup menu.
 
 Platform specific ~
 -----------------
 - support OpenType font features in 'guifont' for DirectWrite (Win32)
+- Include strptime() fallback for MS-Windows
 
 xxd ~
 ---
@@ -52642,6 +52649,9 @@ Changed ~
 - Removed the Wayland focus steal feature 'wlsteal', since it causes too many
   issues and can now be re-implemted using the |clipboard-providers| feature
   if needed, see |wayland-primary-selection| for an example.
+- On Unix, filename completion for single-file Ex commands now treats embedded
+  whitespace as part of the filename, like on other platforms.
+
 
 							*added-9.3*
 Added ~
@@ -52651,6 +52661,8 @@ Various syntax, indent and other plugins were added.
 Functions: ~
 
 |ch_listen()|		listen on {address}
+|tabpanel_getinfo()|	get current state of the |tabpanel|
+|tabpanel_scroll()|	scroll the |tabpanel|
 
 Autocommands: ~
 
