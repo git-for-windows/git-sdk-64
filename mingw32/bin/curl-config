@@ -82,20 +82,20 @@ while test "$#" -gt 0; do
     ;;
 
   --feature|--features)
-    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ''; do
+    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ''; do
       test -n "$feature" && echo "$feature"
     done
     ;;
 
   --protocols)
     # shellcheck disable=SC2043
-    for protocol in DICT FILE FTP FTPS GOPHER GOPHERS HTTP HTTPS IMAP IMAPS IPFS IPNS LDAP LDAPS MQTT MQTTS POP3 POP3S RTSP SCP SFTP SMB SMBS SMTP SMTPS TELNET TFTP WS WSS; do
+    for protocol in DICT FILE FTP FTPS GOPHER GOPHERS HTTP HTTPS IMAP IMAPS IPFS IPNS LDAP LDAPS MQTT MQTTS POP3 POP3S RTSP SCP SFTP SMTP SMTPS TELNET TFTP WS WSS; do
       echo "$protocol"
     done
     ;;
 
   --version)
-    echo 'libcurl 8.19.0'
+    echo 'libcurl 8.20.0'
     exit 0
     ;;
 
@@ -107,11 +107,11 @@ while test "$#" -gt 0; do
     # dash as that's used for things like version 1.2.3-pre1
     cpatch=`echo "$checkfor" | cut -d. -f3 | cut -d- -f1`
 
-    vmajor=`echo '8.19.0' | cut -d. -f1`
-    vminor=`echo '8.19.0' | cut -d. -f2`
+    vmajor=`echo '8.20.0' | cut -d. -f1`
+    vminor=`echo '8.20.0' | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
-    vpatch=`echo '8.19.0' | cut -d. -f3 | cut -d- -f1`
+    vpatch=`echo '8.20.0' | cut -d. -f3 | cut -d- -f1`
 
     if test "$vmajor" -gt "$cmajor"; then
       exit 0
@@ -127,12 +127,12 @@ while test "$#" -gt 0; do
       fi
     fi
 
-    echo "requested version $checkfor is newer than existing 8.19.0"
+    echo "requested version $checkfor is newer than existing 8.20.0"
     exit 1
     ;;
 
   --vernum)
-    echo '081300'
+    echo '081400'
     exit 0
     ;;
 
