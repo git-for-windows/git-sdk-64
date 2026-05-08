@@ -77,7 +77,10 @@
 #endif
 
 #ifndef WINPTHREAD_API
-# ifdef WINPTHREADS_USE_DLLIMPORT
+  /**
+   * Allow `WINPTHREAD_STATIC` to override `WINPTHREADS_USE_DLLIMPORT`.
+   */
+# if defined(WINPTHREADS_USE_DLLIMPORT) && !defined(WINPTHREAD_STATIC)
 #  define WINPTHREAD_API  __declspec(dllimport)
 # else
 #  define WINPTHREAD_API

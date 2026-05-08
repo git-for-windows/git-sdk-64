@@ -1713,7 +1713,7 @@ static inline HRESULT IProtectedModeMenuServices_LoadMenuID(IProtectedModeMenuSe
 
 #endif
 #endif
-#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY_DESKTOP_APP, WINAPI_PARTITION_APP)
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)
 typedef struct tagPAGESET { } PAGESET;
 #endif
 /* Begin additional prototypes for all interfaces */

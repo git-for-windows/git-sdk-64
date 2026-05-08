@@ -489,6 +489,6 @@ interface IProtectedModeMenuServices : IUnknown {
 cpp_quote("#endif")
 cpp_quote("#endif")
 
-cpp_quote("#if WINAPI_FAMILY_ONE_PARTITION(WINAPI_FAMILY_DESKTOP_APP, WINAPI_PARTITION_APP)")
+cpp_quote("#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP)")
 cpp_quote("typedef struct tagPAGESET { } PAGESET;")
 cpp_quote("#endif")
