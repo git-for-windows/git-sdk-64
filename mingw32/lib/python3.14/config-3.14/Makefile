@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.14
-srcdir=		../Python-3.14.4
-VPATH=		../Python-3.14.4
-abs_srcdir=	/d/W/B/src/build-MINGW32/../Python-3.14.4
+srcdir=		../Python-3.14.5
+VPATH=		../Python-3.14.5
+abs_srcdir=	/d/W/B/src/build-MINGW32/../Python-3.14.5
 abs_builddir=	/d/W/B/src/build-MINGW32
 
 
@@ -49,7 +49,7 @@ LIBPYTHON=-lpython3.14
 GITVERSION=	
 GITTAG=		
 GITBRANCH=	
-PGO_PROF_GEN_FLAG=-fprofile-generate -fprofile-update=atomic
+PGO_PROF_GEN_FLAG=-fprofile-generate
 PGO_PROF_USE_FLAG=-fprofile-use -fprofile-correction
 LLVM_PROF_MERGER=true
 LLVM_PROF_FILE=
@@ -131,7 +131,9 @@ PY_CORE_CFLAGS=	$(PY_STDMODULE_CFLAGS) -DPy_BUILD_CORE
 PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 # Strict or non-strict aliasing flags used to compile dtoa.c, see above
 CFLAGS_ALIASING=-fno-strict-aliasing
-RCFLAGS= -DFIELD3=4150 -O COFF --target=pe-i386
+# Compilation flags only for ceval.c.
+CFLAGS_CEVAL=
+RCFLAGS= -DFIELD3=5150 -O COFF --target=pe-i386
 
 
 # Machine-dependent subdirectories
@@ -158,8 +160,8 @@ host_exec_prefix= 	${exec_prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		D:/W/B/src/Python-3.14.4
-abs_srcdir_b2h=		D:/W/B/src/Python-3.14.4
+srcdir_b2h=		D:/W/B/src/Python-3.14.5
+abs_srcdir_b2h=		D:/W/B/src/Python-3.14.5
 abs_builddir_b2h=	D:/W/B/src/build-MINGW32
 prefix_b2h=		D:/M/msys64/mingw32
 
@@ -1268,7 +1270,7 @@ $(PYTHONFRAMEWORKDIR)/Versions/$(VERSION)/$(PYTHONFRAMEWORK): \
 	$(INSTALL) -d -m $(DIRMODE) $(PYTHONFRAMEWORKDIR)/Versions/$(VERSION)
 	$(CC) -o $(LDLIBRARY) $(PY_CORE_LDFLAGS) -dynamiclib \
 		-all_load $(LIBRARY) \
-		-install_name $(DESTDIR)$(PYTHONFRAMEWORKINSTALLNAMEPREFIX)/$(PYTHONFRAMEWORK) \
+		-install_name $(PYTHONFRAMEWORKINSTALLNAMEPREFIX)/$(PYTHONFRAMEWORK) \
 		-compatibility_version $(VERSION) \
 		-current_version $(VERSION) \
 		-framework CoreFoundation $(LIBS);
@@ -3374,6 +3376,9 @@ regen-jit:
 # https://bugs.llvm.org//show_bug.cgi?id=31928
 Python/dtoa.o: Python/dtoa.c
 	$(CC) -c $(PY_CORE_CFLAGS) $(CFLAGS_ALIASING) -o $@ $<
+
+Python/ceval.o: Python/ceval.c
+	$(CC) -c $(PY_CORE_CFLAGS) $(CFLAGS_CEVAL) -o $@ $<
 
 # Run reindent on the library
 .PHONY: reindent
