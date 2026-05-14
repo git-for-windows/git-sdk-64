@@ -146,10 +146,12 @@ class BaseReference(ABC):
         if self._children is None:
             self._children = [None] * self.child_count()
         for idx in range(start, start + count):
+            # DAP was clarified to say that if too many children are
+            # requested, this is not an error, but instead the result
+            # is just truncated.
+            # https://github.com/microsoft/debug-adapter-protocol/issues/571
             if idx >= len(self._children):
-                raise DAPException(
-                    f"requested child {idx} outside range of variable {self._ref}"
-                )
+                break
             if self._children[idx] is None:
                 (name, value) = self.fetch_one_child(idx)
                 name = self._compute_name(name)
