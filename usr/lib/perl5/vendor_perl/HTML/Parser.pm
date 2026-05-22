@@ -2,7 +2,7 @@ package HTML::Parser;
 
 use strict;
 
-our $VERSION = '3.83';
+our $VERSION = '3.85';
 
 require HTML::Entities;
 
@@ -482,8 +482,6 @@ then C<dtext> will be reported as "\xE2\x99\xA5\x{2665}" without
 C<utf8_mode> enabled, but as "\xE2\x99\xA5\xE2\x99\xA5" when enabled.
 The later string is what you want.
 
-This option is only available with perl-5.8 or better.
-
 =item $p->xml_mode
 
 =item $p->xml_mode( $bool )
@@ -695,9 +693,7 @@ automatically decoded unless the event was inside a CDATA section or
 was between literal start and end tags (C<script>, C<style>,
 C<xmp>, C<iframe>, C<title>, C<textarea> and C<plaintext>).
 
-The Unicode character set is assumed for entity decoding.  With Perl
-version 5.6 or earlier only the Latin-1 range is supported, and
-entities for characters outside the range 0..255 are left unchanged.
+The Unicode character set is assumed for entity decoding.
 
 This passes undef except for C<text> events.
 
@@ -958,8 +954,7 @@ of whitespace between two text events.
 
 =head2 Unicode
 
-C<HTML::Parser> can parse Unicode strings when running under
-perl-5.8 or better.  If Unicode is passed to $p->parse() then chunks
+If Unicode is passed to $p->parse() then chunks
 of Unicode will be reported to the handlers.  The offset and length
 argspecs will also report their position in terms of characters.
 

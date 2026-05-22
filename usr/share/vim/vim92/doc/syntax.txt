@@ -1,4 +1,4 @@
-*syntax.txt*	For Vim version 9.2.  Last change: 2026 May 04
+*syntax.txt*	For Vim version 9.2.  Last change: 2026 May 17
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -5992,28 +5992,13 @@ EndOfBuffer	Filler lines (~) after the last line in the buffer.
 							*hl-ErrorMsg*
 ErrorMsg	Error messages on the command line.
 							*hl-VertSplit*
-VertSplit	Column separating vertically split windows that are adjacent
-		to the current window.  The cell character and highlight at
-		each screen row depend on what is at that row on both sides
-		of the separator:
-		- On a status line row of the current window: the cell is
-		  drawn as a space with the |hl-StatusLine| highlight, so it
-		  visually merges into the current window's status line.
-		- On any other row (including a row that is a status line
-		  row of the adjacent non-current window but not of the
-		  current window): the cell is drawn with the "vert" item of
-		  'fillchars' and the VertSplit highlight.
+VertSplit	Column separating vertically split windows that is adjacent
+		to the current window.  Drawn with the "vert" item of
+		'fillchars'.
 							*hl-VertSplitNC*
 VertSplitNC	Column separating vertically split windows where neither
-		adjacent window is the current window.  The cell character
-		and highlight at each screen row depend on what is at that
-		row on both sides of the separator:
-		- On a status line row of either adjacent (non-current)
-		  window: the cell is drawn as a space with the
-		  |hl-StatusLineNC| highlight of that window, so it visually
-		  merges into that window's status line.
-		- On any other row: the cell is drawn with the "vert" item
-		  of 'fillchars' and the VertSplitNC highlight.
+		adjacent window is the current window.  Drawn with the
+		"vert" item of 'fillchars'.
 		By default, highlighted like |hl-VertSplit|.
 							*hl-Folded*
 Folded		Line used for closed folds.
@@ -6092,6 +6077,18 @@ PmenuShadow	Popup menu: Used for shadow.
 ComplMatchIns	Matched text of the currently inserted completion.
 							*hl-PreInsert*
 PreInsert	Text inserted when "preinsert" is in 'completeopt'.
+							*hl-Popup*
+Popup		Popup window body, used when neither the popup's 'wincolor'
+		nor explicit "highlight" argument is set.  Linked to |hl-Pmenu|
+		by default.
+							*hl-PopupBorder*
+PopupBorder	Popup window border characters, used when "borderhighlight" is
+		not set and the popup's 'wincolor' is also not set.
+		Linked to |hl-Pmenu| by default.
+							*hl-PopupTitle*
+PopupTitle	Popup window title, used when "borderhighlight" is not set and
+		the popup's 'wincolor' is also not set.  Linked to
+		|hl-Pmenu| by default.
 							*hl-PopupSelected*
 PopupSelected	Popup window created with |popup_menu()|.  Linked to
 		|hl-PmenuSel| by default.
@@ -6130,13 +6127,14 @@ SpellRare	Word that is recognized by the spellchecker as one that is
 		hardly ever used. |spell|
 		This will be combined with the highlighting used otherwise.
 							*hl-StatusLine*
-StatusLine	Status line of current window.
-		Also used for the vertical separator cell adjacent to the
-		current window's status line.  see |hl-VertSplit|.
+StatusLine	Status line of current window.  The highlight at the status
+		line's edge (StatusLine, or any %#... / %N* in 'statusline')
+		also extends into the adjacent vertical separator cell when
+		the status lines are connected (no 'vert' character drawn).
 							*hl-StatusLineNC*
-StatusLineNC	status lines of not-current windows.
-		Also used for the vertical separator cell adjacent to the
-		non-current window's status line.  see |hl-VertSplitNC|.
+StatusLineNC	status lines of not-current windows.  Like |hl-StatusLine|,
+		the edge highlight also extends into the adjacent vertical
+		separator cell.
 		Note: If this is equal to "StatusLine", Vim will use "^^^" in
 		the status line of the current window.
 							*hl-StatusLineTerm*

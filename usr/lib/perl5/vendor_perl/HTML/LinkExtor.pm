@@ -2,7 +2,7 @@ package HTML::LinkExtor;
 
 require HTML::Parser;
 our @ISA = qw(HTML::Parser);
-our $VERSION = '3.83';
+our $VERSION = '3.85';
 
 =head1 NAME
 

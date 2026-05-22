@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.2.  Last change: 2026 May 07
+*options.txt*	For Vim version 9.2.  Last change: 2026 May 18
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -3983,9 +3983,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|String| and is the |:find| command argument.  The second argument is
 	a |Boolean| and is set to |v:true| when the function is called to get
 	a List of command-line completion matches for the |:find| command.
-	The function should return a List of strings, or, in the command-line
-	completion case, whatever a |:command-completion-customlist| function
-	may return.
+	The function should return a List, which is handled similarly to the
+	return value of a |:command-completion-customlist| function.
 
 	The function is called only once per |:find| command invocation.
 	The function can process all the directories specified in 'path'.
@@ -4775,7 +4774,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 				     [:PmenuKind,]:PmenuKindSel,
 				     {:PmenuExtra,}:PmenuExtraSel,
 				     x:PmenuSbar,X:PmenuThumb,j:PmenuBorder,
-				     H:PmenuShadow,*:TabLine,
+				     H:PmenuShadow,p:Popup,J:PopupBorder,
+				     Q:PopupTitle,*:TabLine,
 				     #:TabLineSel,_:TabLineFill,!:CursorColumn,
 				     .:CursorLine,o:ColorColumn,q:QuickFixLine,
 				     z:StatusLineTerm,Z:StatusLineTermNC,
@@ -4846,6 +4846,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	|hl-PmenuMatchSel| <  popup menu matched text in selected line
 	|hl-PmenuBorder|   j  popup menu border characters
 	|hl-PmenuShadow|   H  popup menu shadow
+	|hl-Popup|	 p  popup window body
+	|hl-PopupBorder|   J  popup window border characters
+	|hl-PopupTitle|	 Q  popup window title
 	|hl-PreInsert|	 I  text inserted when "preinsert" is in 'completeopt'
 	|hl-Normal|	 (  Window color (supersedes 'wincolor' option)
 
@@ -6217,6 +6220,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 		'filetype'
 		'foldcolumn'
 		'foldenable'
+		'foldmarker'
 		'foldmethod'
 		'modifiable'
 		'readonly'
@@ -6234,6 +6238,11 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Any other option set from a modeline will be silently ignored.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
+
+	As an exception, `set nomodeline` is honored from within a modeline
+	even when 'modelinestrict' is on.  Other forms (`set modeline=0`,
+	`set modeline!`, `set invmodeline`) are still silently ignored.
+	This lets a file disable further modeline processing for itself.
 
 	The behaviour of 'modeline', 'modelinestrict' and 'modelineexpr' is
 	as follows:
@@ -7847,6 +7856,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	Note: When using a pipe like "| tee", you'll lose the exit code of the
 	shell command.  This might be configurable by your shell, look for
 	the pipefail option (for bash and zsh, use ":set -o pipefail").
+	Only a single "%s" value is allowed.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
 
@@ -7890,6 +7900,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 	become obsolete (at least for Unix).
 	This option cannot be set from a |modeline| or in the |sandbox|, for
 	security reasons.
+								*E1577*
+	Only a single "%s" item is allowed in the option value.
+
 
 			*'shellslash'* *'ssl'* *'noshellslash'* *'nossl'*
 'shellslash' 'ssl'	boolean	(default off)
@@ -9214,6 +9227,22 @@ A jump table for the options with a short description can be found at |Q_op|.
 	The use of |:set+=| and |:set-=| is preferred when adding or removing
 	file names from the list.  This avoids problems when a future version
 	uses another default.
+
+			*'tagsecure'* *'tsc'* *'notagsecure'* *'notsc'*
+'tagsecure' 'tsc'	boolean	(default on)
+			global
+	When on, Vim refuses to follow tag entries whose file field looks like
+	a URL ("scheme://..."), aborting the jump with error |E1576|.  This
+	prevents tag files from causing Vim to open URLs through |netrw|, which
+	would trigger a network request and expose netrw's URL-handling code to
+	attacker-controlled input or lead to environment exfiltration.
+
+	Tag files might be distributed alongside source code (e.g. via Git
+	repositories) and may therefore be untrustworthy.  Only disable
+	this option if you fully control the tag files Vim will read.
+
+	This option cannot be set from a |modeline| or in the |sandbox|, for
+	security reasons.
 
 				*'tagstack'* *'tgst'* *'notagstack'* *'notgst'*
 'tagstack' 'tgst'	boolean	(default on)

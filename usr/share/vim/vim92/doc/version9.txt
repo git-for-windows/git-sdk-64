@@ -1,4 +1,4 @@
-*version9.txt*	For Vim version 9.2.  Last change: 2026 May 05
+*version9.txt*	For Vim version 9.2.  Last change: 2026 May 19
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -41880,6 +41880,9 @@ Highlighting: ~
 |hl-PmenuMatchSel|	Popup menu: highlighting of matched text in selected
 			line
 |hl-PmenuShadow|	Popup menu: highlighting of the popup shadow
+|hl-Popup|		Popup window: body, default link |hl-Pmenu|
+|hl-PopupBorder|	Popup window: border characters, default link |hl-Pmenu|
+|hl-PopupTitle|		Popup window: title, default link |hl-Pmenu|
 |hl-PreInsert|		highlighting for completion preinserted text
 |hl-TabPanel|		|tabpanel|: not active tab page label
 |hl-TabPanelFill|	|tabpanel|: filler space
@@ -52582,12 +52585,18 @@ VERSION 9.3				*version-9.3* *version9.3* *vim-9.3*
 This section is about improvements made between version 9.2 and 9.3 and is
 work in progress.
 
+GUI ~
+-----
+- Added support for the GTK 4 GUI (via patch 9.2.0501).  Enable with
+  `--enable-gui=gtk4` configure switch at build time.
+
 Popups ~
 ------
 - Support for transparency, see |popup-opacity|.
 - 'previewpopup' supports the same values as 'completepopup' (except for
   "align").
 - Support "opacity" setting for 'completepopup' option.
+- Support for clipping textproperty popups |popup-clipwindow|.
 
 Diff mode ~
 ---------
@@ -52626,6 +52635,10 @@ Other ~
 - |:command-completion-customlist| can return a list of dictionaries with
   kind/menu/info/abbr for the popup menu.
 - |C-indenting| detects comments better.
+- The |package-hlyank| can now optionally highlight the last put region as
+  well.
+- New argument handling for user commands |:command-nargs| using the "-nars=_"
+  attribute to handle completion of single arguments with spaces as expected.
 
 Platform specific ~
 -----------------
@@ -52668,6 +52681,8 @@ Functions: ~
 Autocommands: ~
 
 |SessionLoadPre|	before loading a |Session| file
+|TextPutPost|		after putting text
+|TextPutPre|		before putting text
 
 Options: ~
 
@@ -52678,6 +52693,7 @@ Options: ~
 			configure the height.
 't_BS'			Begin synchronized update.
 't_ES'			End synchronized update.
+'tagsecure'		Do not open remote files using tag commands
 'termresize'		Method for handling terminal resize events.
 'termsync'		Enable support for terminal DEC 2026 sync mode.
 'winhighlight'		Window-local highlight group mappings.
@@ -52685,6 +52701,9 @@ Options: ~
 Highlighting: ~
 
 |hl-VertSplitNC|	Column separator of non-current window.
+|hl-Popup|		Popup window body.
+|hl-PopupBorder|	Popup window border.
+|hl-PopupTitle|		Popup window title.
 
 ==============================================================================
 PATCHES						*patches-9.3* *bug-fixes-9.3*
