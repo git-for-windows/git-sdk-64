@@ -12,18 +12,6 @@
 extern "C" {
 #endif
 
-#ifndef _CTYPE_DISABLE_MACROS
-
-#ifndef MB_CUR_MAX
-#define MB_CUR_MAX ___mb_cur_max_func()
-#ifndef __mb_cur_max
-#define __mb_cur_max	(___mb_cur_max_func())
-#endif
-_CRTIMP int __cdecl ___mb_cur_max_func(void);
-#endif
-
-#endif /* !_CTYPE_DISABLE_MACROS */
-
 /**
  * Standard C functions.
  */
@@ -43,10 +31,6 @@ _CRTIMP int __cdecl isxdigit(int _C);
 
 _CRTIMP int __cdecl tolower(int _C);
 _CRTIMP int __cdecl toupper(int _C);
-
-#if !defined(_CTYPE_DISABLE_MACROS) && !defined(__cplusplus)
-#define __chvalidchk(a,b) (__PCTYPE_FUNC[(unsigned char)(a)] & (b))
-#endif /* !_CTYPE_DISABLE_MACROS && !__cplusplus */
 
 /**
  * Locale-specific versions of Standard C functions.
@@ -71,29 +55,6 @@ _CRTIMP int __cdecl _isxdigit_l(int _C,_locale_t _Locale);
 
 _CRTIMP int __cdecl _tolower_l(int _C,_locale_t _Locale);
 _CRTIMP int __cdecl _toupper_l(int _C,_locale_t _Locale);
-
-#if !defined(_CTYPE_DISABLE_MACROS) && !defined(__cplusplus)
-#ifdef _UCRT
-#define _chvalidchk_l(_Char,_Flag,_Locale) (!_Locale ? __chvalidchk(_Char,_Flag) : ((_locale_t)_Locale)->locinfo->_locale_pctype[(unsigned char)(_Char)] & (_Flag))
-#define _ischartype_l(_Char,_Flag,_Locale) (((_Locale)!=NULL && (((_locale_t)(_Locale))->locinfo->_locale_mb_cur_max) > 1) ? _isctype_l(_Char,(_Flag),_Locale) : _chvalidchk_l(_Char,_Flag,_Locale))
-#else
-#define _chvalidchk_l(_Char,_Flag,_Locale) (!_Locale ? __chvalidchk(_Char,_Flag) : ((_locale_t)_Locale)->locinfo->pctype[(unsigned char)(_Char)] & (_Flag))
-#define _ischartype_l(_Char,_Flag,_Locale) (((_Locale)!=NULL && (((_locale_t)(_Locale))->locinfo->mb_cur_max) > 1) ? _isctype_l(_Char,(_Flag),_Locale) : _chvalidchk_l(_Char,_Flag,_Locale))
-#endif
-
-#define _isalnum_l(_Char,_Locale)  _ischartype_l(_Char,_ALPHA|_DIGIT,_Locale)
-#define _isalpha_l(_Char,_Locale)  _ischartype_l(_Char,_ALPHA,_Locale)
-#define _isblank_l(_Char,_Locale)  (((_Char) == '\t') || _ischartype_l(_Char,_BLANK,_Locale))
-#define _iscntrl_l(_Char,_Locale)  _ischartype_l(_Char,_CONTROL,_Locale)
-#define _isdigit_l(_Char,_Locale)  _ischartype_l(_Char,_DIGIT,_Locale)
-#define _isgraph_l(_Char,_Locale)  _ischartype_l(_Char,_PUNCT|_ALPHA|_DIGIT,_Locale)
-#define _islower_l(_Char,_Locale)  _ischartype_l(_Char,_LOWER,_Locale)
-#define _isprint_l(_Char,_Locale)  _ischartype_l(_Char,_BLANK|_PUNCT|_ALPHA|_DIGIT,_Locale)
-#define _ispunct_l(_Char,_Locale)  _ischartype_l(_Char,_PUNCT,_Locale)
-#define _isspace_l(_Char,_Locale)  _ischartype_l(_Char,_SPACE,_Locale)
-#define _isupper_l(_Char,_Locale)  _ischartype_l(_Char,_UPPER,_Locale)
-#define _isxdigit_l(_Char,_Locale) _ischartype_l(_Char,_HEX,_Locale)
-#endif /* !_CTYPE_DISABLE_MACROS && !__cplusplus */
 #endif
 
 /**
