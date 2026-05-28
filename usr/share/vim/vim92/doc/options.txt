@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.2.  Last change: 2026 May 18
+*options.txt*	For Vim version 9.2.  Last change: 2026 May 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -4613,10 +4613,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 		Photon GUIs.
 								*'go-s'*
 	  's'	Enable fullscreen mode.  Currently only supported in the
-		MS-Windows GUI version.  When set, the window will occupy the
-		entire screen and remove window decorations.  Define custom
-		mappings to toggle this mode conveniently.  For detailed usage
-		instructions, see |gui-w32-fullscreen|.
+		MS-Windows and GTK GUI version.  When set, the window will
+		occupy the entire screen and remove window decorations.
+		Define custom mappings to toggle this mode conveniently.
+		For detailed usage instructions, see |gui-fullscreen|.
 								*'go-r'*
 	  'r'	Right-hand scrollbar is always present.
 								*'go-R'*
@@ -6369,7 +6369,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 			be acted upon, i.e. no cursor move.  This implies of
 			course, that right clicking outside a selection will
 			end Visual mode.
-	Overview of what button does what for each model:
+
+	For a detailed description of 'mousemodel' behaviour see
+	|mouse-mode-table|.  Overview of what button does what for each model:
+
 	mouse		    extend		popup(_setpos) ~
 	left click	    place cursor	place cursor
 	left drag	    start selection	start selection
@@ -8667,7 +8670,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	{ NF  Evaluate expression between '%{' and '}' and substitute result.
 	      Note that there is no '%' before the closing '}'.  The
 	      expression cannot contain a '}' character, call a function to
-	      work around that.  See |stl-%{| below.
+	      work around that.  See |stl-%{| below.  Use '%0{' to insert the
+	      result verbatim.
 	{% -  This is almost same as { except the result of the expression is
 	      re-evaluated as a statusline format string.  Thus if the
 	      return value of expr contains % items they will get expanded.
@@ -8794,6 +8798,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 	A result of all digits is regarded a number for display purposes.
 	Otherwise the result is taken as flag text and applied to the rules
 	described above.
+								*stl-%0{*
+	With %0{ neither applies: the result is inserted as a literal string.
 
 	Watch out for errors in expressions.  They may render Vim unusable!
 	If you are stuck, hold down ':' or 'Q' to get a prompt, then quit and
