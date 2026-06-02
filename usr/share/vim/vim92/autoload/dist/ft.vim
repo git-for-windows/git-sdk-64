@@ -3,7 +3,7 @@ vim9script
 # Vim functions for file type detection
 #
 # Maintainer:		The Vim Project <https://github.com/vim/vim>
-# Last Change:		2026 May 18
+# Last Change:		2026 May 29
 # Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 # These functions are moved here from runtime/filetype.vim to make startup
@@ -61,6 +61,21 @@ export def FTapp()
     endif
     return
   endfor
+enddef
+
+# This function checks for Kawasaki robots AS file or atlas file type.
+export def FTas()
+  if exists("g:filetype_as")
+    exe "setf " .. g:filetype_as
+    return
+  endif
+  for lnum in range(1, min([line("$"), 30]))
+    if getline(lnum) =~ '^\.NETCONF'
+      setf kawasaki_as
+      return
+    endif
+  endfor
+  setf atlas
 enddef
 
 # This function checks for the kind of assembly that is wanted by the user, or
@@ -1771,7 +1786,6 @@ const ft_from_ext = {
   "astro": "astro",
   # Atlas
   "atl": "atlas",
-  "as": "atlas",
   # Atom is based on XML
   "atom": "xml",
   # Authzed
@@ -2300,6 +2314,8 @@ const ft_from_ext = {
   # KAREL
   "kl": "karel",
   "KL": "karel",
+  # Kawasaki AS
+  "pg": "kawasaki_as",
   # KDL
   "kdl": "kdl",
   # KerML
@@ -2320,6 +2336,8 @@ const ft_from_ext = {
   "kts": "kotlin",
   # KDE script
   "ks": "kscript",
+  # Kaitai struct
+  "ksy": "yaml",
   # Kyaml
   "kyaml": "yaml",
   "kyml": "yaml",
@@ -2621,6 +2639,8 @@ const ft_from_ext = {
   "qmd": "quarto",
   # QuickBms
   "bms": "quickbms",
+  # Popcap Reanimation files
+  "reanim": "xml",
   # Racket (formerly detected as "scheme")
   "rkt": "racket",
   "rktd": "racket",
@@ -2715,6 +2735,8 @@ const ft_from_ext = {
   "mill": "scala",
   # SBT - Scala Build Tool
   "sbt": "sbt",
+  # SGF, Smart Game Format
+  "sgf": "sgf",
   # Slang Shading Language
   "slang": "shaderslang",
   # Slint
@@ -2743,6 +2765,8 @@ const ft_from_ext = {
   "sieve": "sieve",
   # TriG
   "trig": "trig",
+  # Tolk
+  "tolk": "tolk",
   # Zig and Zig Object Notation (ZON)
   "zig": "zig",
   "zon": "zig",
