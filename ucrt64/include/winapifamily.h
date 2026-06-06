@@ -1,0 +1,49 @@
+/**
+ * This file is part of the mingw-w64 runtime package.
+ * No warranty is given; refer to the file DISCLAIMER within this package.
+ */
+
+#ifndef _INC_WINAPIFAMILY
+#define _INC_WINAPIFAMILY
+
+#define WINAPI_FAMILY_PC_APP         2
+#define WINAPI_FAMILY_PHONE_APP      3
+#define WINAPI_FAMILY_SYSTEM         4
+#define WINAPI_FAMILY_SERVER         5
+#define WINAPI_FAMILY_DESKTOP_APP  100
+
+#define WINAPI_FAMILY_APP WINAPI_FAMILY_PC_APP
+
+#ifndef WINAPI_FAMILY
+#define WINAPI_FAMILY WINAPI_FAMILY_DESKTOP_APP
+#endif
+
+#ifndef WINAPI_PARTITION_DESKTOP
+#define WINAPI_PARTITION_DESKTOP   (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
+#endif
+
+#ifndef WINAPI_PARTITION_APP
+#define WINAPI_PARTITION_APP       (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP || \
+                                    WINAPI_FAMILY == WINAPI_FAMILY_PC_APP || \
+                                    WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#endif
+
+#ifndef WINAPI_PARTITION_PC_APP
+#define WINAPI_PARTITION_PC_APP    (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP || \
+                                    WINAPI_FAMILY == WINAPI_FAMILY_PC_APP)
+#endif
+
+#ifndef WINAPI_PARTITION_PHONE_APP
+#define WINAPI_PARTITION_PHONE_APP (WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP)
+#endif
+
+#ifndef WINAPI_PARTITION_SYSTEM
+#define WINAPI_PARTITION_SYSTEM    (WINAPI_FAMILY == WINAPI_FAMILY_SYSTEM || \
+                                    WINAPI_FAMILY == WINAPI_FAMILY_SERVER)
+#endif
+
+#define WINAPI_PARTITION_PHONE  WINAPI_PARTITION_PHONE_APP
+
+#define WINAPI_FAMILY_PARTITION(x) x
+
+#endif /* _INC_WINAPIFAMILY */

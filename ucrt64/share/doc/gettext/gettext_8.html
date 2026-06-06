@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html401/loose.dtd">
+<html>
+<!-- Created on January, 29 2026 by texi2html 1.78a -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people.
+Send bugs and suggestions to <texi2html-bug@nongnu.org>
+
+-->
+<head>
+<title>GNU gettext utilities: 8. Pretranslating PO Files</title>
+
+<meta name="description" content="GNU gettext utilities: 8. Pretranslating PO Files">
+<meta name="keywords" content="GNU gettext utilities: 8. Pretranslating PO Files">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="Generator" content="texi2html 1.78a">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+<!--
+a.summary-letter {text-decoration: none}
+pre.display {font-family: serif}
+pre.format {font-family: serif}
+pre.menu-comment {font-family: serif}
+pre.menu-preformatted {font-family: serif}
+pre.smalldisplay {font-family: serif; font-size: smaller}
+pre.smallexample {font-size: smaller}
+pre.smallformat {font-family: serif; font-size: smaller}
+pre.smalllisp {font-size: smaller}
+span.roman {font-family:serif; font-weight:normal;}
+span.sansserif {font-family:sans-serif; font-weight:normal;}
+ul.toc {list-style: none}
+-->
+</style>
+
+
+</head>
+
+<body lang="en" bgcolor="#FFFFFF" text="#000000" link="#0000FF" vlink="#800080" alink="#FF0000">
+
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="gettext_7.html#SEC68" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_9.html#SEC93" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_22.html#SEC453" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+
+<hr size="2">
+<a name="Pretranslating"></a>
+<a name="SEC78"></a>
+<h1 class="chapter"> <a href="gettext_toc.html#TOC74">8. Pretranslating PO Files</a> </h1>
+
+<p>As a translator,
+you may save yourself some work
+by starting from a reasonably good translation produced by a machine,
+and modify that translation, to make it perfect.
+</p>
+<p>Thus, before you start working on a translation,
+you might have the PO file <em>pretranslated</em>.
+</p>
+<p>This process, also called <em>machine translation</em>,
+is nowadays best performed through a Large Language Model (LLM).
+(See <a href="https://en.wikipedia.org/wiki/Machine_translation#Neural_MT">https://en.wikipedia.org/wiki/Machine_translation#Neural_MT</a>,
+<a href="https://en.wikipedia.org/wiki/Neural_machine_translation#Generative_LLMs">https://en.wikipedia.org/wiki/Neural_machine_translation#Generative_LLMs</a>.)
+</p>
+
+<a name="Installing-an-LLM"></a>
+<a name="SEC79"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC75">8.1 Installing a Large Language Model</a> </h2>
+
+<p>We don't recommend to use machine translation
+through a web service in the cloud, controlled by someone else than yourself.
+Such a machine translation service would be have major drawbacks
+(it could go away any time,
+it could be used to spy on you or manipulate you,
+or the costs could go up beyond your control);
+see <a href="https://www.gnu.org/philosophy/who-does-that-server-really-serve.en.html">https://www.gnu.org/philosophy/who-does-that-server-really-serve.en.html</a>.
+Additionally, such a service typically has some cost
+(between $10 and $25 per megabyte, as of 2025).
+</p>
+<p>Instead, we recommend a Large Language Model execution engine
+that runs on hardware under your control.
+This can be a desktop computer,
+or for instance a single-board computer in your local network.
+</p>
+<a name="IDX353"></a>
+<p>At this point (in 2025),
+a Large Language Model execution engine that is Free Software is
+&lsquo;<samp>ollama</samp>&rsquo;, that can be downloaded from <a href="https://ollama.com/">https://ollama.com/</a>.
+</p>
+<p>Next, you will need to pick a Large Language Model.
+There are two properties to watch out for:
+</p><ul>
+<li>
+The license under which the LLM is released.
+While some LLMs are under a Free Software license
+(most often the Apache 2.0 license)
+and are thus &ldquo;open weights&rdquo; models
+(see <a href="https://opensource.org/ai/open-weights">https://opensource.org/ai/open-weights</a>),
+others have licenses with usage restrictions.
+</li><li>
+The size of the LLM.
+Generally, it should be smaller than the available RAM size
+of your machine on which you will run the LLM execution engine.
+</li></ul>
+
+<p>Together with an LLM of reasonable quality,
+such as the model <code>ministral-3:14b</code>,
+the system requirements are as follows:
+</p><ul>
+<li>
+RAM: 16 GB.
+</li><li>
+Disk space: 10 GB (1 GB for <code>ollama</code>, 9 GB for the model).
+</li><li>
+GPU or TPU: A GPU (Graphics Processing Unit) or TPU (Tensor Processing Unit)
+is not needed.
+As of 2025, a high-end GPU from certain vendors
+can be used by <code>ollama</code> to provide an optional speedup.
+</li></ul>
+
+<p>Additional configuration:
+</p><ul>
+<li>
+If you are running <code>ollama</code> on your computer directly,
+no further configuration is needed.
+</li><li>
+If you are running <code>ollama</code> on a separate machine,
+and want to make it accessible from all machines in the LAN:
+Edit the file &lsquo;<tt>/etc/systemd/system/ollama.services</tt>&rsquo;,
+adding a line: <code>Environment=&quot;OLLAMA_HOST=0.0.0.0&quot;</code>.
+See <a href="https://github.com/ollama/ollama/issues/703">https://github.com/ollama/ollama/issues/703</a>.
+</li><li>
+If you are running <code>ollama</code> in a virtual machine,
+make the port 11434 accessible through port forwarding.
+</li></ul>
+
+
+<a name="msgpre-Invocation"></a>
+<a name="SEC80"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC76">8.2 Invoking the <code>msgpre</code> Program</a> </h2>
+
+
+<table><tr><td>&nbsp;</td><td><pre class="example">msgpre [<var>option</var>...]
+</pre></td></tr></table>
+
+<a name="IDX354"></a>
+<a name="IDX355"></a>
+<p>The <code>msgpre</code> program pretranslates a translation catalog.
+</p>
+<p><strong>Warning:</strong> The pretranslations might not be what you expect.
+They might be of the wrong form, be of poor quality, or reflect some biases.
+</p>
+
+<a name="SEC81"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC77">8.2.1 Input file location</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>-i <var>inputfile</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--input=<var>inputfile</var></samp>&rsquo;</dt>
+<dd><a name="IDX356"></a>
+<a name="IDX357"></a>
+<p>Input PO file.
+</p>
+</dd>
+<dt> &lsquo;<samp>-D <var>directory</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--directory=<var>directory</var></samp>&rsquo;</dt>
+<dd><a name="IDX358"></a>
+<a name="IDX359"></a>
+<p>Add <var>directory</var> to the list of directories.  Source files are
+searched relative to this list of directories.  The resulting &lsquo;<tt>.po</tt>&rsquo;
+file will be written relative to the current directory, though.
+</p>
+</dd>
+</dl>
+
+<p>If no <var>inputfile</var> is given or if it is &lsquo;<samp>-</samp>&rsquo;, standard input is read.
+</p>
+
+<a name="SEC82"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC78">8.2.2 Output file location</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>-o <var>file</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--output-file=<var>file</var></samp>&rsquo;</dt>
+<dd><a name="IDX360"></a>
+<a name="IDX361"></a>
+<p>Write output to specified file.
+</p>
+</dd>
+</dl>
+
+<p>The results are written to standard output if no output file is specified
+or if it is &lsquo;<samp>-</samp>&rsquo;.
+</p>
+
+<a name="SEC83"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC79">8.2.3 Message selection</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>--keep-fuzzy</samp>&rsquo;</dt>
+<dd><a name="IDX362"></a>
+<p>Keep fuzzy messages unmodified.
+Pretranslate only untranslated messages.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC84"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC80">8.2.4 Large Language Model (LLM) options</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>--species=<var>type</var></samp>&rsquo;</dt>
+<dd><a name="IDX363"></a>
+<p>Specifies the type of Large Language Model execution engine.
+The default and only valid value is <code>ollama</code>.
+</p>
+</dd>
+<dt> &lsquo;<samp>--url=<var>url</var></samp>&rsquo;</dt>
+<dd><a name="IDX364"></a>
+<p>Specifies the URL of the server that runs Large Language Model execution engine.
+For <code>ollama</code>, the default is <code>http://localhost:11434</code>.
+</p>
+</dd>
+<dt> &lsquo;<samp>-m <var>model</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--model=<var>model</var></samp>&rsquo;</dt>
+<dd><a name="IDX365"></a>
+<a name="IDX366"></a>
+<p>Specifies the model to use.
+This option is mandatory; no default exists.
+The specified model must
+already be installed in the Large Language Model execution engine.
+</p>
+</dd>
+<dt> &lsquo;<samp>--prompt=<var>text</var></samp>&rsquo;</dt>
+<dd><a name="IDX367"></a>
+<p>Specifies the prompt to use before each <code>msgid</code> from the PO file.
+It allows you to specify extra instructions for the LLM.
+The prompt should include an instruction like
+&quot;Translate into <var>target language</var>.&quot;.
+Some hints for good prompts are described in the article
+&ldquo;How to write AI prompts for translation&rdquo;
+<a href="https://poeditor.com/blog/ai-prompts-for-translation/">https://poeditor.com/blog/ai-prompts-for-translation/</a>.
+</p>
+</dd>
+<dt> &lsquo;<samp>--postprocess=<var>command</var></samp>&rsquo;</dt>
+<dd><a name="IDX368"></a>
+<p>Specifies a command to post-process the output from the LLM.
+This should be a Bourne shell command
+that reads from standard input and writes to standard output.
+</p>
+<p>For instance, the <code>ministral-3:14b</code> model
+often emphasizes part of the output with &lsquo;<samp>**</samp>&rsquo; characters.
+To eliminate these markers,
+you could use the command &lsquo;<samp>sed -e 's/[*][*]//g'</samp>&rsquo;.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC85"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC81">8.2.5 Input file syntax</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>-P</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--properties-input</samp>&rsquo;</dt>
+<dd><a name="IDX369"></a>
+<a name="IDX370"></a>
+<p>Assume the input file is a Java ResourceBundle in Java <code>.properties</code>
+syntax, not in PO file syntax.
+</p>
+</dd>
+<dt> &lsquo;<samp>--stringtable-input</samp>&rsquo;</dt>
+<dd><a name="IDX371"></a>
+<p>Assume the input file is a NeXTstep/GNUstep localized resource file in
+<code>.strings</code> syntax, not in PO file syntax.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC86"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC82">8.2.6 Output details</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>--color</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--color=<var>when</var></samp>&rsquo;</dt>
+<dd><a name="IDX372"></a>
+<p>Specify whether or when to use colors and other text attributes.
+See <a href="gettext_10.html#SEC193">The <code>--color</code> option</a> for details.
+</p>
+</dd>
+<dt> &lsquo;<samp>--style=<var>style_file</var></samp>&rsquo;</dt>
+<dd><a name="IDX373"></a>
+<p>Specify the CSS style rule file to use for <code>--color</code>.
+See <a href="gettext_10.html#SEC195">The <code>--style</code> option</a> for details.
+</p>
+</dd>
+<dt> &lsquo;<samp>--force-po</samp>&rsquo;</dt>
+<dd><a name="IDX374"></a>
+<p>Always write an output file even if it contains no message.
+</p>
+</dd>
+<dt> &lsquo;<samp>--indent</samp>&rsquo;</dt>
+<dd><a name="IDX375"></a>
+<p>Write the .po file using indented style.
+</p>
+</dd>
+<dt> &lsquo;<samp>--no-location</samp>&rsquo;</dt>
+<dd><a name="IDX376"></a>
+<p>Do not write &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines.
+</p>
+</dd>
+<dt> &lsquo;<samp>-n</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--add-location=<var>type</var></samp>&rsquo;</dt>
+<dd><a name="IDX377"></a>
+<p>Generate &lsquo;<samp>#: <var>filename</var>:<var>line</var></samp>&rsquo; lines (default).
+</p>
+<p>The optional <var>type</var> can be either &lsquo;<samp>full</samp>&rsquo;, &lsquo;<samp>file</samp>&rsquo;, or
+&lsquo;<samp>never</samp>&rsquo;.  If it is not given or &lsquo;<samp>full</samp>&rsquo;, it generates the
+lines with both file name and line number.  If it is &lsquo;<samp>file</samp>&rsquo;, the
+line number part is omitted.  If it is &lsquo;<samp>never</samp>&rsquo;, it completely
+suppresses the lines (same as <code>--no-location</code>).
+</p>
+</dd>
+<dt> &lsquo;<samp>--strict</samp>&rsquo;</dt>
+<dd><a name="IDX378"></a>
+<p>Write out a strict Uniforum conforming PO file.  Note that this
+Uniforum format should be avoided because it doesn't support the
+GNU extensions.
+</p>
+</dd>
+<dt> &lsquo;<samp>-p</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--properties-output</samp>&rsquo;</dt>
+<dd><a name="IDX379"></a>
+<a name="IDX380"></a>
+<p>Write out a Java ResourceBundle in Java <code>.properties</code> syntax.  Note
+that this file format doesn't support plural forms and silently drops
+obsolete messages.
+</p>
+</dd>
+<dt> &lsquo;<samp>--stringtable-output</samp>&rsquo;</dt>
+<dd><a name="IDX381"></a>
+<p>Write out a NeXTstep/GNUstep localized resource file in <code>.strings</code> syntax.
+Note that this file format doesn't support plural forms.
+</p>
+</dd>
+<dt> &lsquo;<samp>-w <var>number</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--width=<var>number</var></samp>&rsquo;</dt>
+<dd><a name="IDX382"></a>
+<a name="IDX383"></a>
+<p>Set the output page width.  Long strings in the output files will be
+split across multiple lines in order to ensure that each line's width
+(= number of screen columns) is less or equal to the given <var>number</var>.
+</p>
+</dd>
+<dt> &lsquo;<samp>--no-wrap</samp>&rsquo;</dt>
+<dd><a name="IDX384"></a>
+<p>Do not break long message lines.  Message lines whose width exceeds the
+output page width will not be split into several lines.  Only file reference
+lines which are wider than the output page width will be split.
+</p>
+</dd>
+<dt> &lsquo;<samp>-s</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--sort-output</samp>&rsquo;</dt>
+<dd><a name="IDX385"></a>
+<a name="IDX386"></a>
+<p>Generate sorted output.  Note that using this option makes it much harder
+for the translator to understand each message's context.
+</p>
+</dd>
+<dt> &lsquo;<samp>-F</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--sort-by-file</samp>&rsquo;</dt>
+<dd><a name="IDX387"></a>
+<a name="IDX388"></a>
+<p>Sort output by file location.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC87"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC83">8.2.7 Informative output</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
+<dd><a name="IDX389"></a>
+<a name="IDX390"></a>
+<p>Display this help and exit.
+</p>
+</dd>
+<dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
+<dd><a name="IDX391"></a>
+<a name="IDX392"></a>
+<p>Output version information and exit.
+</p>
+</dd>
+<dt> &lsquo;<samp>-q</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--quiet</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--silent</samp>&rsquo;</dt>
+<dd><a name="IDX393"></a>
+<a name="IDX394"></a>
+<a name="IDX395"></a>
+<p>Suppress progress indicators.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC88"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC84">8.2.8 Examples</a> </h3>
+
+<p>To pretranslate the file <code>foo.po</code>:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="smallexample">msgpre --model=ministral-3:14b &lt; foo.po &gt; foo-pretranslated.po
+</pre></td></tr></table>
+
+<p>Note that this command can take a long time,
+depending on the model and the available hardware.
+</p>
+
+<a name="spit-Invocation"></a>
+<a name="SEC89"></a>
+<h2 class="section"> <a href="gettext_toc.html#TOC85">8.3 Invoking the <code>spit</code> Program</a> </h2>
+
+
+<table><tr><td>&nbsp;</td><td><pre class="example">spit [<var>option</var>...]
+</pre></td></tr></table>
+
+<a name="IDX396"></a>
+<a name="IDX397"></a>
+<p>The <code>spit</code> program
+passes its input to a Large Language Model (LLM) instance
+and prints the response.
+With the <code>--to</code> option,
+it translates its input to the specified language
+through a Large Language Model (LLM) and prints the translation.
+</p>
+<p><strong>Warning:</strong> The output might not be what you expect.
+It might be of the wrong form, be of poor quality, or reflect some biases.
+</p>
+
+<a name="SEC90"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC86">8.3.1 Large Language Model (LLM) options</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>--species=<var>type</var></samp>&rsquo;</dt>
+<dd><a name="IDX398"></a>
+<p>Specifies the type of Large Language Model execution engine.
+The default and only valid value is <code>ollama</code>.
+</p>
+</dd>
+<dt> &lsquo;<samp>--url=<var>url</var></samp>&rsquo;</dt>
+<dd><a name="IDX399"></a>
+<p>Specifies the URL of the server that runs Large Language Model execution engine.
+For <code>ollama</code>, the default is <code>http://localhost:11434</code>.
+</p>
+</dd>
+<dt> &lsquo;<samp>-m <var>model</var></samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--model=<var>model</var></samp>&rsquo;</dt>
+<dd><a name="IDX400"></a>
+<a name="IDX401"></a>
+<p>Specifies the model to use.
+This option is mandatory; no default exists.
+The specified model must
+already be installed in the Large Language Model execution engine.
+</p>
+</dd>
+<dt> &lsquo;<samp>--to=<var>language</var></samp>&rsquo;</dt>
+<dd><a name="IDX402"></a>
+<p>Specifies the target language.
+<var>language</var> may be specified
+as an ISO 639 language code (such as <code>fr</code> for French),
+as a combination of an ISO 639 language code and an ISO 3166 country code
+(such as <code>fr_CA</code> for French in Canada,
+or <code>zh_TW</code> for traditional Chinese),
+or as the English name of a language (such as <code>French</code>).
+</p>
+<p>The effect of this option is to
+add a prompt similar to &quot;Translate to <var>language</var>:&quot;.
+</p>
+</dd>
+<dt> &lsquo;<samp>--prompt=<var>text</var></samp>&rsquo;</dt>
+<dd><a name="IDX403"></a>
+<p>Specifies the prompt to use before the input that comes from standard input.
+It allows you to specify extra instructions for the LLM.
+</p>
+<p>This option overrides the <code>--to</code> option.
+</p>
+</dd>
+<dt> &lsquo;<samp>--postprocess=<var>command</var></samp>&rsquo;</dt>
+<dd><a name="IDX404"></a>
+<p>Specifies a command to post-process the output.
+This should be a Bourne shell command
+that reads from standard input and writes to standard output.
+</p>
+<p>For instance, the <code>ministral-3:14b</code> model
+often emphasizes part of the output with &lsquo;<samp>**</samp>&rsquo; characters.
+To eliminate these markers,
+you could use the command &lsquo;<samp>sed -e 's/[*][*]//g'</samp>&rsquo;.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC91"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC87">8.3.2 Informative output</a> </h3>
+
+<dl compact="compact">
+<dt> &lsquo;<samp>-h</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--help</samp>&rsquo;</dt>
+<dd><a name="IDX405"></a>
+<a name="IDX406"></a>
+<p>Display this help and exit.
+</p>
+</dd>
+<dt> &lsquo;<samp>-V</samp>&rsquo;</dt>
+<dt> &lsquo;<samp>--version</samp>&rsquo;</dt>
+<dd><a name="IDX407"></a>
+<a name="IDX408"></a>
+<p>Output version information and exit.
+</p>
+</dd>
+</dl>
+
+
+<a name="SEC92"></a>
+<h3 class="subsection"> <a href="gettext_toc.html#TOC88">8.3.3 Examples</a> </h3>
+
+<p>Machine translation of a single sentence:
+</p>
+<table><tr><td>&nbsp;</td><td><pre class="smallexample">$ echo 'Translate into German: &quot;Welcome to the GNU project!&quot;' \
+    | spit --model=ministral-3:14b \
+           --postprocess=&quot;sed -e 's/[*][*]//g'&quot;
+&quot;Willkommen zum GNU-Projekt!&quot;
+</pre></td></tr></table>
+
+<p>The perfect translation would be <code>&quot;Willkommen beim GNU-Projekt!&quot;</code>.
+You can see: some manual adjustment after the machine translation is needed.
+</p>
+
+<table cellpadding="1" cellspacing="1" border="0">
+<tr><td valign="middle" align="left">[<a href="#SEC78" title="Beginning of this chapter or previous chapter"> &lt;&lt; </a>]</td>
+<td valign="middle" align="left">[<a href="gettext_9.html#SEC93" title="Next chapter"> &gt;&gt; </a>]</td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left"> &nbsp; </td>
+<td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Top" title="Cover (top) of document">Top</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_toc.html#SEC_Contents" title="Table of contents">Contents</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_22.html#SEC453" title="Index">Index</a>]</td>
+<td valign="middle" align="left">[<a href="gettext_abt.html#SEC_About" title="About (help)"> ? </a>]</td>
+</tr></table>
+<p>
+ <font size="-1">
+  This document was generated by <em>Bruno Haible</em> on <em>January, 29 2026</em> using <a href="https://www.nongnu.org/texi2html/"><em>texi2html 1.78a</em></a>.
+ </font>
+ <br>
+
+</p>
+</body>
+</html>

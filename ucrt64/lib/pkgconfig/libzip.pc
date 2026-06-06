@@ -1,0 +1,15 @@
+prefix=/ucrt64
+exec_prefix=${prefix}
+bindir=${prefix}/bin
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+zipcmp=${bindir}/zipcmp
+
+Name: libzip
+Description: library for handling zip archives
+Version: 1.11.4
+Libs:  -L${libdir} -lzip
+Libs.private:  -ladvapi32 -lbz2 -llzma -lzstd -lbcrypt -lz
+Cflags: -I${includedir}
+Cflags.private: -DZIP_STATIC

@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>X509V3_EXT_print</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>X509V3_EXT_print, X509V3_EXT_print_fp - pretty print X509 certificate extensions</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/x509v3.h&gt;
+
+int X509V3_EXT_print(BIO *out, X509_EXTENSION *ext, unsigned long flag, int indent);
+int X509V3_EXT_print_fp(FILE *out, X509_EXTENSION *ext, int flag, int indent);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>X509V3_EXT_print() and X509V3_EXT_print_fp() parse and print the extension info from <i>ext</i> to <i>bio</i> or <i>out</i> with indentation set via <i>indent</i>. <i>flag</i> determines the behaviour if an extension could not be parsed and can be one of: <b>X509V3_EXT_DEFAULT</b> (equivalent to 0): an unknown or unparsable extension stops the parsing and the function returns a failure. <b>X509V3_EXT_PARSE_UNKNOWN</b>: an unknown or unparsable extension is handled by printing it through the <b>ASN1_parse_dump()</b> function, and the function returns success. <b>X509V3_EXT_DUMP_UNKNOWN</b>: an unknown or unparsable extension is handled by printing it through the <b>BIO_dump_indent()</b> function, and the function returns success, <b>X509V3_EXT_ERROR_UNKNOWN</b>: an unknown or unparsable extension is handled by printing either &quot;&lt;Not Supported&gt;&quot; or &quot;&lt;Parse Error&gt;&quot;, and the function returns success.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>X509V3_EXT_print() and X509V3_EXT_print_fp() return 1 for success and 0 for failure.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/BIO_dump_indent.html">BIO_dump_indent(3)</a>, <a href="../man3/ASN1_parse_dump.html">ASN1_parse_dump(3)</a>,</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+
