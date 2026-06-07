@@ -30,7 +30,11 @@ jobs:
           git --git-dir=git-sdk-64.git fetch --depth=1 origin ${{github.sha}} &&
           git --git-dir=git-sdk-64.git update-ref --no-deref HEAD ${{github.sha}}
       - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+        shell: bash
+        run: |
+          git clone --depth=1 --single-branch \
+            -b please-sh-tolerate-missing-sparse \
+            https://github.com/dscho/build-extra
       - name: build git-sdk-64-minimal-sdk
         shell: bash
         run: |
@@ -105,7 +109,11 @@ jobs:
           git --git-dir=git-sdk-64.git fetch --depth=1 origin ${{github.sha}} &&
           git --git-dir=git-sdk-64.git update-ref --no-deref HEAD ${{github.sha}}
       - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+        shell: bash
+        run: |
+          git clone --depth=1 --single-branch \
+            -b please-sh-tolerate-missing-sparse \
+            https://github.com/dscho/build-extra
       - name: build git-sdk-64-build-installers
         shell: bash
         run: sh -x ./build-extra/please.sh create-sdk-artifact --architecture=ucrt64 --sdk=git-sdk-64.git build-installers

@@ -29,7 +29,11 @@ jobs:
         env:
           REF: ${{github.ref}}
       - name: clone build-extra
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
+        shell: bash
+        run: |
+          git clone --depth=1 --single-branch \
+            -b please-sh-tolerate-missing-sparse \
+            https://github.com/dscho/build-extra
       - name: create build-installers artifact
         shell: bash
         run: |
