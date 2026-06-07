@@ -44,9 +44,12 @@ jobs:
         with:
           name: minimal-sdk
           path: git-sdk-x86_64-minimal.tar.gz
-      - name: clone git.git's `master`
-        run: git clone --depth=1 --branch master https://github.com/git/git ..\git
-      - name: build current `master` of git.git
+      - name: clone git-for-windows/git's `main`
+        shell: bash
+        run: |
+          git clone --depth=1 --branch main \
+            https://github.com/git-for-windows/git ../git
+      - name: build current `main` of git-for-windows/git
         shell: bash
         run: |
           set -x
