@@ -33,13 +33,17 @@ jobs:
       - name: create build-installers artifact
         shell: bash
         run: |
-          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git build-installers &&
+          sh -x ./build-extra/please.sh create-sdk-artifact --architecture=ucrt64 --sdk=git-sdk-64.git build-installers &&
           cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
           cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/mingw64/bin" >>$GITHUB_PATH
+          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>$GITHUB_PATH
       - name: check for missing DLLs
         shell: bash
+        env:
+          MSYSTEM: UCRT64
         run: ./build-extra/check-for-missing-dlls.sh
       - name: check for missing DLLs (MinGit)
         shell: bash
+        env:
+          MSYSTEM: UCRT64
         run: MINIMAL_GIT=1 ./build-extra/check-for-missing-dlls.sh
