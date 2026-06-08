@@ -34,7 +34,7 @@ jobs:
       - name: build git-sdk-64-minimal-sdk
         shell: bash
         run: |
-          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git minimal-sdk &&
+          sh -x ./build-extra/please.sh create-sdk-artifact --architecture=ucrt64 --sdk=git-sdk-64.git minimal-sdk &&
           cygpath -aw minimal-sdk/usr/bin >>$GITHUB_PATH
       - name: compress artifact
         shell: bash
@@ -52,7 +52,7 @@ jobs:
           set -x
           . /etc/profile
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
-          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
+          test "$(type -p gcc)" = "/ucrt64/bin/gcc" || exit 1
           make -C ../git DEVELOPER=1 NO_PERL=1 NO_RUST=UnfortunatelyYes SKIP_DASHED_BUILT_INS=YesPlease -j8 all strip
       - name: compress git artifacts
         shell: bash
@@ -105,7 +105,7 @@ jobs:
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
       - name: build git-sdk-64-build-installers
         shell: bash
-        run: sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-64.git build-installers
+        run: sh -x ./build-extra/please.sh create-sdk-artifact --architecture=ucrt64 --sdk=git-sdk-64.git build-installers
       - name: compress artifact
         shell: bash
         run: |

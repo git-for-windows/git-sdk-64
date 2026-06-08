@@ -87,7 +87,7 @@ jobs:
           test "$(cygpath -aw /)" = "${{github.workspace}}\minimal-sdk" || exit 1
 
           # comes with GCC and can compile a DLL
-          test "$(type -p gcc)" = "/mingw64/bin/gcc" || exit 1
+          test "$(type -p gcc)" = "/ucrt64/bin/gcc" || exit 1
           cat >dll.c <<-\EOF &&
           __attribute__((dllexport)) int increment(int i)
           {
