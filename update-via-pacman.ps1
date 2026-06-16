@@ -129,12 +129,13 @@ if (!(Test-Path cmd\git.exe -PathType Leaf)) {
   # This installation does not yet have the split mingw-w64-git package
   bash -lc @'
     set -x
-    for d in clangarm64 mingw64 mingw32
+    for d in clangarm64 ucrt64 mingw64 mingw32
     do
       test -x /$d/bin/git.exe || continue
       export PATH=/$d/bin:$PATH
       case $d in
       clangarm64) carch=clang-aarch64;;
+      ucrt64) carch=ucrt-x86_64;;
       mingw64) carch=x86_64;;
       mingw32) carch=i686;;
       esac
