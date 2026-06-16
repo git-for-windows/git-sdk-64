@@ -80,35 +80,6 @@ if ($type -Match "full system upgrade") {
   if (!$?) { die "Could not re-populate git-for-windows-keyring" }
 }
 
-# Git for Windows switched to using the regular `asciidoctor` _without_ any
-# of the extensions. So let's ensure that the custom-built package
-# `mingw-w64-asciidoctor-extensions` is no longer installed.
-if (Test-Path var/lib/pacman/local/mingw-w64-*-asciidoctor-extensions-[0-9]* -PathType Container) {
-  bash -lc @'
-    set -x
-    for d in clangarm64 mingw64 mingw32
-    do
-      test -x /$d/bin/ruby.exe || continue
-      export PATH=/$d/bin:$PATH
-      case $d in
-      clangarm64) carch=clang-aarch64;;
-      mingw64) carch=x86_64;;
-      mingw32) carch=i686;;
-      esac
-
-      # Uninstall mingw-w64-asciidoctor-extensions
-      test ! -d /var/lib/pacman/local/mingw-w64-$carch-asciidoctor-extensions-[0-9]* || {
-        pacman -R --noconfirm mingw-w64-$carch-asciidoctor-extensions &&
-        # Uninstall the `asciidoctor` gem and install `mingw-w64-asciidoctor` instead
-        gem uninstall asciidoctor
-      } || exit 1
-
-      pacman -S --noconfirm mingw-w64-$carch-asciidoctor || exit 1
-    done
-'@
-	if (!$?) { die "Could not re-install asciidoctor" }
-}
-
 # Pacman sometimes writes `.pacnew` files; We want to rename them and let
 # the post-install script of the `git-extra` package edit them.
 $latestSystemUpgrade = (
