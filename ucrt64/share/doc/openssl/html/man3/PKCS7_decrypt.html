@@ -40,6 +40,8 @@ int PKCS7_decrypt(PKCS7 *p7, EVP_PKEY *pkey, X509 *cert, BIO *data, int flags);<
 
 <p>Although the recipients certificate is not needed to decrypt the data it is needed to locate the appropriate (of possible several) recipients in the PKCS#7 structure.</p>
 
+<p>When RSA PKCS#1 v1.5 Key Transport is in use, the invoked EVP_PKEY_decrypt() will use implicit rejection mechanism. It always returns the result of RSA decryption of the symmetric key to avoid Marvin attack. This result is deterministic and can happen to match the symmetric cipher used for the content encryption. In case when the certificate is not provided, the last RecipientInfo producing the key looking valid will be used. It may cause getting garbage content on decryption.</p>
+
 <p>The following flags can be passed in the <b>flags</b> parameter.</p>
 
 <p>If the <b>PKCS7_TEXT</b> flag is set MIME headers for type <b>text/plain</b> are deleted from the content. If the content is not of type <b>text/plain</b> then an error is returned.</p>
@@ -52,15 +54,13 @@ int PKCS7_decrypt(PKCS7 *p7, EVP_PKEY *pkey, X509 *cert, BIO *data, int flags);<
 
 <p>PKCS7_decrypt() must be passed the correct recipient key and certificate. It would be better if it could look up the correct key and certificate from a database.</p>
 
-<p>The lack of single pass processing and need to hold all data in memory as mentioned in PKCS7_sign() also applies to PKCS7_verify().</p>
-
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/PKCS7_encrypt.html">PKCS7_encrypt(3)</a></p>
+<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/PKCS7_encrypt.html">PKCS7_encrypt(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

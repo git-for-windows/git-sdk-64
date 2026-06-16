@@ -240,6 +240,8 @@
 
 <p>The URI of a store containing trusted certificates to use for verifying the server&#39;s certificate.</p>
 
+<p>When any of <b>-verifyCAfile</b>, <b>-verifyCApath</b>, or <b>-verifyCAstore</b> is specified, they are loaded into a separate verification store (via <a href="../man3/SSL_CTX_set1_verify_cert_store.html">SSL_CTX_set1_verify_cert_store(3)</a>) and used for server certificate verification instead of the store built from <b>-CAfile</b>, <b>-CApath</b>, and <b>-CAstore</b>.</p>
+
 </dd>
 <dt id="chainCAfile-file"><b>-chainCAfile</b> <i>file</i></dt>
 <dd>
@@ -613,7 +615,7 @@ DANE TLSA 2 1 1 ...ee12d2cc90180517616e8a18 matched TA certificate at depth 1
 <dt id="alpn-protocols--nextprotoneg-protocols"><b>-alpn</b> <i>protocols</i>, <b>-nextprotoneg</b> <i>protocols</i></dt>
 <dd>
 
-<p>These flags enable the Enable the Application-Layer Protocol Negotiation or Next Protocol Negotiation (NPN) extension, respectively. ALPN is the IETF standard and replaces NPN. The <i>protocols</i> list is a comma-separated list of protocol names that the client should advertise support for. The list should contain the most desirable protocols first. Protocol names are printable ASCII strings, for example &quot;http/1.1&quot; or &quot;spdy/3&quot;. An empty list of protocols is treated specially and will cause the client to advertise support for the TLS extension but disconnect just after receiving ServerHello with a list of server supported protocols. The flag <b>-nextprotoneg</b> cannot be specified if <b>-tls1_3</b> is used.</p>
+<p>These flags enable the Enable the Application-Layer Protocol Negotiation or Next Protocol Negotiation (NPN) extension, respectively. ALPN is the IETF standard and replaces NPN. The <i>protocols</i> list is a comma-separated list of protocol names that the client should advertise support for. The list should contain the most desirable protocols first. Protocol names are printable ASCII strings, for example &quot;http/1.1&quot; or &quot;spdy/3&quot;. The flag <b>-nextprotoneg</b> cannot be specified if <b>-tls1_3</b> is used.</p>
 
 </dd>
 <dt id="ct--noct"><b>-ct</b>, <b>-noct</b></dt>
@@ -965,7 +967,7 @@ Ciphersuite: TLS_AES_256_GCM_SHA384
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

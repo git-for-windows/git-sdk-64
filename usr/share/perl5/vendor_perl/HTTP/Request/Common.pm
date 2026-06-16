@@ -3,7 +3,7 @@ package HTTP::Request::Common;
 use strict;
 use warnings;
 
-our $VERSION = '7.01';
+our $VERSION = '7.02';
 
 our $DYNAMIC_FILE_UPLOAD ||= 0;  # make it defined (don't know why)
 our $READ_BUFFER_SIZE      = 8192;
@@ -312,7 +312,7 @@ HTTP::Request::Common - Construct common HTTP::Request objects
 
 =head1 VERSION
 
-version 7.01
+version 7.02
 
 =head1 SYNOPSIS
 

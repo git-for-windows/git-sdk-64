@@ -2,7 +2,7 @@
 " Language:	   Vim script
 " Maintainer:	   Hirohito Higashi <h.east.727 ATMARK gmail.com>
 "	   Doug Kearns <dougkearns@gmail.com>
-" Last Change:	   2026 May 24
+" Last Change:	   2026 Jun 12
 " Former Maintainer: Charles E. Campbell
 
 " DO NOT CHANGE DIRECTLY.
@@ -154,14 +154,14 @@ syn case match
 " Function Names {{{2
 " GEN_SYN_VIM: vimFuncName, START_STR='syn keyword vimFuncName contained', END_STR=''
 syn keyword vimFuncName contained abs acos add and append appendbufline argc argidx arglistid argv asin assert_beeps assert_equal assert_equalfile assert_exception assert_fails assert_false assert_inrange assert_match assert_nobeep assert_notequal assert_notmatch assert_report assert_true atan atan2 autocmd_add autocmd_delete autocmd_get balloon_gettext balloon_show balloon_split base64_decode base64_encode bindtextdomain blob2list blob2str browse browsedir bufadd bufexists buflisted bufload bufloaded bufname bufnr bufwinid bufwinnr byte2line byteidx byteidxcomp call ceil ch_canread ch_close ch_close_in ch_evalexpr ch_evalraw ch_getbufnr ch_getjob ch_info ch_listen ch_log ch_logfile ch_open ch_read ch_readblob ch_readraw ch_sendexpr ch_sendraw ch_setoptions ch_status
-syn keyword vimFuncName contained changenr char2nr charclass charcol charidx chdir cindent clearmatches cmdcomplete_info col complete complete_add complete_check complete_info confirm copy cos cosh count cscope_connection cursor debugbreak deepcopy delete deletebufline did_filetype diff diff_filler diff_hlID digraph_get digraph_getlist digraph_set digraph_setlist echoraw empty environ err_teapot escape eval eventhandler executable execute exepath exists exists_compiled exp expand expandcmd extend extendnew feedkeys filecopy filereadable filewritable filter finddir findfile flatten flattennew float2nr floor fmod fnameescape fnamemodify foldclosed foldclosedend foldlevel foldtext foldtextresult foreach foreground fullcommand funcref function garbagecollect get getbufinfo
-syn keyword vimFuncName contained getbufline getbufoneline getbufvar getcellpixels getcellwidths getchangelist getchar getcharmod getcharpos getcharsearch getcharstr getcmdcomplpat getcmdcompltype getcmdline getcmdpos getcmdprompt getcmdscreenpos getcmdtype getcmdwintype getcompletion getcompletiontype getcurpos getcursorcharpos getcwd getenv getfontname getfperm getfsize getftime getftype getimstatus getjumplist getline getloclist getmarklist getmatches getmousepos getmouseshape getpid getpos getqflist getreg getreginfo getregion getregionpos getregtype getscriptinfo getstacktrace gettabinfo gettabvar gettabwinvar gettagstack gettext getwininfo getwinpos getwinposx getwinposy getwinvar glob glob2regpat globpath has has_key haslocaldir hasmapto histadd histdel
-syn keyword vimFuncName contained histget histnr hlID hlexists hlget hlset hostname iconv id indent index indexof input inputdialog inputlist inputrestore inputsave inputsecret insert instanceof interrupt invert isabsolutepath isdirectory isinf islocked isnan items job_getchannel job_info job_setoptions job_start job_status job_stop join js_decode js_encode json_decode json_encode keys keytrans len libcall libcallnr line line2byte lispindent list2blob list2str list2tuple listener_add listener_flush listener_remove localtime log log10 luaeval map maparg mapcheck maplist mapnew mapset match matchadd matchaddpos matcharg matchbufline matchdelete matchend matchfuzzy matchfuzzypos matchlist matchstr matchstrlist matchstrpos max menu_info min mkdir mode mzeval nextnonblank
-syn keyword vimFuncName contained ngettext nr2char or pathshorten perleval popup_atcursor popup_beval popup_clear popup_close popup_create popup_dialog popup_filter_menu popup_filter_yesno popup_findecho popup_findinfo popup_findpreview popup_getoptions popup_getpos popup_hide popup_list popup_locate popup_menu popup_move popup_notification popup_setbuf popup_setoptions popup_settext popup_show pow preinserted prevnonblank printf prompt_getprompt prompt_setcallback prompt_setinterrupt prompt_setprompt prop_add prop_add_list prop_clear prop_find prop_list prop_remove prop_type_add prop_type_change prop_type_delete prop_type_get prop_type_list pum_getpos pumvisible py3eval pyeval pyxeval rand range readblob readdir readdirex readfile redraw_listener_add redraw_listener_remove
-syn keyword vimFuncName contained reduce reg_executing reg_recording reltime reltimefloat reltimestr remote_expr remote_foreground remote_peek remote_read remote_send remote_startserver remove rename repeat resolve reverse round rubyeval screenattr screenchar screenchars screencol screenpos screenrow screenstring search searchcount searchdecl searchpair searchpairpos searchpos server2client serverlist setbufline setbufvar setcellwidths setcharpos setcharsearch setcmdline setcmdpos setcursorcharpos setenv setfperm setline setloclist setmatches setpos setqflist setreg settabvar settabwinvar settagstack setwinvar sha256 shellescape shiftwidth sign_define sign_getdefined sign_getplaced sign_jump sign_place sign_placelist sign_undefine sign_unplace sign_unplacelist
-syn keyword vimFuncName contained simplify sin sinh slice sort sound_clear sound_playevent sound_playfile sound_stop soundfold spellbadword spellsuggest split sqrt srand state str2blob str2float str2list str2nr strcharlen strcharpart strchars strdisplaywidth strftime strgetchar stridx string strlen strpart strptime strridx strtrans strutf16len strwidth submatch substitute swapfilelist swapinfo swapname synID synIDattr synIDtrans synconcealed synstack system systemlist tabpagebuflist tabpagenr tabpagewinnr tabpanel_getinfo tabpanel_scroll tagfiles taglist tan tanh tempname term_dumpdiff term_dumpload term_dumpwrite term_getaltscreen term_getansicolors term_getattr term_getcursor term_getjob term_getline term_getscrolled term_getsize term_getstatus term_gettitle
-syn keyword vimFuncName contained term_gettty term_list term_scrape term_sendkeys term_setansicolors term_setapi term_setkill term_setrestore term_setsize term_start term_wait terminalprops test_alloc_fail test_autochdir test_feedinput test_garbagecollect_now test_garbagecollect_soon test_getvalue test_gui_event test_ignore_error test_mswin_event test_null_blob test_null_channel test_null_dict test_null_function test_null_job test_null_list test_null_partial test_null_string test_null_tuple test_option_not_set test_override test_refcount test_setmouse test_settime test_srand_seed test_unknown test_void timer_info timer_pause timer_start timer_stop timer_stopall tolower toupper tr trim trunc tuple2list type typename undofile undotree uniq uri_decode uri_encode
-syn keyword vimFuncName contained utf16idx values virtcol virtcol2col visualmode wildmenumode wildtrigger win_execute win_findbuf win_getid win_gettype win_gotoid win_id2tabwin win_id2win win_move_separator win_move_statusline win_screenpos win_splitmove winbufnr wincol windowsversion winheight winlayout winline winnr winrestcmd winrestview winsaveview winwidth wordcount writefile xor
+syn keyword vimFuncName contained changenr char2nr charclass charcol charidx chdir cindent clearmatches cmdcomplete_info col complete complete_add complete_check complete_info confirm copy cos cosh count cscope_connection cursor debugbreak deepcopy delete deletebufline did_filetype diff diff_filler diff_hlID digraph_get digraph_getlist digraph_set digraph_setlist echoraw empty environ err_teapot escape eval eventhandler executable execute exepath exists exists_compiled exp expand expandcmd extend extendnew feedkeys filecopy filereadable filewritable filter finddir findfile flatten flattennew float2nr floor fmod fnameescape fnamemodify foldclosed foldclosedend foldlevel foldtext foldtextresult foreach foreground fullcommand funcref function garbagecollect get getbgcolor
+syn keyword vimFuncName contained getbufinfo getbufline getbufoneline getbufvar getcellpixels getcellwidths getchangelist getchar getcharmod getcharpos getcharsearch getcharstr getcmdcomplpat getcmdcompltype getcmdline getcmdpos getcmdprompt getcmdscreenpos getcmdtype getcmdwintype getcompletion getcompletiontype getcurpos getcursorcharpos getcwd getenv getfontname getfperm getfsize getftime getftype getimstatus getjumplist getline getloclist getmarklist getmatches getmousepos getmouseshape getpid getpos getqflist getreg getreginfo getregion getregionpos getregtype getscriptinfo getstacktrace gettabinfo gettabvar gettabwinvar gettagstack gettext getwininfo getwinpos getwinposx getwinposy getwinvar glob glob2regpat globpath has has_key haslocaldir hasmapto histadd
+syn keyword vimFuncName contained histdel histget histnr hlID hlexists hlget hlset hostname iconv id indent index indexof input inputdialog inputlist inputrestore inputsave inputsecret insert instanceof interrupt invert isabsolutepath isdirectory isinf islocked isnan items job_getchannel job_info job_setoptions job_start job_status job_stop join js_decode js_encode json_decode json_encode keys keytrans len libcall libcallnr line line2byte lispindent list2blob list2str list2tuple listener_add listener_flush listener_remove localtime log log10 luaeval map maparg mapcheck maplist mapnew mapset match matchadd matchaddpos matcharg matchbufline matchdelete matchend matchfuzzy matchfuzzypos matchlist matchstr matchstrlist matchstrpos max menu_info min mkdir mode mzeval
+syn keyword vimFuncName contained nextnonblank ngettext nr2char or pathshorten perleval popup_atcursor popup_beval popup_clear popup_close popup_create popup_dialog popup_filter_menu popup_filter_yesno popup_findecho popup_findinfo popup_findpreview popup_getoptions popup_getpos popup_hide popup_list popup_locate popup_menu popup_move popup_notification popup_setbuf popup_setoptions popup_settext popup_show pow preinserted prevnonblank printf prompt_getprompt prompt_setcallback prompt_setinterrupt prompt_setprompt prop_add prop_add_list prop_clear prop_find prop_list prop_remove prop_type_add prop_type_change prop_type_delete prop_type_get prop_type_list pum_getpos pumvisible py3eval pyeval pyxeval rand range readblob readdir readdirex readfile redraw_listener_add
+syn keyword vimFuncName contained redraw_listener_remove reduce reg_executing reg_recording reltime reltimefloat reltimestr remote_expr remote_foreground remote_peek remote_read remote_send remote_startserver remove rename repeat resolve reverse round rubyeval screenattr screenchar screenchars screencol screenpos screenrow screenstring search searchcount searchdecl searchpair searchpairpos searchpos server2client serverlist setbufline setbufvar setcellwidths setcharpos setcharsearch setcmdline setcmdpos setcursorcharpos setenv setfperm setline setloclist setmatches setpos setqflist setreg settabvar settabwinvar settagstack setwinvar sha256 shellescape shiftwidth sign_define sign_getdefined sign_getplaced sign_jump sign_place sign_placelist sign_undefine sign_unplace
+syn keyword vimFuncName contained sign_unplacelist simplify sin sinh slice sort sound_clear sound_playevent sound_playfile sound_stop soundfold spellbadword spellsuggest split sqrt srand state str2blob str2float str2list str2nr strcharlen strcharpart strchars strdisplaywidth strftime strgetchar stridx string strlen strpart strptime strridx strtrans strutf16len strwidth submatch substitute swapfilelist swapinfo swapname synID synIDattr synIDtrans synconcealed synstack system systemlist tabpagebuflist tabpagenr tabpagewinnr tabpanel_getinfo tabpanel_scroll tagfiles taglist tan tanh tempname term_dumpdiff term_dumpload term_dumpwrite term_getaltscreen term_getansicolors term_getattr term_getcursor term_getjob term_getline term_getscrolled term_getsize term_getstatus
+syn keyword vimFuncName contained term_gettitle term_gettty term_list term_scrape term_sendkeys term_setansicolors term_setapi term_setkill term_setrestore term_setsize term_start term_wait terminalprops test_alloc_fail test_autochdir test_feedinput test_garbagecollect_now test_garbagecollect_soon test_getvalue test_gui_event test_ignore_error test_mswin_event test_null_blob test_null_channel test_null_dict test_null_function test_null_job test_null_list test_null_partial test_null_string test_null_tuple test_option_not_set test_override test_refcount test_setmouse test_settime test_srand_seed test_unknown test_void timer_info timer_pause timer_start timer_stop timer_stopall tolower toupper tr trim trunc tuple2list type typename undofile undotree uniq uri_decode
+syn keyword vimFuncName contained uri_encode utf16idx values virtcol virtcol2col visualmode wildmenumode wildtrigger win_execute win_findbuf win_getid win_gettype win_gotoid win_id2tabwin win_id2win win_move_separator win_move_statusline win_screenpos win_splitmove winbufnr wincol windowsversion winheight winlayout winline winnr winrestcmd winrestview winsaveview winwidth wordcount writefile xor
 
 " Predefined variable names {{{2
 " GEN_SYN_VIM: vimVarName, START_STR='syn keyword vimVimVarName contained', END_STR=''
@@ -290,13 +290,13 @@ Vim9 syn keyword vim9Boolean	true false
 " Numbers {{{2
 " =======
 syn case ignore
-syn match	vimNumber	"\<\d\+\%('\d\+\)*"		skipwhite nextgroup=@vimComment,vimSubscript,vimGlobal,vimSubst1
+syn match	vimNumber	"\<\d\+\%('\d\+\)*"		skipwhite nextgroup=@vimComment,vimSubscriptBrackets,vimGlobal,vimSubst1
 syn match	vimNumber	"\<\d\+\%('\d\+\)*\.\d\+\%(e[+-]\=\d\+\)\="	skipwhite nextgroup=@vimComment
-syn match	vimNumber	"\<0b[01]\+\%('[01]\+\)*"		skipwhite nextgroup=@vimComment,vimSubscript
-syn match	vimNumber	"\<0o\=\o\+\%('\o\+\)*"		skipwhite nextgroup=@vimComment,vimSubscript
-syn match	vimNumber	"\<0x\x\+\%('\x\+\)*"		skipwhite nextgroup=@vimComment,vimSubscript
+syn match	vimNumber	"\<0b[01]\+\%('[01]\+\)*"		skipwhite nextgroup=@vimComment,vimSubscriptBrackets
+syn match	vimNumber	"\<0o\=\o\+\%('\o\+\)*"		skipwhite nextgroup=@vimComment,vimSubscriptBrackets
+syn match	vimNumber	"\<0x\x\+\%('\x\+\)*"		skipwhite nextgroup=@vimComment,vimSubscriptBrackets
 syn match	vimNumber	'\<0z\>'			skipwhite nextgroup=@vimComment
-syn match	vimNumber	'\<0z\%(\x\x\)\+\%(\.\%(\x\x\)\+\)*'	skipwhite nextgroup=@vimComment,vimSubscript
+syn match	vimNumber	'\<0z\%(\x\x\)\+\%(\.\%(\x\x\)\+\)*'	skipwhite nextgroup=@vimComment,vimSubscriptBrackets
 syn case match
 
 " All vimCommands are contained by vimIsCommand. {{{2
@@ -309,20 +309,28 @@ syn match vimIsCommand	"\<\h\w*\>"	nextgroup=vimBang contains=vimCommand
 syn match vimBang	      contained	"!"
 syn match vimWhitespace contained	"\s\+"
 
-syn region vimSubscript contained	matchgroup=vimSubscriptBracket start="\[" end="]" nextgroup=vimSubscript contains=@vimExprList
+syn region vimSubscriptBrackets	contained
+      \ matchgroup=vimSubscriptBracket
+      \ start="\["
+      \ end="]"
+      \ nextgroup=vimSubscriptBrackets,vimSubscriptDot
+      \ contains=@vimExprList
+syn match  vimSubscriptDot	contained	"\."	nextgroup=vimVar,vimVarKey,vimUserFunc,vimUserFuncKey
 
-syn match vimVar	      contained	"\<\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscript contains=vim9Super,vim9This
-syn match vimVar		"\<[bwglstav]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscript contains=vimVarScope
-syn match vimVar		"\<a:\%(000\|1\=[0-9]\|20\)\>"	nextgroup=vimSubscript contains=vimVarScope
-syn match vimFBVar      contained	"\<[bwglsta]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscript contains=vimVarScope
+syn match vimVar	      contained	"\<\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vim9Super,vim9This
+" dict-key only
+syn match vimVarKey     contained	"\<\d\w*\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot
+syn match vimVar		"\<[bwglstav]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+syn match vimVar		"\<a:\%(000\|1\=[0-9]\|20\)\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
+syn match vimFBVar      contained	"\<[bwglsta]:\h[a-zA-Z0-9#_]*\>"	nextgroup=vimSubscriptBrackets,vimSubscriptDot contains=vimVarScope
 
 " match the scope prefix independently of the retrofitted scope dictionary
 syn match vimVarScope   contained	"\<[bwglstav]:"
-syn match vimVimVar     contained	"\<[bwglstav]:\%(\h\|\d\)\@!"	nextgroup=vimSubscript
+syn match vimVimVar     contained	"\<[bwglstav]:\%(\h\|\d\)\@!"	nextgroup=vimSubscriptBrackets,vimSubscriptDot
 
-syn match vimVarNameError contained "\<\h\w*\>"
-syn match vimVimVar	"\<v:"		nextgroup=vimSubscript,vimVimVarName,vimVarNameError
-syn match vimOptionVar	"&\%([lg]:\)\="		nextgroup=vimSubscript,vimOptionVarName,vimVarNameError
+syn match vimVarNameError contained "\<\h\w*\>"		nextgroup=vimSubscriptBrackets,vimSubscriptDot " just abort highlighting rather than match nextgroup?
+syn match vimVimVar	"\<v:"		nextgroup=vimSubscriptBrackets,vimSubscriptDot,vimVimVarName,vimVarNameError
+syn match vimOptionVar	"&\%([lg]:\)\="		nextgroup=vimSubscriptBrackets,vimSubscriptDot,vimOptionVarName,vimVarNameError
 syn cluster vimSpecialVar	contains=vimEnvvar,vimLetRegister,vimOptionVar,vimVimVar
 
 Vim9 syn match	vimVar	contained	 "\<\h\w*\ze<"		nextgroup=vim9TypeArgs
@@ -330,8 +338,8 @@ Vim9 syn match	vimVar	contained	 "\<\h\w*\ze<"		nextgroup=vim9TypeArgs
 Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\s\+[-+/*%]\==\%(\s\|$\)"
 Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\s\+\.\.=\%(\s\|$\)"
 Vim9 syn match	vim9LhsVariable	"\s\=\%([bwgt]:\)\=\h[a-zA-Z0-9#_]*\ze\s\+=<<\s"	skipwhite nextgroup=vimLetHeredoc	contains=vimVarScope
-Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\["		          nextgroup=vimSubscript
-Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\."		          nextgroup=vimOper	contains=vim9Super,vim9This
+Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\["		          nextgroup=vimSubscriptBrackets
+Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\."		          nextgroup=vimSubscriptDot	contains=vim9Super,vim9This
 Vim9 syn match	vim9LhsVariable	"\s\=\h[a-zA-Z0-9#_]*\ze\s*->"				contains=vim9Super,vim9This
 
 Vim9 syn match vim9LhsVariableList	"\[\_[^]]\+]\ze\s\+[-+/*%]\=="			contains=vimVar,@vimSpecialVar
@@ -547,9 +555,9 @@ syn match	vimOper	"="			skipwhite skipnl nextgroup=@vimOperContinue,@vimExprList
 syn match	vimOper	"\%#=1\%(==\|!=\|>=\|<=\|=\~\|!\~\|>\|<\)[?#]\="	skipwhite skipnl nextgroup=@vimOperContinue,@vimExprList,vimContinueString,vimSpecFile
 syn match	vimOper	"\<is\%(not\)\=\>"		skipwhite skipnl nextgroup=@vimOperContinue,@vimExprList,vimContinueString,vimSpecFile
 syn match	vimOper	"\<is\%(not\)\=[?#]"		skipwhite skipnl nextgroup=@vimOperContinue,@vimExprList,vimContinueString,vimSpecFile
-syn region	vimOperParen 		matchgroup=vimParenSep start="("    end=")" contains=@vimOperGroup nextgroup=vimSubscript
-syn region	vimOperParen		matchgroup=vimSep	     start="#\={" end="}" contains=@vimOperGroup nextgroup=vimSubscript,vimVar
-syn region	vimOperParen	contained	matchgroup=vimSep	     start="\["	end="]" contains=@vimOperGroup nextgroup=vimSubscript,vimVar
+syn region	vimOperParen 		matchgroup=vimParenSep start="("    end=")" contains=@vimOperGroup nextgroup=vimSubscriptBrackets,vimSubscriptDot
+syn region	vimOperParen		matchgroup=vimSep	     start="#\={" end="}" contains=@vimOperGroup nextgroup=vimSubscriptBrackets,vimSubscriptDot,vimVar
+syn region	vimOperParen	contained	matchgroup=vimSep	     start="\["	end="]" contains=@vimOperGroup nextgroup=vimSubscriptBrackets,vimSubscriptDot,vimVar
 if !exists("g:vimsyn_noerror") && !exists("g:vimsyn_noopererror")
  syn match	vimOperError	")"
 endif
@@ -1060,8 +1068,8 @@ syn region	vimPatSepZone	oneline   contained   matchgroup=vimPatSepZ start="\\%\
 syn region	vimPatRegion	contained transparent matchgroup=vimPatSepR start="\\[z%]\=(" end="\\)"	contains=@vimSubstList oneline
 syn match	vimNotPatSep	contained	"\\\\"
 syn cluster	vimStringGroup	contains=vimEscape,vimEscapeBrace,vimPatSep,vimNotPatSep,vimPatSepErr,vimPatSepZone,@Spell
-syn region	vimString	oneline keepend	matchgroup=vimString start=+[^a-zA-Z\\@]"+lc=1 skip=+\\\\\|\\"+ matchgroup=vimStringEnd end=+"+ nextgroup=vimSubscript contains=@vimStringGroup extend
-syn region	vimString	oneline	matchgroup=vimString start=+[^a-zA-Z\\@]'+lc=1 end=+'+		       nextgroup=vimSubscript contains=vimQuoteEscape  extend
+syn region	vimString	oneline keepend	matchgroup=vimString start=+[^a-zA-Z\\@]"+lc=1 skip=+\\\\\|\\"+ matchgroup=vimStringEnd end=+"+ nextgroup=vimSubscriptBrackets contains=@vimStringGroup extend
+syn region	vimString	oneline	matchgroup=vimString start=+[^a-zA-Z\\@]'+lc=1 end=+'+		       nextgroup=vimSubscriptBrackets contains=vimQuoteEscape  extend
 "syn region	vimString	oneline	start="\s/\s*\A"lc=1 skip="\\\\\|\\+" end="/"	contains=@vimStringGroup  " see tst45.vim
 
 syn match	vimEscape	contained	"\\."
@@ -1071,17 +1079,17 @@ syn match	vimEscape	contained	"\\<" contains=vimNotation
 syn match	vimEscape	contained	"\\<\*[^>]*>\=>"
 syn match	vimQuoteEscape	contained	"''"
 
-syn region	vimString	oneline matchgroup=vimString start=+$'+ end=+'+ nextgroup=vimSubscript contains=@vimStringInterpolation,vimQuoteEscape  extend
-syn region	vimString	oneline matchgroup=vimString start=+$"+ end=+"+ nextgroup=vimSubscript contains=@vimStringInterpolation,@vimStringGroup extend
+syn region	vimString	oneline matchgroup=vimString start=+$'+ end=+'+ nextgroup=vimSubscriptBrackets contains=@vimStringInterpolation,vimQuoteEscape  extend
+syn region	vimString	oneline matchgroup=vimString start=+$"+ end=+"+ nextgroup=vimSubscriptBrackets contains=@vimStringInterpolation,@vimStringGroup extend
 syn region	vimStringInterpolationExpr  oneline contained matchgroup=vimSep start=+{+ end=+}+ contains=@vimExprList
 syn match	vimStringInterpolationBrace contained "{{"
 syn match	vimStringInterpolationBrace contained "}}"
 syn cluster	vimStringInterpolation contains=vimStringInterpolationExpr,vimStringInterpolationBrace
 
-syn region	vimContinueString	contained	matchgroup=vimContinueString start=+"+  skip=+\n\s*\%(\\\|["#]\\ \)+ end=+"+ end="$" skipwhite nextgroup=vimSubscript,vimComment contains=@vimContinue,@vimStringGroup
-syn region	vimContinueString	contained	matchgroup=vimContinueString start=+'+  skip=+\n\s*\%(\\\|["#]\\ \)+ end=+'+ end="$" skipwhite nextgroup=vimSubscript,vimComment contains=@vimContinue,vimQuoteEscape
-syn region	vimContinueString	contained	matchgroup=vimContinueString start=+$"+ skip=+\n\s*\%(\\\|["#]\\ \)+ end=+"+ end="$" skipwhite nextgroup=vimSubscript,vimComment contains=@vimContinue,@vimStringInterpolation,@vimStringGroup
-syn region	vimContinueString	contained	matchgroup=vimContinueString start=+$'+ skip=+\n\s*\%(\\\|["#]\\ \)+ end=+'+ end="$" skipwhite nextgroup=vimSubscript,vimComment contains=@vimContinue,@vimStringInterpolation,vimQuoteEscape
+syn region	vimContinueString	contained	matchgroup=vimContinueString start=+"+  skip=+\n\s*\%(\\\|["#]\\ \)+ end=+"+ end="$" skipwhite nextgroup=vimSubscriptBrackets,vimComment contains=@vimContinue,@vimStringGroup
+syn region	vimContinueString	contained	matchgroup=vimContinueString start=+'+  skip=+\n\s*\%(\\\|["#]\\ \)+ end=+'+ end="$" skipwhite nextgroup=vimSubscriptBrackets,vimComment contains=@vimContinue,vimQuoteEscape
+syn region	vimContinueString	contained	matchgroup=vimContinueString start=+$"+ skip=+\n\s*\%(\\\|["#]\\ \)+ end=+"+ end="$" skipwhite nextgroup=vimSubscriptBrackets,vimComment contains=@vimContinue,@vimStringInterpolation,@vimStringGroup
+syn region	vimContinueString	contained	matchgroup=vimContinueString start=+$'+ skip=+\n\s*\%(\\\|["#]\\ \)+ end=+'+ end="$" skipwhite nextgroup=vimSubscriptBrackets,vimComment contains=@vimContinue,@vimStringInterpolation,vimQuoteEscape
 
 " Substitutions: {{{2
 " =============
@@ -1215,7 +1223,7 @@ syn region	vimVarList	contained
       \ start="\[" end="]"
       \ skipwhite nextgroup=vimLetHeredoc
       \ contains=@vimContinue,@vimSpecialVar,vimVar
-syn match	vimLetVar	 contained	"\<\%([bwglstav]:\)\=\h[a-zA-Z0-9#_]*\>\ze\%(\[.*]\)\=\s*=<<"	skipwhite nextgroup=vimLetVarSubscript,vimLetHeredoc	contains=vimVarScope,vimSubscript
+syn match	vimLetVar	 contained	"\<\%([bwglstav]:\)\=\h[a-zA-Z0-9#_]*\>\ze\%(\[.*]\)\=\s*=<<"	skipwhite nextgroup=vimLetVarSubscript,vimLetHeredoc	contains=vimVarScope,vimSubscriptBrackets
 hi link vimLetVar vimVar
 syn region	vimLetVarSubscript contained
       \ matchgroup=vimSubscriptBracket
@@ -2394,14 +2402,16 @@ unlet s:interfaces
 " Function Call Highlighting: {{{2
 " (following Gautam Iyer's suggestion)
 " ==========================
-syn match	vimFunc	contained	"\<\l\w*\ze\s*("					skipwhite nextgroup=vimOperParen		contains=vimFuncName
-syn match	vimUserFunc	contained	"\.\@1<=\l\w*\ze\%(\s*(\|<.*>(\)"				skipwhite nextgroup=vimOperParen,vim9TypeArgs
-syn match	vimUserFunc	contained	"\<\%([[:upper:]_]\|\%(\h\w*\.\)\+\h\)\w*\ze\%(\s*(\|<.*>(\)"		skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vim9MethodName,vim9Super,vim9This
-syn match	vimUserFunc	contained	"\<\%(g:\)\=\%(\h\w*#\)\+\h\w*\ze\%(\s*(\|<.*>(\)"			skipwhite nextgroup=vimOperParen		contains=vimVarScope
-syn match	vimUserFunc	contained	"\%(\<[sgbwtlav]:\|<[sS][iI][dD]>\)\%(\h\w*\.\)*\h\w*\ze\%(\s*(\|<.*>(\)"	skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vimVarScope,vimNotation
+syn match	vimFunc	contained	"\<\l\w*\ze\s*("				skipwhite nextgroup=vimOperParen		contains=vimFuncName
+" dict-key only
+syn match	vimUserFuncKey	contained	"\%(\l\|\d\)\w*\ze\%(\s*(\|<.*>(\)"			skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vim9MethodName
+syn match	vimUserFunc	contained	"\<[[:upper:]_]\w*\ze\%(\s*(\|<.*>(\)"		skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vim9MethodName,vim9Super,vim9This
+syn match	vimUserFunc	contained	"\<\%(g:\)\=\%(\h\w*#\)\+\h\w*\ze\%(\s*(\|<.*>(\)"		skipwhite nextgroup=vimOperParen		contains=vimVarScope
+syn match	vimUserFunc	contained	"\%(\<[sgbwtlav]:\|<[sS][iI][dD]>\)\h\w*\ze\%(\s*(\|<.*>(\)"	skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vimVarScope,vimNotation
 
-Vim9 syn match	vim9UserFunc	"^\s*\zs\%([sgbwtv]:\|<[sS][iI][dD]>\)\=\%(\h\w*[.#]\)*\h\w*\ze[<(]"			skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vimVarScope,vimNotation,vim9MethodName,vim9Super,vim9This
-Vim9 syn match	vim9Func	"^\s*\zs\l\w*\ze("					skipwhite nextgroup=vimOperParen		contains=vimFuncName
+Vim9 syn match	vim9UserFunc	"^\s*\zs\%([sgbwtv]:\|<[sS][iI][dD]>\)\=\h\w*\ze[(<]"			skipwhite nextgroup=vimOperParen,vim9TypeArgs	contains=vimVarScope,vimNotation,vim9MethodName,vim9Super,vim9This
+Vim9 syn match	vim9UserFunc	"^\s*\zs\%(g:\)\=\%(\h\w*#\)\+\h\w*\ze[(<]"			skipwhite nextgroup=vimOperParen		contains=vimVarScope
+Vim9 syn match	vim9Func	"^\s*\zs\l\w*\ze[(<]"				skipwhite nextgroup=vimOperParen		contains=vimFuncName
 
 syn cluster	vimFunc	contains=vimFunc,vimUserFunc
 syn cluster	vim9Func	contains=vim9Func,vim9UserFunc
@@ -2821,7 +2831,9 @@ if !exists("skip_vim_syntax_inits")
  hi def link vimUserCmdError	Error
  hi def link vimUserCmdKey	vimCommand
  hi def link vimUserFunc	Normal
+ hi def link vimUserFuncKey	vimUserFunc
  hi def link vimVar	Normal
+ hi def link vimVarKey	vimVar
  hi def link vimVarScope	Identifier
  hi def link vimVimgrep	vimCommand
  hi def link vimVimgrepadd	vimCommand

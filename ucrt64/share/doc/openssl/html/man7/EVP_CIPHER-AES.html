@@ -111,6 +111,8 @@
 
 <p>The AES-SIV and AES-WRAP mode implementations do not support streaming. That means to obtain correct results there can be only one <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call after the initialization of the context.</p>
 
+<p>When wrapping with AES-WRAP-PAD ciphers, the output buffer must be at least <i>inl</i> rounded up to the cipher block size (8 bytes) plus the block size. That is, the minimum output buffer size is <code>((inl + 7) / 8) * 8 + 8</code> bytes.</p>
+
 <p>The AES-XTS implementations allow streaming to be performed, but each <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call requires each input to be a multiple of the blocksize. Only the final EVP_EncryptUpdate() or EVP_DecryptUpdate() call can optionally have an input that is not a multiple of the blocksize but is larger than one block. In that case ciphertext stealing (CTS) is used to fill the block.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
@@ -123,7 +125,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

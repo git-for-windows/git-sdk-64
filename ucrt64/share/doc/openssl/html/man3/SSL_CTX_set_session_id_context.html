@@ -47,15 +47,15 @@ int SSL_set_session_id_context(SSL *ssl, const unsigned char *sid_ctx,
 
 <p>The session id context becomes part of the session. The session id context is set by the SSL/TLS server. The SSL_CTX_set_session_id_context() and SSL_set_session_id_context() functions are therefore only useful on the server side.</p>
 
-<p>OpenSSL clients will check the session id context returned by the server when reusing a session.</p>
-
 <p>The maximum length of the <b>sid_ctx</b> is limited to <b>SSL_MAX_SID_CTX_LENGTH</b>.</p>
 
 <h1 id="WARNINGS">WARNINGS</h1>
 
 <p>If the session id context is not set on an SSL/TLS server and client certificates are used, stored sessions will not be reused but a fatal error will be flagged and the handshake will fail.</p>
 
-<p>If a server returns a different session id context to an OpenSSL client when reusing a session, an error will be flagged and the handshake will fail. OpenSSL servers will always return the correct session id context, as an OpenSSL server checks the session id context itself before reusing a session as described above.</p>
+<p>If a client attempts to resume a session and the server detects that the session id context associated with the session is different to the current session id context then the resumption will fail. The handshake will continue normally but no resumption will occur.</p>
+
+<p>It is vital that the session id context is set before any session resumption occurs. Sessions get created early in the handshake. If the session id context is not set by the time the session gets created then the session will be associated with an empty session id context. The already created session will not get updated if the session id context is later set. In particular the callback set via the <a href="../man3/SSL_CTX_set_tlsext_servername_callback.html">SSL_CTX_set_tlsext_servername_callback(3)</a> function will be invoked after the session gets created, so if the session id context is set in the callback then this will be too late for the current handshake and the session id context setting will be ignored with respect to resumption. Typically the session id context should be set before the TLS handshake starts, but it may occur as late as in the callback set via the <a href="../man3/SSL_CTX_set_client_hello_cb.html">SSL_CTX_set_client_hello_cb(3)</a> function.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -83,7 +83,7 @@ int SSL_set_session_id_context(SSL *ssl, const unsigned char *sid_ctx,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

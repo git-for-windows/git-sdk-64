@@ -41,7 +41,7 @@
 
 <p><b>openssl rehash</b> scans directories and calculates a hash value of each <i>.pem</i>, <i>.crt</i>, <i>.cer</i>, or <i>.crl</i> file in the specified directory list and creates symbolic links for each file, where the name of the link is the hash value. (If the platform does not support symbolic links, a copy is made.) This command is useful as many programs that use OpenSSL require directories to be set up like this in order to find certificates.</p>
 
-<p>If any directories are named on the command line, then those are processed in turn. If not, then the <b>SSL_CERT_DIR</b> environment variable is consulted; this should be a colon-separated list of directories, like the Unix <b>PATH</b> variable. If that is not set then the default directory (installation-specific but often <i>/usr/local/ssl/certs</i>) is processed.</p>
+<p>If any directories are named on the command line, then those are processed in turn. If not, then the <b>SSL_CERT_DIR</b> environment variable is consulted; this should be a colon-separated list of directories (or semicolon-separated on Windows), like the <b>PATH</b> variable. If that is not set then the default directory (installation-specific but often <i>/usr/local/ssl/certs</i>) is processed.</p>
 
 <p>In order for a directory to be processed, the user must have write permissions on that directory, otherwise an error will be generated.</p>
 
@@ -144,7 +144,7 @@ $OPENSSL crl -hash -fingerprint -noout -in FILENAME</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
