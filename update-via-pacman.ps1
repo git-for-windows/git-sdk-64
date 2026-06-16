@@ -147,5 +147,20 @@ if (!(Test-Path cmd\git.exe -PathType Leaf)) {
   if (!$?) { die "Could not install mingw-w64-git-for-windows-addons" }
 }
 
+# Make sure that Git for Windows' special packages are installed
+$missing = @()
+
+foreach ($name in "cv2pdb", "curl-openssl-alternate", "git-credential-manager", "wintoast", "xpdf-tools") {
+  $pkg = "mingw-w64-ucrt-x86_64-$name"
+  if (-not (Get-ChildItem -Path "var/lib/pacman/local" -Directory -Filter "$pkg-[0-9]*" -ErrorAction SilentlyContinue)) {
+    $missing += $pkg
+  }
+}
+
+if ($missing) {
+  pacman -S --noconfirm @missing
+  if (!$?) { die "Could not install $($missing -join ', ')" }
+}
+
 # Wrapping up: re-install mingw-w64-git-extra
 bash -lc "pacman -S --overwrite=\* --noconfirm mingw-w64-ucrt-x86_64-git-extra"
