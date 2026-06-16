@@ -148,4 +148,4 @@ if (!(Test-Path cmd\git.exe -PathType Leaf)) {
 }
 
 # Wrapping up: re-install mingw-w64-git-extra
-bash -lc "pacman -S --overwrite=\* --noconfirm mingw-w64-x86_64-git-extra"
+bash -lc "pacman -S --overwrite=\* --noconfirm mingw-w64-ucrt-x86_64-git-extra"
