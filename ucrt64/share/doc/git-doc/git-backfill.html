@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>backfill</code> [<code>--min-batch-size=</code><em>&lt;n&gt;</em>] [<code>--</code>[<code>no-</code>]<code>sparse</code>]</pre>
+<pre class="content"><code>git</code> <code>backfill</code> [<code>--min-batch-size=</code><em>&lt;n&gt;</em>] [<code>--</code>[<code>no-</code>]<code>sparse</code>] [<code>--</code>[<code>no-</code>]<code>include-edges</code>] [<em>&lt;revision-range&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -493,7 +493,7 @@ time.</p>
 </div>
 <div class="paragraph">
 <p>By default, <code>git</code> <code>backfill</code> downloads all blobs reachable from the <code>HEAD</code>
-commit. This set can be restricted or expanded using various options.</p>
+commit. This set can be restricted or expanded using various options below.</p>
 </div>
 <div class="paragraph">
 <p>THIS COMMAND IS EXPERIMENTAL. ITS BEHAVIOR MAY CHANGE IN THE FUTURE.</p>
@@ -519,10 +519,33 @@ blobs seen at a given path. The default minimum batch size is
 current sparse-checkout. If the sparse-checkout feature is enabled,
 then <code>--sparse</code> is assumed and can be disabled with <code>--no-sparse</code>.</p>
 </dd>
-</dl>
+<dt class="hdlist1"><code>--include-edges</code></dt>
+<dt class="hdlist1"><code>--no-include-edges</code></dt>
+<dd>
+<p>Include blobs from boundary commits in the backfill.  Useful in
+preparation for commands like <code>git</code> <code>log</code> <code>-p</code> <code>A</code><code>..</code><code>B</code> or <code>git</code> <code>replay</code>
+<code>--onto</code> <code>TARGET</code> <code>A</code><code>..</code><code>B</code>, where A..B normally excludes A but you need
+the blobs from A as well.  <code>--include-edges</code> is the default.</p>
+</dd>
+<dt class="hdlist1"><em>&lt;revision-range&gt;</em></dt>
+<dd>
+<p>Backfill only blobs reachable from commits in the specified
+revision range.  When no <em>&lt;revision-range&gt;</em> is specified, it
+defaults to <code>HEAD</code> (i.e. the whole history leading to the
+current commit).  For a complete list of ways to spell
+<em>&lt;revision-range&gt;</em>, see the "Specifying Ranges" section of
+<a href="gitrevisions.html">gitrevisions(7)</a>.</p>
+<div class="paragraph">
+<p>You may also use commit-limiting options understood by
+<a href="git-rev-list.html">git-rev-list(1)</a> such as <code>--first-parent</code>, <code>--since</code>, or pathspecs.</p>
 </div>
 <div class="paragraph">
-<p>You may also specify the commit limiting options from <a href="git-rev-list.html">git-rev-list(1)</a>.</p>
+<p>Most <code>--filter=</code><em>&lt;spec&gt;</em> options don&#8217;t work with the purpose of
+<code>git</code> <code>backfill</code>, but the <code>sparse:</code><em>&lt;oid&gt;</em> filter is integrated to provide a
+focused set of paths to download, distinct from the <code>--sparse</code> option.</p>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -546,7 +569,7 @@ then <code>--sparse</code> is assumed and can be disabled with <code>--no-sparse
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 9.0.
+<p>This manual documents GNU <code>nano</code>, version 9.1.
 </p>
 
 
@@ -520,7 +520,7 @@ hard-wrapping occurs or when text is justified.
 </dd>
 <dt><span><samp>-N</samp></span></dt>
 <dt><span><samp>--noconvert</samp></span></dt>
-<dd><p>Disable automatic conversion of files from DOS/Mac format.
+<dd><p>Disable automatic conversion of files from DOS format.
 </p>
 </dd>
 <dt><span><samp>-O</samp></span></dt>
@@ -547,13 +547,24 @@ email, and to rewrap blocks of line comments when writing source code.
 </dd>
 <dt><span><samp>-R</samp></span></dt>
 <dt><span><samp>--restricted</samp></span></dt>
-<dd><p>Restricted mode: don&rsquo;t read or write to any file not specified on the
-command line.  This means: don&rsquo;t read or write history files; don&rsquo;t allow
-suspending; don&rsquo;t allow spell checking; don&rsquo;t
-allow a file to be appended to, prepended to, or saved under a different
-name if it already has one; and don&rsquo;t make backup files.
-Restricted mode can also be activated by invoking <code>nano</code> with
-any name beginning with <code>r</code> (e.g. <code>rnano</code>).
+<dd><p>Read and write only the file (or files) specified on the command line.
+This means: don&rsquo;t read or write the history files; don&rsquo;t allow suspending;
+don&rsquo;t allow spell checking; don&rsquo;t allow executing any command in the shell;
+don&rsquo;t allow the current buffer to be saved under a different name; don&rsquo;t
+allow appending or prepending to any file; and don&rsquo;t make backup files.
+</p>
+<p>As an exception, before the specified file or files, the nanorc files are
+read, to allow customization.  If customization should not be allowed,
+use option <samp>-I</samp> (<samp>--ignorercfiles</samp>) as well.
+</p>
+<p>When no file is specified on the command line, restricted mode
+allows you to save the contents that you type into the new buffer
+under any name, except that existing files may not be overwritten.
+If the places where this new file may be created should be limited,
+then use option <samp>-o</samp> (<samp>--operatingdir</samp>) as well.
+</p>
+<p>Restricted mode can also be activated by invoking <code>nano</code> with
+a name beginning with <code>r</code> (for example: <code>rnano</code>).
 </p>
 </dd>
 <dt><span><samp>-S</samp></span></dt>
@@ -698,7 +709,7 @@ dragging by holding down the Shift key.
 <dt><span><samp>--noread</samp></span></dt>
 <dd><p>Treat any name given on the command line as a new file.  This allows
 <code>nano</code> to write to named pipes: it starts with a blank buffer,
-and writes to the pipe when the user saves the &quot;file&quot;.  This way
+and writes to the pipe when the user saves the “file”.  This way
 <code>nano</code> can be used as an editor in combination with for instance
 <code>gpg</code> without having to write sensitive data to disk first.
 </p>
@@ -718,7 +729,7 @@ Note that option <samp>-/</samp> (<samp>--modernbindings</samp>) overrides this.
 </dd>
 <dt><span><samp>-q</samp></span></dt>
 <dt><span><samp>--indicator</samp></span></dt>
-<dd><p>Display a &quot;scrollbar&quot; on the righthand side of the edit window.
+<dd><p>Display a “scrollbar” on the righthand side of the edit window.
 It shows the position of the viewport in the buffer
 and how much of the buffer is covered by the viewport.
 </p>
@@ -826,7 +837,7 @@ filename in the center of the title bar.
 <dt><span><samp>--minibar</samp></span></dt>
 <dd><p>Suppress the title bar and instead show information about
 the current buffer at the bottom of the screen, in the space
-for the status bar.  In this &quot;mini bar&quot; the filename is shown
+for the status bar.  In this “mini bar” the filename is shown
 on the left, followed by an asterisk if the buffer has been modified.
 On the right are displayed the current line and column number, the
 code of the character under the cursor (in Unicode format: U+xxxx),
@@ -1119,7 +1130,7 @@ executed commands, so they can be easily reused in later sessions.
 </p>
 </dd>
 <dt><span><code>set indicator</code></span></dt>
-<dd><p>Display a &quot;scrollbar&quot; on the righthand side of the edit window.
+<dd><p>Display a “scrollbar” on the righthand side of the edit window.
 It shows the position of the viewport in the buffer
 and how much of the buffer is covered by the viewport.
 </p>
@@ -1169,7 +1180,7 @@ if your terminal can do those.
 </p>
 </dd>
 <dt><span><code>set locking</code></span></dt>
-<dd><p>Enable vim-style lock-files for when editing files.
+<dd><p>Use vim-style lock-files when editing files.
 </p>
 </dd>
 <dt><span><code>set magic</code></span></dt>
@@ -1189,7 +1200,7 @@ The default value is &quot;<tt>(&lt;[{)&gt;]}</tt>&quot;.
 <dt><span><code>set minibar</code></span></dt>
 <dd><p>Suppress the title bar and instead show information about
 the current buffer at the bottom of the screen, in the space
-for the status bar.  In this &quot;mini bar&quot; the filename is shown
+for the status bar.  In this “mini bar” the filename is shown
 on the left, followed by an asterisk if the buffer has been modified.
 On the right are displayed the current line and column number, the
 code of the character under the cursor (in Unicode format: U+xxxx),
@@ -1220,7 +1231,7 @@ cursor, set the mark (with two clicks), or execute shortcuts.
 </p>
 </dd>
 <dt><span><code>set noconvert</code></span></dt>
-<dd><p>Don&rsquo;t convert files from DOS/Mac format.
+<dd><p>Don&rsquo;t convert files from DOS format.
 </p>
 </dd>
 <dt><span><code>set nohelp</code></span></dt>
@@ -1312,7 +1323,7 @@ Regular expressions in <code>nano</code> are of the extended type (ERE).
 </p>
 </dd>
 <dt><span><code>set scrollercolor <var>fgcolor</var>,<var>bgcolor</var></code></span></dt>
-<dd><p>Use this color combination for the indicator alias &quot;scrollbar&quot;.
+<dd><p>Use this color combination for the indicator alias “scrollbar”.
 See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 </p>
 </dd>
@@ -1525,12 +1536,12 @@ on the system and <samp>--magic</samp> or <code>set magic</code> was given.)
 <dt><span><code>comment &quot;<var>string</var>&quot;</code></span></dt>
 <dd><p>Use the given string for commenting and uncommenting lines.
 If the string contains a vertical bar or pipe character (<tt>|</tt>),
-this designates bracket-style comments; for example, <tt>&quot;/*|*/&quot;</tt> for
+this designates bracket-style comments; for example, &quot;<tt>/*|*/</tt>&quot; for
 CSS files.  The characters before the pipe are prepended to the line and the
 characters after the pipe are appended at the end of the line.  If no pipe
-character is present, the full string is prepended; for example, <tt>&quot;#&quot;</tt> for
-Python files.  If empty double quotes are specified, the comment/uncomment
-functions are disabled; for example, <tt>&quot;&quot;</tt> for JSON.
+character is present, the full string is prepended; for example, &quot;<tt>#</tt>&quot;
+for Python files.  If nothing is specified between the double quotes, then
+the comment/uncomment function is disabled; for example, &quot;&quot; for JSON.
 The default value is &quot;<tt>#</tt>&quot;.
 </p>
 </dd>
@@ -1664,16 +1675,16 @@ Example: <code>^C</code>.
 </dd>
 <dt><span><code>M-<var>X</var></code></span></dt>
 <dd><p>where <var>X</var> is any ASCII character (except [),
-or the word &quot;Space&quot;, &quot;Left&quot;, &quot;Right&quot;, &quot;Up&quot;, or &quot;Down&quot;.
+or the word &quot;Space&quot;, &quot;Left&quot;, &quot;Right&quot;, &quot;Up&quot;, &quot;Down&quot;, &quot;Ins&quot;, or &quot;Del&quot;.
 Example: <code>M-8</code>.
 </p>
 </dd>
 <dt><span><code>Sh-M-<var>X</var></code></span></dt>
 <dd><p>where <var>X</var> is a Latin letter.
 Example: <code>Sh-M-U</code>.
-By default, each Meta+letter keystroke does the same as the corresponding
-Shift+Meta+letter.  But when any Shift+Meta bind is made, that will
-no longer be the case, for all letters.
+By default, each Shift+Meta+letter keystroke does the same as the
+corresponding Meta+letter.  But when any Shift+Meta bind is made,
+that will no longer be the case, for all letters.
 </p>
 </dd>
 <dt><span><code>F<var>n</var></code></span></dt>
@@ -2032,7 +2043,7 @@ as a macro.  When already recording, the recording is stopped.
 </p>
 </dd>
 <dt><span><code>redo</code></span></dt>
-<dd><p>Redoes the last undone action (i.e., it undoes an undo).
+<dd><p>Redoes the last undone action (that is: it undoes an undo).
 </p>
 </dd>
 <dt><span><code>refresh</code></span></dt>
@@ -2069,10 +2080,6 @@ the given characters.
 <dd><p>Toggles between searching for something and replacing something.
 </p>
 </dd>
-<dt><span><code>flipgoto</code></span></dt>
-<dd><p>Toggles between searching for text and targeting a line number.
-</p>
-</dd>
 <dt><span><code>flipexecute</code></span></dt>
 <dd><p>Switches from inserting a file to executing a command.
 </p>
@@ -2089,15 +2096,11 @@ empty buffer.
 </dd>
 <dt><span><code>flipconvert</code></span></dt>
 <dd><p>When reading in a file, toggles between converting and not converting
-it from DOS/Mac format.  Converting is the default.
+it from DOS format.  Converting is the default.
 </p>
 </dd>
 <dt><span><code>dosformat</code></span></dt>
-<dd><p>When writing a file, switches to writing a DOS format (CR/LF).
-</p>
-</dd>
-<dt><span><code>macformat</code></span></dt>
-<dd><p>When writing a file, switches to writing a Mac format.
+<dd><p>When writing a file, switches to writing DOS format (CR+LF line endings).
 </p>
 </dd>
 <dt><span><code>append</code></span></dt>
@@ -2105,7 +2108,7 @@ it from DOS/Mac format.  Converting is the default.
 </p>
 </dd>
 <dt><span><code>prepend</code></span></dt>
-<dd><p>When writing a file, &rsquo;prepends&rsquo; (writes at the beginning) instead of overwriting.
+<dd><p>When writing a file, “prepends” (writes at the beginning) instead of overwriting.
 </p>
 </dd>
 <dt><span><code>backup</code></span></dt>

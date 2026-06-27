@@ -452,15 +452,15 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git apply</em> [--stat] [--numstat] [--summary] [--check]
-          [--index | --intent-to-add] [--3way] [--ours | --theirs | --union]
-          [--apply] [--no-add] [--build-fake-ancestor=&lt;file&gt;] [-R | --reverse]
-          [--allow-binary-replacement | --binary] [--reject] [-z]
-          [-p&lt;n&gt;] [-C&lt;n&gt;] [--inaccurate-eof] [--recount] [--cached]
-          [--ignore-space-change | --ignore-whitespace]
-          [--whitespace=(nowarn|warn|fix|error|error-all)]
-          [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--directory=&lt;root&gt;]
-          [--verbose | --quiet] [--unsafe-paths] [--allow-empty] [&lt;patch&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>apply</code> [<code>--stat</code>] [<code>--numstat</code>] [<code>--summary</code>] [<code>--check</code>]
+	  [<code>--index</code> | <code>--intent-to-add</code>] [<code>--3way</code>] [<code>--ours</code> | <code>--theirs</code> | <code>--union</code>]
+	  [<code>--apply</code>] [<code>--no-add</code>] [<code>--build-fake-ancestor=</code><em>&lt;file&gt;</em>] [<code>-R</code> | <code>--reverse</code>]
+	  [<code>--allow-binary-replacement</code> | <code>--binary</code>] [<code>--reject</code>] [<code>-z</code>]
+	  [<code>-p</code><em>&lt;n&gt;</em>] [<code>-C</code><em>&lt;n&gt;</em>] [<code>--inaccurate-eof</code>] [<code>--recount</code>] [<code>--cached</code>]
+	  [<code>--ignore-space-change</code> | <code>--ignore-whitespace</code>]
+	  [<code>--whitespace=</code>(<code>nowarn</code>|<code>warn</code>|<code>fix</code>|<code>error</code>|<code>error-all</code>)]
+	  [<code>--exclude=</code><em>&lt;path&gt;</em>] [<code>--include=</code><em>&lt;path&gt;</em>] [<code>--directory=</code><em>&lt;root&gt;</em>]
+	  [<code>--verbose</code> | <code>--quiet</code>] [<code>--unsafe-paths</code>] [<code>--allow-empty</code>] [<em>&lt;patch&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -488,17 +488,17 @@ and does not require them to be in a Git repository.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;patch&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;patch&gt;</em>...</dt>
 <dd>
-<p>The files to read the patch from.  <em>-</em> can be used to read
+<p>The files to read the patch from.  <code>-</code> can be used to read
 from the standard input.</p>
 </dd>
-<dt class="hdlist1">--stat</dt>
+<dt class="hdlist1"><code>--stat</code></dt>
 <dd>
 <p>Instead of applying the patch, output diffstat for the
 input.  Turns off "apply".</p>
 </dd>
-<dt class="hdlist1">--numstat</dt>
+<dt class="hdlist1"><code>--numstat</code></dt>
 <dd>
 <p>Similar to <code>--stat</code>, but shows the number of added and
 deleted lines in decimal notation and the pathname without
@@ -506,20 +506,20 @@ abbreviation, to make it more machine friendly.  For
 binary files, outputs two <code>-</code> instead of saying
 <code>0</code> <code>0</code>.  Turns off "apply".</p>
 </dd>
-<dt class="hdlist1">--summary</dt>
+<dt class="hdlist1"><code>--summary</code></dt>
 <dd>
 <p>Instead of applying the patch, output a condensed
 summary of information obtained from git diff extended
 headers, such as creations, renames, and mode changes.
 Turns off "apply".</p>
 </dd>
-<dt class="hdlist1">--check</dt>
+<dt class="hdlist1"><code>--check</code></dt>
 <dd>
 <p>Instead of applying the patch, see if the patch is
 applicable to the current working tree and/or the index
 file and detects errors.  Turns off "apply".</p>
 </dd>
-<dt class="hdlist1">--index</dt>
+<dt class="hdlist1"><code>--index</code></dt>
 <dd>
 <p>Apply the patch to both the index and the working tree (or
 merely check that it would apply cleanly to both if <code>--check</code> is
@@ -529,14 +529,14 @@ contents and metadata such as file mode must match), and will
 raise an error if they are not, even if the patch would apply
 cleanly to both the index and the working tree in isolation.</p>
 </dd>
-<dt class="hdlist1">--cached</dt>
+<dt class="hdlist1"><code>--cached</code></dt>
 <dd>
 <p>Apply the patch to just the index, without touching the working
 tree. If <code>--check</code> is in effect, merely check that it would
 apply cleanly to the index entry.</p>
 </dd>
-<dt class="hdlist1">-N</dt>
-<dt class="hdlist1">--intent-to-add</dt>
+<dt class="hdlist1"><code>-N</code></dt>
+<dt class="hdlist1"><code>--intent-to-add</code></dt>
 <dd>
 <p>When applying the patch only to the working tree, mark new
 files to be added to the index later (see <code>--intent-to-add</code>
@@ -545,8 +545,8 @@ option in <a href="git-add.html">git-add(1)</a>). This option is ignored if
 repository. Note that <code>--index</code> could be implied by other options
 such as <code>--3way</code>.</p>
 </dd>
-<dt class="hdlist1">-3</dt>
-<dt class="hdlist1">--3way</dt>
+<dt class="hdlist1"><code>-3</code></dt>
+<dt class="hdlist1"><code>--3way</code></dt>
 <dd>
 <p>Attempt 3-way merge if the patch records the identity of blobs it is supposed
 to apply to and we have those blobs available locally, possibly leaving the
@@ -556,16 +556,16 @@ resolve.  This option implies the <code>--index</code> option unless the
 When used with the <code>--cached</code> option, any conflicts are left at higher stages
 in the cache.</p>
 </dd>
-<dt class="hdlist1">--ours</dt>
-<dt class="hdlist1">--theirs</dt>
-<dt class="hdlist1">--union</dt>
+<dt class="hdlist1"><code>--ours</code></dt>
+<dt class="hdlist1"><code>--theirs</code></dt>
+<dt class="hdlist1"><code>--union</code></dt>
 <dd>
 <p>Instead of leaving conflicts in the file, resolve conflicts favouring
-our (or their or both) side of the lines. Requires --3way.</p>
+our (or their or both) side of the lines. Requires <code>--3way</code>.</p>
 </dd>
-<dt class="hdlist1">--build-fake-ancestor=&lt;file&gt;</dt>
+<dt class="hdlist1"><code>--build-fake-ancestor=</code><em>&lt;file&gt;</em></dt>
 <dd>
-<p>Newer <em>git diff</em> output has embedded <em>index information</em>
+<p>Newer <code>git</code> <code>diff</code> output has embedded <em>index information</em>
 for each blob to help identify the original version that
 the patch applies to.  When this flag is given, and if
 the original versions of the blobs are available locally,
@@ -575,20 +575,20 @@ builds a temporary index containing those blobs.</p>
 the information is read from the current index instead.</p>
 </div>
 </dd>
-<dt class="hdlist1">-R</dt>
-<dt class="hdlist1">--reverse</dt>
+<dt class="hdlist1"><code>-R</code></dt>
+<dt class="hdlist1"><code>--reverse</code></dt>
 <dd>
 <p>Apply the patch in reverse.</p>
 </dd>
-<dt class="hdlist1">--reject</dt>
+<dt class="hdlist1"><code>--reject</code></dt>
 <dd>
-<p>For atomicity, <em>git apply</em> by default fails the whole patch and
+<p>For atomicity, <code>git</code> <code>apply</code> by default fails the whole patch and
 does not touch the working tree when some of the hunks
 do not apply.  This option makes it apply
 the parts of the patch that are applicable, and leave the
-rejected hunks in corresponding *.rej files.</p>
+rejected hunks in corresponding <code>*.rej</code> files.</p>
 </dd>
-<dt class="hdlist1">-z</dt>
+<dt class="hdlist1"><code>-z</code></dt>
 <dd>
 <p>When <code>--numstat</code> has been given, do not munge pathnames,
 but use a NUL-terminated machine-readable format.</p>
@@ -598,23 +598,23 @@ explained for the configuration variable <code>core.quotePath</code> (see
 <a href="git-config.html">git-config(1)</a>).</p>
 </div>
 </dd>
-<dt class="hdlist1">-p&lt;n&gt;</dt>
+<dt class="hdlist1"><code>-p</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>Remove &lt;n&gt; leading path components (separated by slashes) from
+<p>Remove <em>&lt;n&gt;</em> leading path components (separated by slashes) from
 traditional diff paths. E.g., with <code>-p2</code>, a patch against
 <code>a/dir/file</code> will be applied directly to <code>file</code>. The default is
 1.</p>
 </dd>
-<dt class="hdlist1">-C&lt;n&gt;</dt>
+<dt class="hdlist1"><code>-C</code><em>&lt;n&gt;</em></dt>
 <dd>
-<p>Ensure at least &lt;n&gt; lines of surrounding context match before
+<p>Ensure at least <em>&lt;n&gt;</em> lines of surrounding context match before
 and after each change.  When fewer lines of surrounding
 context exist they all must match.  By default no context is
 ever ignored.</p>
 </dd>
-<dt class="hdlist1">--unidiff-zero</dt>
+<dt class="hdlist1"><code>--unidiff-zero</code></dt>
 <dd>
-<p>By default, <em>git apply</em> expects that the patch being
+<p>By default, <code>git</code> <code>apply</code> expects that the patch being
 applied is a unified diff with at least one line of context.
 This provides good safety measures, but breaks down when
 applying a diff generated with <code>--unified=0</code>. To bypass these
@@ -624,39 +624,39 @@ checks use <code>--unidiff-zero</code>.</p>
 discouraged.</p>
 </div>
 </dd>
-<dt class="hdlist1">--apply</dt>
+<dt class="hdlist1"><code>--apply</code></dt>
 <dd>
 <p>If you use any of the options marked "Turns off
-<em>apply</em>" above, <em>git apply</em> reads and outputs the
+<em>apply</em>" above, <code>git</code> <code>apply</code> reads and outputs the
 requested information without actually applying the
 patch.  Give this flag after those flags to also apply
 the patch.</p>
 </dd>
-<dt class="hdlist1">--no-add</dt>
+<dt class="hdlist1"><code>--no-add</code></dt>
 <dd>
 <p>When applying a patch, ignore additions made by the
 patch.  This can be used to extract the common part between
-two files by first running <em>diff</em> on them and applying
+two files by first running <code>diff</code> on them and applying
 the result with this option, which would apply the
 deletion part but not the addition part.</p>
 </dd>
-<dt class="hdlist1">--allow-binary-replacement</dt>
-<dt class="hdlist1">--binary</dt>
+<dt class="hdlist1"><code>--allow-binary-replacement</code></dt>
+<dt class="hdlist1"><code>--binary</code></dt>
 <dd>
 <p>Historically we did not allow binary patch application
 without an explicit permission from the user, and this
 flag was the way to do so.  Currently, we always allow binary
 patch application, so this is a no-op.</p>
 </dd>
-<dt class="hdlist1">--exclude=&lt;path-pattern&gt;</dt>
+<dt class="hdlist1"><code>--exclude=</code><em>&lt;path-pattern&gt;</em></dt>
 <dd>
-<p>Don&#8217;t apply changes to files matching the given path pattern. This can
+<p>Don&#8217;t apply changes to files matching <em>&lt;path-pattern&gt;</em>. This can
 be useful when importing patchsets, where you want to exclude certain
 files or directories.</p>
 </dd>
-<dt class="hdlist1">--include=&lt;path-pattern&gt;</dt>
+<dt class="hdlist1"><code>--include=</code><em>&lt;path-pattern&gt;</em></dt>
 <dd>
-<p>Apply changes to files matching the given path pattern. This can
+<p>Apply changes to files matching the <em>&lt;path-pattern&gt;</em>. This can
 be useful when importing patchsets, where you want to include certain
 files or directories.</p>
 <div class="paragraph">
@@ -667,8 +667,8 @@ include/exclude pattern is used by default if there is no include pattern
 on the command line, and ignored if there is any include pattern.</p>
 </div>
 </dd>
-<dt class="hdlist1">--ignore-space-change</dt>
-<dt class="hdlist1">--ignore-whitespace</dt>
+<dt class="hdlist1"><code>--ignore-space-change</code></dt>
+<dt class="hdlist1"><code>--ignore-whitespace</code></dt>
 <dd>
 <p>When applying a patch, ignore changes in whitespace in context
 lines if necessary.
@@ -676,7 +676,7 @@ Context lines will preserve their whitespace, and they will not
 undergo whitespace fixing regardless of the value of the
 <code>--whitespace</code> option. New lines will still be fixed, though.</p>
 </dd>
-<dt class="hdlist1">--whitespace=&lt;action&gt;</dt>
+<dt class="hdlist1"><code>--whitespace=</code><em>&lt;action&gt;</em></dt>
 <dd>
 <p>When applying a patch, detect a new or modified line that has
 whitespace errors.  What are considered whitespace errors is
@@ -719,36 +719,36 @@ to apply the patch.</p>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">--inaccurate-eof</dt>
+<dt class="hdlist1"><code>--inaccurate-eof</code></dt>
 <dd>
-<p>Under certain circumstances, some versions of <em>diff</em> do not correctly
+<p>Under certain circumstances, some versions of <code>diff</code> do not correctly
 detect a missing new-line at the end of the file. As a result, patches
-created by such <em>diff</em> programs do not record incomplete lines
+created by such <code>diff</code> programs do not record incomplete lines
 correctly. This option adds support for applying such patches by
 working around this bug.</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Report progress to stderr. By default, only a message about the
 current patch being applied will be printed. This option will cause
 additional information to be reported.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Suppress stderr output. Messages about patch status and progress
 will not be printed.</p>
 </dd>
-<dt class="hdlist1">--recount</dt>
+<dt class="hdlist1"><code>--recount</code></dt>
 <dd>
 <p>Do not trust the line counts in the hunk headers, but infer them
 by inspecting the patch (e.g. after editing the patch without
 adjusting the hunk headers appropriately).</p>
 </dd>
-<dt class="hdlist1">--directory=&lt;root&gt;</dt>
+<dt class="hdlist1"><code>--directory=</code><em>&lt;root&gt;</em></dt>
 <dd>
-<p>Prepend &lt;root&gt; to all filenames.  If a "-p" argument was also passed,
+<p>Prepend <em>&lt;root&gt;</em> to all filenames.  If a <code>-p</code> argument was also passed,
 it is applied before prepending the new root.</p>
 <div class="paragraph">
 <p>For example, a patch that talks about updating <code>a/git-gui.sh</code> to <code>b/git-gui.sh</code>
@@ -756,19 +756,19 @@ can be applied to the file in the working tree <code>modules/git-gui/git-gui.sh<
 running <code>git</code> <code>apply</code> <code>--directory=modules/git-gui</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--unsafe-paths</dt>
+<dt class="hdlist1"><code>--unsafe-paths</code></dt>
 <dd>
 <p>By default, a patch that affects outside the working area
 (either a Git controlled working tree, or the current working
-directory when "git apply" is used as a replacement of GNU
-patch) is rejected as a mistake (or a mischief).</p>
+directory when <code>git</code> <code>apply</code> is used as a replacement of GNU
+<code>patch</code>) is rejected as a mistake (or a mischief).</p>
 <div class="paragraph">
-<p>When <code>git</code> <code>apply</code> is used as a "better GNU patch", the user can pass
+<p>When <code>git</code> <code>apply</code> is used as a "better GNU <code>patch</code>", the user can pass
 the <code>--unsafe-paths</code> option to override this safety check.  This option
 has no effect when <code>--index</code> or <code>--cached</code> is in use.</p>
 </div>
 </dd>
-<dt class="hdlist1">--allow-empty</dt>
+<dt class="hdlist1"><code>--allow-empty</code></dt>
 <dd>
 <p>Don&#8217;t return an error for patches containing no diff. This includes
 empty patches and patches with commit text only.</p>
@@ -787,19 +787,18 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">apply.ignoreWhitespace</dt>
+<dt class="hdlist1"><code>apply.ignoreWhitespace</code></dt>
 <dd>
-<p>When set to <em>change</em>, tells <em>git apply</em> to ignore changes in
+<p>When set to <code>change</code>, tells <code>git</code> <code>apply</code> to ignore changes in
 whitespace, in the same way as the <code>--ignore-space-change</code>
 option.
-When set to one of: no, none, never, false, it tells <em>git apply</em> to
-respect all whitespace differences.
-See <a href="git-apply.html">git-apply(1)</a>.</p>
+When set to one of: <code>no</code>, <code>none</code>, <code>never</code>, <code>false</code>, it tells <code>git</code> <code>apply</code> to
+respect all whitespace differences.</p>
 </dd>
-<dt class="hdlist1">apply.whitespace</dt>
+<dt class="hdlist1"><code>apply.whitespace</code></dt>
 <dd>
-<p>Tells <em>git apply</em> how to handle whitespace, in the same way
-as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply(1)</a>.</p>
+<p>Tells <code>git</code> <code>apply</code> how to handle whitespace, in the same way
+as the <code>--whitespace</code> option.</p>
 </dd>
 </dl>
 </div>
@@ -809,7 +808,7 @@ as the <code>--whitespace</code> option. See <a href="git-apply.html">git-apply(
 <h2 id="_submodules">SUBMODULES</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If the patch contains any changes to submodules then <em>git apply</em>
+<p>If the patch contains any changes to submodules then <code>git</code> <code>apply</code>
 treats these changes as follows.</p>
 </div>
 <div class="paragraph">
@@ -845,7 +844,7 @@ subdirectory is checked and (if possible) updated.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

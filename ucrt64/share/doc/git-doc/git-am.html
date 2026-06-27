@@ -452,16 +452,16 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git am</em> [--signoff] [--keep] [--[no-]keep-cr] [--[no-]utf8] [--[no-]verify]
-         [--[no-]3way] [--interactive] [--committer-date-is-author-date]
-         [--ignore-date] [--ignore-space-change | --ignore-whitespace]
-         [--whitespace=&lt;action&gt;] [-C&lt;n&gt;] [-p&lt;n&gt;] [--directory=&lt;dir&gt;]
-         [--exclude=&lt;path&gt;] [--include=&lt;path&gt;] [--reject] [-q | --quiet]
-         [--[no-]scissors] [-S[&lt;keyid&gt;]] [--patch-format=&lt;format&gt;]
-         [--quoted-cr=&lt;action&gt;]
-         [--empty=(stop|drop|keep)]
-         [(&lt;mbox&gt; | &lt;Maildir&gt;)&#8230;&#8203;]
-<em>git am</em> (--continue | --skip | --abort | --quit | --retry | --show-current-patch[=(diff|raw)] | --allow-empty)</pre>
+<pre class="content"><code>git</code> <code>am</code> [<code>--signoff</code>] [<code>--keep</code>] [<code>--</code>[<code>no-</code>]<code>keep-cr</code>] [<code>--</code>[<code>no-</code>]<code>utf8</code>] [<code>--</code>[<code>no-</code>]<code>verify</code>]
+	 [<code>--</code>[<code>no-</code>]<code>3way</code>] [<code>--interactive</code>] [<code>--committer-date-is-author-date</code>]
+	 [<code>--ignore-date</code>] [<code>--ignore-space-change</code> | <code>--ignore-whitespace</code>]
+	 [<code>--whitespace=</code><em>&lt;action&gt;</em>] [<code>-C</code><em>&lt;n&gt;</em>] [<code>-p</code><em>&lt;n&gt;</em>] [<code>--directory=</code><em>&lt;dir&gt;</em>]
+	 [<code>--exclude=</code><em>&lt;path&gt;</em>] [<code>--include=</code><em>&lt;path&gt;</em>] [<code>--reject</code>] [<code>-q</code> | <code>--quiet</code>]
+	 [<code>--</code>[<code>no-</code>]<code>scissors</code>] [<code>-S</code>[<em>&lt;key-id&gt;</em>]] [<code>--patch-format=</code><em>&lt;format&gt;</em>]
+	 [<code>--quoted-cr=</code><em>&lt;action&gt;</em>]
+	 [<code>--empty=</code>(<code>stop</code>|<code>drop</code>|<code>keep</code>)]
+	 [(<em>&lt;mbox&gt;</em> | <em>&lt;Maildir&gt;</em>)&#8230;&#8203;]
+<code>git</code> <code>am</code> (<code>--continue</code> | <code>--skip</code> | <code>--abort</code> | <code>--quit</code> | <code>--retry</code> | <code>--show-current-patch</code>[<code>=</code>(<code>diff</code>|<code>raw</code>)] | <code>--allow-empty</code>)</pre>
 </div>
 </div>
 </div>
@@ -482,53 +482,53 @@ history without merges.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">(&lt;mbox&gt;|&lt;Maildir&gt;)&#8230;&#8203;</dt>
+<dt class="hdlist1">(<em>&lt;mbox&gt;</em>|<em>&lt;Maildir&gt;</em>)...</dt>
 <dd>
 <p>The list of mailbox files to read patches from. If you do not
 supply this argument, the command reads from the standard input.
 If you supply directories, they will be treated as Maildirs.</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--signoff</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--signoff</code></dt>
 <dd>
 <p>Add a <code>Signed-off-by</code> trailer to the commit message (see
 <a href="git-interpret-trailers.html">git-interpret-trailers(1)</a>), using the committer identity
 of yourself.  See the signoff option in <a href="git-commit.html">git-commit(1)</a>
 for more information.</p>
 </dd>
-<dt class="hdlist1">-k</dt>
-<dt class="hdlist1">--keep</dt>
+<dt class="hdlist1"><code>-k</code></dt>
+<dt class="hdlist1"><code>--keep</code></dt>
 <dd>
 <p>Pass <code>-k</code> flag to <a href="git-mailinfo.html">git-mailinfo(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--keep-non-patch</dt>
+<dt class="hdlist1"><code>--keep-non-patch</code></dt>
 <dd>
 <p>Pass <code>-b</code> flag to <a href="git-mailinfo.html">git-mailinfo(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--keep-cr</dt>
-<dt class="hdlist1">--no-keep-cr</dt>
+<dt class="hdlist1"><code>--keep-cr</code></dt>
+<dt class="hdlist1"><code>--no-keep-cr</code></dt>
 <dd>
 <p>With <code>--keep-cr</code>, call <a href="git-mailsplit.html">git-mailsplit(1)</a>
 with the same option, to prevent it from stripping CR at the end of
 lines. <code>am.keepcr</code> configuration variable can be used to specify the
 default behaviour.  <code>--no-keep-cr</code> is useful to override <code>am.keepcr</code>.</p>
 </dd>
-<dt class="hdlist1">-c</dt>
-<dt class="hdlist1">--scissors</dt>
+<dt class="hdlist1"><code>-c</code></dt>
+<dt class="hdlist1"><code>--scissors</code></dt>
 <dd>
 <p>Remove everything in body before a scissors line (see
 <a href="git-mailinfo.html">git-mailinfo(1)</a>). Can be activated by default using
 the <code>mailinfo.scissors</code> configuration variable.</p>
 </dd>
-<dt class="hdlist1">--no-scissors</dt>
+<dt class="hdlist1"><code>--no-scissors</code></dt>
 <dd>
 <p>Ignore scissors lines (see <a href="git-mailinfo.html">git-mailinfo(1)</a>).</p>
 </dd>
-<dt class="hdlist1">--quoted-cr=&lt;action&gt;</dt>
+<dt class="hdlist1"><code>--quoted-cr=</code><em>&lt;action&gt;</em></dt>
 <dd>
 <p>This flag will be passed down to <a href="git-mailinfo.html">git-mailinfo(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--empty=(drop|keep|stop)</dt>
+<dt class="hdlist1"><code>--empty=</code>(<code>drop</code>|<code>keep</code>|<code>stop</code>)</dt>
 <dd>
 <p>How to handle an e-mail message lacking a patch:</p>
 <div class="openblock">
@@ -554,26 +554,26 @@ session. This is the default behavior.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">-m</dt>
-<dt class="hdlist1">--message-id</dt>
+<dt class="hdlist1"><code>-m</code></dt>
+<dt class="hdlist1"><code>--message-id</code></dt>
 <dd>
 <p>Pass the <code>-m</code> flag to <a href="git-mailinfo.html">git-mailinfo(1)</a>,
 so that the <code>Message-ID</code> header is added to the commit message.
 The <code>am.messageid</code> configuration variable can be used to specify
 the default behaviour.</p>
 </dd>
-<dt class="hdlist1">--no-message-id</dt>
+<dt class="hdlist1"><code>--no-message-id</code></dt>
 <dd>
 <p>Do not add the Message-ID header to the commit message.
 <code>--no-message-id</code> is useful to override <code>am.messageid</code>.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Be quiet. Only print error messages.</p>
 </dd>
-<dt class="hdlist1">-u</dt>
-<dt class="hdlist1">--utf8</dt>
+<dt class="hdlist1"><code>-u</code></dt>
+<dt class="hdlist1"><code>--utf8</code></dt>
 <dd>
 <p>Pass <code>-u</code> flag to <a href="git-mailinfo.html">git-mailinfo(1)</a>.
 The proposed commit log message taken from the e-mail
@@ -585,20 +585,20 @@ preferred encoding if it is not UTF-8).</p>
 default.   You can use <code>--no-utf8</code> to override this.</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-utf8</dt>
+<dt class="hdlist1"><code>--no-utf8</code></dt>
 <dd>
 <p>Pass <code>-n</code> flag to <a href="git-mailinfo.html">git-mailinfo(1)</a>.</p>
 </dd>
-<dt class="hdlist1">-3</dt>
-<dt class="hdlist1">--3way</dt>
-<dt class="hdlist1">--no-3way</dt>
+<dt class="hdlist1"><code>-3</code></dt>
+<dt class="hdlist1"><code>--3way</code></dt>
+<dt class="hdlist1"><code>--no-3way</code></dt>
 <dd>
 <p>When the patch does not apply cleanly, fall back on
 3-way merge if the patch records the identity of blobs
 it is supposed to apply to and we have those blobs
 available locally. <code>--no-3way</code> can be used to override
-am.threeWay configuration variable. For more information,
-see am.threeWay in <a href="git-config.html">git-config(1)</a>.</p>
+<code>am.threeWay</code> configuration variable. For more information,
+see <code>am.threeWay</code> in <a href="git-config.html">git-config(1)</a>.</p>
 </dd>
 <dt class="hdlist1"><code>--rerere-autoupdate</code></dt>
 <dt class="hdlist1"><code>--no-rerere-autoupdate</code></dt>
@@ -611,24 +611,24 @@ double-check what <a href="git-rerere.html">git-rerere(1)</a> did and catch pote
 mismerges, before committing the result to the index with a
 separate <a href="git-add.html">git-add(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--ignore-space-change</dt>
-<dt class="hdlist1">--ignore-whitespace</dt>
-<dt class="hdlist1">--whitespace=&lt;action&gt;</dt>
-<dt class="hdlist1">-C&lt;n&gt;</dt>
-<dt class="hdlist1">-p&lt;n&gt;</dt>
-<dt class="hdlist1">--directory=&lt;dir&gt;</dt>
-<dt class="hdlist1">--exclude=&lt;path&gt;</dt>
-<dt class="hdlist1">--include=&lt;path&gt;</dt>
-<dt class="hdlist1">--reject</dt>
+<dt class="hdlist1"><code>--ignore-space-change</code></dt>
+<dt class="hdlist1"><code>--ignore-whitespace</code></dt>
+<dt class="hdlist1"><code>--whitespace=</code><em>&lt;action&gt;</em></dt>
+<dt class="hdlist1"><code>-C</code><em>&lt;n&gt;</em></dt>
+<dt class="hdlist1"><code>-p</code><em>&lt;n&gt;</em></dt>
+<dt class="hdlist1"><code>--directory=</code><em>&lt;dir&gt;</em></dt>
+<dt class="hdlist1"><code>--exclude=</code><em>&lt;path&gt;</em></dt>
+<dt class="hdlist1"><code>--include=</code><em>&lt;path&gt;</em></dt>
+<dt class="hdlist1"><code>--reject</code></dt>
 <dd>
 <p>These flags are passed to the <a href="git-apply.html">git-apply(1)</a> program that
 applies the patch.</p>
 <div class="paragraph">
-<p>Valid &lt;action&gt; for the <code>--whitespace</code> option are:
+<p>Valid <em>&lt;action&gt;</em> for the <code>--whitespace</code> option are:
 <code>nowarn</code>, <code>warn</code>, <code>fix</code>, <code>error</code>, and <code>error-all</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--patch-format</dt>
+<dt class="hdlist1"><code>--patch-format</code></dt>
 <dd>
 <p>By default the command will try to detect the patch format
 automatically. This option allows the user to bypass the automatic
@@ -636,14 +636,14 @@ detection and specify the patch format that the patch(es) should be
 interpreted as. Valid formats are mbox, mboxrd,
 stgit, stgit-series, and hg.</p>
 </dd>
-<dt class="hdlist1">-i</dt>
-<dt class="hdlist1">--interactive</dt>
+<dt class="hdlist1"><code>-i</code></dt>
+<dt class="hdlist1"><code>--interactive</code></dt>
 <dd>
 <p>Run interactively.</p>
 </dd>
-<dt class="hdlist1">--verify</dt>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--no-verify</dt>
+<dt class="hdlist1"><code>--verify</code></dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--no-verify</code></dt>
 <dd>
 <p>Run the <code>pre-applypatch</code> and <code>applypatch-msg</code> hooks. This is the
 default. Skip these hooks with <code>-n</code> or <code>--no-verify</code>. See also
@@ -652,7 +652,7 @@ default. Skip these hooks with <code>-n</code> or <code>--no-verify</code>. See 
 <p>Note that <code>post-applypatch</code> cannot be skipped.</p>
 </div>
 </dd>
-<dt class="hdlist1">--committer-date-is-author-date</dt>
+<dt class="hdlist1"><code>--committer-date-is-author-date</code></dt>
 <dd>
 <p>By default the command records the date from the e-mail
 message as the commit author date, and uses the time of
@@ -677,7 +677,7 @@ applying.
 </table>
 </div>
 </dd>
-<dt class="hdlist1">--ignore-date</dt>
+<dt class="hdlist1"><code>--ignore-date</code></dt>
 <dd>
 <p>By default the command records the date from the e-mail
 message as the commit author date, and uses the time of
@@ -685,24 +685,24 @@ commit creation as the committer date. This allows the
 user to lie about the author date by using the same
 value as the committer date.</p>
 </dd>
-<dt class="hdlist1">--skip</dt>
+<dt class="hdlist1"><code>--skip</code></dt>
 <dd>
 <p>Skip the current patch.  This is only meaningful when
 restarting an aborted patch.</p>
 </dd>
-<dt class="hdlist1">-S[&lt;keyid&gt;]</dt>
-<dt class="hdlist1">--gpg-sign[=&lt;keyid&gt;]</dt>
-<dt class="hdlist1">--no-gpg-sign</dt>
+<dt class="hdlist1"><code>-S</code>[<em>&lt;key-id&gt;</em>]</dt>
+<dt class="hdlist1"><code>--gpg-sign</code>[<code>=</code><em>&lt;key-id&gt;</em>]</dt>
+<dt class="hdlist1"><code>--no-gpg-sign</code></dt>
 <dd>
-<p>GPG-sign commits. The <code>keyid</code> argument is optional and
+<p>GPG-sign commits. The <em>&lt;key-id&gt;</em> is optional and
 defaults to the committer identity; if specified, it must be
 stuck to the option without a space. <code>--no-gpg-sign</code> is useful to
 countermand both <code>commit.gpgSign</code> configuration variable, and
 earlier <code>--gpg-sign</code>.</p>
 </dd>
-<dt class="hdlist1">--continue</dt>
-<dt class="hdlist1">-r</dt>
-<dt class="hdlist1">--resolved</dt>
+<dt class="hdlist1"><code>--continue</code></dt>
+<dt class="hdlist1"><code>-r</code></dt>
+<dt class="hdlist1"><code>--resolved</code></dt>
 <dd>
 <p>After a patch failure (e.g. attempting to apply
 conflicting patch), the user has applied it by hand and
@@ -711,41 +711,41 @@ Make a commit using the authorship and commit log
 extracted from the e-mail message and the current index
 file, and continue.</p>
 </dd>
-<dt class="hdlist1">--resolvemsg=&lt;msg&gt;</dt>
+<dt class="hdlist1"><code>--resolvemsg=</code><em>&lt;msg&gt;</em></dt>
 <dd>
-<p>When a patch failure occurs, &lt;msg&gt; will be printed
+<p>When a patch failure occurs, <em>&lt;msg&gt;</em> will be printed
 to the screen before exiting.  This overrides the
 standard message informing you to use <code>--continue</code>
 or <code>--skip</code> to handle the failure.  This is solely
 for internal use between <a href="git-rebase.html">git-rebase(1)</a> and
 <a href="git-am.html">git-am(1)</a>.</p>
 </dd>
-<dt class="hdlist1">--abort</dt>
+<dt class="hdlist1"><code>--abort</code></dt>
 <dd>
 <p>Restore the original branch and abort the patching operation.
 Revert the contents of files involved in the am operation to their
 pre-am state.</p>
 </dd>
-<dt class="hdlist1">--quit</dt>
+<dt class="hdlist1"><code>--quit</code></dt>
 <dd>
-<p>Abort the patching operation but keep HEAD and the index
+<p>Abort the patching operation but keep <code>HEAD</code> and the index
 untouched.</p>
 </dd>
-<dt class="hdlist1">--retry</dt>
+<dt class="hdlist1"><code>--retry</code></dt>
 <dd>
 <p>Try to apply the last conflicting patch again. This is generally
 only useful for passing extra options to the retry attempt
 (e.g., <code>--3way</code>), since otherwise you&#8217;ll just see the same
 failure again.</p>
 </dd>
-<dt class="hdlist1">--show-current-patch[=(diff|raw)]</dt>
+<dt class="hdlist1"><code>--show-current-patch</code>[<code>=</code>(<code>diff</code>|<code>raw</code>)]</dt>
 <dd>
 <p>Show the message at which <a href="git-am.html">git-am(1)</a> has stopped due to
 conflicts.  If <code>raw</code> is specified, show the raw contents of
 the e-mail message; if <code>diff</code>, show the diff portion only.
 Defaults to <code>raw</code>.</p>
 </dd>
-<dt class="hdlist1">--allow-empty</dt>
+<dt class="hdlist1"><code>--allow-empty</code></dt>
 <dd>
 <p>After a patch failure on an input e-mail message lacking a patch,
 create an empty commit with the contents of the e-mail message
@@ -787,10 +787,10 @@ Any line that is of the form:</p>
 <p>three-dashes and end-of-line, or</p>
 </li>
 <li>
-<p>a line that begins with "diff -", or</p>
+<p>a line that begins with <code>diff</code> <code>-</code>, or</p>
 </li>
 <li>
-<p>a line that begins with "Index: "</p>
+<p>a line that begins with `Index: `</p>
 </li>
 </ul>
 </div>
@@ -827,11 +827,11 @@ run <code>git</code> <code>am</code> <code>--abort</code> before running the com
 names.</p>
 </div>
 <div class="paragraph">
-<p>Before any patches are applied, ORIG_HEAD is set to the tip of the
+<p>Before any patches are applied, <code>ORIG_HEAD</code> is set to the tip of the
 current branch.  This is useful if you have problems with multiple
 commits, like running <a href="git-am.html">git-am(1)</a> on the wrong branch or an error
 in the commits that is more easily fixed by changing the mailbox (e.g.
-errors in the "From:" lines).</p>
+errors in the <code>From:</code> lines).</p>
 </div>
 </div>
 </div>
@@ -867,7 +867,7 @@ email workflows.</p>
 </div>
 <div class="paragraph">
 <p>Given these limitations, one might be tempted to use a general-purpose
-utility like patch(1) instead. However, patch(1) will not only look for
+utility like <code>patch</code>(1) instead. However, <code>patch</code>(1) will not only look for
 unindented diffs (like <a href="git-am.html">git-am(1)</a>) but will try to apply indented
 diffs as well.</p>
 </div>
@@ -896,7 +896,7 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">am.keepcr</dt>
+<dt class="hdlist1"><code>am.keepcr</code></dt>
 <dd>
 <p>If true, <a href="git-am.html">git-am(1)</a> will call <a href="git-mailsplit.html">git-mailsplit(1)</a>
 for patches in mbox format with parameter <code>--keep-cr</code>. In this
@@ -904,7 +904,7 @@ case <a href="git-mailsplit.html">git-mailsplit(1)</a> will
 not remove <code>\r</code> from lines ending with <code>\r\n</code>. Can be overridden
 by giving <code>--no-keep-cr</code> from the command line.</p>
 </dd>
-<dt class="hdlist1">am.threeWay</dt>
+<dt class="hdlist1"><code>am.threeWay</code></dt>
 <dd>
 <p>By default, <a href="git-am.html">git-am(1)</a> will fail if the patch does not
 apply cleanly. When set to true, this setting tells
@@ -913,7 +913,7 @@ records the identity of blobs it is supposed to apply to and we
 have those blobs available locally (equivalent to giving the
 <code>--3way</code> option from the command line). Defaults to <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">am.messageId</dt>
+<dt class="hdlist1"><code>am.messageId</code></dt>
 <dd>
 <p>Add a <code>Message-ID</code> trailer based on the email header to the
 commit when using <a href="git-am.html">git-am(1)</a> (see
@@ -944,7 +944,7 @@ and <code>--no-message-id</code> options.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

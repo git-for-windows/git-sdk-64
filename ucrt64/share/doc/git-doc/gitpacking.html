@@ -689,8 +689,8 @@ will be updated more often than a reference pointing at an old commit.</p>
 <dd>
 <p>Determines the proportion of non-bitmapped commits (among
 reference tips) which are selected for inclusion in an
-unstable pseudo-merge bitmap. Must be between <code>0</code> and <code>1</code>
-(inclusive). The default is <code>1</code>.</p>
+unstable pseudo-merge bitmap. Must be greater than <code>0</code> and
+less than or equal to <code>1</code>. The default is <code>1</code>.</p>
 </dd>
 <dt class="hdlist1">bitmapPseudoMerge.&lt;name&gt;.threshold</dt>
 <dd>
@@ -757,7 +757,7 @@ with a configuration like so:</p>
         pattern = "refs/"
         threshold = now
         stableThreshold = never
-        sampleRate = 100
+        sampleRate = 1
         maxMerges = 64</pre>
 </div>
 </div>
@@ -789,7 +789,7 @@ like:</p>
         pattern = "refs/virtual/([0-9]+)/(heads|tags)/"
         threshold = now
         stableThreshold = never
-        sampleRate = 100
+        sampleRate = 1
         maxMerges = 64</pre>
 </div>
 </div>
@@ -821,7 +821,7 @@ respectively).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

@@ -452,19 +452,19 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git bisect</em> start [--term-(bad|new)=&lt;term-new&gt; --term-(good|old)=&lt;term-old&gt;]
-                   [--no-checkout] [--first-parent] [&lt;bad&gt; [&lt;good&gt;&#8230;&#8203;]] [--] [&lt;pathspec&gt;&#8230;&#8203;]
-<em>git bisect</em> (bad|new|&lt;term-new&gt;) [&lt;rev&gt;]
-<em>git bisect</em> (good|old|&lt;term-old&gt;) [&lt;rev&gt;&#8230;&#8203;]
-<em>git bisect</em> terms [--term-(good|old) | --term-(bad|new)]
-<em>git bisect</em> skip [(&lt;rev&gt;|&lt;range&gt;)&#8230;&#8203;]
-<em>git bisect</em> next
-<em>git bisect</em> reset [&lt;commit&gt;]
-<em>git bisect</em> (visualize|view)
-<em>git bisect</em> replay &lt;logfile&gt;
-<em>git bisect</em> log
-<em>git bisect</em> run &lt;cmd&gt; [&lt;arg&gt;&#8230;&#8203;]
-<em>git bisect</em> help</pre>
+<pre class="content"><code>git</code> <code>bisect</code> <code>start</code> [<code>--term-</code>(<code>bad</code>|<code>new</code>)<code>=</code><em>&lt;term-new&gt;</em> <code>--term-</code>(<code>good</code>|<code>old</code>)<code>=</code><em>&lt;term-old&gt;</em>]
+		 [<code>--no-checkout</code>] [<code>--first-parent</code>] [<em>&lt;bad&gt;</em> [<em>&lt;good&gt;</em>&#8230;&#8203;]] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>bisect</code> (<code>bad</code>|<code>new</code>|<em>&lt;term-new&gt;</em>) [<em>&lt;rev&gt;</em>]
+<code>git</code> <code>bisect</code> (<code>good</code>|<code>old</code>|<em>&lt;term-old&gt;</em>) [<em>&lt;rev&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>bisect</code> <code>terms</code> [<code>--term-</code>(<code>good</code>|<code>old</code>) | <code>--term-</code>(<code>bad</code>|<code>new</code>)]
+<code>git</code> <code>bisect</code> <code>skip</code> [(<em>&lt;rev&gt;</em>|<em>&lt;range&gt;</em>)&#8230;&#8203;]
+<code>git</code> <code>bisect</code> <code>next</code>
+<code>git</code> <code>bisect</code> <code>reset</code> [<em>&lt;commit&gt;</em>]
+<code>git</code> <code>bisect</code> (<code>visualize</code>|<code>view</code>)
+<code>git</code> <code>bisect</code> <code>replay</code> <em>&lt;logfile&gt;</em>
+<code>git</code> <code>bisect</code> <code>log</code>
+<code>git</code> <code>bisect</code> <code>run</code> <em>&lt;cmd&gt;</em> [<em>&lt;arg&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>bisect</code> <code>help</code></pre>
 </div>
 </div>
 </div>
@@ -553,12 +553,10 @@ reference <code>refs/bisect/bad</code> will be left pointing at that commit.</p>
 <h3 id="_bisect_reset">Bisect reset</h3>
 <div class="paragraph">
 <p>After a bisect session, to clean up the bisection state and return to
-the original HEAD, issue the following command:</p>
+the original <code>HEAD</code>, issue the following command:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>$ git bisect reset</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>reset</code></pre>
 </div>
 <div class="paragraph">
 <p>By default, this will return your tree to the commit that was checked
@@ -569,10 +567,8 @@ that, as it cleans up the old bisection state.)</p>
 <p>With an optional argument, you can return to a different commit
 instead:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>$ git bisect reset &lt;commit&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>reset</code> <em>&lt;commit&gt;</em></pre>
 </div>
 <div class="paragraph">
 <p>For example, <code>git</code> <code>bisect</code> <code>reset</code> <code>bisect/bad</code> will check out the first
@@ -610,18 +606,14 @@ will report which commit introduced the property.</p>
 <code>bisect</code> <code>start</code> without commits as argument and then run the following
 commands to add the commits:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>git bisect old [&lt;rev&gt;]</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>old</code> [<em>&lt;rev&gt;</em>]</pre>
 </div>
 <div class="paragraph">
 <p>to indicate that a commit was before the sought change, or</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>git bisect new [&lt;rev&gt;...]</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>new</code> [<em>&lt;rev&gt;</em>&#8230;&#8203;]</pre>
 </div>
 <div class="paragraph">
 <p>to indicate that it was after.</p>
@@ -629,10 +621,8 @@ commands to add the commits:</p>
 <div class="paragraph">
 <p>To get a reminder of the currently used terms, use</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>git bisect terms</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>terms</code></pre>
 </div>
 <div class="paragraph">
 <p>You can get just the old term with <code>git</code> <code>bisect</code> <code>terms</code> <code>--term-old</code>
@@ -646,10 +636,8 @@ the commits more recent than the sought change.</p>
 subcommands like <code>reset</code>, <code>start</code>, &#8230;&#8203;) by starting the
 bisection using</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>git bisect start --term-old &lt;term-old&gt; --term-new &lt;term-new&gt;</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>start</code> <code>--term-old</code> <em>&lt;term-old&gt;</em> <code>--term-new</code> <em>&lt;term-new&gt;</em></pre>
 </div>
 <div class="paragraph">
 <p>For example, if you are looking for a commit that introduced a
@@ -657,7 +645,7 @@ performance regression, you might use</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>git bisect start --term-old fast --term-new slow</pre>
+<pre>$ git bisect start --term-old fast --term-new slow</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -665,7 +653,7 @@ performance regression, you might use</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>git bisect start --term-new fixed --term-old broken</pre>
+<pre>$ git bisect start --term-new fixed --term-old broken</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -676,7 +664,7 @@ of <code>git</code> <code>bisect</code> <code>good</code> and <code>git</code> <
 <div class="sect2">
 <h3 id="_bisect_visualizeview">Bisect visualize/view</h3>
 <div class="paragraph">
-<p>To see the currently remaining suspects in <em>gitk</em>, issue the following
+<p>To see the currently remaining suspects in <code>gitk</code>, issue the following
 command during the bisection process (the subcommand <code>view</code> can be used
 as an alternative to <code>visualize</code>):</p>
 </div>
@@ -686,14 +674,30 @@ as an alternative to <code>visualize</code>):</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Git detects a graphical environment through various environment variables:
-<code>DISPLAY</code>, which is set in X Window System environments on Unix systems.
-<code>SESSIONNAME</code>, which is set under Cygwin in interactive desktop sessions.
-<code>MSYSTEM</code>, which is set under Msys2 and Git for Windows.
-<code>SECURITYSESSIONID</code>, which may be set on macOS in interactive desktop sessions.</p>
+<p>Git detects a graphical environment through various environment variables:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>DISPLAY</code></dt>
+<dd>
+<p>which is set in X Window System environments on Unix systems.</p>
+</dd>
+<dt class="hdlist1"><code>SESSIONNAME</code></dt>
+<dd>
+<p>which is set under Cygwin in interactive desktop sessions.</p>
+</dd>
+<dt class="hdlist1"><code>MSYSTEM</code></dt>
+<dd>
+<p>which is set under Msys2 and Git for Windows.</p>
+</dd>
+<dt class="hdlist1"><code>SECURITYSESSIONID</code></dt>
+<dd>
+<p>which may be set on macOS in interactive desktop sessions.</p>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
-<p>If none of these environment variables is set, <em>git log</em> is used instead.
+<p>If none of these environment variables is set, <code>git</code> <code>log</code> is used instead.
 You can also give command-line options such as <code>-p</code> and <code>--stat</code>.</p>
 </div>
 <div class="listingblock">
@@ -843,21 +847,19 @@ the bad commit when issuing the <code>bisect</code> <code>start</code> command:<
 <p>If you have a script that can tell if the current source code is good
 or bad, you can bisect by issuing the command:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>$ git bisect run my_script arguments</pre>
-</div>
+<div class="verseblock">
+<pre class="content"><code>git</code> <code>bisect</code> <code>run</code> <em>&lt;cmd&gt;</em> [<em>&lt;arg&gt;</em>&#8230;&#8203;]</pre>
 </div>
 <div class="paragraph">
-<p>Note that the script (<code>my_script</code> in the above example) should exit
+<p>Note that <em>&lt;cmd&gt;</em> run with <em>&lt;arg&gt;</em>  should exit
 with code 0 if the current source code is good/old, and exit with a
 code between 1 and 127 (inclusive), except 125, if the current source
 code is bad/new.</p>
 </div>
 <div class="paragraph">
 <p>Any other exit code will abort the bisect process. It should be noted
-that a program that terminates via <code>exit</code>(<code>-1</code>) leaves $? = 255, (see the
-exit(3) manual page), as the value is chopped with &amp; <code>0377</code>.</p>
+that a program that terminates via <code>exit</code>(<code>-1</code>) leaves <code>$</code>? = 255, (see the
+<code>exit</code>(3) manual page), as the value is chopped with &amp; <code>0377</code>.</p>
 </div>
 <div class="paragraph">
 <p>The special exit code 125 should be used when the current source code
@@ -871,13 +873,13 @@ details do not matter, as they are normal errors in the script, as far as
 </div>
 <div class="paragraph">
 <p>You may often find that during a bisect session you want to have
-temporary modifications (e.g. s/#define DEBUG 0/#define DEBUG 1/ in a
+temporary modifications (e.g. <code>s/</code>#define <code>DEBUG</code> <code>0/</code>#define <code>DEBUG</code> <code>1/</code> in a
 header file, or "revision that does not have this commit needs this
 patch applied to work around another problem this bisection is not
 interested in") applied to the revision being tested.</p>
 </div>
 <div class="paragraph">
-<p>To cope with such a situation, after the inner <em>git bisect</em> finds the
+<p>To cope with such a situation, after the inner <code>git</code> <code>bisect</code> finds the
 next revision to test, the script can apply the patch
 before compiling, run the real test, and afterwards decide if the
 revision (possibly with the needed patch) passed the test and then
@@ -893,13 +895,11 @@ determine the eventual outcome of the bisect session.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--no-checkout</dt>
+<dt class="hdlist1"><code>--no-checkout</code></dt>
 <dd>
-<div class="paragraph">
 <p>Do not checkout the new working tree at each iteration of the bisection
 process. Instead just update the reference named <code>BISECT_HEAD</code> to make
 it point to the commit that should be tested.</p>
-</div>
 <div class="paragraph">
 <p>This option may be useful when the test you would perform in each step
 does not require a checked out tree.</p>
@@ -908,11 +908,9 @@ does not require a checked out tree.</p>
 <p>If the repository is bare, <code>--no-checkout</code> is assumed.</p>
 </div>
 </dd>
-<dt class="hdlist1">--first-parent</dt>
+<dt class="hdlist1"><code>--first-parent</code></dt>
 <dd>
-<div class="paragraph">
 <p>Follow only the first parent commit upon seeing a merge commit.</p>
-</div>
 <div class="paragraph">
 <p>In detecting regressions introduced through the merging of a branch, the merge
 commit will be identified as introduction of the bug and its ancestors will be
@@ -933,7 +931,7 @@ branch contained broken or non-buildable commits, but the merge itself was OK.</
 <div class="ulist">
 <ul>
 <li>
-<p>Automatically bisect a broken build between v1.2 and HEAD:</p>
+<p>Automatically bisect a broken build between v1.2 and <code>HEAD</code>:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git bisect start HEAD v1.2 --      # HEAD is bad, v1.2 is good
@@ -943,7 +941,7 @@ $ git bisect reset                   # quit the bisect session</pre>
 </div>
 </li>
 <li>
-<p>Automatically bisect a test failure between origin and HEAD:</p>
+<p>Automatically bisect a test failure between origin and <code>HEAD</code>:</p>
 <div class="listingblock">
 <div class="content">
 <pre>$ git bisect start HEAD origin --    # HEAD is bad, origin is good
@@ -974,7 +972,7 @@ and <code>exit</code> <code>1</code> otherwise.</p>
 <div class="paragraph">
 <p>It is safer if both <code>test.sh</code> and <code>check_test_case.sh</code> are
 outside the repository to prevent interactions between the bisect,
-make and test processes and the scripts.</p>
+<code>make</code> and test processes and the scripts.</p>
 </div>
 </li>
 <li>
@@ -1044,9 +1042,9 @@ $ git bisect reset                   # quit the bisect session</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In this case, when <em>git bisect run</em> finishes, bisect/bad will refer to a commit that
+<p>In this case, when <code>git</code> <code>bisect</code> <code>run</code> finishes, <code>bisect/bad</code> will refer to a commit that
 has at least one parent whose reachable graph is fully traversable in the sense
-required by <em>git pack objects</em>.</p>
+required by <code>git</code> <code>pack-objects</code>.</p>
 </div>
 </li>
 <li>
@@ -1100,7 +1098,7 @@ $ git bisect broken HEAD~10</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

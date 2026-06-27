@@ -452,9 +452,9 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git describe</em> [--all] [--tags] [--contains] [--abbrev=&lt;n&gt;] [&lt;commit-ish&gt;&#8230;&#8203;]
-<em>git describe</em> [--all] [--tags] [--contains] [--abbrev=&lt;n&gt;] --dirty[=&lt;mark&gt;]
-<em>git describe</em> &lt;blob&gt;</pre>
+<pre class="content"><code>git</code> <code>describe</code> [<code>--all</code>] [<code>--tags</code>] [<code>--contains</code>] [<code>--abbrev=</code><em>&lt;n&gt;</em>] [<em>&lt;commit-ish&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>describe</code> [<code>--all</code>] [<code>--tags</code>] [<code>--contains</code>] [<code>--abbrev=</code><em>&lt;n&gt;</em>] <code>--dirty</code>[<code>=</code><em>&lt;mark&gt;</em>]
+<code>git</code> <code>describe</code> <em>&lt;blob&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -471,16 +471,16 @@ is a "human-readable" object name which can also be used to
 identify the commit to other git commands.</p>
 </div>
 <div class="paragraph">
-<p>By default (without --all or --tags) <code>git</code> <code>describe</code> only shows
+<p>By default (without <code>--all</code> or <code>--tags</code>) <code>git</code> <code>describe</code> only shows
 annotated tags.  For more information about creating annotated tags
-see the -a and -s options to <a href="git-tag.html">git-tag(1)</a>.</p>
+see the <code>-a</code> and <code>-s</code> options to <a href="git-tag.html">git-tag(1)</a>.</p>
 </div>
 <div class="paragraph">
 <p>If the given object refers to a blob, it will be described
 as <em>&lt;commit-ish&gt;</em><code>:</code><em>&lt;path&gt;</em>, such that the blob can be found
 at <em>&lt;path&gt;</em> in the <em>&lt;commit-ish&gt;</em>, which itself describes the
 first commit in which this blob occurs in a reverse revision walk
-from HEAD.</p>
+from <code>HEAD</code>.</p>
 </div>
 </div>
 </div>
@@ -489,67 +489,67 @@ from HEAD.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">&lt;commit-ish&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;commit-ish&gt;</em>...</dt>
 <dd>
-<p>Commit-ish object names to describe.  Defaults to HEAD if omitted.</p>
+<p>Commit-ish object names to describe. Defaults to <code>HEAD</code> if omitted.</p>
 </dd>
-<dt class="hdlist1">--dirty[=&lt;mark&gt;]</dt>
-<dt class="hdlist1">--broken[=&lt;mark&gt;]</dt>
+<dt class="hdlist1"><code>--dirty</code>[<code>=</code><em>&lt;mark&gt;</em>]</dt>
+<dt class="hdlist1"><code>--broken</code>[<code>=</code><em>&lt;mark&gt;</em>]</dt>
 <dd>
 <p>Describe the state of the working tree.  When the working
-tree matches HEAD, the output is the same as "git describe
-HEAD".  If the working tree has local modification "-dirty"
+tree matches <code>HEAD</code>, the output is the same as <code>git</code> <code>describe</code> <code>HEAD</code>.
+If the working tree has local modification, <code>-dirty</code>
 is appended to it.  If a repository is corrupt and Git
 cannot determine if there is local modification, Git will
-error out, unless &#8216;--broken&#8217; is given, which appends
-the suffix "-broken" instead.</p>
+error out, unless <code>--broken</code> is given, which appends
+the suffix <code>-broken</code> instead.</p>
 </dd>
-<dt class="hdlist1">--all</dt>
+<dt class="hdlist1"><code>--all</code></dt>
 <dd>
 <p>Instead of using only the annotated tags, use any ref
 found in <code>refs/</code> namespace.  This option enables matching
 any known branch, remote-tracking branch, or lightweight tag.</p>
 </dd>
-<dt class="hdlist1">--tags</dt>
+<dt class="hdlist1"><code>--tags</code></dt>
 <dd>
 <p>Instead of using only the annotated tags, use any tag
 found in <code>refs/tags</code> namespace.  This option enables matching
 a lightweight (non-annotated) tag.</p>
 </dd>
-<dt class="hdlist1">--contains</dt>
+<dt class="hdlist1"><code>--contains</code></dt>
 <dd>
 <p>Instead of finding the tag that predates the commit, find
 the tag that comes after the commit, and thus contains it.
-Automatically implies --tags.</p>
+Automatically implies <code>--tags</code>.</p>
 </dd>
-<dt class="hdlist1">--abbrev=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--abbrev=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Instead of using the default number of hexadecimal digits (which
 will vary according to the number of objects in the repository with
-a default of 7) of the abbreviated object name, use &lt;n&gt; digits, or
-as many digits as needed to form a unique object name. An &lt;n&gt; of 0
+a default of 7) of the abbreviated object name, use <em>&lt;n&gt;</em> digits, or
+as many digits as needed to form a unique object name. An <em>&lt;n&gt;</em> of 0
 will suppress long format, only showing the closest tag.</p>
 </dd>
-<dt class="hdlist1">--candidates=&lt;n&gt;</dt>
+<dt class="hdlist1"><code>--candidates=</code><em>&lt;n&gt;</em></dt>
 <dd>
 <p>Instead of considering only the 10 most recent tags as
 candidates to describe the input commit-ish consider
-up to &lt;n&gt; candidates.  Increasing &lt;n&gt; above 10 will take
+up to <em>&lt;n&gt;</em> candidates.  Increasing <em>&lt;n&gt;</em> above 10 will take
 slightly longer but may produce a more accurate result.
-An &lt;n&gt; of 0 will cause only exact matches to be output.</p>
+An <em>&lt;n&gt;</em> of 0 will cause only exact matches to be output.</p>
 </dd>
-<dt class="hdlist1">--exact-match</dt>
+<dt class="hdlist1"><code>--exact-match</code></dt>
 <dd>
 <p>Only output exact matches (a tag directly references the
-supplied commit).  This is a synonym for --candidates=0.</p>
+supplied commit).  This is a synonym for <code>--candidates=0</code>.</p>
 </dd>
-<dt class="hdlist1">--debug</dt>
+<dt class="hdlist1"><code>--debug</code></dt>
 <dd>
 <p>Verbosely display information about the searching strategy
 being employed to standard error.  The tag name will still
 be printed to standard out.</p>
 </dd>
-<dt class="hdlist1">--long</dt>
+<dt class="hdlist1"><code>--long</code></dt>
 <dd>
 <p>Always output the long format (the tag, the number of commits
 and the abbreviated commit name) even when it matches a tag.
@@ -559,9 +559,9 @@ a tagged version.  Instead of just emitting the tag name, it will
 describe such a commit as v1.2-0-gdeadbee (0th commit since tag v1.2
 that points at object deadbee&#8230;&#8203;.).</p>
 </dd>
-<dt class="hdlist1">--match &lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>--match</code> <em>&lt;pattern&gt;</em></dt>
 <dd>
-<p>Only consider tags matching the given <code>glob</code>(<code>7</code>) pattern,
+<p>Only consider tags matching the given <code>glob</code>(7) pattern,
 excluding the "refs/tags/" prefix. If used with <code>--all</code>, it also
 considers local branches and remote-tracking references matching the
 pattern, excluding respectively "refs/heads/" and "refs/remotes/"
@@ -570,24 +570,24 @@ multiple times, a list of patterns will be accumulated, and tags
 matching any of the patterns will be considered.  Use <code>--no-match</code> to
 clear and reset the list of patterns.</p>
 </dd>
-<dt class="hdlist1">--exclude &lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>--exclude</code> <em>&lt;pattern&gt;</em></dt>
 <dd>
-<p>Do not consider tags matching the given <code>glob</code>(<code>7</code>) pattern, excluding
+<p>Do not consider tags matching the given <code>glob</code>(7) pattern, excluding
 the "refs/tags/" prefix. If used with <code>--all</code>, it also does not consider
 local branches and remote-tracking references matching the pattern,
-excluding respectively "refs/heads/" and "refs/remotes/" prefix;
+excluding respectively "<code>refs/heads/</code>" and "<code>refs/remotes/</code>" prefix;
 references of other types are never considered. If given multiple times,
 a list of patterns will be accumulated and tags matching any of the
-patterns will be excluded. When combined with --match a tag will be
-considered when it matches at least one --match pattern and does not
-match any of the --exclude patterns. Use <code>--no-exclude</code> to clear and
+patterns will be excluded. When combined with <code>--match</code> a tag will be
+considered when it matches at least one <code>--match</code> pattern and does not
+match any of the <code>--exclude</code> patterns. Use <code>--no-exclude</code> to clear and
 reset the list of patterns.</p>
 </dd>
-<dt class="hdlist1">--always</dt>
+<dt class="hdlist1"><code>--always</code></dt>
 <dd>
 <p>Show uniquely abbreviated commit object as fallback.</p>
 </dd>
-<dt class="hdlist1">--first-parent</dt>
+<dt class="hdlist1"><code>--first-parent</code></dt>
 <dd>
 <p>Follow only the first parent commit upon seeing a merge commit.
 This is useful when you wish to not match tags on branches merged
@@ -618,8 +618,8 @@ at the end.</p>
 </div>
 <div class="paragraph">
 <p>The number of additional commits is the number
-of commits which would be displayed by "git log v1.0.4..parent".
-The hash suffix is "-g" + an unambiguous abbreviation for the tip commit
+of commits which would be displayed by <code>git</code> <code>log</code> <code>v1.0.4</code><code>..</code><code>parent</code>.
+The hash suffix is "<code>-g</code>" + an unambiguous abbreviation for the tip commit
 of parent (which was <code>2414721b194453f058079d897d13c4e377f92dc6</code>). The
 length of the abbreviation scales as the repository grows, using the
 approximate number of objects in the repository and a bit of math
@@ -629,7 +629,7 @@ a software depending on the SCM the software is managed with. This is useful
 in an environment where people may use different SCMs.</p>
 </div>
 <div class="paragraph">
-<p>Doing a <em>git describe</em> on a tag-name will just show the tag name:</p>
+<p>Doing a <code>git</code> <code>describe</code> on a tag-name will just show the tag name:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -638,7 +638,7 @@ v1.0.4</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>With --all, the command can use branch heads as references, so
+<p>With <code>--all</code>, the command can use branch heads as references, so
 the output shows the reference path as well:</p>
 </div>
 <div class="literalblock">
@@ -654,7 +654,7 @@ heads/lt/describe-7-g975b</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>With --abbrev set to 0, the command can be used to find the
+<p>With <code>--abbrev</code> set to 0, the command can be used to find the
 closest tagname without any suffix:</p>
 </div>
 <div class="literalblock">
@@ -676,14 +676,14 @@ be sufficient to disambiguate these commits.</p>
 <h2 id="_search_strategy">SEARCH STRATEGY</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For each commit-ish supplied, <em>git describe</em> will first look for
+<p>For each commit-ish supplied, <code>git</code> <code>describe</code> will first look for
 a tag which tags exactly that commit.  Annotated tags will always
 be preferred over lightweight tags, and tags with newer dates will
 always be preferred over tags with older dates.  If an exact match
 is found, its name will be output and searching will stop.</p>
 </div>
 <div class="paragraph">
-<p>If an exact match was not found, <em>git describe</em> will walk back
+<p>If an exact match was not found, <code>git</code> <code>describe</code> will walk back
 through the commit history to locate an ancestor commit which
 has been tagged.  The ancestor&#8217;s tag will be output along with an
 abbreviation of the input commit-ish&#8217;s SHA-1. If <code>--first-parent</code> was
@@ -705,7 +705,7 @@ will be the smallest number of commits possible.</p>
 <div class="paragraph">
 <p>Tree objects as well as tag objects not pointing at commits, cannot be described.
 When describing blobs, the lightweight tags pointing at blobs are ignored,
-but the blob is still described as &lt;commit-ish&gt;:&lt;path&gt; despite the lightweight
+but the blob is still described as <em>&lt;commit-ish&gt;</em><code>:</code><em>&lt;path&gt;</em> despite the lightweight
 tag being favorable.</p>
 </div>
 </div>
@@ -721,7 +721,7 @@ tag being favorable.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

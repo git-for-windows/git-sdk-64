@@ -452,8 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git imap-send</em> [-v] [-q] [--[no-]curl] [(--folder|-f) &lt;folder&gt;]
-<em>git imap-send</em> --list</pre>
+<pre class="content"><code>git</code> <code>imap-send</code> [<code>-v</code>] [<code>-q</code>] [<code>--</code>[<code>no-</code>]<code>curl</code>] [(<code>--folder</code>|<code>-f</code>) <em>&lt;folder&gt;</em>]
+<code>git</code> <code>imap-send</code> <code>--list</code></pre>
 </div>
 </div>
 </div>
@@ -483,35 +483,35 @@ that order.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--verbose</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Be verbose.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Be quiet.</p>
 </dd>
-<dt class="hdlist1">-f &lt;folder&gt;</dt>
-<dt class="hdlist1">--folder=&lt;folder&gt;</dt>
+<dt class="hdlist1"><code>-f</code> <em>&lt;folder&gt;</em></dt>
+<dt class="hdlist1"><code>--folder=</code><em>&lt;folder&gt;</em></dt>
 <dd>
 <p>Specify the folder in which the emails have to saved.
 For example: <code>--folder=</code>[<code>Gmail</code>]<code>/Drafts</code> or <code>-f</code> <code>INBOX/Drafts</code>.</p>
 </dd>
-<dt class="hdlist1">--curl</dt>
+<dt class="hdlist1"><code>--curl</code></dt>
 <dd>
 <p>Use libcurl to communicate with the IMAP server, unless tunneling
 into it.  Ignored if Git was built without the USE_CURL_FOR_IMAP_SEND
 option set.</p>
 </dd>
-<dt class="hdlist1">--no-curl</dt>
+<dt class="hdlist1"><code>--no-curl</code></dt>
 <dd>
 <p>Talk to the IMAP server using git&#8217;s own IMAP routines instead of
 using libcurl.  Ignored if Git was built with the NO_OPENSSL option
 set.</p>
 </dd>
-<dt class="hdlist1">--list</dt>
+<dt class="hdlist1"><code>--list</code></dt>
 <dd>
 <p>Run the IMAP LIST command to output a list of all the folders present.</p>
 </dd>
@@ -533,7 +533,7 @@ same as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">imap.folder</dt>
+<dt class="hdlist1"><code>imap.folder</code></dt>
 <dd>
 <p>The folder to drop the mails into, which is typically the Drafts
 folder. For example: <code>INBOX.Drafts</code>, <code>INBOX/Drafts</code> or
@@ -541,47 +541,47 @@ folder. For example: <code>INBOX.Drafts</code>, <code>INBOX/Drafts</code> or
 the value of this configuration variable is used as the fallback
 default value when the <code>--folder</code> option is not given.</p>
 </dd>
-<dt class="hdlist1">imap.tunnel</dt>
+<dt class="hdlist1"><code>imap.tunnel</code></dt>
 <dd>
 <p>Command used to set up a tunnel to the IMAP server through which
 commands will be piped instead of using a direct network connection
-to the server. Required when imap.host is not set.</p>
+to the server. Required when <code>imap.host</code> is not set.</p>
 </dd>
-<dt class="hdlist1">imap.host</dt>
+<dt class="hdlist1"><code>imap.host</code></dt>
 <dd>
 <p>A URL identifying the server. Use an <code>imap://</code> prefix for non-secure
 connections and an <code>imaps://</code> prefix for secure connections.
-Ignored when imap.tunnel is set, but required otherwise.</p>
+Ignored when <code>imap.tunnel</code> is set, but required otherwise.</p>
 </dd>
-<dt class="hdlist1">imap.user</dt>
+<dt class="hdlist1"><code>imap.user</code></dt>
 <dd>
 <p>The username to use when logging in to the server.</p>
 </dd>
-<dt class="hdlist1">imap.pass</dt>
+<dt class="hdlist1"><code>imap.pass</code></dt>
 <dd>
 <p>The password to use when logging in to the server.</p>
 </dd>
-<dt class="hdlist1">imap.port</dt>
+<dt class="hdlist1"><code>imap.port</code></dt>
 <dd>
 <p>An integer port number to connect to on the server.
-Defaults to 143 for imap:// hosts and 993 for imaps:// hosts.
-Ignored when imap.tunnel is set.</p>
+Defaults to 143 for <code>imap://</code> hosts and 993 for <code>imaps://</code> hosts.
+Ignored when <code>imap.tunnel</code> is set.</p>
 </dd>
-<dt class="hdlist1">imap.sslverify</dt>
+<dt class="hdlist1"><code>imap.sslverify</code></dt>
 <dd>
 <p>A boolean to enable/disable verification of the server certificate
 used by the SSL/TLS connection. Default is <code>true</code>. Ignored when
-imap.tunnel is set.</p>
+<code>imap.tunnel</code> is set.</p>
 </dd>
-<dt class="hdlist1">imap.preformattedHTML</dt>
+<dt class="hdlist1"><code>imap.preformattedHTML</code></dt>
 <dd>
 <p>A boolean to enable/disable the use of html encoding when sending
-a patch.  An html encoded patch will be bracketed with &lt;pre&gt;
+a patch.  An html encoded patch will be bracketed with <em>&lt;pre&gt;</em>
 and have a content type of text/html.  Ironically, enabling this
 option causes Thunderbird to send the patch as a plain/text,
 format=fixed email.  Default is <code>false</code>.</p>
 </dd>
-<dt class="hdlist1">imap.authMethod</dt>
+<dt class="hdlist1"><code>imap.authMethod</code></dt>
 <dd>
 <p>Specify the authentication method for authenticating with the IMAP server.
 If Git was built with the NO_CURL option, or if your curl version is older
@@ -820,7 +820,7 @@ users may wish to visit this web page for more information:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

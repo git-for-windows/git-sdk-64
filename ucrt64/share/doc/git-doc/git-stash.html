@@ -456,7 +456,7 @@ pre>code {
 <code>git</code> <code>stash</code> <code>show</code> [<code>-u</code> | <code>--include-untracked</code> | <code>--only-untracked</code>] [<em>&lt;diff-options&gt;</em>] [<em>&lt;stash&gt;</em>]
 <code>git</code> <code>stash</code> <code>drop</code> [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
 <code>git</code> <code>stash</code> <code>pop</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
-<code>git</code> <code>stash</code> <code>apply</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<em>&lt;stash&gt;</em>]
+<code>git</code> <code>stash</code> <code>apply</code> [<code>--index</code>] [<code>-q</code> | <code>--quiet</code>] [<code>--label-ours=</code><em>&lt;label&gt;</em>] [<code>--label-theirs=</code><em>&lt;label&gt;</em>] [<code>--label-base=</code><em>&lt;label&gt;</em>] [<em>&lt;stash&gt;</em>]
 <code>git</code> <code>stash</code> <code>branch</code> <em>&lt;branchname&gt;</em> [<em>&lt;stash&gt;</em>]
 <code>git</code> <code>stash</code> [<code>push</code>] [<code>-p</code> | <code>--patch</code>] [<code>-S</code> | <code>--staged</code>] [<code>-k</code> | <code>--</code>[<code>no-</code>]<code>keep-index</code>] [<code>-q</code> | <code>--quiet</code>]
 	     [<code>-u</code> | <code>--include-untracked</code>] [<code>-a</code> | <code>--all</code>] [(<code>-m</code> | <code>--message</code>) <em>&lt;message&gt;</em>]
@@ -670,6 +670,17 @@ entry as part of the diff.</p>
 the index&#8217;s ones. However, this can fail, when you have conflicts
 (which are stored in the index, where you therefore can no longer
 apply the changes as they were originally).</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>--label-ours=</code><em>&lt;label&gt;</em></dt>
+<dt class="hdlist1"><code>--label-theirs=</code><em>&lt;label&gt;</em></dt>
+<dt class="hdlist1"><code>--label-base=</code><em>&lt;label&gt;</em></dt>
+<dd>
+<p>These options are only valid for the <code>apply</code> command.</p>
+<div class="paragraph">
+<p>Use the given labels in conflict markers instead of the default
+"Updated upstream", "Stashed changes", and "Stash base".
+<code>--label-base</code> only has an effect with merge.conflictStyle=diff3.</p>
 </div>
 </dd>
 <dt class="hdlist1"><code>-k</code></dt>
@@ -1007,7 +1018,7 @@ option will show a diffstat of the stash entry.  Defaults to true.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

@@ -444,7 +444,7 @@ pre>code {
 <h1>git-shortlog(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-shortlog - Summarize 'git log' output</p>
+<p>git-shortlog - Summarize `git log` output</p>
 </div>
 </div>
 <div id="content">
@@ -452,8 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git shortlog</em> [&lt;options&gt;] [&lt;revision-range&gt;] [[--] &lt;path&gt;&#8230;&#8203;]
-git log --pretty=short | <em>git shortlog</em> [&lt;options&gt;]</pre>
+<pre class="content"><code>git</code> <code>shortlog</code> [<em>&lt;options&gt;</em>] [<em>&lt;revision-range&gt;</em>] [[<code>--</code>] <em>&lt;path&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>log</code> <code>--pretty=short</code> | <code>git</code> <code>shortlog</code> [<em>&lt;options&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -461,7 +461,7 @@ git log --pretty=short | <em>git shortlog</em> [&lt;options&gt;]</pre>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Summarizes <em>git log</em> output in a format suitable for inclusion
+<p>Summarizes <code>git</code> <code>log</code> output in a format suitable for inclusion
 in release announcements. Each commit will be grouped by author and title.</p>
 </div>
 <div class="paragraph">
@@ -469,7 +469,7 @@ in release announcements. Each commit will be grouped by author and title.</p>
 </div>
 <div class="paragraph">
 <p>If no revisions are passed on the command line and either standard input
-is not a terminal or there is no current branch, <em>git shortlog</em> will
+is not a terminal or there is no current branch, <code>git</code> <code>shortlog</code> will
 output a summary of the log read from standard input, without
 reference to the current repository.</p>
 </div>
@@ -480,39 +480,39 @@ reference to the current repository.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--numbered</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--numbered</code></dt>
 <dd>
 <p>Sort output according to the number of commits per author instead
 of author alphabetic order.</p>
 </dd>
-<dt class="hdlist1">-s</dt>
-<dt class="hdlist1">--summary</dt>
+<dt class="hdlist1"><code>-s</code></dt>
+<dt class="hdlist1"><code>--summary</code></dt>
 <dd>
 <p>Suppress commit description and provide a commit count summary only.</p>
 </dd>
-<dt class="hdlist1">-e</dt>
-<dt class="hdlist1">--email</dt>
+<dt class="hdlist1"><code>-e</code></dt>
+<dt class="hdlist1"><code>--email</code></dt>
 <dd>
 <p>Show the email address of each author.</p>
 </dd>
-<dt class="hdlist1">--format[=&lt;format&gt;]</dt>
+<dt class="hdlist1"><code>--format</code>[<code>=</code><em>&lt;format&gt;</em>]</dt>
 <dd>
 <p>Instead of the commit subject, use some other information to
-describe each commit.  <em>&lt;format&gt;</em> can be any string accepted
-by the <code>--format</code> option of <em>git log</em>, such as <em>* [%h] %s</em>.
-(See the "PRETTY FORMATS" section of <a href="git-log.html">git-log(1)</a>.)</p>
+describe each commit. <em>&lt;format&gt;</em> can be any string accepted
+by the <code>--format</code> option of <code>git</code> <code>log</code>, such as <em>* [%h] %s</em>.
+(See the <em>PRETTY FORMATS</em> section of <a href="git-log.html">git-log(1)</a>.)</p>
 <div class="paragraph">
 <p>Each pretty-printed commit will be rewrapped before it is shown.</p>
 </div>
 </dd>
-<dt class="hdlist1">--date=&lt;format&gt;</dt>
+<dt class="hdlist1"><code>--date=</code><em>&lt;format&gt;</em></dt>
 <dd>
 <p>Show dates formatted according to the given date string. (See
-the <code>--date</code> option in the "Commit Formatting" section of
+the <code>--date</code> option in the <em>Commit Formatting</em> section of
 <a href="git-log.html">git-log(1)</a>). Useful with <code>--group=format:</code><em>&lt;format&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">--group=&lt;type&gt;</dt>
+<dt class="hdlist1"><code>--group=</code><em>&lt;type&gt;</em></dt>
 <dd>
 <p>Group commits based on <em>&lt;type&gt;</em>. If no <code>--group</code> option is
 specified, the default is <code>author</code>. <em>&lt;type&gt;</em> is one of:</p>
@@ -547,7 +547,7 @@ as an identity, it will be taken literally and completely.</p>
 </li>
 <li>
 <p><code>format:</code><em>&lt;format&gt;</em>, any string accepted by the <code>--format</code> option of
-<em>git log</em>. (See the "PRETTY FORMATS" section of
+<code>git</code> <code>log</code>. (See the <em>PRETTY FORMATS</em> section of
 <a href="git-log.html">git-log(1)</a>.)</p>
 </li>
 </ul>
@@ -561,12 +561,12 @@ example, <code>git</code> <code>shortlog</code> <code>--group=author</code> <cod
 counts both authors and co-authors.</p>
 </div>
 </dd>
-<dt class="hdlist1">-c</dt>
-<dt class="hdlist1">--committer</dt>
+<dt class="hdlist1"><code>-c</code></dt>
+<dt class="hdlist1"><code>--committer</code></dt>
 <dd>
 <p>This is an alias for <code>--group=committer</code>.</p>
 </dd>
-<dt class="hdlist1">-w[&lt;width&gt;[,&lt;indent1&gt;[,&lt;indent2&gt;]]]</dt>
+<dt class="hdlist1"><code>-w</code>[<em>&lt;width&gt;</em>[<code>,</code><em>&lt;indent1&gt;</em>[<code>,</code><em>&lt;indent2&gt;</em>]]]</dt>
 <dd>
 <p>Linewrap the output by wrapping each line at <code>width</code>.  The first
 line of each entry is indented by <code>indent1</code> spaces, and the second
@@ -577,17 +577,17 @@ and subsequent lines are indented by <code>indent2</code> spaces. <code>width</c
 them.</p>
 </div>
 </dd>
-<dt class="hdlist1">&lt;revision-range&gt;</dt>
+<dt class="hdlist1"><em>&lt;revision-range&gt;</em></dt>
 <dd>
 <p>Show only commits in the specified revision range.  When no
-&lt;revision-range&gt; is specified, it defaults to <code>HEAD</code> (i.e. the
+<em>&lt;revision-range&gt;</em> is specified, it defaults to <code>HEAD</code> (i.e. the
 whole history leading to the current commit).  <code>origin</code><code>..</code><code>HEAD</code>
 specifies all the commits reachable from the current commit
 (i.e. <code>HEAD</code>), but not from <code>origin</code>. For a complete list of
-ways to spell &lt;revision-range&gt;, see the "Specifying Ranges"
+ways to spell <em>&lt;revision-range&gt;</em>, see the <em>Specifying Ranges</em>
 section of <a href="gitrevisions.html">gitrevisions(7)</a>.</p>
 </dd>
-<dt class="hdlist1">[--] &lt;path&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1">[<code>--</code>] <em>&lt;path&gt;</em>...</dt>
 <dd>
 <p>Consider only commits that are enough to explain how the files
 that match the specified paths came to be.</p>
@@ -621,7 +621,11 @@ ordering and formatting options, such as <code>--reverse</code>.</p>
 <dt class="hdlist1"><code>-n</code> <em>&lt;number&gt;</em></dt>
 <dt class="hdlist1"><code>--max-count=</code><em>&lt;number&gt;</em></dt>
 <dd>
-<p>Limit the output to <em>&lt;number&gt;</em> commits.</p>
+<p>Limit the output to the first <em>&lt;number&gt;</em> commits that would be shown.</p>
+</dd>
+<dt class="hdlist1"><code>--max-count-oldest=</code><em>&lt;number&gt;</em></dt>
+<dd>
+<p>Limit the output to the last <em>&lt;number&gt;</em> commits that would be shown.</p>
 </dd>
 <dt class="hdlist1"><code>--skip=</code><em>&lt;number&gt;</em></dt>
 <dd>
@@ -630,7 +634,8 @@ ordering and formatting options, such as <code>--reverse</code>.</p>
 <dt class="hdlist1"><code>--since=</code><em>&lt;date&gt;</em></dt>
 <dt class="hdlist1"><code>--after=</code><em>&lt;date&gt;</em></dt>
 <dd>
-<p>Show commits more recent than <em>&lt;date&gt;</em>.</p>
+<p>Show commits more recent than <em>&lt;date&gt;</em>.  As a special case,
+<em>today</em> means the last midnight.</p>
 </dd>
 <dt class="hdlist1"><code>--since-as-filter=</code><em>&lt;date&gt;</em></dt>
 <dd>
@@ -1568,7 +1573,7 @@ the current directory.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

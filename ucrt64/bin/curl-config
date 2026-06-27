@@ -70,11 +70,11 @@ while test "$#" -gt 0; do
     ;;
 
   --ca)
-    echo 'none'
+    echo ''
     ;;
 
   --cc)
-    echo '/ucrt64/bin/gcc.exe'
+    echo 'gcc'
     ;;
 
   --prefix)
@@ -95,7 +95,7 @@ while test "$#" -gt 0; do
     ;;
 
   --version)
-    echo 'libcurl 8.20.0'
+    echo 'libcurl 8.21.0'
     exit 0
     ;;
 
@@ -107,11 +107,11 @@ while test "$#" -gt 0; do
     # dash as that's used for things like version 1.2.3-pre1
     cpatch=`echo "$checkfor" | cut -d. -f3 | cut -d- -f1`
 
-    vmajor=`echo '8.20.0' | cut -d. -f1`
-    vminor=`echo '8.20.0' | cut -d. -f2`
+    vmajor=`echo '8.21.0' | cut -d. -f1`
+    vminor=`echo '8.21.0' | cut -d. -f2`
     # when extracting the patch part we strip off everything after a
     # dash as that's used for things like version 1.2.3-pre1
-    vpatch=`echo '8.20.0' | cut -d. -f3 | cut -d- -f1`
+    vpatch=`echo '8.21.0' | cut -d. -f3 | cut -d- -f1`
 
     if test "$vmajor" -gt "$cmajor"; then
       exit 0
@@ -127,12 +127,12 @@ while test "$#" -gt 0; do
       fi
     fi
 
-    echo "requested version $checkfor is newer than existing 8.20.0"
+    echo "requested version $checkfor is newer than existing 8.21.0"
     exit 1
     ;;
 
   --vernum)
-    echo '081400'
+    echo '081500'
     exit 0
     ;;
 
@@ -155,7 +155,7 @@ while test "$#" -gt 0; do
       curllibdir=''
     fi
     if test 'yes' = 'no'; then
-      echo "${curllibdir}-lcurl -lssh2 -lidn2 -lz -lbrotlidec -lbrotlicommon -lzstd -lwldap32 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lsecur32 -lws2_32 -liphlpapi -lz -lws2_32"
+      echo "${curllibdir}-lcurl -lsecur32 -lidn2 -lwldap32 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lbrotlicommon -lz -lws2_32 -liphlpapi"
     else
       echo "${curllibdir}-lcurl"
     fi
@@ -167,7 +167,7 @@ while test "$#" -gt 0; do
 
   --static-libs)
     if test 'no' != 'no'; then
-      echo "${exec_prefix}/lib/libcurl.a  -lssh2 -lidn2 -lz -lbrotlidec -lbrotlicommon -lzstd -lwldap32 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lsecur32 -lws2_32 -liphlpapi -lz -lws2_32"
+      echo "${exec_prefix}/lib/libcurl.a  -lsecur32 -lidn2 -lwldap32 -lssh2 -lssh2 -lpsl -lbcrypt -ladvapi32 -lcrypt32 -lzstd -lzstd -lbrotlidec -lbrotlidec -lbrotlicommon -lz -lws2_32 -liphlpapi"
     else
       echo 'curl was built with static libraries disabled' >&2
       exit 1
@@ -175,7 +175,7 @@ while test "$#" -gt 0; do
     ;;
 
   --configure)
-    echo 
+    echo " '--prefix=/ucrt64' '--build=x86_64-w64-mingw32' '--host=x86_64-w64-mingw32' '--target=x86_64-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'target_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1' 'LDFLAGS=' 'CPPFLAGS='"
     ;;
 
   *)

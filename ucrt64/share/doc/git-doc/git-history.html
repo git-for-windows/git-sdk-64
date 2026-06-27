@@ -452,7 +452,8 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>history</code> <code>reword</code> <em>&lt;commit&gt;</em> [<code>--dry-run</code>] [<code>--update-refs=</code>(<code>branches</code>|<code>head</code>)]
+<pre class="content"><code>git</code> <code>history</code> <code>fixup</code> <em>&lt;commit&gt;</em> [<code>--dry-run</code>] [<code>--update-refs=</code>(<code>branches</code>|<code>head</code>)] [<code>--reedit-message</code>] [<code>--empty=</code>(<code>drop</code>|<code>keep</code>|<code>abort</code>)]
+<code>git</code> <code>history</code> <code>reword</code> <em>&lt;commit&gt;</em> [<code>--dry-run</code>] [<code>--update-refs=</code>(<code>branches</code>|<code>head</code>)]
 <code>git</code> <code>history</code> <code>split</code> <em>&lt;commit&gt;</em> [<code>--dry-run</code>] [<code>--update-refs=</code>(<code>branches</code>|<code>head</code>)] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
@@ -474,8 +475,9 @@ used to rewrite history. There are a couple of major differences though:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="git-history.html">git-history(1)</a> can work in a bare repository as it does not need to
-touch either the index or the worktree.</p>
+<p>Most subcommands of <a href="git-history.html">git-history(1)</a> can work in a bare repository as
+they do not need to touch either the index or the worktree. The <code>fixup</code>
+subcommand is an exception to this, as it reads staged changes from the index.</p>
 </li>
 <li>
 <p><a href="git-history.html">git-history(1)</a> does not execute any <a href="githooks.html">githooks(5)</a> at the
@@ -512,6 +514,10 @@ conflicts. This limitation is by design as history rewrites are not intended to
 be stateful operations. The limitation can be lifted once (if) Git learns about
 first-class conflicts.</p>
 </div>
+<div class="paragraph">
+<p>When using <code>fixup</code> with <code>--empty=drop</code>, dropping the root commit is not yet
+supported.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -522,6 +528,23 @@ first-class conflicts.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><code>fixup</code> <em>&lt;commit&gt;</em></dt>
+<dd>
+<p>Apply the currently staged changes to the specified commit. This is
+similar in nature to <code>git</code> <code>commit</code> <code>--fixup=</code><em>&lt;commit&gt;</em> followed by <code>git</code>
+<code>rebase</code> <code>--autosquash</code> <em>&lt;commit&gt;</em><code>~</code>. Changes are applied to the target
+commit by performing a three-way merge between the HEAD commit, the
+target commit and the tree generated from staged changes.</p>
+<div class="paragraph">
+<p>The commit message and authorship of the target commit are preserved by
+default, unless you specify <code>--reedit-message</code>.</p>
+</div>
+<div class="paragraph">
+<p>If applying the staged changes would result in a conflict, the command
+aborts with an error. All branches that are descendants of the original
+commit are updated to point to the rewritten history.</p>
+</div>
+</dd>
 <dt class="hdlist1"><code>reword</code> <em>&lt;commit&gt;</em></dt>
 <dd>
 <p>Rewrite the commit message of the specified commit. All the other
@@ -568,6 +591,44 @@ format that can be consumed by <a href="git-update-ref.html">git-update-ref(1)</
 objects will be written into the repository, so applying these printed
 ref updates is generally safe.</p>
 </dd>
+<dt class="hdlist1"><code>--reedit-message</code></dt>
+<dd>
+<p>Open an editor to modify the target commit&#8217;s message.</p>
+</dd>
+<dt class="hdlist1"><code>--empty=</code>(<code>drop</code>|<code>keep</code>|<code>abort</code>)</dt>
+<dd>
+<p>Control what happens when a commit becomes empty as a result of the
+fixup. This can happen in two situations:</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The fixup target itself becomes empty because the staged changes exactly
+cancel out all changes introduced by that commit.</p>
+</li>
+<li>
+<p>A descendant commit becomes empty during replay because it introduced the
+same change that was just fixed up into an ancestor.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>With <code>drop</code> (the default), empty commits are removed from the rewritten
+history. Descendants of a dropped target commit are replayed directly onto
+the target&#8217;s parent. Note that dropping the root commit is not supported;
+see LIMITATIONS.</p>
+</div>
+<div class="paragraph">
+<p>With <code>keep</code>, empty commits are retained in the rewritten history as-is.</p>
+</div>
+<div class="paragraph">
+<p>With <code>abort</code>, the command stops with an error if any commit would become
+empty.</p>
+</div>
+</dd>
 <dt class="hdlist1"><code>--update-refs=</code>(<code>branches</code>|<code>head</code>)</dt>
 <dd>
 <p>Control which references will be updated by the command, if any. With
@@ -582,6 +643,38 @@ the current <code>HEAD</code> reference will be rewritten. Defaults to <code>bra
 <div class="sect1">
 <h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_fixup_a_commit">Fixup a commit</h3>
+<div class="listingblock">
+<div class="content">
+<pre>$ git log --oneline --stat
+abc1234 (HEAD -&gt; main) third
+ third.txt | 1 +
+def5678 second
+ second.txt | 1 +
+ghi9012 first
+ first.txt | 1 +
+
+$ echo "change" &gt;&gt;unrelated.txt
+$ git add unrelated.txt
+$ git history fixup ghi9012
+
+$ git log --oneline --stat
+jkl3456 (HEAD -&gt; main) third
+ third.txt | 1 +
+mno7890 second
+ second.txt | 1 +
+pqr1234 first
+ first.txt     | 1 +
+ unrelated.txt | 1 +</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The staged addition of <code>unrelated.txt</code> has been incorporated into the <code>first</code>
+commit. All descendant commits have been replayed on top of the rewritten
+history.</p>
+</div>
+</div>
 <div class="sect2">
 <h3 id="_split_a_commit">Split a commit</h3>
 <div class="listingblock">
@@ -634,7 +727,7 @@ d1582f3 split-out commit
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

@@ -573,6 +573,12 @@ support the following date formats:</p>
 <em>&lt;unix-timestamp&gt;</em> is the number of seconds since the UNIX epoch.
 <em>&lt;time-zone-offset&gt;</em> is a positive or negative offset from UTC.
 For example CET (which is 1 hour ahead of UTC) is <code>+0100</code>.</p>
+<div class="paragraph">
+<p>It is safer to prepend the <em>&lt;unix-timestamp&gt;</em> with <code>@</code> (e.g.,
+<code>@0</code> <code>+0000</code>), which forces Git to interpret it as a raw timestamp. This
+is required for values less than 100,000,000 (which have fewer than 9
+digits) to avoid confusion with other date formats like <code>YYYYMMDD</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">RFC 2822</dt>
 <dd>
@@ -729,7 +735,7 @@ reversible operation.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

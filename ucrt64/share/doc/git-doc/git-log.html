@@ -533,14 +533,27 @@ each commit introduces are shown.</p>
 <dd>
 <p>Print out the ref names of any commits that are shown. Possible values
 are:</p>
-<div class="listingblock">
+<div class="openblock">
 <div class="content">
-<pre>`short`;; the ref name prefixes `refs/heads/`, `refs/tags/` and
-        `refs/remotes/` are not printed.
-`full`;; the full ref name (including prefix) is printed.
-`auto`:: if the output is going to a terminal, the ref names
-        are shown as if `short` were given, otherwise no ref names are
-        shown.</pre>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>short</code></dt>
+<dd>
+<p>the ref name prefixes <code>refs/heads/</code>, <code>refs/tags/</code> and
+<code>refs/remotes/</code> are not printed.</p>
+</dd>
+<dt class="hdlist1"><code>full</code></dt>
+<dd>
+<p>the full ref name (including prefix) is printed.</p>
+</dd>
+<dt class="hdlist1"><code>auto</code></dt>
+<dd>
+<p>if the output is going to a terminal, the ref names
+are shown as if <code>short</code> were given, otherwise no ref names are
+shown.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -615,13 +628,15 @@ a walk starting from a single revision, i.e., you may only
 give zero or one positive revision arguments, and
 <em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> (or <em>&lt;funcname&gt;</em>) must exist in the starting revision.
 You can specify this option more than once. Implies <code>--patch</code>.
-Patch output can be suppressed using <code>--no-patch</code>, but other diff formats
-(namely <code>--raw</code>, <code>--numstat</code>, <code>--shortstat</code>, <code>--dirstat</code>, <code>--summary</code>,
-<code>--name-only</code>, <code>--name-status</code>, <code>--check</code>) are not currently implemented.</p>
+Patch output can be suppressed using <code>--no-patch</code>.
+Non-patch diff formats <code>--raw</code>, <code>--name-only</code>, <code>--name-status</code>,
+and <code>--summary</code> are supported.  Diff stat formats
+(<code>--stat</code>, <code>--numstat</code>, <code>--shortstat</code>, <code>--dirstat</code>) are not
+currently implemented.</p>
 <div class="paragraph">
 <p>Patch formatting options such as <code>--word-diff</code>, <code>--color-moved</code>,
 <code>--no-prefix</code>, and whitespace options (<code>-w</code>, <code>-b</code>) are supported,
-as are pickaxe options (<code>-S</code>, <code>-G</code>).</p>
+as are pickaxe options (<code>-S</code>, <code>-G</code>) and <code>--diff-filter</code>.</p>
 </div>
 <div class="paragraph">
 <p><em>&lt;start&gt;</em> and <em>&lt;end&gt;</em> can take one of these forms:</p>
@@ -712,7 +727,11 @@ ordering and formatting options, such as <code>--reverse</code>.</p>
 <dt class="hdlist1"><code>-n</code> <em>&lt;number&gt;</em></dt>
 <dt class="hdlist1"><code>--max-count=</code><em>&lt;number&gt;</em></dt>
 <dd>
-<p>Limit the output to <em>&lt;number&gt;</em> commits.</p>
+<p>Limit the output to the first <em>&lt;number&gt;</em> commits that would be shown.</p>
+</dd>
+<dt class="hdlist1"><code>--max-count-oldest=</code><em>&lt;number&gt;</em></dt>
+<dd>
+<p>Limit the output to the last <em>&lt;number&gt;</em> commits that would be shown.</p>
 </dd>
 <dt class="hdlist1"><code>--skip=</code><em>&lt;number&gt;</em></dt>
 <dd>
@@ -721,7 +740,8 @@ ordering and formatting options, such as <code>--reverse</code>.</p>
 <dt class="hdlist1"><code>--since=</code><em>&lt;date&gt;</em></dt>
 <dt class="hdlist1"><code>--after=</code><em>&lt;date&gt;</em></dt>
 <dd>
-<p>Show commits more recent than <em>&lt;date&gt;</em>.</p>
+<p>Show commits more recent than <em>&lt;date&gt;</em>.  As a special case,
+<em>today</em> means the last midnight.</p>
 </dd>
 <dt class="hdlist1"><code>--since-as-filter=</code><em>&lt;date&gt;</em></dt>
 <dd>
@@ -2003,6 +2023,13 @@ which can make it hard to see that the two consecutive commits
 do not belong to a linear branch. This option puts a barrier
 in between them in that case. If <em>&lt;barrier&gt;</em> is specified, it
 is the string that will be shown instead of the default one.</p>
+</dd>
+<dt class="hdlist1"><code>--graph-lane-limit=</code><em>&lt;n&gt;</em></dt>
+<dd>
+<p>When <code>--graph</code> is used, limit the number of graph lanes to be shown.
+Lanes over the limit are replaced with a truncation mark <em>~</em>.
+By default it is set to 0 (no limit), zero and negative values
+are ignored and treated as no limit.</p>
 </dd>
 </dl>
 </div>
@@ -3334,6 +3361,15 @@ tilde <code>~</code> on a line of its own.</p>
 <p>Note that despite the name of the first mode, color is used to
 highlight the changed parts in all modes if enabled.</p>
 </div>
+<div class="paragraph">
+<p>The <code>--word-diff</code> option operates by taking the same line-by-line
+diff that is produced without the option and computing
+word-by-word changes within each hunk.  This may produce a
+larger diff than a dedicated word-diff tool would.  If Git
+acquires a different implementation in the future, the output
+may change.  Note that this is similar to the <code>--diff-algorithm</code>
+option, which may also change the output.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>--word-diff-regex=</code><em>&lt;regex&gt;</em></dt>
 <dd>
@@ -4500,7 +4536,7 @@ See <code>notes.rewrite.</code><em>&lt;command&gt;</em> above for a further desc
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

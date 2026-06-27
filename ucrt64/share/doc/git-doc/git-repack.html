@@ -454,7 +454,7 @@ pre>code {
 <div class="verseblock">
 <pre class="content"><em>git repack</em> [-a] [-A] [-d] [-f] [-F] [-l] [-n] [-q] [-b] [-m]
         [--window=&lt;n&gt;] [--depth=&lt;n&gt;] [--threads=&lt;n&gt;] [--keep-pack=&lt;pack-name&gt;]
-        [--write-midx] [--name-hash-version=&lt;n&gt;] [--path-walk]</pre>
+        [--write-midx[=&lt;mode&gt;]] [--name-hash-version=&lt;n&gt;] [--path-walk]</pre>
 </div>
 </div>
 </div>
@@ -735,10 +735,60 @@ pack as the preferred pack for object selection by the MIDX (see
 </div>
 </dd>
 <dt class="hdlist1">-m</dt>
-<dt class="hdlist1">--write-midx</dt>
+<dt class="hdlist1">--write-midx[=&lt;mode&gt;]</dt>
 <dd>
 <p>Write a multi-pack index (see <a href="git-multi-pack-index.html">git-multi-pack-index(1)</a>)
-containing the non-redundant packs.</p>
+containing the non-redundant packs. The following modes are
+available:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>default</code></dt>
+<dd>
+<p>Write a single MIDX covering all packs. This is the
+default when <code>--write-midx</code> is given without an
+explicit mode.</p>
+</dd>
+<dt class="hdlist1"><code>incremental</code></dt>
+<dd>
+<p>Write an incremental MIDX chain instead of a single
+flat MIDX.</p>
+<div class="paragraph">
+<p>Without <code>--geometric</code>, a new MIDX layer is appended to the existing
+chain (or a new chain is started) containing whatever packs were written
+by the repack. Existing layers are preserved as-is.</p>
+</div>
+<div class="paragraph">
+<p>When combined with <code>--geometric</code>, the incremental mode maintains a chain
+of MIDX layers that is compacted over time using a geometric merging
+strategy. Each repack creates a new tip layer containing the newly
+written pack(s). Adjacent layers are then merged whenever the newer
+layer&#8217;s object count exceeds <code>1/repack.midxSplitFactor</code> of the next
+deeper layer&#8217;s count. Layers that do not meet this condition are
+retained as-is.</p>
+</div>
+<div class="paragraph">
+<p>The result is that newer (tip) layers tend to contain many small packs
+with relatively few objects, while older (deeper) layers contain fewer,
+larger packs covering more objects. Because compaction is driven by the
+tip of the chain, newer layers are also rewritten more frequently than
+older ones, which are only touched when enough objects have accumulated
+to justify merging into them. This keeps the total number of layers
+logarithmic relative to the total number of objects.</p>
+</div>
+<div class="paragraph">
+<p>Only packs in the tip MIDX layer are considered as candidates for the
+geometric repack; packs in deeper layers are left untouched. If the tip
+layer contains fewer packs than <code>repack.midxNewLayerThreshold</code>, those
+packs are excluded from the geometry entirely, and a new layer is
+created for any new pack(s) without disturbing the existing chain.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </dd>
 <dt class="hdlist1">--name-hash-version=&lt;n&gt;</dt>
 <dd>
@@ -799,7 +849,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>

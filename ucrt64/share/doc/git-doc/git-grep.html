@@ -452,27 +452,27 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git grep</em> [-a | --text] [-I] [--textconv] [-i | --ignore-case] [-w | --word-regexp]
-           [-v | --invert-match] [-h|-H] [--full-name]
-           [-E | --extended-regexp] [-G | --basic-regexp]
-           [-P | --perl-regexp]
-           [-F | --fixed-strings] [-n | --line-number] [--column]
-           [-l | --files-with-matches] [-L | --files-without-match]
-           [(-O | --open-files-in-pager) [&lt;pager&gt;]]
-           [-z | --null]
-           [ -o | --only-matching ] [-c | --count] [--all-match] [-q | --quiet]
-           [--max-depth &lt;depth&gt;] [--[no-]recursive]
-           [--color[=&lt;when&gt;] | --no-color]
-           [--break] [--heading] [-p | --show-function]
-           [-A &lt;post-context&gt;] [-B &lt;pre-context&gt;] [-C &lt;context&gt;]
-           [-W | --function-context]
-           [(-m | --max-count) &lt;num&gt;]
-           [--threads &lt;num&gt;]
-           [-f &lt;file&gt;] [-e] &lt;pattern&gt;
-           [--and|--or|--not|(|)|-e &lt;pattern&gt;&#8230;&#8203;]
-           [--recurse-submodules] [--parent-basename &lt;basename&gt;]
-           [ [--[no-]exclude-standard] [--cached | --untracked | --no-index] | &lt;tree&gt;&#8230;&#8203;]
-           [--] [&lt;pathspec&gt;&#8230;&#8203;]</pre>
+<pre class="content"><code>git</code> <code>grep</code> [<code>-a</code> | <code>--text</code>] [<code>-I</code>] [<code>--textconv</code>] [<code>-i</code> | <code>--ignore-case</code>] [<code>-w</code> | <code>--word-regexp</code>]
+	   [<code>-v</code> | <code>--invert-match</code>] [<code>-h</code>|<code>-H</code>] [<code>--full-name</code>]
+	   [<code>-E</code> | <code>--extended-regexp</code>] [<code>-G</code> | <code>--basic-regexp</code>]
+	   [<code>-P</code> | <code>--perl-regexp</code>]
+	   [<code>-F</code> | <code>--fixed-strings</code>] [<code>-n</code> | <code>--line-number</code>] [<code>--column</code>]
+	   [<code>-l</code> | <code>--files-with-matches</code>] [<code>-L</code> | <code>--files-without-match</code>]
+	   [(<code>-O</code> | <code>--open-files-in-pager</code>) [<em>&lt;pager&gt;</em>]]
+	   [<code>-z</code> | <code>--null</code>]
+	   [ <code>-o</code> | <code>--only-matching</code> ] [<code>-c</code> | <code>--count</code>] [<code>--all-match</code>] [<code>-q</code> | <code>--quiet</code>]
+	   [<code>--max-depth</code> <em>&lt;depth&gt;</em>] [<code>--</code>[<code>no-</code>]<code>recursive</code>]
+	   [<code>--color</code>[<code>=</code><em>&lt;when&gt;</em>] | <code>--no-color</code>]
+	   [<code>--break</code>] [<code>--heading</code>] [<code>-p</code> | <code>--show-function</code>]
+	   [<code>-A</code> <em>&lt;post-context&gt;</em>] [<code>-B</code> <em>&lt;pre-context&gt;</em>] [<code>-C</code> <em>&lt;context&gt;</em>]
+	   [<code>-W</code> | <code>--function-context</code>]
+	   [(<code>-m</code> | <code>--max-count</code>) <em>&lt;num&gt;</em>]
+	   [<code>--threads</code> <em>&lt;num&gt;</em>]
+	   [<code>-f</code> <em>&lt;file&gt;</em>] [<code>-e</code>] <em>&lt;pattern&gt;</em>
+	   [<code>--and</code>|<code>--or</code>|<code>--not</code>|(|)|<code>-e</code> <em>&lt;pattern&gt;</em>&#8230;&#8203;]
+	   [<code>--recurse-submodules</code>] [<code>--parent-basename</code> <em>&lt;basename&gt;</em>]
+	   [ [<code>--</code>[<code>no-</code>]<code>exclude-standard</code>] [<code>--cached</code> | <code>--untracked</code> | <code>--no-index</code>] | <em>&lt;tree&gt;</em>&#8230;&#8203;]
+	   [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -492,41 +492,41 @@ characters.  An empty string as search expression matches all lines.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--cached</dt>
+<dt class="hdlist1"><code>--cached</code></dt>
 <dd>
 <p>Instead of searching tracked files in the working tree, search
 blobs registered in the index file.</p>
 </dd>
-<dt class="hdlist1">--untracked</dt>
+<dt class="hdlist1"><code>--untracked</code></dt>
 <dd>
 <p>In addition to searching in the tracked files in the working
 tree, search also in untracked files.</p>
 </dd>
-<dt class="hdlist1">--no-index</dt>
+<dt class="hdlist1"><code>--no-index</code></dt>
 <dd>
 <p>Search files in the current directory that is not managed by Git,
 or by ignoring that the current directory is managed by Git.  This
-is rather similar to running the regular <code>grep</code>(<code>1</code>) utility with its
+is rather similar to running the regular <code>grep</code>(1) utility with its
 <code>-r</code> option specified, but with some additional benefits, such as
-using pathspec patterns to limit paths;  see the <em>pathspec</em> entry
+using pathspec patterns to limit paths;  see the <code>pathspec</code> entry
 in <a href="gitglossary.html">gitglossary(7)</a> for more information.</p>
 <div class="paragraph">
 <p>This option cannot be used together with <code>--cached</code> or <code>--untracked</code>.
 See also <code>grep.fallbackToNoIndex</code> in <em>CONFIGURATION</em> below.</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-exclude-standard</dt>
+<dt class="hdlist1"><code>--no-exclude-standard</code></dt>
 <dd>
 <p>Also search in ignored files by not honoring the .<code>gitignore</code>
 mechanism. Only useful with <code>--untracked</code>.</p>
 </dd>
-<dt class="hdlist1">--exclude-standard</dt>
+<dt class="hdlist1"><code>--exclude-standard</code></dt>
 <dd>
 <p>Do not pay attention to ignored files specified via the .<code>gitignore</code>
 mechanism.  Only useful when searching files in the current directory
 with <code>--no-index</code>.</p>
 </dd>
-<dt class="hdlist1">--recurse-submodules</dt>
+<dt class="hdlist1"><code>--recurse-submodules</code></dt>
 <dd>
 <p>Recursively search in each submodule that is active and
 checked out in the repository.  When used in combination with the
@@ -534,61 +534,61 @@ checked out in the repository.  When used in combination with the
 the parent project&#8217;s <em>&lt;tree&gt;</em> object.  This option cannot be used together
 with <code>--untracked</code>, and it has no effect if <code>--no-index</code> is specified.</p>
 </dd>
-<dt class="hdlist1">-a</dt>
-<dt class="hdlist1">--text</dt>
+<dt class="hdlist1"><code>-a</code></dt>
+<dt class="hdlist1"><code>--text</code></dt>
 <dd>
 <p>Process binary files as if they were text.</p>
 </dd>
-<dt class="hdlist1">--textconv</dt>
+<dt class="hdlist1"><code>--textconv</code></dt>
 <dd>
 <p>Honor textconv filter settings.</p>
 </dd>
-<dt class="hdlist1">--no-textconv</dt>
+<dt class="hdlist1"><code>--no-textconv</code></dt>
 <dd>
 <p>Do not honor textconv filter settings.
 This is the default.</p>
 </dd>
-<dt class="hdlist1">-i</dt>
-<dt class="hdlist1">--ignore-case</dt>
+<dt class="hdlist1"><code>-i</code></dt>
+<dt class="hdlist1"><code>--ignore-case</code></dt>
 <dd>
 <p>Ignore case differences between the patterns and the
 files.</p>
 </dd>
-<dt class="hdlist1">-I</dt>
+<dt class="hdlist1"><code>-I</code></dt>
 <dd>
 <p>Don&#8217;t match the pattern in binary files.</p>
 </dd>
-<dt class="hdlist1">--max-depth &lt;depth&gt;</dt>
+<dt class="hdlist1"><code>--max-depth</code> <em>&lt;depth&gt;</em></dt>
 <dd>
-<p>For each &lt;pathspec&gt; given on command line, descend at most &lt;depth&gt;
+<p>For each <em>&lt;pathspec&gt;</em> given on command line, descend at most <em>&lt;depth&gt;</em>
 levels of directories. A value of -1 means no limit.
-This option is ignored if &lt;pathspec&gt; contains active wildcards.
+This option is ignored if <em>&lt;pathspec&gt;</em> contains active wildcards.
 In other words if "a*" matches a directory named "a*",
-"*" is matched literally so --max-depth is still effective.</p>
+"*" is matched literally so <code>--max-depth</code> is still effective.</p>
 </dd>
-<dt class="hdlist1">-r</dt>
-<dt class="hdlist1">--recursive</dt>
+<dt class="hdlist1"><code>-r</code></dt>
+<dt class="hdlist1"><code>--recursive</code></dt>
 <dd>
 <p>Same as <code>--max-depth=-1</code>; this is the default.</p>
 </dd>
-<dt class="hdlist1">--no-recursive</dt>
+<dt class="hdlist1"><code>--no-recursive</code></dt>
 <dd>
 <p>Same as <code>--max-depth=0</code>.</p>
 </dd>
-<dt class="hdlist1">-w</dt>
-<dt class="hdlist1">--word-regexp</dt>
+<dt class="hdlist1"><code>-w</code></dt>
+<dt class="hdlist1"><code>--word-regexp</code></dt>
 <dd>
 <p>Match the pattern only at word boundary (either begin at the
 beginning of a line, or preceded by a non-word character; end at
 the end of a line or followed by a non-word character).</p>
 </dd>
-<dt class="hdlist1">-v</dt>
-<dt class="hdlist1">--invert-match</dt>
+<dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--invert-match</code></dt>
 <dd>
 <p>Select non-matching lines.</p>
 </dd>
-<dt class="hdlist1">-h</dt>
-<dt class="hdlist1">-H</dt>
+<dt class="hdlist1"><code>-h</code></dt>
+<dt class="hdlist1"><code>-H</code></dt>
 <dd>
 <p>By default, the command shows the filename for each
 match.  <code>-h</code> option is used to suppress this output.
@@ -596,23 +596,23 @@ match.  <code>-h</code> option is used to suppress this output.
 except it overrides <code>-h</code> given earlier on the command
 line.</p>
 </dd>
-<dt class="hdlist1">--full-name</dt>
+<dt class="hdlist1"><code>--full-name</code></dt>
 <dd>
 <p>When run from a subdirectory, the command usually
 outputs paths relative to the current directory.  This
 option forces paths to be output relative to the project
 top directory.</p>
 </dd>
-<dt class="hdlist1">-E</dt>
-<dt class="hdlist1">--extended-regexp</dt>
-<dt class="hdlist1">-G</dt>
-<dt class="hdlist1">--basic-regexp</dt>
+<dt class="hdlist1"><code>-E</code></dt>
+<dt class="hdlist1"><code>--extended-regexp</code></dt>
+<dt class="hdlist1"><code>-G</code></dt>
+<dt class="hdlist1"><code>--basic-regexp</code></dt>
 <dd>
 <p>Use POSIX extended/basic regexp for patterns.  Default
 is to use basic regexp.</p>
 </dd>
-<dt class="hdlist1">-P</dt>
-<dt class="hdlist1">--perl-regexp</dt>
+<dt class="hdlist1"><code>-P</code></dt>
+<dt class="hdlist1"><code>--perl-regexp</code></dt>
 <dd>
 <p>Use Perl-compatible regular expressions for patterns.</p>
 <div class="paragraph">
@@ -621,37 +621,37 @@ compile-time dependency. If Git wasn&#8217;t compiled with support for them
 providing this option will cause it to die.</p>
 </div>
 </dd>
-<dt class="hdlist1">-F</dt>
-<dt class="hdlist1">--fixed-strings</dt>
+<dt class="hdlist1"><code>-F</code></dt>
+<dt class="hdlist1"><code>--fixed-strings</code></dt>
 <dd>
 <p>Use fixed strings for patterns (don&#8217;t interpret pattern
 as a regex).</p>
 </dd>
-<dt class="hdlist1">-n</dt>
-<dt class="hdlist1">--line-number</dt>
+<dt class="hdlist1"><code>-n</code></dt>
+<dt class="hdlist1"><code>--line-number</code></dt>
 <dd>
 <p>Prefix the line number to matching lines.</p>
 </dd>
-<dt class="hdlist1">--column</dt>
+<dt class="hdlist1"><code>--column</code></dt>
 <dd>
 <p>Prefix the 1-indexed byte-offset of the first match from the start of the
 matching line.</p>
 </dd>
-<dt class="hdlist1">-l</dt>
-<dt class="hdlist1">--files-with-matches</dt>
-<dt class="hdlist1">--name-only</dt>
-<dt class="hdlist1">-L</dt>
-<dt class="hdlist1">--files-without-match</dt>
+<dt class="hdlist1"><code>-l</code></dt>
+<dt class="hdlist1"><code>--files-with-matches</code></dt>
+<dt class="hdlist1"><code>--name-only</code></dt>
+<dt class="hdlist1"><code>-L</code></dt>
+<dt class="hdlist1"><code>--files-without-match</code></dt>
 <dd>
 <p>Instead of showing every matched line, show only the
 names of files that contain (or do not contain) matches.
-For better compatibility with <em>git diff</em>, <code>--name-only</code> is a
+For better compatibility with <code>git</code> <code>diff</code>, <code>--name-only</code> is a
 synonym for <code>--files-with-matches</code>.</p>
 </dd>
-<dt class="hdlist1">-O[&lt;pager&gt;]</dt>
-<dt class="hdlist1">--open-files-in-pager[=&lt;pager&gt;]</dt>
+<dt class="hdlist1"><code>-O</code>[<em>&lt;pager&gt;</em>]</dt>
+<dt class="hdlist1"><code>--open-files-in-pager</code>[<code>=</code><em>&lt;pager&gt;</em>]</dt>
 <dd>
-<p>Open the matching files in the pager (not the output of <em>grep</em>).
+<p>Open the matching files in the pager (not the output of <code>grep</code>).
 If the pager happens to be "less" or "vi", and the user
 specified only one pattern, the first file is positioned at
 the first match automatically. The <code>pager</code> argument is
@@ -659,48 +659,48 @@ optional; if specified, it must be stuck to the option
 without a space. If <code>pager</code> is unspecified, the default pager
 will be used (see <code>core.pager</code> in <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
-<dt class="hdlist1">-z</dt>
-<dt class="hdlist1">--null</dt>
+<dt class="hdlist1"><code>-z</code></dt>
+<dt class="hdlist1"><code>--null</code></dt>
 <dd>
 <p>Use \0 as the delimiter for pathnames in the output, and print
 them verbatim. Without this option, pathnames with "unusual"
 characters are quoted as explained for the configuration
 variable <code>core.quotePath</code> (see <a href="git-config.html">git-config(1)</a>).</p>
 </dd>
-<dt class="hdlist1">-o</dt>
-<dt class="hdlist1">--only-matching</dt>
+<dt class="hdlist1"><code>-o</code></dt>
+<dt class="hdlist1"><code>--only-matching</code></dt>
 <dd>
 <p>Print only the matched (non-empty) parts of a matching line, with each such
 part on a separate output line.</p>
 </dd>
-<dt class="hdlist1">-c</dt>
-<dt class="hdlist1">--count</dt>
+<dt class="hdlist1"><code>-c</code></dt>
+<dt class="hdlist1"><code>--count</code></dt>
 <dd>
 <p>Instead of showing every matched line, show the number of
 lines that match.</p>
 </dd>
-<dt class="hdlist1">--color[=&lt;when&gt;]</dt>
+<dt class="hdlist1"><code>--color</code>[<code>=</code><em>&lt;when&gt;</em>]</dt>
 <dd>
 <p>Show colored matches.
-The value must be always (the default), never, or auto.</p>
+The value must be <code>always</code> (the default), <code>never</code>, or <code>auto</code>.</p>
 </dd>
-<dt class="hdlist1">--no-color</dt>
+<dt class="hdlist1"><code>--no-color</code></dt>
 <dd>
 <p>Turn off match highlighting, even when the configuration file
 gives the default to color output.
 Same as <code>--color=never</code>.</p>
 </dd>
-<dt class="hdlist1">--break</dt>
+<dt class="hdlist1"><code>--break</code></dt>
 <dd>
 <p>Print an empty line between matches from different files.</p>
 </dd>
-<dt class="hdlist1">--heading</dt>
+<dt class="hdlist1"><code>--heading</code></dt>
 <dd>
 <p>Show the filename above the matches in that file instead of
 at the start of each shown line.</p>
 </dd>
-<dt class="hdlist1">-p</dt>
-<dt class="hdlist1">--show-function</dt>
+<dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--show-function</code></dt>
 <dd>
 <p>Show the preceding line that contains the function name of
 the match, unless the matching line is a function name itself.
@@ -708,27 +708,27 @@ The name is determined in the same way as <code>git</code> <code>diff</code> wor
 patch hunk headers (see <em>Defining a custom hunk-header</em> in
 <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
-<dt class="hdlist1">-&lt;num&gt;</dt>
-<dt class="hdlist1">-C &lt;num&gt;</dt>
-<dt class="hdlist1">--context &lt;num&gt;</dt>
+<dt class="hdlist1"><code>-</code><em>&lt;num&gt;</em></dt>
+<dt class="hdlist1"><code>-C</code> <em>&lt;num&gt;</em></dt>
+<dt class="hdlist1"><code>--context</code> <em>&lt;num&gt;</em></dt>
 <dd>
-<p>Show &lt;num&gt; leading and trailing lines, and place a line
+<p>Show <em>&lt;num&gt;</em> leading and trailing lines, and place a line
 containing <code>--</code> between contiguous groups of matches.</p>
 </dd>
-<dt class="hdlist1">-A &lt;num&gt;</dt>
-<dt class="hdlist1">--after-context &lt;num&gt;</dt>
+<dt class="hdlist1"><code>-A</code> <em>&lt;num&gt;</em></dt>
+<dt class="hdlist1"><code>--after-context</code> <em>&lt;num&gt;</em></dt>
 <dd>
-<p>Show &lt;num&gt; trailing lines, and place a line containing
+<p>Show <em>&lt;num&gt;</em> trailing lines, and place a line containing
 <code>--</code> between contiguous groups of matches.</p>
 </dd>
-<dt class="hdlist1">-B &lt;num&gt;</dt>
-<dt class="hdlist1">--before-context &lt;num&gt;</dt>
+<dt class="hdlist1"><code>-B</code> <em>&lt;num&gt;</em></dt>
+<dt class="hdlist1"><code>--before-context</code> <em>&lt;num&gt;</em></dt>
 <dd>
-<p>Show &lt;num&gt; leading lines, and place a line containing
+<p>Show <em>&lt;num&gt;</em> leading lines, and place a line containing
 <code>--</code> between contiguous groups of matches.</p>
 </dd>
-<dt class="hdlist1">-W</dt>
-<dt class="hdlist1">--function-context</dt>
+<dt class="hdlist1"><code>-W</code></dt>
+<dt class="hdlist1"><code>--function-context</code></dt>
 <dd>
 <p>Show the surrounding text from the previous line containing a
 function name up to the one before the next function name,
@@ -737,8 +737,8 @@ found. The function names are determined in the same way as
 <code>git</code> <code>diff</code> works out patch hunk headers (see <em>Defining a
 custom hunk-header</em> in <a href="gitattributes.html">gitattributes(5)</a>).</p>
 </dd>
-<dt class="hdlist1">-m &lt;num&gt;</dt>
-<dt class="hdlist1">--max-count &lt;num&gt;</dt>
+<dt class="hdlist1"><code>-m</code> <em>&lt;num&gt;</em></dt>
+<dt class="hdlist1"><code>--max-count</code> <em>&lt;num&gt;</em></dt>
 <dd>
 <p>Limit the amount of matches per file. When using the <code>-v</code> or
 <code>--invert-match</code> option, the search stops after the specified
@@ -746,16 +746,16 @@ number of non-matches. A value of -1 will return unlimited
 results (the default). A value of 0 will exit immediately with
 a non-zero status.</p>
 </dd>
-<dt class="hdlist1">--threads &lt;num&gt;</dt>
+<dt class="hdlist1"><code>--threads</code> <em>&lt;num&gt;</em></dt>
 <dd>
-<p>Number of <code>grep</code> worker threads to use.  See <em>NOTES ON THREADS</em>
+<p>Number of <code>grep</code> worker threads to use.  See <code>NOTES</code> <code>ON</code> <code>THREADS</code>
 and <code>grep.threads</code> in <em>CONFIGURATION</em> for more information.</p>
 </dd>
-<dt class="hdlist1">-f &lt;file&gt;</dt>
+<dt class="hdlist1"><code>-f</code> <em>&lt;file&gt;</em></dt>
 <dd>
-<p>Read patterns from &lt;file&gt;, one per line.</p>
+<p>Read patterns from <em>&lt;file&gt;</em>, one per line.</p>
 <div class="paragraph">
-<p>Passing the pattern via &lt;file&gt; allows for providing a search pattern
+<p>Passing the pattern via <em>&lt;file&gt;</em> allows for providing a search pattern
 containing a \0.</p>
 </div>
 <div class="paragraph">
@@ -776,51 +776,51 @@ more search backends, until then we&#8217;ll die when the pattern type in
 question doesn&#8217;t support them.</p>
 </div>
 </dd>
-<dt class="hdlist1">-e</dt>
+<dt class="hdlist1"><code>-e</code></dt>
 <dd>
 <p>The next parameter is the pattern. This option has to be
 used for patterns starting with <code>-</code> and should be used in
 scripts passing user input to grep.  Multiple patterns are
-combined by <em>or</em>.</p>
+combined by <code>or</code>.</p>
 </dd>
-<dt class="hdlist1">--and</dt>
-<dt class="hdlist1">--or</dt>
-<dt class="hdlist1">--not</dt>
-<dt class="hdlist1">( &#8230;&#8203; )</dt>
+<dt class="hdlist1"><code>--and</code></dt>
+<dt class="hdlist1"><code>--or</code></dt>
+<dt class="hdlist1"><code>--not</code></dt>
+<dt class="hdlist1">( <code>...</code> )</dt>
 <dd>
 <p>Specify how multiple patterns are combined using Boolean
 expressions.  <code>--or</code> is the default operator.  <code>--and</code> has
 higher precedence than <code>--or</code>.  <code>-e</code> has to be used for all
 patterns.</p>
 </dd>
-<dt class="hdlist1">--all-match</dt>
+<dt class="hdlist1"><code>--all-match</code></dt>
 <dd>
 <p>When giving multiple pattern expressions combined with <code>--or</code>,
 this flag is specified to limit the match to files that
 have lines to match all of them.</p>
 </dd>
-<dt class="hdlist1">-q</dt>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>-q</code></dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Do not output matched lines; instead, exit with status 0 when
 there is a match and with non-zero status when there isn&#8217;t.</p>
 </dd>
-<dt class="hdlist1">&lt;tree&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;tree&gt;</em>...</dt>
 <dd>
 <p>Instead of searching tracked files in the working tree, search
 blobs in the given trees.</p>
 </dd>
-<dt class="hdlist1">--</dt>
+<dt class="hdlist1"><code>--</code></dt>
 <dd>
 <p>Signals the end of options; the rest of the parameters
-are &lt;pathspec&gt; limiters.</p>
+are <em>&lt;pathspec&gt;</em> limiters.</p>
 </dd>
-<dt class="hdlist1">&lt;pathspec&gt;&#8230;&#8203;</dt>
+<dt class="hdlist1"><em>&lt;pathspec&gt;</em>...</dt>
 <dd>
 <p>If given, limit the search to paths matching at least one pattern.
-Both leading paths match and glob(7) patterns are supported.</p>
+Both leading paths match and <code>glob</code>(7) patterns are supported.</p>
 <div class="paragraph">
-<p>For more details about the &lt;pathspec&gt; syntax, see the <em>pathspec</em> entry
+<p>For more details about the <em>&lt;pathspec&gt;</em> syntax, see the <code>pathspec</code> entry
 in <a href="gitglossary.html">gitglossary(7)</a>.</p>
 </div>
 </dd>
@@ -881,41 +881,41 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">grep.lineNumber</dt>
+<dt class="hdlist1"><code>grep.lineNumber</code></dt>
 <dd>
-<p>If set to true, enable <code>-n</code> option by default.</p>
+<p>If set to <code>true</code>, enable <code>-n</code> option by default.</p>
 </dd>
-<dt class="hdlist1">grep.column</dt>
+<dt class="hdlist1"><code>grep.column</code></dt>
 <dd>
-<p>If set to true, enable the <code>--column</code> option by default.</p>
+<p>If set to <code>true</code>, enable the <code>--column</code> option by default.</p>
 </dd>
-<dt class="hdlist1">grep.patternType</dt>
+<dt class="hdlist1"><code>grep.patternType</code></dt>
 <dd>
-<p>Set the default matching behavior. Using a value of <em>basic</em>, <em>extended</em>,
-<em>fixed</em>, or <em>perl</em> will enable the <code>--basic-regexp</code>, <code>--extended-regexp</code>,
+<p>Set the default matching behavior. Using a value of <code>basic</code>, <code>extended</code>,
+<code>fixed</code>, or <code>perl</code> will enable the <code>--basic-regexp</code>, <code>--extended-regexp</code>,
 <code>--fixed-strings</code>, or <code>--perl-regexp</code> option accordingly, while the
-value <em>default</em> will use the <code>grep.extendedRegexp</code> option to choose
-between <em>basic</em> and <em>extended</em>.</p>
+value <code>default</code> will use the <code>grep.extendedRegexp</code> option to choose
+between <code>basic</code> and <code>extended</code>.</p>
 </dd>
-<dt class="hdlist1">grep.extendedRegexp</dt>
+<dt class="hdlist1"><code>grep.extendedRegexp</code></dt>
 <dd>
-<p>If set to true, enable <code>--extended-regexp</code> option by default. This
+<p>If set to <code>true</code>, enable <code>--extended-regexp</code> option by default. This
 option is ignored when the <code>grep.patternType</code> option is set to a value
-other than <em>default</em>.</p>
+other than <code>default</code>.</p>
 </dd>
-<dt class="hdlist1">grep.threads</dt>
+<dt class="hdlist1"><code>grep.threads</code></dt>
 <dd>
 <p>Number of grep worker threads to use. If unset (or set to 0), Git will
 use as many threads as the number of logical cores available.</p>
 </dd>
-<dt class="hdlist1">grep.fullName</dt>
+<dt class="hdlist1"><code>grep.fullName</code></dt>
 <dd>
-<p>If set to true, enable <code>--full-name</code> option by default.</p>
+<p>If set to <code>true</code>, enable <code>--full-name</code> option by default.</p>
 </dd>
-<dt class="hdlist1">grep.fallbackToNoIndex</dt>
+<dt class="hdlist1"><code>grep.fallbackToNoIndex</code></dt>
 <dd>
-<p>If set to true, fall back to <code>git</code> <code>grep</code> <code>--no-index</code> if <code>git</code> <code>grep</code>
-is executed outside of a git repository.  Defaults to false.</p>
+<p>If set to <code>true</code>, fall back to <code>git</code> <code>grep</code> <code>--no-index</code> if <code>git</code> <code>grep</code>
+is executed outside of a git repository.  Defaults to <code>false</code>.</p>
 </dd>
 </dl>
 </div>
@@ -932,7 +932,7 @@ is executed outside of a git repository.  Defaults to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-20 21:01:14 UTC
+Last updated 2026-06-24 09:16:42 UTC
 </div>
 </div>
 </body>
