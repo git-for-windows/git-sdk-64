@@ -13,7 +13,7 @@
 
 package IO::Socket::SSL;
 
-our $VERSION = '2.098';
+our $VERSION = '2.099';
 
 use IO::Socket;
 use Net::SSLeay 1.46;
@@ -645,6 +645,8 @@ sub configure {
     # set Blocking only explicitly if it was set
     $arg_hash->{Blocking} = 1 if defined ($blocking);
 
+    # close newly created socket on SSL fail
+    $arg_hash->{SSL_keepSocketOnError} = 0 if !exists $arg_hash->{SSL_keepSocketOnError};
     $self->configure_SSL($arg_hash) || return;
 
     if ($arg_hash->{$family_key} ||= $arg_hash->{Domain} || $arg_hash->{Family}) {
@@ -673,6 +675,9 @@ sub configure_SSL {
 
     # add user defined defaults, maybe after filtering
     $FILTER_SSL_ARGS->($is_server,$arg_hash) if $FILTER_SSL_ARGS;
+
+    # keep socket open on error by default when just upgrading
+    $arg_hash->{SSL_keepSocketOnError} = 1 if !exists $arg_hash->{SSL_keepSocketOnError};
 
     # cleanup in case there was something left, but leave BIO socket
     _cleanup_ssl($self, undef, '_SSL_bio_socket');
@@ -939,6 +944,9 @@ sub connect_SSL {
 
     $ctx ||= ${*$self}{'_SSL_ctx'};
 
+    # _SSL_ocsp_verify is set only when a staple was received and fully
+    # verified. A missing staple and a broken/unverifiable staple both leave it
+    # undef, so MUST_STAPLE treats both identically as "no usable staple".
     if ( my $ocsp_result = ${*$self}{_SSL_ocsp_verify} ) {
 	# got result from OCSP stapling
 	if ( $ocsp_result->[0] > 0 ) {
@@ -3074,8 +3082,11 @@ sub new {
 		    # documented but given the age of this function we'll assume
 		    # that this will stay this way in the future.
 		    while (my $ca = pop @chain) {
-			Net::SSLeay::CTX_add_extra_chain_cert($ctx,$ca)
-			    or last PKCS12;
+			next if Net::SSLeay::CTX_add_extra_chain_cert($ctx,$ca);
+			# failed - free everything not added yet and exit loop
+			Net::SSLeay::X509_free($ca);
+			Net::SSLeay::X509_free($_) for @chain;
+			last PKCS12;
 		    }
 		    last if $key && ! Net::SSLeay::CTX_use_PrivateKey($ctx,$key);
 		    $havecert = 'PKCS12';
@@ -3285,7 +3296,13 @@ sub new {
 		return 1;
 	    }
 
-	    # default callback does verification
+	    # Default callback does verification.
+	    # _SSL_ocsp_verify is only written when a staple is received AND fully
+	    # verified (good status, valid signature, cert status retrieved).
+	    # Returning 1 here without writing _SSL_ocsp_verify means the staple
+	    # is treated the same as if no staple was provided: with
+	    # SSL_OCSP_TRY_STAPLE the connection continues; with
+	    # SSL_OCSP_MUST_STAPLE the post-handshake check will reject it.
 	    if ( ! $resp ) {
 		$DEBUG>=3 && DEBUG("did not get stapled OCSP response");
 		return 1;
@@ -3293,11 +3310,13 @@ sub new {
 	    $DEBUG>=3 && DEBUG("got stapled OCSP response");
 	    my $status = Net::SSLeay::OCSP_response_status($resp);
 	    if ($status != Net::SSLeay::OCSP_RESPONSE_STATUS_SUCCESSFUL()) {
+		# Treat a broken staple the same as no staple (see comment above).
 		$DEBUG>=3 && DEBUG("bad status of stapled OCSP response: ".
 		    Net::SSLeay::OCSP_response_status_str($status));
 		return 1;
 	    }
 	    if (!eval { Net::SSLeay::OCSP_response_verify($ssl,$resp) }) {
+		# Treat an unverifiable staple the same as no staple (see comment above).
 		$DEBUG>=3 && DEBUG("verify of stapled OCSP response failed");
 		return 1;
 	    }
@@ -3779,8 +3798,9 @@ sub new {
     }
     while ( my($uri,$v) = each %todo) {
 	my $ids = $v->{ids};
-	$v->{req} = Net::SSLeay::i2d_OCSP_REQUEST(
-	    Net::SSLeay::OCSP_ids2req(@$ids));
+	my $oreq = Net::SSLeay::OCSP_ids2req(@$ids);
+	$v->{req} = Net::SSLeay::i2d_OCSP_REQUEST($oreq);
+	Net::SSLeay::OCSP_REQUEST_free($oreq);
     }
     $hard_error ||= '' if ! %todo;
     return bless {
@@ -3806,19 +3826,19 @@ sub requests {
 
 # add new response
 sub add_response {
-    my ($self,$uri,$resp) = @_;
+    my ($self,$uri,$resp_d) = @_;
     my $todo = delete $self->{todo}{$uri};
     return $self->{error} if ! $todo || $self->{error};
 
-    my ($req,@soft_error,@hard_error);
+    my ($req,$resp,@soft_error,@hard_error);
 
     # do we have a response
-    if (!$resp) {
+    if (!$resp_d) {
 	@soft_error = "http request for OCSP failed; subject: ".
 	    join("; ",@{$todo->{subj}});
 
     # is it a valid OCSP_RESPONSE
-    } elsif ( ! eval { $resp = Net::SSLeay::d2i_OCSP_RESPONSE($resp) }) {
+    } elsif ( ! eval { $resp = Net::SSLeay::d2i_OCSP_RESPONSE($resp_d) }) {
 	@soft_error = "invalid response (no OCSP_RESPONSE); subject: ".
 	    join("; ",@{$todo->{subj}});
 	# hopefully short-time error
@@ -3896,8 +3916,9 @@ sub add_response {
 	    # try again
 	    $self->{todo}{$uri} = $todo;
 	    $todo->{ids} = \@miss;
-	    $todo->{req} = Net::SSLeay::i2d_OCSP_REQUEST(
-		Net::SSLeay::OCSP_ids2req(@miss));
+	    my $oreq = Net::SSLeay::OCSP_ids2req(@miss);
+	    $todo->{req} = Net::SSLeay::i2d_OCSP_REQUEST($oreq);
+	    Net::SSLeay::OCSP_REQUEST_free($oreq);
 	    $DEBUG>=2 && DEBUG("$uri just answered ".@found." of ".(@found+@miss)." requests");
 	}
     } else {
@@ -3910,6 +3931,7 @@ sub add_response {
 	}) for (@{$todo->{ids}});
     }
 
+    Net::SSLeay::OCSP_RESPONSE_free($resp) if $resp;
     Net::SSLeay::OCSP_REQUEST_free($req) if $req;
     if ($self->{failhard}) {
 	push @hard_error,@soft_error;

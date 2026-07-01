@@ -275,7 +275,10 @@ sub CERT_create {
 
     Net::SSLeay::ASN1_INTEGER_set(
 	Net::SSLeay::X509_get_serialNumber($cert),
-	delete $args{serial} || rand(2**32),
+	delete $args{serial} || do {
+	    Net::SSLeay::RAND_bytes(my $buf, 4);
+	    unpack('N', $buf);
+	},
     );
 
     # version default to 2 (V3)
@@ -694,7 +697,8 @@ time plus one 365 days.
 
 =item serial
 
-The serial number. If not given a random number will be used.
+The serial number. If not given a cryptographically random 32-bit value is
+generated using C<Net::SSLeay::RAND_bytes>.
 
 =item version
 

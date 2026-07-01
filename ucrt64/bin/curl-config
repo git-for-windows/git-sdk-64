@@ -82,7 +82,7 @@ while test "$#" -gt 0; do
     ;;
 
   --feature|--features)
-    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ''; do
+    for feature in alt-svc AsynchDNS brotli HSTS HTTPS-proxy IDN IPv6 Kerberos Largefile libz NTLM PSL SPNEGO SSL SSPI threadsafe UnixSockets zstd ''; do
       test -n "$feature" && echo "$feature"
     done
     ;;
@@ -175,7 +175,7 @@ while test "$#" -gt 0; do
     ;;
 
   --configure)
-    echo " '--prefix=/ucrt64' '--build=x86_64-w64-mingw32' '--host=x86_64-w64-mingw32' '--target=x86_64-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'target_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1' 'LDFLAGS=' 'CPPFLAGS='"
+    echo " '--prefix=/ucrt64' '--build=x86_64-w64-mingw32' '--host=x86_64-w64-mingw32' '--target=x86_64-w64-mingw32' '--disable-pthreads' '--without-random' '--disable-static' '--enable-shared' '--enable-sspi' '--enable-ldap' '--enable-ldaps' '--enable-ntlm' '--with-brotli' '--with-ldap-lib=wldap32' '--with-libssh2' '--with-zstd' '--with-schannel' '--without-nghttp2' '--without-ca-bundle' '--without-ca-path' '--without-librtmp' '--disable-debug' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'target_alias=x86_64-w64-mingw32' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1' 'LDFLAGS=' 'CPPFLAGS='"
     ;;
 
   *)

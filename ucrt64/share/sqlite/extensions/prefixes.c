@@ -289,10 +289,14 @@ static void prefixLengthFunc(
   int nL = sqlite3_value_bytes(apVal[0]);
   int nR = sqlite3_value_bytes(apVal[1]);
   int i;
+  if( zL==0 || zR==0 ){
+    sqlite3_result_int(ctx, 0);
+    return;
+  }
 
   nByte = (nL > nR ? nL : nR);
   for(i=0; i<nByte; i++){
-    if( zL[i]!=zR[i] ) break;
+    if( zL[i]==0 || zL[i]!=zR[i] ) break;
     if( (zL[i] & 0xC0)!=0x80 ) nRet++;
   }
 

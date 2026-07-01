@@ -73,13 +73,19 @@ sub new {
 sub DESTROY {
     # call various ssl _free routines
     my $self = shift or return;
-    for ( \$self->{cacert}, 
-	map { \$_->{cert} } ref($self->{cache}) ne 'CODE' ? values %{$self->{cache}} :()) {
+    my @cert = (\$self->{cacert});
+    my @key = (\$self->{cakey}, \$self->{certkey});
+    if (ref($self->{cache}) ne 'HASH') {
+	my @v = values %{$self->{cache}};
+	push @cert, map { \$_->{cert} } @v;
+	push @key, map { \$_->{key} } @v if !$self->{certkey};
+    }
+    for (@cert) {
 	$$_ or next;
 	CERT_free($$_);
 	$$_ = undef;
     }
-    for ( \$self->{cakey}, \$self->{pubkey} ) {
+    for (@key) {
 	$$_ or next;
 	KEY_free($$_);
 	$$_ = undef;
@@ -148,9 +154,9 @@ sub serialize {
     if ( ref($self->{cache}) eq 'HASH' ) {
 	while ( my($k,$v) = each %{ $self->{cache}} ) {
 	    $data .= pack("N/aN/aN/aN", $k,
-		PEM_cert2string($k->{cert}),
-		$k->{key} ? PEM_key2string($k->{key}) : '',
-		$k->{atime});
+		PEM_cert2string($v->{cert}),
+		$v->{key} ? PEM_key2string($v->{key}) : '',
+		$v->{atime});
 	}
     }
     return $data;
@@ -312,7 +318,7 @@ It can be either given by an EVP_PKEY object from L<Net::SSLeay>s internal
 representation, or using a file in PEM format.
 The key should not have a passphrase.
 
-=item pubkey EVP_PKEY | pubkey_file filename
+=item cert_key EVP_PKEY | cert_key_file filename
 
 This optional argument specifies the public key used for the cloned certificate.
 It can be either given by an EVP_PKEY object from L<Net::SSLeay>s internal
