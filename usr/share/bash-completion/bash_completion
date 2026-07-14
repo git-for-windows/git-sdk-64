@@ -27,7 +27,7 @@
 
 BASH_COMPLETION_VERSINFO=(
     2  # x-release-please-major
-    17 # x-release-please-minor
+    18 # x-release-please-minor
     0  # x-release-please-patch
 )
 
@@ -144,6 +144,7 @@ _comp_userland()
 _comp_sysvdirs()
 {
     sysvdirs=()
+    [[ -d ${_comp__test_inetd_dir-} ]] && sysvdirs+=("$_comp__test_inetd_dir")
     [[ -d /etc/rc.d/init.d ]] && sysvdirs+=(/etc/rc.d/init.d)
     [[ -d /etc/init.d ]] && sysvdirs+=(/etc/init.d)
     # Slackware uses /etc/rc.d
@@ -791,6 +792,8 @@ _comp_compgen__call_generator()
     local _comp_compgen__append=$_append
     local _comp_compgen__var=$_var
     local _comp_compgen__cur=$_cur cur=$_cur
+    local _comp_compgen__dir=$_dir
+    local _comp_compgen__prefix=$_prefix
     if [[ $_prefix ]]; then
         local -a tmp=()
         local _comp_compgen__var=tmp
@@ -863,7 +866,16 @@ if ((BASH_VERSINFO[0] > 5 || BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 3)); t
         [[ $_dir ]] && command cd -- "$_original_pwd"
 
         ((${#_upvars[@]})) && _comp_unlocal "${_upvars[@]}"
-        ((${#_result[@]})) || return
+
+        # workaround for bash-4.2 nounset
+        ((${#_result[@]})) || {
+            if [[ $_append ]]; then
+                eval -- "$_var+=()"
+            else
+                eval -- "$_var=()"
+            fi
+            return
+        }
 
         if [[ $_prefix ]]; then
             local _i
@@ -1278,10 +1290,13 @@ _comp_quote_compgen()
 # OPTIONS
 #   -d      Complete only on directories
 #   -f      Perform `compopt -o filenames` modifications manually.  This
-#           suffixes a slash to a directory name.  This can be combined with
-#           the `-C dir` option to `_comp_compgen`, where the generated
-#           filenames do not exist in the current working directory and Bash
-#           fails to properly detect the filenames.
+#           suffixes a slash to a directory name.  When "-C <dir>" or "-P
+#           <prefix>" is specified to the "_comp_compgen" call, this option
+#           is automatically turned on.
+#   -X PATTERN
+#           @since 2.18 Specify the filename pattern to exclude, or the
+#           filename pattern to include prefixed by "!".  When this option is
+#           specified, $1 should be empty or not specified.
 # @return 0 if at least one completion is generated, or 1 otherwise.
 #
 # @since 2.12
@@ -1290,12 +1305,26 @@ _comp_compgen_filedir()
     _comp_compgen_tilde && return
 
     local -a toks
-    local _dir="" _filenames=""
+    local _dir="" _filenames="" _xspec=""
+    if [[ ${_comp_compgen__dir-} || ${_comp_compgen__prefix-} ]]; then
+        # When "-C <dir>" or "-P <prefix>" is specified, the working directory
+        # does not contain the generated candidates as filenames.  In the case
+        # of "-C <dir>", the generated filenames are located in the directory
+        # "<dir>" but not in the working directory.  In the case of "-P
+        # <prefix>", candidates have the form "<prefix><filename>".  In those
+        # cases, Bash fails to recognize the generated candidates to be
+        # filenames, and Bash does not adjust these as filenames.  We
+        # automatically detect such cases and modify the generated filenames as
+        # if the option "-f" is passed.
+        _filenames=set
+    fi
+
     local OPTIND=1 OPTARG="" OPTERR=0 _opt
-    while getopts ":df" _opt "$@"; do
+    while getopts ":dfX:" _opt "$@"; do
         case $_opt in
             d) _dir=set ;;
             f) _filenames=set ;;
+            X) _xspec=$OPTARG ;;
             *)
                 printf "bash_completion: %s: usage error\n" "$FUNCNAME" >&2
                 return 2
@@ -1304,6 +1333,10 @@ _comp_compgen_filedir()
     done
     shift "$((OPTIND - 1))"
     local _arg=${1-}
+    if [[ $_xspec && $_arg ]]; then
+        printf 'bash_completion: %s: "-X xspec" and "$1" cannot be specified simultaneously\n' "$FUNCNAME" >&2
+        return 2
+    fi
 
     if [[ $_dir ]]; then
         _comp_compgen -v toks -- -d
@@ -1319,24 +1352,21 @@ _comp_compgen_filedir()
         # Munge xspec to contain uppercase version too
         # https://lists.gnu.org/archive/html/bug-bash/2010-09/msg00036.html
         # news://news.gmane.io/4C940E1C.1010304@case.edu
-        local _xspec=${_arg:+"!*.@($_arg|${_arg^^})"} _plusdirs=()
+        [[ $_xspec ]] || _xspec=${_arg:+"!*.@($_arg|${_arg^^})"}
 
+        local _opts=(-f -X "$_xspec")
         # Use plusdirs to get dir completions if we have a xspec; if we don't,
         # there's no need, dirs come along with other completions. Don't use
         # plusdirs quite yet if fallback is in use though, in order to not ruin
         # the fallback condition with the "plus" dirs.
-        local _opts=(-f -X "$_xspec")
-        [[ $_xspec ]] && _plusdirs=(-o plusdirs)
-        [[ ${BASH_COMPLETION_FILEDIR_FALLBACK-} || ! ${_plusdirs-} ]] ||
-            _opts+=("${_plusdirs[@]}")
-
+        [[ $_xspec && ! ${BASH_COMPLETION_FILEDIR_FALLBACK-} ]] &&
+            _opts+=(-o plusdirs)
         _comp_compgen -v toks -c "$_quoted" -- "${_opts[@]}"
 
         # Try without filter if it failed to produce anything and configured to
         [[ ${BASH_COMPLETION_FILEDIR_FALLBACK-} &&
             $_arg && ${#toks[@]} -lt 1 ]] &&
-            _comp_compgen -av toks -c "$_quoted" -- \
-                -f ${_plusdirs+"${_plusdirs[@]}"}
+            _comp_compgen -av toks -c "$_quoted" -- -f
     fi
 
     if ((${#toks[@]} != 0)); then
@@ -1521,20 +1551,8 @@ _comp_variable_assignments()
 
     case $prev in
         TZ)
-            cur=/usr/share/zoneinfo/$cur
-            _comp_compgen_filedir
-            if ((${#COMPREPLY[@]})); then
-                for i in "${!COMPREPLY[@]}"; do
-                    if [[ ${COMPREPLY[i]} == *.tab ]]; then
-                        unset -v 'COMPREPLY[i]'
-                        continue
-                    elif [[ -d ${COMPREPLY[i]} ]]; then
-                        COMPREPLY[i]+=/
-                        compopt -o nospace
-                    fi
-                    COMPREPLY[i]=${COMPREPLY[i]#/usr/share/zoneinfo/}
-                done
-            fi
+            _comp_compgen -C /usr/share/zoneinfo filedir -f \
+                -X '@(*.tab|leapseconds|leap-seconds.list|tzdata.zi)'
             ;;
         TERM)
             _comp_compgen_terms
@@ -2062,12 +2080,12 @@ if [[ $OSTYPE == *@(solaris|aix)* ]]; then
     # This function completes on process IDs.
     _comp_compgen_pids()
     {
-        _comp_compgen_split -- "$(command ps -efo pid | command sed 1d)"
+        _comp_compgen_split -- "$(command ps -efo pid | _comp_tail -n +2)"
     }
 
     _comp_compgen_pgids()
     {
-        _comp_compgen_split -- "$(command ps -efo pgid | command sed 1d)"
+        _comp_compgen_split -- "$(command ps -efo pgid | _comp_tail -n +2)"
     }
     _comp_compgen_pnames()
     {
@@ -2088,7 +2106,7 @@ else
     {
         local -a procs=()
         if [[ ${1-} == -s ]]; then
-            _comp_split procs "$(command ps ax -o comm | command sed -e 1d)"
+            _comp_split procs "$(command ps ax -o comm | _comp_tail -n +2)"
         else
             # Some versions of ps don't support "command", but do "comm", e.g.
             # some busybox ones. Fall back
@@ -2182,30 +2200,44 @@ _comp_compgen_xinetd_services()
     fi
 }
 
+# This function completes on SysV init services
+#
+# @since 2.18
+_comp_compgen_sysv_services()
+{
+    local sysvdirs
+    _comp_sysvdirs &&
+        _comp_compgen -U sysvdirs -C "${sysvdirs[0]}" -- \
+            -fX "@($_comp_backup_glob|functions|*.sh|README*|*/*)"
+}
+
 # This function completes on services
 #
+# @return 0 if at least one completion is generated, or 1 otherwise.
 # @since 2.12
 _comp_compgen_services()
 {
-    local sysvdirs
-    _comp_sysvdirs || return 1
-
-    local services
-    _comp_expand_glob services '${sysvdirs[0]}/!($_comp_backup_glob|functions|README)'
+    local status=1
+    _comp_compgen_sysv_services && status=0
 
     local _generated=$({
         systemctl list-units --full --all ||
             systemctl list-unit-files
-    } 2>/dev/null |
-        _comp_awk '$1 ~ /\.service$/ { sub("\\.service$", "", $1); print $1 }')
-    _comp_split -la services "$_generated"
+    } 2>/dev/null | _comp_awk '
+        # Example output from systemctl:
+        #   httpd.service       loaded    active   running  The Apache HTTP Server
+        # * iptables.service    not-found inactive dead     iptables.service
+        sub(/\.service$/, "", $1) { print $1; next }
+        sub(/\.service$/, "", $2) { print $2 }
+    ')
+    _comp_compgen -a split -l -- "$_generated" && status=0
 
     if [[ -x /sbin/upstart-udev-bridge ]]; then
-        _comp_split -la services "$(initctl list 2>/dev/null | cut -d' ' -f1)"
+        _comp_compgen -a split -l -- "$(initctl list 2>/dev/null | cut -d' ' -f1)" &&
+            status=0
     fi
 
-    ((${#services[@]})) || return 1
-    _comp_compgen -U services -U sysvdirs -- -W '"${services[@]#${sysvdirs[0]}/}"'
+    return "$status"
 }
 
 # This completes on a list of all available service scripts for the
@@ -2230,8 +2262,9 @@ _comp_complete_service()
     else
         local sysvdirs
         _comp_sysvdirs || return 1
-        _comp_compgen_split -l -- "$(command sed -e 'y/|/ /' \
-            -ne 's/^.*\(U\|msg_u\)sage.*{\(.*\)}.*$/\2/p' \
+        _comp_compgen_split -- "$(command sed -ne 'y/|/ /' \
+            -e 's/^.*Usage.*{\(.*\)}.*$/\1/p' \
+            -e 's/^.*msg_usage.*{\(.*\)}.*$/\1/p' \
             "${sysvdirs[0]}/${prev##*/}" 2>/dev/null) start stop"
     fi
 } &&
@@ -2620,7 +2653,7 @@ _comp_complete_user_at_host()
     _comp_initialize -n : -- "$@" || return
 
     if [[ $cur == *@* ]]; then
-        _comp_compgen_known_hosts "$cur"
+        _comp_compgen_known_hosts -- "$cur"
     else
         _comp_compgen -- -u -S @
         compopt -o nospace
@@ -2643,7 +2676,7 @@ _comp_complete_known_hosts()
     [[ ${1-} == -a || ${2-} == -a ]] && options+=(-a)
     [[ ${1-} == -c || ${2-} == -c ]] && options+=(-c)
     local IFS=$' \t\n' # Workaround for connected ${v+"$@"} in bash < 4.4
-    _comp_compgen_known_hosts ${options[@]+"${options[@]}"} -- "$cur"
+    _comp_compgen_known_hosts ${options[@]+"${options[@]}"}
 }
 
 # Helper function to locate ssh included files in configs
@@ -2710,9 +2743,19 @@ _comp__included_ssh_config_files()
 #     -a             Use aliases from ssh config files
 #     -c             Use `:' suffix
 #     -F configfile  Use `configfile' for configuration settings
-#     -p PREFIX      Use PREFIX
 #     -4             Filter IPv6 addresses from results
 #     -6             Filter IPv4 addresses from results
+#     -p PREFIX      (deprecated 2.18) Use PREFIX.  This is equivalent to
+#                    specifying "-P PREFIX" as a "_comp_compgen" option.  This
+#                    option is only kept for backward compatibility.  Please
+#                    use "_comp_compgen -P PREFIX known_hosts ...".
+#
+# @param[in] $1 CWORD - (deprecated 2.18) This is kept for backward
+#   compatibility.  This could be used to specify the current word.  Currently,
+#   $cur in the context is used as the default value of the current word.  If
+#   one wants to specify the current word used to generate completions, use
+#   `_comp_compgen -c CWORD known_hosts ...` instead.
+#
 # @var[out] COMPREPLY  Completions, starting with CWORD, are added
 # @return True (0) if one or more completions are generated, or otherwise False
 # (1).
@@ -2728,7 +2771,7 @@ _comp_compgen_known_hosts__impl()
     known_hosts=()
 
     local configfile="" flag prefix=""
-    local cur suffix="" aliases="" i host ipv4="" ipv6=""
+    local suffix="" aliases="" i host ipv4="" ipv6=""
     local -a kh tmpkh=() khd=() config=()
 
     # TODO remove trailing %foo from entries
@@ -2754,20 +2797,13 @@ _comp_compgen_known_hosts__impl()
                 ;;
         esac
     done
-    if (($# < OPTIND)); then
-        echo "bash_completion: $FUNCNAME: missing mandatory argument CWORD" >&2
+    shift "$((OPTIND - 1))"
+    if (($# >= 2)); then
+        local IFS=$' \t\n'
+        echo "bash_completion: $FUNCNAME($*): unprocessed arguments:$(printf ' %s' "${@:2}")" >&2
         return 2
     fi
-    cur=${!OPTIND}
-    ((OPTIND += 1))
-    if (($# >= OPTIND)); then
-        echo "bash_completion: $FUNCNAME($*): unprocessed arguments:" \
-            "$(while (($# >= OPTIND)); do
-                printf '%s ' ${!OPTIND}
-                shift
-            done)" >&2
-        return 2
-    fi
+    local cur=${1-$cur}
 
     [[ $cur == *@* ]] && prefix=$prefix${cur%@*}@ && cur=${cur#*@}
     kh=()
@@ -3219,13 +3255,12 @@ _comp_complete_longopt()
 }
 # makeinfo and texi2dvi are defined elsewhere.
 complete -F _comp_complete_longopt \
-    a2ps awk base{32,64,nc} bash bc bison cat chroot colordiff comm cp \
-    csplit cut date df diff dir du enscript expand fmt fold gperf \
-    grep grub head irb ld ldd less ln ls m4 mkdir mkfifo mknod \
-    mv netstat nl nm numfmt objcopy objdump od paste pr ptx readelf \
-    readlink realpath rm rmdir sed seq shar shred \
-    shuf sort split stat strip sum sync tac tail tee \
-    texindex touch tr uname unexpand uniq units vdir wc who
+    a2ps awk base{32,64,nc} bash bc bison cat chroot colordiff comm cp csplit \
+    cut date df diff dir du enscript expand fmt fold gperf grep grub head irb \
+    ld ldd less ln ls m4 mkdir mkfifo mknod mv netstat nl nm numfmt objcopy \
+    objdump od paste pr ptx readelf readlink realpath rm rmdir sed seq shar \
+    shred shuf sort split stat strip sum sync tac tail tee texindex touch tr \
+    uname unexpand uniq units vdir wc who
 
 # @since 2.12
 declare -Ag _comp_xspecs
@@ -3255,14 +3290,14 @@ _comp_compgen_filedir_xspec()
     # https://lists.gnu.org/archive/html/bug-bash/2010-09/msg00036.html
     # news://news.gmane.io/4C940E1C.1010304@case.edu
     eval xspec="${xspec}"
-    local matchop=!
     if [[ $xspec == !* ]]; then
         xspec=${xspec#!}
-        matchop=@
+        xspec="@(|!($xspec|${xspec^^}))"
+    else
+        xspec="@(|$xspec|${xspec^^})"
     fi
-    xspec="$matchop($xspec|${xspec^^})"
 
-    _comp_compgen -av toks -c "$quoted" -- -f -X "@(|!($xspec))"
+    _comp_compgen -av toks -c "$quoted" -- -f -X "$xspec"
 
     # Try without filter if it failed to produce anything and configured to
     [[ ${BASH_COMPLETION_FILEDIR_FALLBACK-} && ${#toks[@]} -lt 1 ]] &&
@@ -3321,7 +3356,7 @@ _comp__init_install_xspec '!*@(.@(mp?(e)g|MP?(E)G|wm[av]|WM[AV]|avi|AVI|asf|vob|
 _comp__init_install_xspec '!*.@(avi|asf|wmv)' aviplay
 _comp__init_install_xspec '!*.@(rm?(j)|ra?(m)|smi?(l))' realplay
 _comp__init_install_xspec '!*.@(mpg|mpeg|avi|mov|qt)' xanim
-_comp__init_install_xspec '!*.@(og[ag]|m3u|flac|spx)' ogg123
+_comp__init_install_xspec '!*.@(og[ag]|m3u|flac|spx|opus)' ogg123
 _comp__init_install_xspec '!*.@(mp3|og[ag]|pls|m3u)' gqmpeg freeamp
 _comp__init_install_xspec '!*.fig' xfig
 _comp__init_install_xspec '!*.@(mid?(i)|cmf)' playmidi
@@ -3372,6 +3407,58 @@ _comp__init_base_directory()
 }
 _comp__init_base_directory
 
+# Attempt to load the specified file and check if the completion setting is
+# successfully loaded.
+#
+# @param $1 compfile ... filename to check.
+# @var[in] cmdname
+# @var[in] cmd
+# @var[in] backslash
+# @var[in] origcmd
+# @var[in] source_args
+# @exit 0 when the file is found, and the completion setting was successfully
+#     loaded.  Otherwise, 1.
+_comp_load__visit_file()
+{
+    local compfile=$1
+    shift
+    [[ -e $compfile ]] || return 1
+
+    # Set up default $IFS in case loaded completions depend on it, as well as
+    # for $compspec invocation below.
+    local IFS=$' \t\n' compspec
+
+    # Avoid trying to source dirs as long as we support bash < 4.3
+    # to avoid an fd leak; https://bugzilla.redhat.com/903540
+    if [[ -d $compfile ]]; then
+        # Do not warn with . or .. (especially the former is common)
+        [[ $compfile == */.?(.) ]] ||
+            echo "bash_completion: $compfile: is a directory" >&2
+    elif . "$compfile" "$cmd" ${source_args[@]+"${source_args[@]}"}; then
+
+        # At least $cmd is expected to have a completion set when we return
+        # successfully; see if it already does
+        if compspec=$(complete -p -- "$cmd" 2>/dev/null); then
+            # $cmd is the case in which we do backslash processing
+            [[ $backslash ]] && eval "$compspec \"\$backslash\$cmd\""
+            # If invoked without path, that one should be set, too
+            # ...but let's not overwrite an existing one, if any
+            [[ $origcmd != */* ]] &&
+                ! complete -p -- "$origcmd" &>/dev/null &&
+                eval "$compspec \"\$origcmd\""
+            return 0
+        fi
+        # If not, see if we got one for $cmdname
+        if [[ $cmdname != "$cmd" ]] && compspec=$(complete -p -- "$cmdname" 2>/dev/null); then
+            # Use that for $cmd too, if we have a full path to it
+            [[ $cmd == /* ]] && eval "$compspec \"\$cmd\""
+            return 0
+        fi
+        # Nothing expected was set, continue lookup
+    fi
+    return 1
+}
+
 # @since 2.12
 _comp_load()
 {
@@ -3388,8 +3475,7 @@ _comp_load()
     done
     shift "$((OPTIND - 1))"
 
-    local cmd=$1 cmdname=${1##*/} dir compfile
-    local -a paths
+    local cmd=$1 cmdname=${1##*/}
     [[ $cmdname ]] || return 1
 
     local backslash=
@@ -3407,91 +3493,108 @@ _comp_load()
         cmd=$REPLY
     fi
 
-    local -a dirs=()
+    # Begin lookup
 
-    # Lookup order:
-    # 1) From BASH_COMPLETION_USER_DIR (e.g. ~/.local/share/bash-completion):
-    # User installed completions.
+    shift # cmd
+    local -a source_args=("$@")
+    local -a dirs
+    local dir
+
+    # There are two kinds of completion subdirs, main and fallback.
+    # Main subdirs are first looked up from all supported base locations,
+    # followed by fallback subdir lookups in certain locations.
+
+    # Typically, there is only one main completion subdir, "completions",
+    # and one fallback completion subdir, "completions-fallback".
+
+    # The location of the main bash_completion script, i.e. the "home" location
+    # of the bash-completion setup in use, is special in a few respects.
+    # It is primarily for run-in-place-from-git-clone setups or ones unpacked
+    # from tarballs, typically user setups where we want to prefer in-tree
+    # completions over ones possibly coming with a system installed
+    # bash-completion.
+    #
+    # It supports an additional "completions-core" main subdir to look up from.
+    # This subdir contains completion snippets that come with that
+    # bash-completion version, and snippets in it are looked up after the usual
+    # "completions" dir. The "completions" dir in this location is for other
+    # completion snippets, such as ones installed by packages shipping
+    # completions of their own.
+    #
+    # Completions in the "completions-core" subdir may make use of
+    # bash-completion's internal API that is highly version specific.
+    # Therefore we do not look up from any other "completions-core" subdir
+    # besides this one.
+    #
+    # This location is also the only one from which we look up fallback
+    # completions from. These may also make use of bash-completion's internal
+    # API, and as it is assumed there's little if any need for a fallback
+    # hierarchy, we don't do it "just in case" to avoid some lookups.
+
+    # Filenames we look up from in usual main subdirs have the name of the
+    # command we are looking up a completion for, with .bash suffix appended
+    # (recommended) or no suffix. From others (i.e. ones containing files
+    # that are part of the bash-completion version in use), only the one with
+    # .bash appended is considered.
+
+    # 1) From user locations
+
     if [[ ${BASH_COMPLETION_USER_DIR-} ]]; then
-        _comp_split -F : paths "$BASH_COMPLETION_USER_DIR" &&
-            dirs+=("${paths[@]/%//completions}")
+        _comp_split -F : dirs "$BASH_COMPLETION_USER_DIR"
     else
-        dirs=("${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion/completions")
+        dirs=("${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion")
     fi
+    for dir in "${dirs[@]}"; do
+        _comp_load__visit_file "$dir/completions/$cmdname.bash" && return 0
+        _comp_load__visit_file "$dir/completions/$cmdname" && return 0
+    done
 
-    # 2) From the location of bash_completion: Completions relative to the main
-    # script. This is primarily for run-in-place-from-git-clone setups, where
-    # we want to prefer in-tree completions over ones possibly coming with a
-    # system installed bash-completion. (Due to usual install layouts, this
-    # often hits the correct completions in system installations, too.)
-    dirs+=("$_comp__base_directory/completions")
+    # 2) From the bash-completion "home" location
 
-    # 3) From bin directories extracted from the specified path to the command,
+    _comp_load__visit_file \
+        "$_comp__base_directory/completions/$cmdname.bash" && return 0
+    _comp_load__visit_file \
+        "$_comp__base_directory/completions/$cmdname" && return 0
+    _comp_load__visit_file \
+        "$_comp__base_directory/completions-core/$cmdname.bash" && return 0
+
+    # 3) From bin directories extracted from a specified path to the command,
     # the real path to the command, and $PATH
-    paths=()
-    [[ $cmd == /* ]] && paths+=("${cmd%/*}")
-    _comp_realcommand "$cmd" && paths+=("${REPLY%/*}")
-    _comp_split -aF : paths "$PATH"
-    for dir in "${paths[@]%/}"; do
-        [[ $dir == ?*/@(bin|sbin) ]] &&
-            dirs+=("${dir%/*}/share/bash-completion/completions")
+
+    dirs=()
+    [[ $cmd == /* ]] && dirs+=("${cmd%/*}")
+    _comp_realcommand "$cmd" && dirs+=("${REPLY%/*}")
+    _comp_split -aF : dirs "$PATH"
+    for dir in "${dirs[@]%/}"; do
+        if [[ $dir == ?*/@(bin|sbin) ]]; then
+            _comp_load__visit_file "${dir%/*}/share/bash-completion/completions/$cmdname.bash" && return 0
+            _comp_load__visit_file "${dir%/*}/share/bash-completion/completions/$cmdname" && return 0
+        fi
     done
 
-    # 4) From XDG_DATA_DIRS or system dirs (e.g. /usr/share, /usr/local/share):
-    # Completions in the system data dirs.
-    _comp_split -F : paths "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}" &&
-        dirs+=("${paths[@]/%//bash-completion/completions}")
+    # 4) From bash-completion subdir in XDG_DATA_DIRS or system dirs
+    # (e.g. /usr/share, /usr/local/share) -- typically meaning a system
+    # installed one if the one in use is not that, see 2) above
 
-    # Set up default $IFS in case loaded completions depend on it,
-    # as well as for $compspec invocation below.
-    local IFS=$' \t\n'
-
-    # Look up and source
-    shift
-    local i prefix compspec
-    for prefix in "" _; do # Regular from all dirs first, then fallbacks
-        for i in ${!dirs[*]}; do
-            dir=${dirs[i]}
-            if [[ ! -d $dir ]]; then
-                unset -v 'dirs[i]'
-                continue
-            fi
-            for compfile in "$prefix$cmdname" "$prefix$cmdname.bash"; do
-                compfile="$dir/$compfile"
-                # Avoid trying to source dirs as long as we support bash < 4.3
-                # to avoid an fd leak; https://bugzilla.redhat.com/903540
-                if [[ -d $compfile ]]; then
-                    # Do not warn with . or .. (especially the former is common)
-                    [[ $compfile == */.?(.) ]] ||
-                        echo "bash_completion: $compfile: is a directory" >&2
-                elif [[ -e $compfile ]] && . "$compfile" "$cmd" "$@"; then
-                    # At least $cmd is expected to have a completion set when
-                    # we return successfully; see if it already does
-                    if compspec=$(complete -p -- "$cmd" 2>/dev/null); then
-                        # $cmd is the case in which we do backslash processing
-                        [[ $backslash ]] && eval "$compspec \"\$backslash\$cmd\""
-                        # If invoked without path, that one should be set, too
-                        # ...but let's not overwrite an existing one, if any
-                        [[ $origcmd != */* ]] &&
-                            ! complete -p -- "$origcmd" &>/dev/null &&
-                            eval "$compspec \"\$origcmd\""
-                        return 0
-                    fi
-                    # If not, see if we got one for $cmdname
-                    if [[ $cmdname != "$cmd" ]] && compspec=$(complete -p -- "$cmdname" 2>/dev/null); then
-                        # Use that for $cmd too, if we have a full path to it
-                        [[ $cmd == /* ]] && eval "$compspec \"\$cmd\""
-                        return 0
-                    fi
-                    # Nothing expected was set, continue lookup
-                fi
-            done
-        done
+    _comp_split -F : dirs "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+    for dir in "${dirs[@]}"; do
+        _comp_load__visit_file \
+            "$dir/bash-completion/completions/$cmdname.bash" && return 0
+        _comp_load__visit_file \
+            "$dir/bash-completion/completions/$cmdname" && return 0
     done
 
-    # Look up simple "xspec" completions
+    # 5) From the fallback completion dir
+
+    _comp_load__visit_file \
+        "$_comp__base_directory/completions-fallback/$cmdname.bash" && return 0
+
+    # 6) Simple "xspec" completions
+
     [[ -v _comp_xspecs[$cmdname] || -v _xspecs[$cmdname] ]] &&
         complete -F _comp_complete_filedir_xspec "$cmdname" "$backslash$cmdname" && return 0
+
+    # Last) fallback to minimal if applicable
 
     if [[ $flag_fallback_default ]]; then
         complete -F _comp_complete_minimal -- "$origcmd" && return 0
@@ -3530,20 +3633,33 @@ _comp_xfunc()
     "$xfunc_name" "${@:3}"
 }
 
-# Call a POSIX-compatible awk.  Solaris awk is not POSIX-compliant, but Solaris
-# provides a POSIX-compatible version through /usr/xpg4/bin/awk.  We switch the
-# implementation to /usr/xpg4/bin/awk in Solaris if any.
+# Call a POSIX-compatible awk and tail.  Solaris awk and tail are not
+# POSIX-compliant, but Solaris provides POSIX-compatible versions through
+# /usr/xpg4/bin/{awk,tail}.  We switch the implementation to
+# /usr/xpg4/bin/{awk,tail} in Solaris if any.
 # @since 2.12
-if [[ $OSTYPE == *solaris* && -x /usr/xpg4/bin/awk ]]; then
-    _comp_awk()
-    {
-        /usr/xpg4/bin/awk "$@"
-    }
-else
-    _comp_awk()
-    {
-        command awk "$@"
-    }
+_comp_awk()
+{
+    command awk "$@"
+}
+# @since 2.18
+_comp_tail()
+{
+    command tail "$@"
+}
+if [[ $OSTYPE == *solaris* ]]; then
+    if [[ -x /usr/xpg4/bin/awk ]]; then
+        _comp_awk()
+        {
+            /usr/xpg4/bin/awk "$@"
+        }
+    fi
+    if [[ -x /usr/xpg4/bin/tail ]]; then
+        _comp_tail()
+        {
+            /usr/xpg4/bin/tail "$@"
+        }
+    fi
 fi
 
 # List custom/extra completion files to source on the startup
@@ -3554,7 +3670,61 @@ _comp__init_collect_startup_configs()
     local base_path=${1:-${BASH_SOURCE[1]}}
     _comp__init_startup_configs=()
 
-    # source compat completion directory definitions
+    # list startup directories
+    local -a startup_dirs=()
+    local paths
+    _comp_split -F : paths "${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}" &&
+        startup_dirs+=("${paths[@]/%//startup}")
+    _comp_split -F : paths "${XDG_DATA_DIRS:-/usr/local/share:/usr/share}" &&
+        startup_dirs+=("${paths[@]/%//bash-completion/startup}")
+    startup_dirs+=("$_comp__base_directory/startup")
+    startup_dirs+=("$_comp__base_directory/startup-core")
+
+    # collect startup files
+    local -A startup_visited=()
+    local startup_dir
+    for startup_dir in "${startup_dirs[@]}"; do
+        [[ -d $startup_dir && -r $startup_dir && -x $startup_dir ]] || continue
+
+        local -a startup_files=()
+        _comp_expand_glob startup_files "$startup_dir/*.bash" || continue
+
+        local -a selected_startup_files=()
+        local startup_file
+        for startup_file in "${startup_files[@]}"; do
+            [[ ! -d $startup_file && -r $startup_file ]] || continue
+
+            # Disable the startup files with the same name as one of already
+            # selected startup files.  This allows users to override a startup
+            # file with another file with the same name placed in an earlier
+            # directory in "${startup_files[@]}".
+            local name=${startup_file##*/?([0-9][0-9][0-9]_)}
+            [[ ${startup_visited[$name]-} ]] && continue
+            startup_visited[$name]=set
+
+            selected_startup_files+=("$startup_file")
+        done
+        ((${#selected_startup_files[@]})) || continue
+
+        # Note: bash < 4.4 has a bug that all elements are connected with
+        # ${a[@]+"${a[@]}"} when IFS does not contain whitespace.
+        local IFS=$' \t\n'
+        # Prepend the selected startup files because we want to source the
+        # system startup files earlier.
+        _comp__init_startup_configs=(
+            "${selected_startup_files[@]}"
+
+            # Note: bash < 4.3 has a bug that "${a[@]}" fails for "set -u" when
+            # an array "a" exists but has no elements.  We use
+            # ${a[@]+"${a[@]}"} as a workaround.  Similar patterns are also
+            # used in completions/*.bash, 000_bash_completion_compat.bash, and
+            # test_unit_compgen.py.  They need to be updated when the minimum
+            # required Bash version is lifted up.
+            ${_comp__init_startup_configs[@]+"${_comp__init_startup_configs[@]}"}
+        )
+    done
+
+    # collect compat completion directory definitions
     local -a compat_dirs=()
     local compat_dir
     if [[ ${BASH_COMPLETION_COMPAT_DIR-} ]]; then
@@ -3569,25 +3739,33 @@ _comp__init_collect_startup_configs()
         # functions.
         if [[ $_comp__base_directory == */share/bash-completion ]]; then
             compat_dir=${_comp__base_directory%/share/bash-completion}/etc/bash_completion.d
-        else
-            compat_dir=$_comp__base_directory/bash_completion.d
+            [[ ${compat_dirs[0]} == "$compat_dir" ]] ||
+                compat_dirs+=("$compat_dir")
         fi
-        [[ ${compat_dirs[0]} == "$compat_dir" ]] ||
-            compat_dirs+=("$compat_dir")
     fi
+    local -A compat_visited=()
     for compat_dir in "${compat_dirs[@]}"; do
         [[ -d $compat_dir && -r $compat_dir && -x $compat_dir ]] || continue
         local compat_files
-        _comp_expand_glob compat_files '"$compat_dir"/*'
+        _comp_expand_glob compat_files '"$compat_dir"/*' || continue
         local compat_file
         for compat_file in "${compat_files[@]}"; do
             [[ ${compat_file##*/} != @($_comp_backup_glob|Makefile*|${BASH_COMPLETION_COMPAT_IGNORE-}) &&
-                -f $compat_file && -r $compat_file ]] &&
-                _comp__init_startup_configs+=("$compat_file")
+                -f $compat_file && -r $compat_file ]] || continue
+
+            # Disable the compat files with the same name as one of already
+            # selected ones.  This allows users to override a compat file with
+            # another file with the same name placed in an earlier directory in
+            # "${compat_dirs[@]}".
+            local name=${compat_file##*/}
+            [[ ${compat_visited[$name]-} ]] && continue
+            compat_visited[$name]=set
+
+            _comp__init_startup_configs+=("$compat_file")
         done
     done
 
-    # source user completion file
+    # collect the user completion file
     #
     # Remark: We explicitly check that $user_completion is not '/dev/null'
     #   since /dev/null may be a regular file in broken systems and can contain
