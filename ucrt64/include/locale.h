@@ -6,7 +6,7 @@
 #ifndef _INC_LOCALE
 #define _INC_LOCALE
 
-#include <crtdefs.h>
+#include <_mingw_locale.h>
 
 #ifdef __cplusplus
 #include <stdio.h>
@@ -30,6 +30,22 @@ extern "C" {
 #endif
 #endif
 
+/**
+ * Internal CRT stuff.
+ */
+
+#ifdef __CHAR_UNSIGNED__
+/* Pull in the constructor from 'charmax.c'.  */
+extern int __mingw_initcharmax;
+__MINGW_SELECTANY int* __mingw_reference_charmax = &__mingw_initcharmax;
+#endif
+
+_CRTIMP unsigned int __cdecl ___lc_codepage_func(void);
+
+/**
+ * Standard C declarations.
+ */
+
 #define LC_ALL 0
 #define LC_COLLATE 1
 #define LC_CTYPE 2
@@ -40,8 +56,6 @@ extern "C" {
 #define LC_MIN LC_ALL
 #define LC_MAX LC_TIME
 
-#ifndef _LCONV_DEFINED
-#define _LCONV_DEFINED
   struct lconv {
     char *decimal_point;
     char *thousands_sep;
@@ -61,7 +75,11 @@ extern "C" {
     char n_sep_by_space;
     char p_sign_posn;
     char n_sign_posn;
-#if __MSVCRT_VERSION__ >= 0xA00 || _WIN32_WINNT >= 0x601
+    /**
+     * These _W_* members are available since msvcr100.dll;
+     * they are also available in msvcrt.dll since Windows 7.
+     */
+#if __MSVCRT_VERSION__ >= 0xA00 || (__MSVCRT_VERSION__ == 0x600 && _WIN32_WINNT >= 0x601)
     wchar_t* _W_decimal_point;
     wchar_t* _W_thousands_sep;
     wchar_t* _W_int_curr_symbol;
@@ -72,11 +90,21 @@ extern "C" {
     wchar_t* _W_negative_sign;
 #endif
   };
-#endif
 
-#ifndef _CONFIG_LOCALE_SWT
-#define _CONFIG_LOCALE_SWT
+_CRTIMP char *__cdecl setlocale(int _Category,const char *_Locale);
+_CRTIMP struct lconv *__cdecl localeconv(void);
 
+/**
+ * Microsoft-specific declarations: thread locales.
+ *
+ * They are available since msvcr80.dll.
+ */
+
+/**
+ * FIXME: we expose `_configthreadlocale` for msvcrt.dll in order to avoid
+ *   breaking packages which use it unconditionally (e.g. libc++).
+ */
+#if __MSVCRT_VERSION__ >= 0x0800 || __MSVCRT_VERSION__ == 0x0600
 #define _ENABLE_PER_THREAD_LOCALE 0x1
 #define _DISABLE_PER_THREAD_LOCALE 0x2
 #define _ENABLE_PER_THREAD_LOCALE_GLOBAL 0x10
@@ -84,40 +112,44 @@ extern "C" {
 #define _ENABLE_PER_THREAD_LOCALE_NEW 0x100
 #define _DISABLE_PER_THREAD_LOCALE_NEW 0x200
 
+_CRTIMP int __cdecl _configthreadlocale(int _Flag);
 #endif
 
-  _CRTIMP int __cdecl _configthreadlocale(int _Flag);
-  _CRTIMP char *__cdecl setlocale(int _Category,const char *_Locale);
-  _CRTIMP struct lconv *__cdecl localeconv(void);
-  _CRTIMP _locale_t __cdecl _get_current_locale(void);
-  _CRTIMP _locale_t __cdecl _create_locale(int _Category,const char *_Locale);
-  _CRTIMP void __cdecl _free_locale(_locale_t _Locale);
-  _CRTIMP _locale_t __cdecl __get_current_locale(void);
-  _CRTIMP _locale_t __cdecl __create_locale(int _Category,const char *_Locale);
-  _CRTIMP void __cdecl __free_locale(_locale_t _Locale);
+/**
+ * Microsoft-specific declarations: locale objects.
+ *
+ * They are available since msvcr80.dll.
+ * They are also available in msvcrt.dll since Windows 8.
+ */
 
-  _CRTIMP unsigned int __cdecl ___lc_codepage_func(void);
+/**
+ * FIXME: functions which use `_locale_t` objects are available in msvcrt.dll
+ *   since Windows Vista, while `_create_locale` etc. are only available since
+ *   Windows 8. We expose them for Vista and later in order to avoid breaking
+ *   packages which use them unconditionally (e.g. libc++).
+ */
+#if __MSVCRT_VERSION__ >= 0x0800 || (__MSVCRT_VERSION__ == 0x0600 && _WIN32_WINNT >= 0x0600)
+_CRTIMP _locale_t __cdecl _get_current_locale(void);
+_CRTIMP _locale_t __cdecl _create_locale(int _Category,const char *_Locale);
+_CRTIMP void __cdecl _free_locale(_locale_t _Locale);
 
-  /* Get the code page that the CRT currently uses for filenames. */
-  unsigned int __cdecl __mingw_filename_cp(void);
-
-  /* Variant of _isleadbyte_l() function which takes codepage (instead of locale_t). */
-  int __cdecl __mingw_isleadbyte_cp(int c, unsigned int cp);
-
-#ifndef _WLOCALE_DEFINED
-#define _WLOCALE_DEFINED
-  _CRTIMP wchar_t *__cdecl _wsetlocale(int _Category,const wchar_t *_Locale);
+/**
+ * Aliases with two underscores are deprecated; do not use in new code.
+ */
+_CRTIMP _locale_t __cdecl __get_current_locale(void);
+_CRTIMP _locale_t __cdecl __create_locale(int _Category,const char *_Locale);
+_CRTIMP void __cdecl __free_locale(_locale_t _Locale);
 #endif
 
-#if __MSVCRT_VERSION__ >= 0xB00
-  _CRTIMP _locale_t __cdecl _wcreate_locale(int _Category, const wchar_t *_Locale);
-#endif
+/**
+ * mingw-w64's private functions.
+ */
 
-#ifdef __CHAR_UNSIGNED__
-/* Pull in the constructor from 'charmax.c'.  */
-extern int __mingw_initcharmax;
-__MINGW_SELECTANY int* __mingw_reference_charmax = &__mingw_initcharmax;
-#endif
+/* Get the code page that the CRT currently uses for filenames. */
+unsigned int __cdecl __mingw_filename_cp(void);
+
+/* Variant of _isleadbyte_l() function which takes codepage (instead of _locale_t). */
+int __cdecl __mingw_isleadbyte_cp(int c, unsigned int cp);
 
 #ifdef __cplusplus
 }

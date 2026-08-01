@@ -32,9 +32,8 @@ if str
   end
 end
 
-if Gem.respond_to?(:activate_bin_path)
-load Gem.activate_bin_path('asciidoctor', 'asciidoctor', version)
+if Gem.respond_to?(:activate_and_load_bin_path)
+  Gem.activate_and_load_bin_path('asciidoctor', 'asciidoctor', version)
 else
-gem "asciidoctor", version
-load Gem.bin_path("asciidoctor", "asciidoctor", version)
+  load Gem.activate_bin_path('asciidoctor', 'asciidoctor', version)
 end

@@ -1,423 +1,465 @@
 package HTTP::Cookies;
 
 use strict;
-use HTTP::Date qw(str2time parse_date time2str);
+use HTTP::Date          qw(str2time parse_date time2str);
 use HTTP::Headers::Util qw(_split_header_words join_header_words);
 
 our $EPOCH_OFFSET;
-our $VERSION = '6.11';
+our $VERSION = '6.12';
 
 # Legacy: because "use "HTTP::Cookies" used be the ONLY way
 #  to load the class HTTP::Cookies::Netscape.
 require HTTP::Cookies::Netscape;
 
-$EPOCH_OFFSET = 0;  # difference from Unix epoch
+$EPOCH_OFFSET = 0;    # difference from Unix epoch
 
 # A HTTP::Cookies object is a hash.  The main attribute is the
 # COOKIES 3 level hash:  $self->{COOKIES}{$domain}{$path}{$key}.
 
-sub new
-{
+sub new {
     my $class = shift;
-    my $self = bless {
-	COOKIES => {},
+    my $self  = bless {
+        COOKIES => {},
     }, $class;
     my %cnf = @_;
-    for (keys %cnf) {
-	$self->{lc($_)} = $cnf{$_};
+    for ( keys %cnf ) {
+        $self->{ lc($_) } = $cnf{$_};
     }
     $self->load;
     $self;
 }
 
-
-sub add_cookie_header
-{
-    my $self = shift;
+sub add_cookie_header {
+    my $self    = shift;
     my $request = shift || return;
-    my $url = $request->uri;
-    my $scheme = $url->scheme;
-    unless ($scheme =~ /^https?\z/) {
-	return;
+    my $url     = $request->uri;
+    my $scheme  = $url->scheme;
+    unless ( $scheme =~ /^https?\z/ ) {
+        return;
     }
 
-    my $domain = _host($request, $url);
+    my $domain = _host( $request, $url );
     $domain = "$domain.local" unless $domain =~ /\./;
-    my $secure_request = ($scheme eq "https");
-    my $req_path = _url_path($url);
-    my $req_port = $url->port;
-    my $now = time();
+    my $secure_request = ( $scheme eq "https" );
+    my $req_path       = _url_path($url);
+    my $req_port       = $url->port;
+    my $now            = time();
     _normalize_path($req_path) if $req_path =~ /%/;
 
-    my @cval;    # cookie values for the "Cookie" header
+    my @cval;                 # cookie values for the "Cookie" header
     my $set_ver;
-    my $netscape_only = 0; # An exact domain match applies to any cookie
+    my $netscape_only = 0;    # An exact domain match applies to any cookie
 
-    while ($domain =~ /\./) {
+    while ( $domain =~ /\./ ) {
+
         # Checking $domain for cookies"
-	my $cookies = $self->{COOKIES}{$domain};
-	next unless $cookies;
-	if ($self->{delayload} && defined($cookies->{'//+delayload'})) {
-	    my $cookie_data = $cookies->{'//+delayload'}{'cookie'};
-	    delete $self->{COOKIES}{$domain};
-	    $self->load_cookie($cookie_data->[1]);
-	    $cookies = $self->{COOKIES}{$domain};
-	    next unless $cookies;  # should not really happen
-	}
-
-	# Want to add cookies corresponding to the most specific paths
-	# first (i.e. longest path first)
-	my $path;
-	for $path (sort {length($b) <=> length($a) } keys %$cookies) {
-	    if (index($req_path, $path) != 0) {
-		next;
-	    }
-
-	    my($key,$array);
-	    while (($key,$array) = each %{$cookies->{$path}}) {
-		my($version,$val,$port,$path_spec,$secure,$expires) = @$array;
-		if ($secure && !$secure_request) {
-		    next;
-		}
-		if ($expires && $expires < $now) {
-		    next;
-		}
-		if ($port) {
-		    my $found;
-		    if ($port =~ s/^_//) {
-			# The corresponding Set-Cookie attribute was empty
-			$found++ if $port eq $req_port;
-			$port = "";
-		    }
-		    else {
-			my $p;
-			for $p (split(/,/, $port)) {
-			    $found++, last if $p eq $req_port;
-			}
-		    }
-		    unless ($found) {
-			next;
-		    }
-		}
-		if ($version > 0 && $netscape_only) {
-		    next;
-		}
-
-		# set version number of cookie header.
-	        # XXX: What should it be if multiple matching
-                #      Set-Cookie headers have different versions themselves
-		if (!$set_ver++) {
-		    if ($version >= 1) {
-			push(@cval, "\$Version=$version");
-		    }
-		    elsif (!$self->{hide_cookie2}) {
-			$request->header(Cookie2 => '$Version="1"');
-		    }
-		}
-
-		# do we need to quote the value
-		if ($val =~ /\W/ && $version) {
-		    $val =~ s/([\\\"])/\\$1/g;
-		    $val = qq("$val");
-		}
-
-		# and finally remember this cookie
-		push(@cval, "$key=$val");
-		if ($version >= 1) {
-		    push(@cval, qq(\$Path="$path"))     if $path_spec;
-		    push(@cval, qq(\$Domain="$domain")) if $domain =~ /^\./;
-		    if (defined $port) {
-			my $p = '$Port';
-			$p .= qq(="$port") if length $port;
-			push(@cval, $p);
-		    }
-		}
-
-	    }
+        my $cookies = $self->{COOKIES}{$domain};
+        next unless $cookies;
+        if ( $self->{delayload} && defined( $cookies->{'//+delayload'} ) ) {
+            my $cookie_data = $cookies->{'//+delayload'}{'cookie'};
+            delete $self->{COOKIES}{$domain};
+            $self->load_cookie( $cookie_data->[1] );
+            $cookies = $self->{COOKIES}{$domain};
+            next unless $cookies;    # should not really happen
         }
 
-    } continue {
-	# Try with a more general domain, alternately stripping
-	# leading name components and leading dots.  When this
-	# results in a domain with no leading dot, it is for
-	# Netscape cookie compatibility only:
-	#
-	# a.b.c.net	Any cookie
-	# .b.c.net	Any cookie
-	# b.c.net	Netscape cookie only
-	# .c.net	Any cookie
+        # Want to add cookies corresponding to the most specific paths
+        # first (i.e. longest path first)
+        my $path;
+        for $path ( sort { length($b) <=> length($a) } keys %$cookies ) {
+            if ( index( $req_path, $path ) != 0 ) {
+                next;
+            }
 
-	if ($domain =~ s/^\.+//) {
-	    $netscape_only = 1;
-	}
-	else {
-	    $domain =~ s/[^.]*//;
-	    $netscape_only = 0;
-	}
+            my ( $key, $array );
+            while ( ( $key, $array ) = each %{ $cookies->{$path} } ) {
+                my ( $version, $val, $port, $path_spec, $secure, $expires )
+                    = @$array;
+                if ( $secure && !$secure_request ) {
+                    next;
+                }
+                if ( $expires && $expires < $now ) {
+                    next;
+                }
+                if ($port) {
+                    my $found;
+                    if ( $port =~ s/^_// ) {
+
+                        # The corresponding Set-Cookie attribute was empty
+                        $found++ if $port eq $req_port;
+                        $port = "";
+                    }
+                    else {
+                        my $p;
+                        for $p ( split( /,/, $port ) ) {
+                            $found++, last if $p eq $req_port;
+                        }
+                    }
+                    unless ($found) {
+                        next;
+                    }
+                }
+                if ( $version > 0 && $netscape_only ) {
+                    next;
+                }
+
+                # set version number of cookie header.
+                # XXX: What should it be if multiple matching
+                #      Set-Cookie headers have different versions themselves
+                if ( !$set_ver++ ) {
+                    if ( $version >= 1 ) {
+                        push( @cval, "\$Version=$version" );
+                    }
+                    elsif ( !$self->{hide_cookie2} ) {
+                        $request->header( Cookie2 => '$Version="1"' );
+                    }
+                }
+
+                # do we need to quote the value
+                if ( $val =~ /\W/ && $version ) {
+                    $val =~ s/([\\\"])/\\$1/g;
+                    $val = qq("$val");
+                }
+
+                # and finally remember this cookie
+                push( @cval, "$key=$val" );
+                if ( $version >= 1 ) {
+                    push( @cval, qq(\$Path="$path") )     if $path_spec;
+                    push( @cval, qq(\$Domain="$domain") ) if $domain =~ /^\./;
+                    if ( defined $port ) {
+                        my $p = '$Port';
+                        $p .= qq(="$port") if length $port;
+                        push( @cval, $p );
+                    }
+                }
+
+            }
+        }
+
+    }
+    continue {
+        # Try with a more general domain, alternately stripping
+        # leading name components and leading dots.  When this
+        # results in a domain with no leading dot, it is for
+        # Netscape cookie compatibility only:
+        #
+        # a.b.c.net	Any cookie
+        # .b.c.net	Any cookie
+        # b.c.net	Netscape cookie only
+        # .c.net	Any cookie
+
+        if ( $domain =~ s/^\.+// ) {
+            $netscape_only = 1;
+        }
+        else {
+            $domain =~ s/[^.]*//;
+            $netscape_only = 0;
+        }
     }
 
     if (@cval) {
-	if (my $old = $request->header("Cookie")) {
-	    unshift(@cval, $old);
-	}
-	$request->header(Cookie => join("; ", @cval));
-	if (my $hash = $request->{_http_cookies}) {
-	    %$hash = (map split(/=/, $_, 2), @cval);
-	}
+        if ( my $old = $request->header("Cookie") ) {
+            unshift( @cval, $old );
+        }
+        $request->header( Cookie => join( "; ", @cval ) );
+        if ( my $hash = $request->{_http_cookies} ) {
+            %$hash = ( map split( /=/, $_, 2 ), @cval );
+        }
     }
 
     $request;
 }
 
-
-sub get_cookies
-{
+sub get_cookies {
     my $self = shift;
-    my $url = shift;
+    my $url  = shift;
     $url = "https://$url" unless $url =~ m,^[a-zA-Z][a-zA-Z0-9.+\-]*:,;
     require HTTP::Request;
-    my $req = HTTP::Request->new(GET => $url);
+    my $req     = HTTP::Request->new( GET => $url );
     my $cookies = $req->{_http_cookies} = {};
     $self->add_cookie_header($req);
     if (@_) {
-	return map $cookies->{$_}, @_ if wantarray;
-	return $cookies->{$_[0]};
+        return map $cookies->{$_}, @_ if wantarray;
+        return $cookies->{ $_[0] };
     }
     return $cookies;
 }
 
-
-sub extract_cookies
-{
-    my $self = shift;
+sub extract_cookies {
+    my $self     = shift;
     my $response = shift || return;
 
-    my @set = _split_header_words($response->_header("Set-Cookie2"));
+    my @set    = _split_header_words( $response->_header("Set-Cookie2") );
     my @ns_set = $response->_header("Set-Cookie");
 
-    return $response unless @set || @ns_set;  # quick exit
+    return $response unless @set || @ns_set;    # quick exit
 
-    my $request = $response->request;
-    my $url = $request->uri;
-    my $req_host = _host($request, $url);
+    my $request  = $response->request;
+    my $url      = $request->uri;
+    my $req_host = _host( $request, $url );
     $req_host = "$req_host.local" unless $req_host =~ /\./;
     my $req_port = $url->port;
     my $req_path = _url_path($url);
     _normalize_path($req_path) if $req_path =~ /%/;
 
     if (@ns_set) {
-	# The old Netscape cookie format for Set-Cookie
-	# http://curl.haxx.se/rfc/cookie_spec.html
-	# can for instance contain an unquoted "," in the expires
-	# field, so we have to use this ad-hoc parser.
-	my $now = time();
 
-	# Build a hash of cookies that was present in Set-Cookie2
-	# headers.  We need to skip them if we also find them in a
-	# Set-Cookie header.
-	my %in_set2;
-	for (@set) {
-	    $in_set2{$_->[0]}++;
-	}
+        # The old Netscape cookie format for Set-Cookie
+        # http://curl.haxx.se/rfc/cookie_spec.html
+        # can for instance contain an unquoted "," in the expires
+        # field, so we have to use this ad-hoc parser.
+        my $now = time();
 
-	my $set;
-	for $set (@ns_set) {
+        # Far-future Expires dates and large Max-Age values are approximated
+        # at ten years out, to avoid overflowing time_t (or producing a float)
+        # when the expiry is serialized.
+        my $ten_years = 10 * 365 * 24 * 60 * 60;
+
+        # Build a hash of cookies that was present in Set-Cookie2
+        # headers.  We need to skip them if we also find them in a
+        # Set-Cookie header.
+        my %in_set2;
+        for (@set) {
+            $in_set2{ $_->[0] }++;
+        }
+
+        my $set;
+        for $set (@ns_set) {
             $set =~ s/^\s+//;
-	    my @cur;
-	    my $param;
-	    my $expires;
-	    my $first_param = 1;
-	    for $param (@{_split_text($set)}) {
+            my @cur;
+            my $param;
+            my $expires;
+            my $max_age;        # Max-Age value, if seen (takes precedence)
+            my $expires_age;    # expiry secs from now (from an Expires attr)
+            my $first_param = 1;
+            for $param ( @{ _split_text($set) } ) {
                 next unless length($param);
-		my($k,$v) = split(/\s*=\s*/, $param, 2);
-		if (defined $v) {
-		    $v =~ s/\s+$//;
-		    #print "$k => $v\n";
-		}
-		else {
-		    $k =~ s/\s+$//;
-		    #print "$k => undef";
-		}
-		if (!$first_param && lc($k) eq "expires") {
-		    my $etime = str2time($v);
-		    if (defined $etime) {
-			push(@cur, "Max-Age" => $etime - $now);
-			$expires++;
-		    }
-		    else {
-			# parse_date can deal with years outside the range of time_t,
-			my($year, $mon, $day, $hour, $min, $sec, $tz) = parse_date($v);
-			if ($year) {
-			    my $thisyear = (gmtime)[5] + 1900;
-			    if ($year < $thisyear) {
-				push(@cur, "Max-Age" => -1);  # any negative value will do
-				$expires++;
-			    }
-			    elsif ($year >= $thisyear + 10) {
-				# the date is at least 10 years into the future, just replace
-				# it with something approximate
-				push(@cur, "Max-Age" => 10 * 365 * 24 * 60 * 60);
-				$expires++;
-			    }
-			}
-		    }
-		}
-                elsif (!$first_param && lc($k) eq 'max-age') {
-                    $expires++;
+                my ( $k, $v ) = split( /\s*=\s*/, $param, 2 );
+                if ( defined $v ) {
+                    $v =~ s/\s+$//;
+
+                    #print "$k => $v\n";
                 }
-                elsif (!$first_param && lc($k) =~ /^(?:version|discard|ns-cookie)/) {
+                else {
+                    $k =~ s/\s+$//;
+
+                    #print "$k => undef";
+                }
+                if ( !$first_param && lc($k) eq "expires" ) {
+
+                    # Record the value rather than applying it now: a Max-Age
+                    # attribute, if present, takes precedence (RFC 6265 5.3), and
+                    # a later Expires overrides an earlier one.
+                    my $etime = str2time($v);
+                    if ( defined $etime ) {
+                        $expires_age = $etime - $now;
+                    }
+                    else {
+                        # parse_date can deal with years outside the range of time_t,
+                        my ( $year, $mon, $day, $hour, $min, $sec, $tz )
+                            = parse_date($v);
+                        if ($year) {
+                            my $thisyear = (gmtime)[5] + 1900;
+                            if ( $year < $thisyear ) {
+                                $expires_age
+                                    = -1;    # any negative value will do
+                            }
+                            elsif ( $year >= $thisyear + 10 ) {
+
+                                # the date is at least 10 years into the future, just replace
+                                # it with something approximate
+                                $expires_age = $ten_years;
+                            }
+                        }
+                    }
+                }
+                elsif ( !$first_param && lc($k) eq 'max-age' ) {
+
+                    # RFC 6265 5.2.2: a non-integer Max-Age is ignored, not
+                    # treated as 0 (which would wrongly delete the cookie).
+                    if ( defined $v && $v =~ /\A-?[0-9]+\z/ ) {
+
+                        # An absurdly large value would make time() + $max_age a
+                        # float in set_cookie and serialize to garbage, so cap
+                        # it at the same ten-year approximation used above.
+                        $v = $ten_years if $v > $ten_years;
+
+                        # A later Max-Age overrides an earlier one (RFC 6265bis).
+                        $max_age = $v;
+                    }
+                }
+                elsif ( !$first_param
+                    && lc($k) =~ /^(?:version|discard|ns-cookie)/ ) {
+
                     # ignore
                 }
-		else {
-		    push(@cur, $k => $v);
-		}
-		$first_param = 0;
-	    }
+                else {
+                    push( @cur, $k => $v );
+                }
+                $first_param = 0;
+            }
             next unless @cur;
-	    next if $in_set2{$cur[0]};
+            next if $in_set2{ $cur[0] };
 
-#	    push(@cur, "Port" => $req_port);
-	    push(@cur, "Discard" => undef) unless $expires;
-	    push(@cur, "Version" => 0);
-	    push(@cur, "ns-cookie" => 1);
-	    push(@set, \@cur);
-	}
+            # Apply the expiry once all params are parsed, with Max-Age taking
+            # precedence over Expires (RFC 6265 5.3).
+            my $age = defined $max_age ? $max_age : $expires_age;
+            if ( defined $age ) {
+                push( @cur, "Max-Age" => $age );
+                $expires++;
+            }
+
+            #	    push(@cur, "Port" => $req_port);
+            push( @cur, "Discard"   => undef ) unless $expires;
+            push( @cur, "Version"   => 0 );
+            push( @cur, "ns-cookie" => 1 );
+            push( @set, \@cur );
+        }
     }
 
-  SET_COOKIE:
+SET_COOKIE:
     for my $set (@set) {
-	next unless @$set >= 2;
+        next unless @$set >= 2;
 
-	my $key = shift @$set;
-	my $val = shift @$set;
+        my $key = shift @$set;
+        my $val = shift @$set;
 
-	my %hash;
-	while (@$set) {
-	    my $k = shift @$set;
-	    my $v = shift @$set;
-	    my $lc = lc($k);
-	    # don't loose case distinction for unknown fields
-	    $k = $lc if $lc =~ /^(?:discard|domain|max-age|
+        my %hash;
+        while (@$set) {
+            my $k  = shift @$set;
+            my $v  = shift @$set;
+            my $lc = lc($k);
+
+            # don't loose case distinction for unknown fields
+            $k = $lc if $lc =~ /^(?:discard|domain|max-age|
                                     path|port|secure|version)$/x;
-	    if ($k eq "discard" || $k eq "secure") {
-		$v = 1 unless defined $v;
-	    }
-	    next if exists $hash{$k};  # only first value is significant
-	    $hash{$k} = $v;
-	};
+            if ( $k eq "discard" || $k eq "secure" ) {
+                $v = 1 unless defined $v;
+            }
+            next if exists $hash{$k};    # only first value is significant
+            $hash{$k} = $v;
+        }
 
-	my %orig_hash = %hash;
-	my $version   = delete $hash{version};
-	$version = 1 unless defined($version);
-	my $discard   = delete $hash{discard};
-	my $secure    = delete $hash{secure};
-	my $maxage    = delete $hash{'max-age'};
-	my $ns_cookie = delete $hash{'ns-cookie'};
+        my %orig_hash = %hash;
+        my $version   = delete $hash{version};
+        $version = 1 unless defined($version);
+        my $discard   = delete $hash{discard};
+        my $secure    = delete $hash{secure};
+        my $maxage    = delete $hash{'max-age'};
+        my $ns_cookie = delete $hash{'ns-cookie'};
 
-	# Check domain
-	my $domain  = delete $hash{domain};
-	$domain = lc($domain) if defined $domain;
-	if (defined($domain)
-	    && $domain ne $req_host && $domain ne ".$req_host") {
-	    if ($domain !~ /\./ && $domain ne "local") {
-		next SET_COOKIE;
-	    }
-	    $domain = ".$domain" unless $domain =~ /^\./;
-	    if ($domain =~ /\.\d+$/) {
-		next SET_COOKIE;
-	    }
-	    my $len = length($domain);
-	    unless (substr($req_host, -$len) eq $domain) {
-		next SET_COOKIE;
-	    }
-	    my $hostpre = substr($req_host, 0, length($req_host) - $len);
-	    if ($hostpre =~ /\./ && !$ns_cookie) {
-		next SET_COOKIE;
-	    }
-	}
-	else {
-	    $domain = $req_host;
-	}
+        # Check domain
+        my $domain = delete $hash{domain};
+        $domain = lc($domain) if defined $domain;
+        if (   defined($domain)
+            && $domain ne $req_host
+            && $domain ne ".$req_host" ) {
+            if ( $domain !~ /\./ && $domain ne "local" ) {
+                next SET_COOKIE;
+            }
+            $domain = ".$domain" unless $domain =~ /^\./;
+            if ( $domain =~ /\.\d+$/ ) {
+                next SET_COOKIE;
+            }
+            my $len = length($domain);
+            unless ( substr( $req_host, -$len ) eq $domain ) {
+                next SET_COOKIE;
+            }
+            my $hostpre = substr( $req_host, 0, length($req_host) - $len );
+            if ( $hostpre =~ /\./ && !$ns_cookie ) {
+                next SET_COOKIE;
+            }
+        }
+        else {
+            $domain = $req_host;
+        }
 
-	my $path = delete $hash{path};
-	my $path_spec;
-	if (defined $path && $path ne '') {
-	    $path_spec++;
-	    _normalize_path($path) if $path =~ /%/;
-	    if (!$ns_cookie &&
-                substr($req_path, 0, length($path)) ne $path) {
-		next SET_COOKIE;
-	    }
-	}
-	else {
-	    $path = $req_path;
-	    $path =~ s,/[^/]*$,,;
-	    $path = "/" unless length($path);
-	}
+        my $path = delete $hash{path};
+        my $path_spec;
+        if ( defined $path && $path ne '' ) {
+            $path_spec++;
+            _normalize_path($path) if $path =~ /%/;
+            if ( !$ns_cookie
+                && substr( $req_path, 0, length($path) ) ne $path ) {
+                next SET_COOKIE;
+            }
+        }
+        else {
+            $path = $req_path;
+            $path =~ s,/[^/]*$,,;
+            $path = "/" unless length($path);
+        }
 
-	my $port;
-	if (exists $hash{port}) {
-	    $port = delete $hash{port};
-	    if (defined $port) {
-		$port =~ s/\s+//g;
-		my $found;
-		for my $p (split(/,/, $port)) {
-		    unless ($p =~ /^\d+$/) {
-			next SET_COOKIE;
-		    }
-		    $found++ if $p eq $req_port;
-		}
-		unless ($found) {
-		    next SET_COOKIE;
-		}
-	    }
-	    else {
-		$port = "_$req_port";
-	    }
-	}
-	$self->set_cookie($version,$key,$val,$path,$domain,$port,$path_spec,$secure,$maxage,$discard, \%hash)
-	    if $self->set_cookie_ok(\%orig_hash);
+        my $port;
+        if ( exists $hash{port} ) {
+            $port = delete $hash{port};
+            if ( defined $port ) {
+                $port =~ s/\s+//g;
+                my $found;
+                for my $p ( split( /,/, $port ) ) {
+                    unless ( $p =~ /^\d+$/ ) {
+                        next SET_COOKIE;
+                    }
+                    $found++ if $p eq $req_port;
+                }
+                unless ($found) {
+                    next SET_COOKIE;
+                }
+            }
+            else {
+                $port = "_$req_port";
+            }
+        }
+        $self->set_cookie(
+            $version,   $key,    $val,    $path,    $domain, $port,
+            $path_spec, $secure, $maxage, $discard, \%hash
+        ) if $self->set_cookie_ok( \%orig_hash );
     }
 
     $response;
 }
 
-sub set_cookie_ok
-{
+sub set_cookie_ok {
     1;
 }
 
-
-sub set_cookie
-{
+sub set_cookie {
     my $self = shift;
-    my($version,
-       $key, $val, $path, $domain, $port,
-       $path_spec, $secure, $maxage, $discard, $rest) = @_;
+    my (
+        $version,
+        $key,       $val,    $path,   $domain,  $port,
+        $path_spec, $secure, $maxage, $discard, $rest
+    ) = @_;
 
     # path and key can not be empty (key can't start with '$')
-    return $self if !defined($path) || $path !~ m,^/, ||
-	            !defined($key)  || $key  =~ m,^\$,;
+    return $self
+        if !defined($path)
+        || $path !~ m,^/,
+        || !defined($key)
+        || $key =~ m,^\$,;
 
     # ensure legal port
-    if (defined $port) {
-	return $self unless $port =~ /^_?\d+(?:,\d+)*$/;
+    if ( defined $port ) {
+        return $self unless $port =~ /^_?\d+(?:,\d+)*$/;
     }
 
     my $expires;
-    if (defined $maxage) {
-	if ($maxage <= 0) {
-	    delete $self->{COOKIES}{$domain}{$path}{$key};
-	    return $self;
-	}
-	$expires = time() + $maxage;
+    if ( defined $maxage ) {
+        if ( $maxage <= 0 ) {
+            delete $self->{COOKIES}{$domain}{$path}{$key};
+            return $self;
+        }
+        $expires = time() + $maxage;
     }
     $version = 0 unless defined $version;
 
-    my @array = ($version, $val,$port,
-		 $path_spec,
-		 $secure, $expires, $discard);
-    push(@array, {%$rest}) if defined($rest) && %$rest;
+    my @array = (
+        $version, $val, $port,
+        $path_spec,
+        $secure, $expires, $discard
+    );
+    push( @array, {%$rest} ) if defined($rest) && %$rest;
+
     # trim off undefined values at end
     pop(@array) while !defined $array[-1];
 
@@ -425,197 +467,197 @@ sub set_cookie
     $self;
 }
 
-
-sub save
-{
+sub save {
     my $self = shift;
     my %args = (
-        file => $self->{'file'},
+        file           => $self->{'file'},
         ignore_discard => $self->{'ignore_discard'},
         @_ == 1 ? ( file => $_[0] ) : @_
     );
     Carp::croak('Unexpected argument to save method') if keys %args > 2;
     my $file = $args{'file'} || return;
-    open(my $fh, '>', $file) or die "Can't open $file: $!";
+    open( my $fh, '>', $file ) or die "Can't open $file: $!";
     print {$fh} "#LWP-Cookies-1.0\n";
-    print {$fh} $self->as_string(!$args{'ignore_discard'});
+    print {$fh} $self->as_string( !$args{'ignore_discard'} );
     close $fh or die "Can't close $file: $!";
     1;
 }
 
-
-sub load
-{
+sub load {
     my $self = shift;
     my $file = shift || $self->{'file'} || return;
 
-    local $/ = "\n";  # make sure we got standard record separator
-    open(my $fh, '<', $file) or return;
+    local $/ = "\n";    # make sure we got standard record separator
+    open( my $fh, '<', $file ) or return;
 
     # check that we have the proper header
     my $magic = <$fh>;
     chomp $magic;
-    unless ($magic =~ /^#LWP-Cookies-\d+\.\d+/) {
+    unless ( $magic =~ /^#LWP-Cookies-\d+\.\d+/ ) {
         warn "$file does not seem to contain cookies";
         return;
     }
 
     # go through the file
-    while (my $line = <$fh>) {
+    while ( my $line = <$fh> ) {
         chomp $line;
         next unless $line =~ s/^Set-Cookie3:\s*//;
         my $cookie;
-        for $cookie (_split_header_words($line)) {
-            my($key,$val) = splice(@$cookie, 0, 2);
+        for $cookie ( _split_header_words($line) ) {
+            my ( $key, $val ) = splice( @$cookie, 0, 2 );
             my %hash;
             while (@$cookie) {
                 my $k = shift @$cookie;
                 my $v = shift @$cookie;
                 $hash{$k} = $v;
             }
-            my $version   = delete $hash{version};
-            my $path      = delete $hash{path};
-            my $domain    = delete $hash{domain};
-            my $port      = delete $hash{port};
-            my $expires   = str2time(delete $hash{expires});
+            my $version = delete $hash{version};
+            my $path    = delete $hash{path};
+            my $domain  = delete $hash{domain};
+            my $port    = delete $hash{port};
+            my $expires = str2time( delete $hash{expires} );
 
-            my $path_spec = exists $hash{path_spec}; delete $hash{path_spec};
-            my $secure    = exists $hash{secure};    delete $hash{secure};
-            my $discard   = exists $hash{discard};   delete $hash{discard};
+            my $path_spec = exists $hash{path_spec};
+            delete $hash{path_spec};
+            my $secure = exists $hash{secure};
+            delete $hash{secure};
+            my $discard = exists $hash{discard};
+            delete $hash{discard};
 
-            my @array = ($version, $val, $port, $path_spec, $secure, $expires,
-                $discard);
-            push(@array, \%hash) if %hash;
+            my @array = (
+                $version, $val, $port, $path_spec, $secure, $expires,
+                $discard
+            );
+            push( @array, \%hash ) if %hash;
             $self->{COOKIES}{$domain}{$path}{$key} = \@array;
         }
     }
     1;
 }
 
-
-sub revert
-{
+sub revert {
     my $self = shift;
     $self->clear->load;
     $self;
 }
 
-
-sub clear
-{
+sub clear {
     my $self = shift;
-    if (@_ == 0) {
-	$self->{COOKIES} = {};
+    if ( @_ == 0 ) {
+        $self->{COOKIES} = {};
     }
-    elsif (@_ == 1) {
-	delete $self->{COOKIES}{$_[0]};
+    elsif ( @_ == 1 ) {
+        delete $self->{COOKIES}{ $_[0] };
     }
-    elsif (@_ == 2) {
-	delete $self->{COOKIES}{$_[0]}{$_[1]};
+    elsif ( @_ == 2 ) {
+        delete $self->{COOKIES}{ $_[0] }{ $_[1] };
     }
-    elsif (@_ == 3) {
-	delete $self->{COOKIES}{$_[0]}{$_[1]}{$_[2]};
+    elsif ( @_ == 3 ) {
+        delete $self->{COOKIES}{ $_[0] }{ $_[1] }{ $_[2] };
     }
     else {
-	require Carp;
+        require Carp;
         Carp::carp('Usage: $c->clear([domain [,path [,key]]])');
     }
     $self;
 }
 
+sub clear_temporary_cookies {
+    my ($self) = @_;
 
-sub clear_temporary_cookies
-{
-    my($self) = @_;
-
-    $self->scan(sub {
-        if($_[9] or        # "Discard" flag set
-           not $_[8]) {    # No expire field?
-            $_[8] = -1;            # Set the expire/max_age field
-            $self->set_cookie(@_); # Clear the cookie
+    $self->scan(
+        sub {
+            if (
+                $_[9] or    # "Discard" flag set
+                not $_[8]
+            ) {             # No expire field?
+                $_[8] = -1;               # Set the expire/max_age field
+                $self->set_cookie(@_);    # Clear the cookie
+            }
         }
-      });
+    );
 }
 
-
-sub DESTROY
-{
+sub DESTROY {
     my $self = shift;
-    local($., $@, $!, $^E, $?);
+    local ( $., $@, $!, $^E, $? );
     $self->save if $self->{'autosave'};
 }
 
-
-sub scan
-{
-    my($self, $cb) = @_;
-    my($domain,$path,$key);
-    for $domain (sort keys %{$self->{COOKIES}}) {
-	for $path (sort keys %{$self->{COOKIES}{$domain}}) {
-	    for $key (sort keys %{$self->{COOKIES}{$domain}{$path}}) {
-		my($version,$val,$port,$path_spec,
-		   $secure,$expires,$discard,$rest) =
-		       @{$self->{COOKIES}{$domain}{$path}{$key}};
-		$rest = {} unless defined($rest);
-		&$cb($version,$key,$val,$path,$domain,$port,
-		     $path_spec,$secure,$expires,$discard,$rest);
-	    }
-	}
+sub scan {
+    my ( $self, $cb ) = @_;
+    my ( $domain, $path, $key );
+    for $domain ( sort keys %{ $self->{COOKIES} } ) {
+        for $path ( sort keys %{ $self->{COOKIES}{$domain} } ) {
+            for $key ( sort keys %{ $self->{COOKIES}{$domain}{$path} } ) {
+                my (
+                    $version, $val,     $port,    $path_spec,
+                    $secure,  $expires, $discard, $rest
+                ) = @{ $self->{COOKIES}{$domain}{$path}{$key} };
+                $rest = {} unless defined($rest);
+                &$cb(
+                    $version,   $key,    $val,     $path,    $domain, $port,
+                    $path_spec, $secure, $expires, $discard, $rest
+                );
+            }
+        }
     }
 }
 
-
-sub as_string
-{
-    my($self, $skip_discard) = @_;
+sub as_string {
+    my ( $self, $skip_discard ) = @_;
     my @res;
-    $self->scan(sub {
-	my($version,$key,$val,$path,$domain,$port,
-	   $path_spec,$secure,$expires,$discard,$rest) = @_;
-	return if $discard && $skip_discard;
-	my @h = ($key, $val);
-	push(@h, "path", $path);
-	push(@h, "domain" => $domain);
-	push(@h, "port" => $port) if defined $port;
-	push(@h, "path_spec" => undef) if $path_spec;
-	push(@h, "secure" => undef) if $secure;
-	push(@h, "expires" => HTTP::Date::time2isoz($expires)) if $expires;
-	push(@h, "discard" => undef) if $discard;
-	my $k;
-	for $k (sort keys %$rest) {
-	    push(@h, $k, $rest->{$k});
-	}
-	push(@h, "version" => $version);
-	push(@res, "Set-Cookie3: " . join_header_words(\@h));
-    });
-    join("\n", @res, "");
+    $self->scan(
+        sub {
+            my (
+                $version,   $key,    $val,     $path,    $domain, $port,
+                $path_spec, $secure, $expires, $discard, $rest
+            ) = @_;
+            return if $discard && $skip_discard;
+            my @h = ( $key, $val );
+            push( @h, "path", $path );
+            push( @h, "domain"    => $domain );
+            push( @h, "port"      => $port ) if defined $port;
+            push( @h, "path_spec" => undef ) if $path_spec;
+            push( @h, "secure"    => undef ) if $secure;
+            push( @h, "expires"   => HTTP::Date::time2isoz($expires) )
+                if $expires;
+            push( @h, "discard" => undef ) if $discard;
+            my $k;
+
+            for $k ( sort keys %$rest ) {
+                push( @h, $k, $rest->{$k} );
+            }
+            push( @h,   "version" => $version );
+            push( @res, "Set-Cookie3: " . join_header_words( \@h ) );
+        }
+    );
+    join( "\n", @res, "" );
 }
 
-sub _host
-{
-    my($request, $url) = @_;
-    if (my $h = $request->header("Host")) {
-	$h =~ s/:\d+$//;  # might have a port as well
-	return lc($h);
+sub _host {
+    my ( $request, $url ) = @_;
+    if ( my $h = $request->header("Host") ) {
+        $h =~ s/:\d+$//;    # might have a port as well
+        return lc($h);
     }
-    return lc($url->host);
+    return lc( $url->host );
 }
 
-sub _url_path
-{
+sub _url_path {
     my $url = shift;
     my $path;
-    if($url->can('epath')) {
-       $path = $url->epath;    # URI::URL method
+    if ( $url->can('epath') ) {
+        $path = $url->epath;    # URI::URL method
     }
     else {
-       $path = $url->path;           # URI::_generic method
+        $path = $url->path;     # URI::_generic method
     }
     $path = "/" unless length $path;
     $path;
 }
 
-sub _normalize_path  # so that plain string compare can be used
+sub _normalize_path    # so that plain string compare can be used
 {
     my $x;
     $_[0] =~ s/%([0-9a-fA-F][0-9a-fA-F])/
@@ -629,35 +671,39 @@ sub _normalize_path  # so that plain string compare can be used
 # deals with splitting values by ; and the fact that they could
 # be in quotes which can also have escaping.
 sub _split_text {
-    my $val = shift;
-    my @vals = grep { $_ ne q{} } split(/([;\\"])/, $val);
+    my $val  = shift;
+    my @vals = grep { $_ ne q{} } split( /([;\\"])/, $val );
     my @chunks;
+
     # divide it up into chunks to be processed.
     my $in_string = 0;
     my @current_string;
-    for(my $i = 0; $i < @vals; $i++) {
+    for ( my $i = 0 ; $i < @vals ; $i++ ) {
         my $chunk = $vals[$i];
-        if($in_string) {
-            if($chunk eq q{\\}) {
+        if ($in_string) {
+            if ( $chunk eq q{\\} ) {
+
                 # don't care about next char probably.
                 # having said that, probably need to be appending to the chunks
                 # just dropping this.
                 $i++;
-                if($i < @vals) {
+                if ( $i < @vals ) {
                     push @current_string, $vals[$i];
                 }
-            } elsif($chunk eq q{"}) {
+            }
+            elsif ( $chunk eq q{"} ) {
                 $in_string = 0;
             }
             else {
                 push @current_string, $chunk;
             }
-        } else {
-            if($chunk eq q{"}) {
+        }
+        else {
+            if ( $chunk eq q{"} ) {
                 $in_string = 1;
             }
-            elsif($chunk eq q{;}) {
-                push @chunks, join(q{}, @current_string);
+            elsif ( $chunk eq q{;} ) {
+                push @chunks, join( q{}, @current_string );
                 @current_string = ();
             }
             else {
@@ -665,7 +711,7 @@ sub _split_text {
             }
         }
     }
-    push @chunks, join(q{}, @current_string) if @current_string;
+    push @chunks, join( q{}, @current_string ) if @current_string;
     s/^\s+// for @chunks;
     return \@chunks;
 }
@@ -682,7 +728,7 @@ HTTP::Cookies - HTTP cookie jars
 
 =head1 VERSION
 
-version 6.11
+version 6.12
 
 =head1 SYNOPSIS
 
@@ -766,7 +812,7 @@ Future parameters might include (not yet implemented):
 
 =item $cookie_jar->get_cookies( $url_or_domain, $cookie_key,... )
 
-Returns a hash of the cookies that applies to the given URL. If a
+Returns a reference to a hash of the cookies that apply to the given URL. If a
 domainname is given as argument, then a prefix of "https://" is assumed.
 
 If one or more $cookie_key parameters are provided return the given values,

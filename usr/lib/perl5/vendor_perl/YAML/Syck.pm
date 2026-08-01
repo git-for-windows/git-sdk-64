@@ -10,7 +10,7 @@ use 5.006;
 use Exporter;
 use XSLoader ();
 
-our $VERSION   = '1.46';
+our $VERSION   = '1.47';
 our @EXPORT    = qw( Dump Load DumpFile LoadFile );
 our @EXPORT_OK = qw( DumpInto LoadBytes LoadUTF8 DumpBytes DumpUTF8 );
 our @ISA       = qw( Exporter );
@@ -233,10 +233,11 @@ your calls in eval to assure you do not get unexpected results.
 
 =head2 $YAML::Syck::MaxDepth
 
-Maximum nesting depth for C<Dump>.  Defaults to 512.  If a data structure
-is nested deeper than this limit, C<Dump> will C<croak> instead of
-overflowing the C stack.  Increase this if you legitimately need to
-serialize very deeply nested structures.
+Maximum nesting depth for C<Load> and C<Dump>.  Defaults to 512.
+C<Dump> will C<croak> if a data structure exceeds this depth, and C<Load>
+will C<croak> if a YAML document is nested deeper than this limit.  This
+prevents stack exhaustion from maliciously crafted input.  Increase the
+value if you legitimately need very deeply nested structures.
 
 =head2 $YAML::Syck::Headless
 

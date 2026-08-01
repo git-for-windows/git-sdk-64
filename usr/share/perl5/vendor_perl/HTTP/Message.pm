@@ -3,7 +3,7 @@ package HTTP::Message;
 use strict;
 use warnings;
 
-our $VERSION = '7.02';
+our $VERSION = '7.04';
 
 require HTTP::Headers;
 require Carp;
@@ -341,12 +341,23 @@ sub decoded_content
 		}
 		elsif ($ce eq 'br') {
 		    require IO::Uncompress::Brotli;
-		    my $bro = IO::Uncompress::Brotli->create;
 
 		    my $output;
 		    if( defined $content_limit ) {
-			$output = eval { $bro->decompress( $$content_ref, $content_limit ); }
+			# unbro() is the only brotli interface that takes a size
+			# limit; the streaming decompress() method cannot stop
+			# short. It decodes into a buffer of $content_limit
+			# octets, so the limit bounds the allocation directly.
+			$output = eval {
+			    IO::Uncompress::Brotli::unbro($$content_ref, $content_limit);
+			};
+			# Brotli reports "output buffer too small" and "this is
+			# not valid brotli" identically, so, unlike the gzip and
+			# bzip2 branches, we cannot say for certain which it was.
+			$@ and $@ =~ /BrotliDecoderDecompress/
+			    and Carp::croak("Can't unbrotli content: it is corrupt, or would decode to more than $content_limit octets");
 		    } else {
+			my $bro = IO::Uncompress::Brotli->create;
 			$output = eval { $bro->decompress($$content_ref) };
 		    }
 
@@ -884,7 +895,7 @@ HTTP::Message - HTTP style message (base class)
 
 =head1 VERSION
 
-version 7.02
+version 7.04
 
 =head1 SYNOPSIS
 
