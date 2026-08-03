@@ -12,7 +12,7 @@ env:
   GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
   HOME: "${{github.workspace}}\\home"
   USERPROFILE: "${{github.workspace}}\\home"
-  MSYSTEM: MINGW64
+  MSYSTEM: UCRT64
 
   ARCH_NAME: x86_64
   ARCH_BITNESS: 64
@@ -53,7 +53,7 @@ jobs:
 
           cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
           cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/mingw${{env.ARCH_BITNESS}}/bin" >>$GITHUB_PATH &&
+          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>$GITHUB_PATH &&
 
           mkdir -p build-installers/usr/src &&
           mv build-extra build-installers/usr/src/
@@ -61,7 +61,7 @@ jobs:
       - name: Generate bundle artifacts
         shell: bash
         run: |
-          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+          printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git &&
           mkdir -p bundle-artifacts &&
 
           { test -n "$REPOSITORY" || REPOSITORY='${{github.repository}}'; } &&
@@ -100,12 +100,12 @@ jobs:
           set -x
 
           # Make sure that there is a `/usr/bin/git` that can be used by `makepkg-mingw`
-          printf '#!/bin/sh\n\nexec /mingw${{env.ARCH_BITNESS}}/bin/git.exe "$@"\n' >/usr/bin/git &&
+          printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git &&
 
           # Restrict `PATH` to MSYS2
-          PATH="/mingw${{env.ARCH_BITNESS}}/bin:/usr/bin:/C/Windows/system32"
+          PATH="/ucrt64/bin:/usr/bin:/C/Windows/system32"
 
-          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-${{env.ARCH_BITNESS}}-bit --build-src-pkg -o artifacts HEAD &&
+          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-ucrt64 --build-src-pkg -o artifacts HEAD &&
           cp bundle-artifacts/ver artifacts/ &&
 
           b=$PWD/artifacts &&
@@ -160,8 +160,8 @@ jobs:
           tar xf build-installers.tgz &&
           cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
           cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/mingw${{env.ARCH_BITNESS}}/bin" >>$GITHUB_PATH
-      - name: Build ${{env.ARCH_BITNESS}}-bit ${{matrix.artifact}}
+          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>$GITHUB_PATH
+      - name: Build ucrt64 ${{matrix.artifact}}
         shell: bash
         run: |
           sh -x /usr/src/build-extra/please.sh make_installers_from_mingw_w64_git \
@@ -201,7 +201,7 @@ jobs:
             exit 1
           }
           "$env:ProgramFiles\Git\usr\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
-          "$env:ProgramFiles\Git\mingw${{env.ARCH_BITNESS}}\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+          "$env:ProgramFiles\Git\ucrt64\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
       - name: Publish installer log
         if: matrix.artifact == 'installer' && (failure() || success())
         uses: actions/upload-artifact@v7
