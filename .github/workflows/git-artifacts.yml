@@ -17,6 +17,11 @@ env:
   ARCH_NAME: x86_64
   ARCH_BITNESS: 64
 
+  # As of Git v2.55, Rust is opt-out; Git for Windows needs to drop
+  # support for Windows 8.1 before including the Rust bits, see
+  # https://github.com/git-for-windows/git/issues/6276 for details.
+  NO_RUST: ForNow
+
 jobs:
   build:
     if: github.event.repository.fork == false
