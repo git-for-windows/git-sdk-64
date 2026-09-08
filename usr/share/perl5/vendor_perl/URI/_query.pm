@@ -7,7 +7,7 @@ use URI          ();
 use URI::Escape  qw(uri_unescape);
 use Scalar::Util ();
 
-our $VERSION = '5.36';
+our $VERSION = '5.37';
 
 sub query {
     my $self = shift;

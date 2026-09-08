@@ -8,7 +8,7 @@ use URI::Escape();
 
 use parent qw( URI URI::_query );
 
-our $VERSION = '5.36';
+our $VERSION = '5.37';
 
 sub new {
     my ($class, @parameters) = @_;

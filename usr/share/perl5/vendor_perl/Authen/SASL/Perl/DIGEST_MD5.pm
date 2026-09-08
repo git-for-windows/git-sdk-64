@@ -5,7 +5,7 @@
 
 # See http://www.ietf.org/rfc/rfc2831.txt for details
 
-package Authen::SASL::Perl::DIGEST_MD5 2.2000;
+package Authen::SASL::Perl::DIGEST_MD5 2.2100;
 
 use strict;
 use warnings;
@@ -408,6 +408,16 @@ sub server_step {
     return $cb->();
   }
 
+  # RFC 2831 section 2.1.2: the nonce in the digest-response is "the
+  # server-specified data string received in the preceding digest-challenge".
+  # The replay resistance of section 3.3 rests on the server binding the
+  # response to the nonce it issued, so check that before anything else uses
+  # the client-supplied value.
+  unless (defined $self->{nonce} and $cparams{nonce} eq $self->{nonce}) {
+    $self->set_error("nonce does not match the one issued");
+    return $cb->();
+  }
+
   my $count = hex ($cparams{'nc'} || 0);
   unless ($count == ++$self->{nonce_counts}{$cparams{nonce}}) {
     $self->set_error("nonce-count doesn't match: $count");
@@ -756,7 +766,7 @@ Authen::SASL::Perl::DIGEST_MD5 - (DEPRECATED) Digest MD5 Authentication class
 
 =head1 VERSION
 
-version 2.2000
+version 2.2100
 
 =head1 SYNOPSIS
 

@@ -12,7 +12,7 @@ use overload
     '""'     => sub { $_[0]->[0] },
     fallback => 1;
 
-our $VERSION = '5.36';
+our $VERSION = '5.37';
 
 sub new {
     my $class   = shift;

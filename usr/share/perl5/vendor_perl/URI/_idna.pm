@@ -10,7 +10,7 @@ use URI::_punycode     qw(decode_punycode encode_punycode);
 use Unicode::Normalize qw(NFC);
 use Carp               qw(croak);
 
-our $VERSION = '5.36';
+our $VERSION = '5.37';
 
 BEGIN {
     *URI::_idna::_ENV_::JOIN_LEAKS_UTF8_FLAGS
