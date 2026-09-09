@@ -3,9 +3,15 @@ name: git-artifacts
 on:
   push:
     branches:
-      - main
-      - ucrt64
+      - tmp
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: git-artifacts-${{github.ref}}
+  cancel-in-progress: false
 
 env:
   REPOSITORY: git-for-windows/git
@@ -28,8 +34,11 @@ env:
 
 jobs:
   build:
-    if: github.event.repository.fork == false
+    if: >-
+      github.event.repository.fork == false &&
+      github.ref == 'refs/heads/tmp'
     runs-on: windows-latest
+    timeout-minutes: 180
     steps:
       - name: Configure user
         shell: bash
@@ -52,6 +61,18 @@ jobs:
           git -C git-sdk-${{env.ARCH_BITNESS}}.git fetch --depth=1 origin $REF:refs/heads/${REF#refs/heads/}
         env:
           REF: ${{github.ref}}
+      - name: Prepare runner-side diagnosis
+        id: debug-context
+        shell: bash
+        run: |
+          mkdir ci-debug &&
+          for file in \
+            .github/copilot-prompts/debug-git-artifacts.md \
+            .github/scripts/build-git-artifacts.sh
+          do
+            git --git-dir=git-sdk-${ARCH_BITNESS}.git \
+              show "FETCH_HEAD:$file" >"ci-debug/${file##*/}" || exit 1
+          done
       - name: clone build-extra
         shell: bash
         run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
@@ -104,27 +125,14 @@ jobs:
           git -c init.defaultBranch=main init &&
           git remote add -f origin https://github.com/git-for-windows/git &&
           git fetch --tags bundle-artifacts/git.bundle $(cat bundle-artifacts/next_version) &&
-          git reset --hard $(cat bundle-artifacts/next_version)
+          git switch --detach "$(cat bundle-artifacts/next_version)"
       - name: Build mingw-w64-${{env.ARCH_NAME}}-git
+        id: build-git
         shell: bash
         run: |
-          set -x
-
-          # Make sure that there is a `/usr/bin/git` that can be used by `makepkg-mingw`
-          printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git &&
-
-          # Restrict `PATH` to MSYS2
-          PATH="/ucrt64/bin:/usr/bin:/usr/bin/core_perl:/C/Windows/system32"
-
-          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-ucrt64 --build-src-pkg -o artifacts HEAD &&
-          cp bundle-artifacts/ver artifacts/ &&
-
-          b=$PWD/artifacts &&
-          version=$(cat bundle-artifacts/next_version) &&
-          (cd /usr/src/MINGW-packages/mingw-w64-git &&
-          cp PKGBUILD.$version PKGBUILD &&
-          git commit -s -m "mingw-w64-git: new version ($version)" PKGBUILD &&
-          git bundle create "$b"/MINGW-packages.bundle origin/main..main)
+          bash --noprofile --norc -e -o pipefail \
+            ci-debug/build-git-artifacts.sh </dev/null 2>&1 |
+            tee ci-debug/build.log
       - name: Publish mingw-w64-${{env.ARCH_NAME}}-git
         uses: actions/upload-artifact@v7
         with:
@@ -142,6 +150,88 @@ jobs:
           name: build-installers.tgz
           path: build-installers.tgz
           retention-days: 1
+
+      - name: Set up Copilot CLI after failure
+        id: copilot-setup
+        if: failure() && steps.debug-context.outcome == 'success'
+        timeout-minutes: 10
+        shell: pwsh
+        run: |
+          $null | npm.cmd install --global `
+            --prefix "$env:RUNNER_TEMP\copilot-cli" @github/copilot `
+            2>&1 | Tee-Object ci-debug\copilot-setup.log
+          exit $LASTEXITCODE
+
+      - name: Diagnose and fix the failure with GPT-6 Astra
+        id: copilot
+        if: failure() && steps.copilot-setup.outcome == 'success'
+        timeout-minutes: 120
+        shell: pwsh
+        env:
+          COPILOT_GITHUB_TOKEN: ${{secrets.COPILOT_GITHUB_TOKEN}}
+          COPILOT_HOME: "${{github.workspace}}\\home\\.copilot"
+        run: |
+          $prompt = 'Follow @ci-debug/debug-git-artifacts.md exactly.'
+          $null | & "$env:RUNNER_TEMP\copilot-cli\copilot.cmd" `
+            -p $prompt --model gpt-6-astra --effort xhigh `
+            --context long_context --yolo `
+            --no-ask-user --no-auto-update --no-remote-export `
+            --secret-env-vars=COPILOT_GITHUB_TOKEN `
+            --log-dir ci-debug\copilot-logs `
+            2>&1 | Tee-Object ci-debug\copilot.log
+          $code = $LASTEXITCODE
+          $code | Set-Content ci-debug\copilot-exit-code.txt
+          exit $code
+
+      - name: Archive runner-side diagnosis
+        if: always()
+        timeout-minutes: 10
+        shell: pwsh
+        env:
+          BUILD_OUTCOME: ${{steps.build-git.outcome}}
+          COPILOT_SETUP_OUTCOME: ${{steps.copilot-setup.outcome}}
+          COPILOT_OUTCOME: ${{steps.copilot.outcome}}
+        run: |
+          New-Item -ItemType Directory -Force ci-debug | Out-Null
+          @{
+            run = $env:GITHUB_RUN_ID
+            attempt = $env:GITHUB_RUN_ATTEMPT
+            ref = $env:GITHUB_REF
+            sdkCommit = $env:GITHUB_SHA
+            build = $env:BUILD_OUTCOME
+            copilotSetup = $env:COPILOT_SETUP_OUTCOME
+            copilot = $env:COPILOT_OUTCOME
+          } | ConvertTo-Json | Set-Content ci-debug\outcomes.json
+
+          # Exclude Copilot configuration and authentication files.
+          $sessions = "$env:USERPROFILE\.copilot\session-state"
+          if (Test-Path $sessions) {
+            Compress-Archive -Path $sessions `
+              -DestinationPath ci-debug\copilot-session.zip
+          }
+
+          function Save-Diff($name, $repo) {
+            if (Test-Path "$repo\.git") {
+              git --no-pager -C $repo diff --binary HEAD `
+                > "ci-debug\$name.patch"
+              if ($LASTEXITCODE -ne 0) {
+                throw "Could not preserve changes in $repo"
+              }
+            }
+          }
+          Save-Diff git .
+          Save-Diff build-extra build-installers\usr\src\build-extra
+          Save-Diff MINGW-packages build-installers\usr\src\MINGW-packages
+
+      - name: Upload runner-side diagnosis
+        if: always()
+        timeout-minutes: 10
+        uses: actions/upload-artifact@v7
+        with:
+          name: copilot-debug-${{github.run_id}}-${{github.run_attempt}}
+          path: ci-debug
+          if-no-files-found: error
+          retention-days: 7
 
   artifacts:
     runs-on: windows-latest
