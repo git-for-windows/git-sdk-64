@@ -1,4 +1,7 @@
-param([switch]$SmokeTest)
+param(
+    [switch]$SmokeTest,
+    [string]$PromptFile = 'ci-debug/debug-git-artifacts.md'
+)
 
 $ErrorActionPreference = 'Stop'
 $directory = if ($SmokeTest) { 'ci-debug\smoke' } else { 'ci-debug' }
@@ -24,7 +27,7 @@ if ($SmokeTest) {
         'its output to ci-debug/smoke/git-version.txt. Then reply ' +
         'COPILOT_SMOKE_OK. Do not perform any other task.'
 } else {
-    $prompt = 'Follow @ci-debug/debug-git-artifacts.md exactly.'
+    $prompt = "Follow @$PromptFile exactly."
 }
 
 $null | & "$env:RUNNER_TEMP\copilot-cli\copilot.cmd" `

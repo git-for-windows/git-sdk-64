@@ -2,75 +2,83 @@ name: git-artifacts
 
 on:
   push:
-    branches:
-      - tmp
+    branches: [tmp]
   workflow_dispatch:
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: git-artifacts-${{github.ref}}
   cancel-in-progress: false
 
 env:
-  REPOSITORY: git-for-windows/git
-  REF: main
-
-  GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
   HOME: "${{github.workspace}}\\home"
   USERPROFILE: "${{github.workspace}}\\home"
   MSYSTEM: UCRT64
-
   ARCH_NAME: x86_64
   ARCH_BITNESS: 64
-
-  # As of Git v2.55, Rust is opt-out; Git for Windows needs to drop
-  # support for Windows 8.1 before including the Rust bits, see
-  # https://github.com/git-for-windows/git/issues/6276 for details.
-  NO_RUST: ForNow
+  GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
+  SOURCE_RUN: '34355542074'
 
 jobs:
-  build:
+  installer:
     if: >-
       github.event.repository.fork == false &&
       github.ref == 'refs/heads/tmp'
     runs-on: windows-latest
     timeout-minutes: 180
     steps:
-      - name: Configure user
-        shell: bash
-        run:
-          USER_NAME="${{github.actor}}" &&
-          USER_EMAIL="${{github.actor}}@users.noreply.github.com" &&
-          mkdir "$HOME" &&
-          git config --global user.name "$USER_NAME" &&
-          git config --global user.email "$USER_EMAIL" &&
-          echo "PACKAGER=$USER_NAME <$USER_EMAIL>" >>$GITHUB_ENV
+      - name: Check out diagnosis files only
+        uses: actions/checkout@v4
+        with:
+          path: workflow
+          sparse-checkout: |
+            .github
+            .sparse
+          persist-credentials: false
 
-      - name: clone git-sdk-${{env.ARCH_BITNESS}}
+      - name: Prepare diagnosis
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force home, ci-debug | Out-Null
+          Copy-Item workflow\.github\scripts\run-copilot.ps1 ci-debug
+          Copy-Item workflow\.github\scripts\build-installer.sh ci-debug
+          Copy-Item workflow\.github\copilot-prompts\debug-installers.md `
+            ci-debug
+
+      - name: Download the successful packages
+        uses: actions/download-artifact@v8
+        with:
+          name: pkg-${{env.ARCH_NAME}}
+          path: pkg-${{env.ARCH_NAME}}
+          run-id: ${{env.SOURCE_RUN}}
+          github-token: ${{github.token}}
+
+      - name: Download the source bundles
+        uses: actions/download-artifact@v8
+        with:
+          name: bundle-artifacts
+          path: bundle-artifacts
+          run-id: ${{env.SOURCE_RUN}}
+          github-token: ${{github.token}}
+
+      - name: Download the successful build's SDK
+        uses: actions/download-artifact@v8
+        with:
+          name: build-installers.tgz
+          run-id: ${{env.SOURCE_RUN}}
+          github-token: ${{github.token}}
+
+      - name: Configure Git for Windows SDK
         shell: bash
         run: |
-          # cannot use `git clone` directly, to allow for PR's refs to be fetched
-          git init --bare -b ${REF#refs/heads/} git-sdk-${{env.ARCH_BITNESS}}.git &&
-          git -C git-sdk-${{env.ARCH_BITNESS}}.git remote add origin https://github.com/${{github.repository}} &&
-          git -C git-sdk-${{env.ARCH_BITNESS}}.git config remote.origin.promisor true &&
-          git -C git-sdk-${{env.ARCH_BITNESS}}.git config remote.origin.partialCloneFilter blob:none &&
-          git -C git-sdk-${{env.ARCH_BITNESS}}.git fetch --depth=1 origin $REF:refs/heads/${REF#refs/heads/}
-        env:
-          REF: ${{github.ref}}
-      - name: Prepare runner-side diagnosis
-        id: debug-context
-        shell: bash
-        run: |
-          mkdir ci-debug &&
-          for file in \
-            .github/copilot-prompts/debug-git-artifacts.md \
-            .github/scripts/build-git-artifacts.sh \
-            .github/scripts/run-copilot.ps1
+          tar xf build-installers.tgz &&
+          for bin in usr/bin/core_perl usr/bin ucrt64/bin
           do
-            git --git-dir=git-sdk-${ARCH_BITNESS}.git \
-              show "FETCH_HEAD:$file" >"ci-debug/${file##*/}" || exit 1
+            cygpath -aw "$PWD/build-installers/$bin" >>"$GITHUB_PATH" ||
+            exit 1
           done
 
       - name: Install the smoke-tested Copilot CLI
@@ -87,7 +95,7 @@ jobs:
             2>&1 | Tee-Object ci-debug\copilot-version.log
           exit $LASTEXITCODE
 
-      - name: Verify Copilot before building
+      - name: Verify Copilot on this runner
         id: copilot-preflight
         timeout-minutes: 5
         shell: pwsh
@@ -98,184 +106,15 @@ jobs:
           & .\ci-debug\run-copilot.ps1 -SmokeTest
           exit $LASTEXITCODE
 
-      - name: clone build-extra
-        shell: bash
-        run: git clone --depth=1 --single-branch -b main https://github.com/git-for-windows/build-extra
-      - name: create build-installers artifact
-        shell: bash
-        run: |
-          sh -x ./build-extra/please.sh create-sdk-artifact --sdk=git-sdk-${{env.ARCH_BITNESS}}.git build-installers &&
-
-          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>$GITHUB_PATH &&
-
-          mkdir -p build-installers/usr/src &&
-          mv build-extra build-installers/usr/src/
-
-      - name: Generate bundle artifacts
-        shell: bash
-        run: |
-          printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git &&
-          mkdir -p bundle-artifacts &&
-
-          { test -n "$REPOSITORY" || REPOSITORY='${{github.repository}}'; } &&
-          { test -n "$REF" || REF='${{github.ref}}'; } &&
-          git -c init.defaultBranch=main init --bare &&
-          git remote add -f origin https://github.com/git-for-windows/git &&
-          git fetch "https://github.com/$REPOSITORY" "$REF:$REF" &&
-
-          tag_name="$(git describe --match 'v[0-9]*' FETCH_HEAD)-$(date +%Y%m%d%H%M%S)" &&
-          echo "prerelease-${tag_name#v}" >bundle-artifacts/ver &&
-          echo "${tag_name#v}" >bundle-artifacts/display_version &&
-          echo "$tag_name" >bundle-artifacts/next_version &&
-          git tag -m "Snapshot build" "$tag_name" FETCH_HEAD &&
-          git bundle create bundle-artifacts/git.bundle origin/main.."$tag_name" &&
-
-          snapshot="$(git show -s  --pretty='tformat:%h (%s, %ad)' --date=short FETCH_HEAD)" &&
-          (cd /usr/src/build-extra && node ./add-release-note.js --commit feature "Snapshot of $snapshot") &&
-          git -C /usr/src/build-extra bundle create "$PWD/bundle-artifacts/build-extra.bundle" origin/main..main
-      - name: 'Publish bundle-artifacts'
-        uses: actions/upload-artifact@v7
-        with:
-          name: bundle-artifacts
-          path: bundle-artifacts
-          retention-days: 5
-
-      - name: Check out git/git
-        shell: bash
-        run: |
-          git -c init.defaultBranch=main init &&
-          git remote add -f origin https://github.com/git-for-windows/git &&
-          git fetch --tags bundle-artifacts/git.bundle $(cat bundle-artifacts/next_version) &&
-          git switch --detach "$(cat bundle-artifacts/next_version)"
-      - name: Build mingw-w64-${{env.ARCH_NAME}}-git
-        id: build-git
+      - name: Build UCRT64 installer
+        id: build-installer
         shell: bash
         run: |
           bash --noprofile --norc -e -o pipefail \
-            ci-debug/build-git-artifacts.sh </dev/null 2>&1 |
-            tee ci-debug/build.log
-      - name: Publish mingw-w64-${{env.ARCH_NAME}}-git
-        uses: actions/upload-artifact@v7
-        with:
-          name: pkg-${{env.ARCH_NAME}}
-          path: artifacts
-          retention-days: 5
+            ci-debug/build-installer.sh </dev/null 2>&1 |
+            tee ci-debug/build-installer.log
 
-      - name: prepare build-installers for uploading
-        shell: bash
-        run: |
-          tar czf build-installers.tgz build-installers/
-      - name: Publish build-installers.tgz
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-installers.tgz
-          path: build-installers.tgz
-          retention-days: 1
-
-      - name: Diagnose and fix the failure with GPT-6 Astra
-        id: copilot
-        if: failure() && steps.copilot-preflight.outcome == 'success'
-        timeout-minutes: 120
-        shell: pwsh
-        env:
-          COPILOT_GITHUB_TOKEN: ${{secrets.COPILOT_GITHUB_TOKEN}}
-          COPILOT_HOME: "${{runner.temp}}\\copilot-home"
-        run: |
-          & .\ci-debug\run-copilot.ps1
-          exit $LASTEXITCODE
-
-      - name: Archive runner-side diagnosis
-        if: always()
-        timeout-minutes: 10
-        shell: pwsh
-        env:
-          BUILD_OUTCOME: ${{steps.build-git.outcome}}
-          COPILOT_PREFLIGHT_OUTCOME: ${{steps.copilot-preflight.outcome}}
-          COPILOT_OUTCOME: ${{steps.copilot.outcome}}
-        run: |
-          New-Item -ItemType Directory -Force ci-debug | Out-Null
-          @{
-            run = $env:GITHUB_RUN_ID
-            attempt = $env:GITHUB_RUN_ATTEMPT
-            ref = $env:GITHUB_REF
-            sdkCommit = $env:GITHUB_SHA
-            build = $env:BUILD_OUTCOME
-            copilotPreflight = $env:COPILOT_PREFLIGHT_OUTCOME
-            copilot = $env:COPILOT_OUTCOME
-          } | ConvertTo-Json | Set-Content ci-debug\outcomes.json
-
-          # Exclude Copilot configuration and authentication files.
-          $sessions = "$env:RUNNER_TEMP\copilot-home\session-state"
-          if (Test-Path $sessions) {
-            Compress-Archive -Path $sessions `
-              -DestinationPath ci-debug\copilot-session.zip
-          }
-
-          function Save-Diff($name, $repo) {
-            if (Test-Path "$repo\.git") {
-              git --no-pager -C $repo diff --binary HEAD -- `
-                > "ci-debug\$name.patch"
-              if ($LASTEXITCODE -ne 0) {
-                throw "Could not preserve changes in $repo"
-              }
-            }
-          }
-          Save-Diff git .
-          Save-Diff build-extra build-installers\usr\src\build-extra
-          Save-Diff MINGW-packages build-installers\usr\src\MINGW-packages
-
-      - name: Upload runner-side diagnosis
-        if: always()
-        timeout-minutes: 10
-        uses: actions/upload-artifact@v7
-        with:
-          name: copilot-debug-${{github.run_id}}-${{github.run_attempt}}
-          path: ci-debug
-          if-no-files-found: error
-          retention-days: 7
-
-  artifacts:
-    runs-on: windows-latest
-    needs: [build]
-    strategy:
-      matrix:
-        artifact: [installer, portable, mingit]
-      fail-fast: false
-    steps:
-      - name: Download pkg-${{env.ARCH_NAME}}
-        uses: actions/download-artifact@v8
-        with:
-          name: pkg-${{env.ARCH_NAME}}
-          path: pkg-${{env.ARCH_NAME}}
-      - name: Download bundle-artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: bundle-artifacts
-          path: bundle-artifacts
-      - name: Download build-installers.tgz
-        uses: actions/download-artifact@v8
-        with:
-          name: build-installers.tgz
-      - name: Configure Git for Windows SDK
-        shell: bash
-        run: |
-          tar xf build-installers.tgz &&
-          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/usr/bin" >>$GITHUB_PATH &&
-          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>$GITHUB_PATH
-      - name: Build ucrt64 ${{matrix.artifact}}
-        shell: bash
-        run: |
-          sh -x /usr/src/build-extra/please.sh make_installers_from_mingw_w64_git \
-            --version=$(cat pkg-${{env.ARCH_NAME}}/ver) \
-            -o artifacts \
-            --${{matrix.artifact}} \
-            $(ls pkg-$ARCH_NAME/mingw-w64-*.pkg.tar.* |
-              sed '/\.sig$/d;/archimport/d;/cvs/d;/p4/d;/gitweb/d;/doc-man/d;s/^/--pkg=/')
       - name: Copy package-versions and pdbs
-        if: matrix.artifact == 'installer'
         shell: bash
         run: |
           cp /usr/src/build-extra/installer/package-versions.txt artifacts/ &&
@@ -285,36 +124,44 @@ jobs:
           (cd /usr/src/build-extra &&
           mkdir -p cached-source-packages &&
           cp "$p"/*-pdb* cached-source-packages/ &&
-          GIT_CONFIG_PARAMETERS="'windows.sdk${{env.ARCH_BITNESS}}.path='" ./please.sh bundle_pdbs --arch=${{env.ARCH_NAME}} --directory="$a" installer/package-versions.txt)
-      - name: Publish ${{matrix.artifact}}-${{env.ARCH_NAME}}
+          GIT_CONFIG_PARAMETERS="'windows.sdk${ARCH_BITNESS}.path='" \
+          ./please.sh bundle_pdbs --arch="$ARCH_NAME" \
+            --directory="$a" installer/package-versions.txt)
+
+      - name: Publish installer
         uses: actions/upload-artifact@v7
         with:
-          name: ${{matrix.artifact}}-${{env.ARCH_NAME}}
+          name: installer-${{env.ARCH_NAME}}
           path: artifacts
           retention-days: 5
 
       - name: Run the installer
-        if: matrix.artifact == 'installer'
         shell: pwsh
         run: |
           $exePath = Get-ChildItem -Path artifacts/*.exe | %{$_.FullName}
-          $installer = Start-Process -PassThru -Wait -FilePath "$exePath" -ArgumentList "/SILENT /VERYSILENT /NORESTART /SUPPRESSMSGBOXES /ALLOWDOWNGRADE=1 /LOG=installer.log"
+          $arguments = '/SILENT /VERYSILENT /NORESTART ' +
+            '/SUPPRESSMSGBOXES /ALLOWDOWNGRADE=1 /LOG=installer.log'
+          $installer = Start-Process -PassThru -Wait -FilePath "$exePath" `
+            -ArgumentList $arguments
           $exitCode = $installer.ExitCode
           if ($exitCode -ne 0) {
             Write-Host "::error::Installer failed with exit code $exitCode!"
             exit 1
           }
-          "$env:ProgramFiles\Git\usr\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
-          "$env:ProgramFiles\Git\ucrt64\bin" | Out-File -Encoding ascii -Append $env:GITHUB_PATH
+          "$env:ProgramFiles\Git\usr\bin" |
+            Out-File -Encoding ascii -Append $env:GITHUB_PATH
+          "$env:ProgramFiles\Git\ucrt64\bin" |
+            Out-File -Encoding ascii -Append $env:GITHUB_PATH
+
       - name: Publish installer log
-        if: matrix.artifact == 'installer' && (failure() || success())
+        if: failure() || success()
         uses: actions/upload-artifact@v7
         with:
           name: installer.log
           path: installer.log
           retention-days: 5
+
       - name: Validate
-        if: matrix.artifact == 'installer'
         shell: bash
         run: |
           echo '::group::installer.log'
@@ -327,8 +174,90 @@ jobs:
           cygpath -aw / &&
           git.exe version --build-options >version &&
           cat version &&
-          grep "$(sed -e 's|^v||' -e 's|-|.|g' <bundle-artifacts/next_version)" version &&
-          checklist=build-installers/usr/src/build-extra/installer/run-checklist.sh &&
+          expected=$(sed -e 's|^v||' -e 's|-|.|g' \
+            <bundle-artifacts/next_version) &&
+          grep "$expected" version &&
+          extra=build-installers/usr/src/build-extra &&
+          checklist=$extra/installer/run-checklist.sh &&
           # cannot test SSH keys in read-only mode, skip test for now
-          sed -i 's|git@ssh.dev.azure.com:v3/git-for-windows/git/git|https://github.com/git/git|' $checklist &&
-          sh -x $checklist
+          azure=git@ssh.dev.azure.com:v3/git-for-windows/git/git &&
+          sed -i "s|$azure|https://github.com/git/git|" "$checklist" &&
+          sh -x "$checklist"
+
+      - name: Download the passing main SDK for comparison
+        if: failure() && steps.copilot-preflight.outcome == 'success'
+        timeout-minutes: 10
+        uses: actions/download-artifact@v8
+        with:
+          name: build-installers.tgz
+          path: main-baseline
+          run-id: '34324713244'
+          github-token: ${{github.token}}
+
+      - name: Preserve the passing main logs
+        if: failure() && steps.copilot-preflight.outcome == 'success'
+        timeout-minutes: 5
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{github.token}}
+        run: |
+          $repo = 'repos/git-for-windows/git-sdk-64'
+          gh api "$repo/actions/runs/34324713244/logs" `
+            > ci-debug\main-logs.zip
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Expand-Archive ci-debug\main-logs.zip main-baseline\logs
+
+      - name: Diagnose and fix the installer with GPT-6 Astra
+        id: copilot
+        if: failure() && steps.copilot-preflight.outcome == 'success'
+        timeout-minutes: 120
+        shell: pwsh
+        env:
+          COPILOT_GITHUB_TOKEN: ${{secrets.COPILOT_GITHUB_TOKEN}}
+          COPILOT_HOME: "${{runner.temp}}\\copilot-home"
+        run: |
+          & .\ci-debug\run-copilot.ps1 `
+            -PromptFile ci-debug/debug-installers.md
+          exit $LASTEXITCODE
+
+      - name: Archive runner diagnosis
+        if: always()
+        timeout-minutes: 10
+        shell: pwsh
+        env:
+          BUILD_OUTCOME: ${{steps.build-installer.outcome}}
+          COPILOT_OUTCOME: ${{steps.copilot.outcome}}
+        run: |
+          New-Item -ItemType Directory -Force ci-debug | Out-Null
+          @{
+            sourceRun = $env:SOURCE_RUN
+            build = $env:BUILD_OUTCOME
+            copilot = $env:COPILOT_OUTCOME
+          } | ConvertTo-Json | Set-Content ci-debug\outcomes.json
+          $sessions = "$env:RUNNER_TEMP\copilot-home\session-state"
+          if (Test-Path $sessions) {
+            Compress-Archive -Path $sessions `
+              -DestinationPath ci-debug\copilot-session.zip
+          }
+          if (Test-Path artifacts) {
+            New-Item -ItemType Directory -Force `
+              ci-debug\verified-artifacts | Out-Null
+            Copy-Item artifacts\* ci-debug\verified-artifacts -Recurse -Force
+          }
+          git -C workflow diff --binary HEAD -- > ci-debug\sdk.patch
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $extra = 'build-installers\usr\src\build-extra'
+          if (Test-Path "$extra\.git") {
+            git -C $extra diff --binary HEAD -- > ci-debug\build-extra.patch
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Upload runner diagnosis
+        if: always()
+        timeout-minutes: 10
+        uses: actions/upload-artifact@v7
+        with:
+          name: copilot-debug-${{github.run_id}}-${{github.run_attempt}}
+          path: ci-debug
+          if-no-files-found: error
+          retention-days: 7
