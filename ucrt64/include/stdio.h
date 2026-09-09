@@ -6,9 +6,9 @@
 #ifndef _INC_STDIO
 #define _INC_STDIO
 
-#include <corecrt_stdio_config.h>
+#include <corecrt_wstdio.h>
 
-#pragma pack(push,_CRT_PACKING)
+_CRT_BEGIN_C_HEADER
 
 #pragma push_macro("snprintf")
 #undef snprintf
@@ -19,34 +19,15 @@
 #pragma push_macro("vsnwprintf")
 #undef vsnwprintf
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define BUFSIZ 512
 #define _NFILE _NSTREAM_
 #define _NSTREAM_ 512
-#define _IOB_ENTRIES 20
-#define EOF (-1)
-
-#ifndef _FILE_DEFINED
-  struct _iobuf {
 #ifdef _UCRT
-    void *_Placeholder;
+#define _IOB_ENTRIES 3
 #else
-    char *_ptr;
-    int _cnt;
-    char *_base;
-    int _flag;
-    int _file;
-    int _charbuf;
-    int _bufsiz;
-    char *_tmpfname;
+#define _IOB_ENTRIES 20
 #endif
-  };
-  typedef struct _iobuf FILE;
-#define _FILE_DEFINED
-#endif
+#define EOF (-1)
 
 #ifdef _POSIX_
 #define _P_tmpdir "/"
@@ -84,25 +65,7 @@ extern "C" {
 #define TMP_MAX 32767
 #endif
 
-#ifndef NULL
-#ifdef __cplusplus
-#ifndef _WIN64
-#define NULL 0
-#else
-#define NULL 0LL
-#endif  /* W64 */
-#else
-#define NULL ((void *)0)
-#endif
-#endif
-
 #include <_mingw_off_t.h>
-
-_CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
-#ifndef _STDIO_DEFINED
-  _CRTIMP FILE *__cdecl __iob_func(void);
-#define _iob __iob_func()
-#endif
 
 #ifndef _FPOS_T_DEFINED
 #define _FPOS_T_DEFINED
@@ -116,14 +79,6 @@ _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
 #define _FPOSOFF(fp) ((long)(fp))
 #endif
 
-#endif
-
-#ifndef _STDSTREAM_DEFINED
-#define _STDSTREAM_DEFINED
-
-#define stdin (__acrt_iob_func(0))
-#define stdout (__acrt_iob_func(1))
-#define stderr (__acrt_iob_func(2))
 #endif
 
 #define _IOFBF 0x0000
@@ -148,11 +103,6 @@ _CRTIMP FILE *__cdecl __acrt_iob_func(unsigned index);
 #define _TWO_DIGIT_EXPONENT 0x1
 #endif
 
-#if __MINGW_FORTIFY_LEVEL > 0
-__mingw_bos_declare;
-#endif
-
-#ifndef _STDIO_DEFINED
 extern
   __MINGW_GNU_SCANF(2, 3) __MINGW_ATTRIB_NONNULL(2)
   int __cdecl __mingw_sscanf(const char * __restrict__ _Src,const char * __restrict__ _Format,...);
@@ -886,323 +836,6 @@ int vsprintf (char * __restrict__ __stream, const char * __restrict__ __format, 
   _CRTIMP int __cdecl _set_printf_count_output(int _Value);
   _CRTIMP int __cdecl _get_printf_count_output(void);
 
-#ifndef _WSTDIO_DEFINED
-#define _WSTDIO_DEFINED
-
-/* __attribute__((__format__ (gnu_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_swscanf(const wchar_t * __restrict__ _Src,const wchar_t * __restrict__ _Format,...);
-/* __attribute__((__format__ (gnu_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_vswscanf (const wchar_t * __restrict__ _Str,const wchar_t * __restrict__ Format,va_list argp);
-/* __attribute__((__format__ (gnu_wscanf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __mingw_wscanf(const wchar_t * __restrict__ _Format,...);
-/* __attribute__((__format__ (gnu_wscanf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __mingw_vwscanf(const wchar_t * __restrict__ Format, va_list argp);
-/* __attribute__((__format__ (gnu_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_fwscanf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...);
-/* __attribute__((__format__ (gnu_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_vfwscanf (FILE * __restrict__ fp, const wchar_t * __restrict__ Format,va_list argp);
-
-/* __attribute__((__format__ (gnu_wprintf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_fwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...);
-/* __attribute__((__format__ (gnu_wprintf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __mingw_wprintf(const wchar_t * __restrict__ _Format,...);
-/* __attribute__((__format__ (gnu_wprintf, 2, 0))) */__MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __mingw_vfwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,va_list _ArgList);
-/*__attribute__((__format__ (gnu_wprintf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __mingw_vwprintf(const wchar_t * __restrict__ _Format,va_list _ArgList);
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __mingw_snwprintf (wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, ...);
-/* __attribute__((__format__ (gnu_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __mingw_vsnwprintf (wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ , va_list);
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __mingw_swprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ , ...);
-/* __attribute__((__format__ (gnu_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __mingw_vswprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ ,va_list);
-
-/* __attribute__((__format__ (ms_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_swscanf(const wchar_t * __restrict__ _Src,const wchar_t * __restrict__ _Format,...)
-  __MINGW_UCRT_ASM_CALL(swscanf);
-/* __attribute__((__format__ (ms_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_vswscanf(const wchar_t * __restrict__ _Src,const wchar_t * __restrict__ _Format,va_list)
-  __MINGW_ASM_CALL(vswscanf);
-/* __attribute__((__format__ (ms_wscanf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __ms_wscanf(const wchar_t * __restrict__ _Format,...)
-  __MINGW_UCRT_ASM_CALL(wscanf);
-/* __attribute__((__format__ (ms_wscanf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __ms_vwscanf(const wchar_t * __restrict__ _Format, va_list)
-  __MINGW_ASM_CALL(vwscanf);
-/* __attribute__((__format__ (ms_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_fwscanf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...)
-  __MINGW_UCRT_ASM_CALL(fwscanf);
-/* __attribute__((__format__ (ms_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_vfwscanf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,va_list)
-  __MINGW_ASM_CALL(vfwscanf);
-
-/* __attribute__((__format__ (ms_wprintf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_fwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...);
-  /* No __MINGW_UCRT_ASM_CALL for __ms_fwprintf; this is provided as an
-   * actual function in the ucrt import libraries. */
-/* __attribute__((__format__ (ms_wprintf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __ms_wprintf(const wchar_t * __restrict__ _Format,...)
-  __MINGW_UCRT_ASM_CALL(wprintf);
-/* __attribute__((__format__ (ms_wprintf, 2, 0))) */__MINGW_ATTRIB_NONNULL(2)
-  int __cdecl __ms_vfwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,va_list _ArgList)
-  __MINGW_UCRT_ASM_CALL(vfwprintf);
-/*__attribute__((__format__ (ms_wprintf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl __ms_vwprintf(const wchar_t * __restrict__ _Format,va_list _ArgList)
-  __MINGW_UCRT_ASM_CALL(vwprintf);
-/* __attribute__((__format__ (ms_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __ms_swprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ , ...)
-  __MINGW_UCRT_ASM_CALL(swprintf);
-/* __attribute__((__format__ (ms_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __ms_vswprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ ,va_list)
-  __MINGW_UCRT_ASM_CALL(vswprintf);
-/* __attribute__((__format__ (ms_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __ms_snwprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ , ...)
-  __MINGW_UCRT_ASM_CALL(snwprintf);
-/* __attribute__((__format__ (ms_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-  int __cdecl __ms_vsnwprintf(wchar_t * __restrict__ , size_t, const wchar_t * __restrict__ , va_list)
-  __MINGW_UCRT_ASM_CALL(vsnwprintf);
-
-#ifdef _UCRT
-  int __cdecl __stdio_common_vswprintf(unsigned __int64 options, wchar_t *str, size_t len, const wchar_t *format, _locale_t locale, va_list valist);
-  int __cdecl __stdio_common_vfwprintf(unsigned __int64 options, FILE *file, const wchar_t *format, _locale_t locale, va_list valist);
-  int __cdecl __stdio_common_vswscanf(unsigned __int64 options, const wchar_t *input, size_t length, const wchar_t *format, _locale_t locale, va_list valist);
-  int __cdecl __stdio_common_vfwscanf(unsigned __int64 options, FILE *file, const wchar_t *format, _locale_t locale, va_list valist);
-#endif
-
-#if __USE_MINGW_ANSI_STDIO && !defined(_CRTBLD)
-/*
- * User has expressed a preference for C99 conformance...
- */
-
-/* __attribute__((__format__ (gnu_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-int swscanf(const wchar_t *__source, const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_swscanf);
-
-/* __attribute__((__format__ (gnu_wscanf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-int wscanf(const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_wscanf);
-
-/* __attribute__((__format__ (gnu_wscanf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-int fwscanf(FILE *__stream, const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_fwscanf);
-
-#ifndef __NO_ISOCEXT  /* externs in libmingwex.a */
-/* __attribute__((__format__ (gnu_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-int vswscanf (const wchar_t * __restrict__ __source, const wchar_t * __restrict__ __format, __builtin_va_list __local_argv)
-__MINGW_ASM_CALL(__mingw_vswscanf);
-
-/* __attribute__((__format__ (gnu_wscanf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-int vwscanf(const wchar_t *__format,  __builtin_va_list __local_argv)
-__MINGW_ASM_CALL(__mingw_vwscanf);
-
-/* __attribute__((__format__ (gnu_wscanf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-int vfwscanf (FILE *__stream,  const wchar_t *__format, __builtin_va_list __local_argv)
-__MINGW_ASM_CALL(__mingw_vfwscanf);
-#endif /* __NO_ISOCEXT */
-
-
-
-/* __attribute__((__format__ (gnu_wprintf, 2, 3))) */ __MINGW_ATTRIB_NONNULL(2)
-int fwprintf (FILE *__stream, const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_fwprintf);
-
-/* __attribute__((__format__ (gnu_wprintf, 1, 2))) */ __MINGW_ATTRIB_NONNULL(1)
-int wprintf (const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_wprintf);
-
-/* __attribute__((__format__ (gnu_wprintf, 2, 0))) */ __MINGW_ATTRIB_NONNULL(2)
-int vfwprintf (FILE *__stream, const wchar_t *__format, __builtin_va_list __local_argv)
-__MINGW_ASM_CALL(__mingw_vfwprintf);
-
-/* __attribute__((__format__ (gnu_wprintf, 1, 0))) */ __MINGW_ATTRIB_NONNULL(1)
-int vwprintf (const wchar_t *__format, __builtin_va_list __local_argv)
-__MINGW_ASM_CALL(__mingw_vwprintf);
-
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-int swprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_swprintf);
-
-#if __MINGW_FORTIFY_VA_ARG
-
-__mingw_bos_extern_ovr
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-int swprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, ...)
-{
-  __mingw_bos_ptr_chk_warn(__stream, __n * sizeof(wchar_t), 1);
-  return __mingw_swprintf( __stream, __n, __format, __builtin_va_arg_pack() );
-}
-
-#endif /* __MINGW_FORTIFY_VA_ARG */
-
-__mingw_bos_ovr
-/* __attribute__((__format__ (gnu_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-int vswprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builtin_va_list __local_argv)
-{
-#if __MINGW_FORTIFY_LEVEL > 0
-  __mingw_bos_ptr_chk_warn(__stream, __n * sizeof(wchar_t), 1);
-#endif
-  return __mingw_vswprintf( __stream, __n, __format, __local_argv );
-}
-
-#ifndef __NO_ISOCEXT  /* externs in libmingwex.a */
-
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-int snwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, ...)
-__MINGW_ASM_CALL(__mingw_snwprintf);
-
-#if __MINGW_FORTIFY_VA_ARG
-
-__mingw_bos_extern_ovr
-/* __attribute__((__format__ (gnu_wprintf, 3, 4))) */ __MINGW_ATTRIB_NONNULL(3)
-int snwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, ...)
-{
-  __mingw_bos_ptr_chk_warn(__stream, __n * sizeof(wchar_t), 1);
-  return __mingw_snwprintf( __stream, __n, __format, __builtin_va_arg_pack() );
-}
-
-#endif /* __MINGW_FORTIFY_VA_ARG */
-
-__mingw_bos_ovr
-/* __attribute__((__format__ (gnu_wprintf, 3, 0))) */ __MINGW_ATTRIB_NONNULL(3)
-int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builtin_va_list __local_argv)
-{
-#if __MINGW_FORTIFY_LEVEL > 0
-  __mingw_bos_ptr_chk_warn(__stream, __n * sizeof(wchar_t), 1);
-#endif
-  return __mingw_vsnwprintf( __stream, __n, __format, __local_argv );
-}
-
-#endif /* __NO_ISOCEXT */
-
-#else /* !__USE_MINGW_ANSI_STDIO */
-  __MINGW_ATTRIB_DEPRECATED_SEC_WARN
-  int __cdecl fwscanf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...);
-
-  __MINGW_ATTRIB_DEPRECATED_SEC_WARN
-  int __cdecl swscanf(const wchar_t * __restrict__ _Src,const wchar_t * __restrict__ _Format,...);
-
-  __MINGW_ATTRIB_DEPRECATED_SEC_WARN
-  int __cdecl wscanf(const wchar_t * __restrict__ _Format,...);
-
-  __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl vfwscanf(FILE *__stream,  const wchar_t *__format, va_list __local_argv);
-
-  __MINGW_ATTRIB_NONNULL(2)
-  int __cdecl vswscanf(const wchar_t * __restrict__ __source, const wchar_t * __restrict__ __format, va_list __local_argv);
-
-  __MINGW_ATTRIB_NONNULL(1)
-  int __cdecl vwscanf(const wchar_t *__format, va_list __local_argv);
-
-  int __cdecl fwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,...);
-  int __cdecl wprintf(const wchar_t * __restrict__ _Format,...);
-  int __cdecl vfwprintf(FILE * __restrict__ _File,const wchar_t * __restrict__ _Format,va_list _ArgList);
-  int __cdecl vwprintf(const wchar_t * __restrict__ _Format,va_list _ArgList);
-
-  int __cdecl swprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,...);
-  int __cdecl vswprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,va_list _Args);
-  int __cdecl snwprintf(wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, ...);
-  int __cdecl vsnwprintf(wchar_t * __restrict__ s, size_t n, const wchar_t * __restrict__ format, va_list arg);
-#endif /* __USE_MINGW_ANSI_STDIO */
-
-#ifndef WEOF
-#define WEOF (wint_t)(0xFFFF)
-#endif
-
-#ifdef _POSIX_
-  _CRTIMP FILE *__cdecl _wfsopen(const wchar_t *_Filename,const wchar_t *_Mode);
-#else
-  _CRTIMP FILE *__cdecl _wfsopen(const wchar_t *_Filename,const wchar_t *_Mode,int _ShFlag);
-#endif
-
-  wint_t __cdecl fgetwc(FILE *_File);
-  _CRTIMP wint_t __cdecl _fgetwchar(void);
-  wint_t __cdecl fputwc(wchar_t _Ch,FILE *_File);
-  _CRTIMP wint_t __cdecl _fputwchar(wchar_t _Ch);
-  wint_t __cdecl getwc(FILE *_File);
-  wint_t __cdecl getwchar(void);
-  wint_t __cdecl putwc(wchar_t _Ch,FILE *_File);
-  wint_t __cdecl putwchar(wchar_t _Ch);
-  wint_t __cdecl ungetwc(wint_t _Ch,FILE *_File);
-  wchar_t *__cdecl fgetws(wchar_t * __restrict__ _Dst,int _SizeInWords,FILE * __restrict__ _File);
-  int __cdecl fputws(const wchar_t * __restrict__ _Str,FILE * __restrict__ _File);
-  _CRTIMP wchar_t *__cdecl _getws(wchar_t *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP int __cdecl _putws(const wchar_t *_Str);
-
-  _CRTIMP int __cdecl _scwprintf(const wchar_t * __restrict__ _Format,...);
-#ifndef _UCRT
-  _CRTIMP int __cdecl _swprintf_c(wchar_t * __restrict__ _DstBuf,size_t _SizeInWords,const wchar_t * __restrict__ _Format,...);
-  _CRTIMP int __cdecl _vswprintf_c(wchar_t * __restrict__ _DstBuf,size_t _SizeInWords,const wchar_t * __restrict__ _Format,va_list _ArgList);
-#endif /* _UCRT */
-  _CRTIMP int __cdecl _snwprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,...) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP int __cdecl _vsnwprintf(wchar_t * __restrict__ _Dest,size_t _Count,const wchar_t * __restrict__ _Format,va_list _Args) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP int __cdecl _vscwprintf(const wchar_t * __restrict__ _Format,va_list _ArgList);
-  _CRTIMP int __cdecl _swprintf(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Format,...);
-  _CRTIMP int __cdecl _vswprintf(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Format,va_list _Args);
-
-#ifndef RC_INVOKED
-#include <swprintf.inl>
-#endif
-
-#ifdef _CRT_NON_CONFORMING_SWPRINTFS
-#ifndef __cplusplus
-#define _swprintf_l __swprintf_l
-#define _vswprintf_l __vswprintf_l
-#endif
-#endif
-
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma push_macro("_wtempnam")
-#undef _wtempnam
-#endif
-  _CRTIMP wchar_t *__cdecl _wtempnam(const wchar_t *_Directory,const wchar_t *_FilePrefix);
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma pop_macro("_wtempnam")
-#endif
-  _CRTIMP int __cdecl _snwscanf(const wchar_t * __restrict__ _Src,size_t _MaxCount,const wchar_t * __restrict__ _Format,...);
-  _CRTIMP FILE *__cdecl _wfdopen(int _FileHandle ,const wchar_t *_Mode);
-  _CRTIMP FILE *__cdecl _wfopen(const wchar_t * __restrict__ _Filename,const wchar_t *__restrict__  _Mode) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP FILE *__cdecl _wfreopen(const wchar_t * __restrict__ _Filename,const wchar_t * __restrict__ _Mode,FILE * __restrict__ _OldFile) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-
-#ifndef _CRT_WPERROR_DEFINED
-#define _CRT_WPERROR_DEFINED
-  _CRTIMP void __cdecl _wperror(const wchar_t *_ErrMsg);
-#endif
-  _CRTIMP FILE *__cdecl _wpopen(const wchar_t *_Command,const wchar_t *_Mode);
-#if !defined(NO_OLDNAMES) && !defined(wpopen)
-#define wpopen	_wpopen
-#endif
-
-  _CRTIMP int __cdecl _wremove(const wchar_t *_Filename);
-  _CRTIMP wchar_t *__cdecl _wtmpnam(wchar_t *_Buffer);
-#if __MSVCRT_VERSION__ >= 0x800
-  _CRTIMP wint_t __cdecl _fgetwc_nolock(FILE *_File);
-  _CRTIMP wint_t __cdecl _fputwc_nolock(wchar_t _Ch,FILE *_File);
-  _CRTIMP wint_t __cdecl _ungetwc_nolock(wint_t _Ch,FILE *_File);
-#endif
-
-#undef _CRT_GETPUTWCHAR_NOINLINE
-
-#if !defined(__cplusplus) || defined(_CRT_GETPUTWCHAR_NOINLINE) || defined (__CRT__NO_INLINE)
-#define getwchar() fgetwc(stdin)
-#define putwchar(_c) fputwc((_c),stdout)
-#else
-  __CRT_INLINE wint_t __cdecl getwchar() {return (fgetwc(stdin)); }
-  __CRT_INLINE wint_t __cdecl putwchar(wchar_t _C) {return (fputwc(_C,stdout)); }
-#endif
-
-#define getwc(_stm) fgetwc(_stm)
-#define putwc(_c,_stm) fputwc(_c,_stm)
-#if __MSVCRT_VERSION__ >= 0x800
-#define _putwc_nolock(_c,_stm) _fputwc_nolock(_c,_stm)
-#define _getwc_nolock(_c) _fgetwc_nolock(_c)
-#endif
-#endif
-
-#define _STDIO_DEFINED
-#endif
-
   _CRTIMP int __cdecl _fgetc_nolock(FILE *_File);
   _CRTIMP int __cdecl _fputc_nolock(int _Char, FILE *_File);
   _CRTIMP int __cdecl _getc_nolock(FILE *_File);
@@ -1249,92 +882,589 @@ int vsnwprintf (wchar_t *__stream, size_t __n, const wchar_t *__format, __builti
   int __cdecl rmtmp(void) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
 
-#ifndef __MINGW_MBWC_CONVERT_DEFINED
-#define __MINGW_MBWC_CONVERT_DEFINED
-
-/**
- * __mingw_str_wide_utf8
- * Converts a null terminated UCS-2 string to a multibyte (UTF-8) equivalent.
- * Caller is supposed to free allocated buffer with __mingw_str_free().
- * @param[in] wptr Pointer to wide string.
- * @param[out] mbptr Pointer to multibyte string.
- * @param[out] buflen Optional parameter for length of allocated buffer.
- * @return Number of characters converted, 0 for failure.
- *
- * WideCharToMultiByte - http://msdn.microsoft.com/en-us/library/dd374130(VS.85).aspx
- */
-int __cdecl __mingw_str_wide_utf8 (const wchar_t * const wptr, char **mbptr, size_t * buflen);
-
-/**
- * __mingw_str_utf8_wide
- * Converts a null terminated UTF-8 string to a UCS-2 equivalent.
- * Caller is supposed to free allocated buffer with __mingw_str_free().
- * @param[out] mbptr Pointer to multibyte string.
- * @param[in] wptr Pointer to wide string.
- * @param[out] buflen Optional parameter for length of allocated buffer.
- * @return Number of characters converted, 0 for failure.
- *
- * MultiByteToWideChar - http://msdn.microsoft.com/en-us/library/dd319072(VS.85).aspx
- */
-
-int __cdecl __mingw_str_utf8_wide (const char *const mbptr, wchar_t ** wptr, size_t * buflen);
-
-/**
- * __mingw_str_free
- * Frees buffer create by __mingw_str_wide_utf8 and __mingw_str_utf8_wide.
- * @param[in] ptr memory block to free.
- *
- */
-
-void __cdecl __mingw_str_free(void *ptr);
-
-#endif /* __MINGW_MBWC_CONVERT_DEFINED */
-
-#ifdef _CRT_USE_WINAPI_FAMILY_DESKTOP_APP
-#ifndef _WSPAWN_DEFINED
-#define _WSPAWN_DEFINED
-  _CRTIMP intptr_t __cdecl _wspawnl(int _Mode,const wchar_t *_Filename,const wchar_t *_ArgList,...);
-  _CRTIMP intptr_t __cdecl _wspawnle(int _Mode,const wchar_t *_Filename,const wchar_t *_ArgList,...);
-  _CRTIMP intptr_t __cdecl _wspawnlp(int _Mode,const wchar_t *_Filename,const wchar_t *_ArgList,...);
-  _CRTIMP intptr_t __cdecl _wspawnlpe(int _Mode,const wchar_t *_Filename,const wchar_t *_ArgList,...);
-  _CRTIMP intptr_t __cdecl _wspawnv(int _Mode,const wchar_t *_Filename,const wchar_t *const *_ArgList);
-  _CRTIMP intptr_t __cdecl _wspawnve(int _Mode,const wchar_t *_Filename,const wchar_t *const *_ArgList,const wchar_t *const *_Env);
-  _CRTIMP intptr_t __cdecl _wspawnvp(int _Mode,const wchar_t *_Filename,const wchar_t *const *_ArgList);
-  _CRTIMP intptr_t __cdecl _wspawnvpe(int _Mode,const wchar_t *_Filename,const wchar_t *const *_ArgList,const wchar_t *const *_Env);
-#endif
-
-#ifndef _P_WAIT
-#define _P_WAIT 0
-#define _P_NOWAIT 1
-#define _OLD_P_OVERLAY 2
-#define _P_NOWAITO 3
-#define _P_DETACH 4
-#define _P_OVERLAY 2
-
-#define _WAIT_CHILD 0
-#define _WAIT_GRANDCHILD 1
-#endif
-
-#ifndef _SPAWNV_DEFINED
-#define _SPAWNV_DEFINED
-  _CRTIMP intptr_t __cdecl _spawnv(int _Mode,const char *_Filename,const char *const *_ArgList);
-  _CRTIMP intptr_t __cdecl _spawnve(int _Mode,const char *_Filename,const char *const *_ArgList,const char *const *_Env);
-  _CRTIMP intptr_t __cdecl _spawnvp(int _Mode,const char *_Filename,const char *const *_ArgList);
-  _CRTIMP intptr_t __cdecl _spawnvpe(int _Mode,const char *_Filename,const char *const *_ArgList,const char *const *_Env);
-#endif
-#endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
-
-#ifdef __cplusplus
-}
-#endif
-
 #pragma pop_macro("snprintf")
 #pragma pop_macro("vsnprintf")
 #pragma pop_macro("snwprintf")
 #pragma pop_macro("vsnwprintf")
 
-#pragma pack(pop)
+  #define L_tmpnam_s L_tmpnam
+  #define TMP_MAX_S TMP_MAX
 
-#include <sec_api/stdio_s.h>
+  _CRTIMP errno_t __cdecl clearerr_s(FILE *_File);
+
+  size_t __cdecl fread_s(void *_DstBuf,size_t _DstSize,size_t _ElementSize,size_t _Count,FILE *_File);
+
+#ifdef _UCRT
+  int __cdecl __stdio_common_vsprintf_s(unsigned __int64 _Options, char *_Str, size_t _Len, const char *_Format, _locale_t _Locale, va_list _ArgList);
+  int __cdecl __stdio_common_vsprintf_p(unsigned __int64 _Options, char *_Str, size_t _Len, const char *_Format, _locale_t _Locale, va_list _ArgList);
+  int __cdecl __stdio_common_vsnprintf_s(unsigned __int64 _Options, char *_Str, size_t _Len, size_t _MaxCount, const char *_Format, _locale_t _Locale, va_list _ArgList);
+  int __cdecl __stdio_common_vfprintf_s(unsigned __int64 _Options, FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList);
+  int __cdecl __stdio_common_vfprintf_p(unsigned __int64 _Options, FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList);
+
+  __mingw_ovr int __cdecl _vfscanf_s_l(FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vfscanf(_CRT_INTERNAL_SCANF_SECURECRT, _File, _Format, _Locale, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl vfscanf_s(FILE *_File, const char *_Format, va_list _ArgList)
+  {
+    return _vfscanf_s_l(_File, _Format, NULL, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl _vscanf_s_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vfscanf_s_l(stdin, _Format, _Locale, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl vscanf_s(const char *_Format, va_list _ArgList)
+  {
+    return _vfscanf_s_l(stdin, _Format, NULL, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl _fscanf_s_l(FILE *_File, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfscanf_s_l(_File, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl fscanf_s(FILE *_File, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfscanf_s_l(_File, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _scanf_s_l(const char *_Format, _locale_t _Locale ,...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfscanf_s_l(stdin, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl scanf_s(const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfscanf_s_l(stdin, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vfscanf_l(FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vfscanf(0, _File, _Format, _Locale, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl _vscanf_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vfscanf_l(stdin, _Format, _Locale, _ArgList);
+  }
+
+  __mingw_ovr int __cdecl _fscanf_l(FILE *_File, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfscanf_l(_File, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _scanf_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfscanf_l(stdin, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsscanf_s_l(const char *_Src, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsscanf(_CRT_INTERNAL_SCANF_SECURECRT, _Src, (size_t)-1, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl vsscanf_s(const char *_Src, const char *_Format, va_list _ArgList)
+  {
+    return _vsscanf_s_l(_Src, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _sscanf_s_l(const char *_Src, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsscanf_s_l(_Src, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl sscanf_s(const char *_Src, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vsscanf_s_l(_Src, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsscanf_l(const char *_Src, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsscanf(0, _Src, (size_t)-1, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _sscanf_l(const char *_Src, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsscanf_l(_Src, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  /* There is no _vsnscanf_s_l nor _vsnscanf_s */
+  __mingw_ovr int __cdecl _snscanf_s_l(const char *_Src, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = __stdio_common_vsscanf(_CRT_INTERNAL_SCANF_SECURECRT, _Src, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _snscanf_s(const char *_Src, size_t _MaxCount, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = __stdio_common_vsscanf(_CRT_INTERNAL_SCANF_SECURECRT, _Src, _MaxCount, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  /* There is no _vsnscanf_l */
+  __mingw_ovr int __cdecl _snscanf_l(const char *_Src, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = __stdio_common_vsscanf(0, _Src, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+
+  __mingw_ovr int __cdecl _vfprintf_s_l(FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vfprintf_s(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _File, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl vfprintf_s(FILE *_File, const char *_Format, va_list _ArgList)
+  {
+    return _vfprintf_s_l(_File, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vprintf_s_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vfprintf_s_l(stdout, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl vprintf_s(const char *_Format, va_list _ArgList)
+  {
+    return _vfprintf_s_l(stdout, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _fprintf_s_l(FILE *_File, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfprintf_s_l(_File, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _printf_s_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfprintf_s_l(stdout, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl fprintf_s(FILE *_File, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfprintf_s_l(_File, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl printf_s(const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfprintf_s_l(stdout, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsnprintf_c_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vsnprintf_c(char *_DstBuf, size_t _MaxCount, const char *_Format, va_list _ArgList)
+  {
+    return _vsnprintf_c_l(_DstBuf, _MaxCount, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _snprintf_c_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsnprintf_c_l(_DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _snprintf_c(char *_DstBuf, size_t _MaxCount, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vsnprintf_c_l(_DstBuf, _MaxCount, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsnprintf_s_l(char *_DstBuf, size_t _DstSize, size_t _MaxCount, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsnprintf_s(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _DstBuf, _DstSize, _MaxCount, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl vsnprintf_s(char *_DstBuf, size_t _DstSize, size_t _MaxCount, const char *_Format, va_list _ArgList)
+  {
+    return _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vsnprintf_s(char *_DstBuf, size_t _DstSize, size_t _MaxCount, const char *_Format, va_list _ArgList)
+  {
+    return _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _snprintf_s_l(char *_DstBuf, size_t _DstSize, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _snprintf_s(char *_DstBuf, size_t _DstSize, size_t _MaxCount, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vsnprintf_s_l(_DstBuf, _DstSize, _MaxCount, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsprintf_s_l(char *_DstBuf, size_t _DstSize, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf_s(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _DstBuf, _DstSize, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl vsprintf_s(char *_DstBuf, size_t _Size, const char *_Format, va_list _ArgList)
+  {
+    return _vsprintf_s_l(_DstBuf, _Size, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _sprintf_s_l(char *_DstBuf, size_t _DstSize, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsprintf_s_l(_DstBuf, _DstSize, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl sprintf_s(char *_DstBuf, size_t _DstSize, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vsprintf_s_l(_DstBuf, _DstSize, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vfprintf_p_l(FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vfprintf_p(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _File, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vfprintf_p(FILE *_File, const char *_Format, va_list _ArgList)
+  {
+    return _vfprintf_p_l(_File, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vprintf_p_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vfprintf_p_l(stdout, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vprintf_p(const char *_Format, va_list _ArgList)
+  {
+    return _vfprintf_p_l(stdout, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _fprintf_p_l(FILE *_File, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = __stdio_common_vfprintf_p(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _File, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _fprintf_p(FILE *_File, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfprintf_p_l(_File, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _printf_p_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfprintf_p_l(stdout, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _printf_p(const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vfprintf_p_l(stdout, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsprintf_p_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf_p(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vsprintf_p(char *_Dst, size_t _MaxCount, const char *_Format, va_list _ArgList)
+  {
+    return _vsprintf_p_l(_Dst, _MaxCount, _Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _sprintf_p_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsprintf_p_l(_DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _sprintf_p(char *_Dst, size_t _MaxCount, const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vsprintf_p_l(_Dst, _MaxCount, _Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vscprintf_p_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf_p(_CRT_INTERNAL_PRINTF_STANDARD_SNPRINTF_BEHAVIOR, NULL, 0, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vscprintf_p(const char *_Format, va_list _ArgList)
+  {
+    return _vscprintf_p_l(_Format, NULL, _ArgList);
+  }
+  __mingw_ovr int __cdecl _scprintf_p_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vscprintf_p_l(_Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _scprintf_p(const char *_Format, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Format);
+    _Ret = _vscprintf_p_l(_Format, NULL, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vfprintf_l(FILE *_File, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vfprintf(_CRT_INTERNAL_LOCAL_PRINTF_OPTIONS, _File, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _vprintf_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vfprintf_l(stdout, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _fprintf_l(FILE *_File, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfprintf_l(_File, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _printf_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vfprintf_l(stdout, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vsnprintf_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf(_CRT_INTERNAL_PRINTF_LEGACY_VSPRINTF_NULL_TERMINATION, _DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _snprintf_l(char *_DstBuf, size_t _MaxCount, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsnprintf_l(_DstBuf, _MaxCount, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+  __mingw_ovr int __cdecl _vsprintf_l(char *_DstBuf, const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return _vsnprintf_l(_DstBuf, (size_t)-1, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _sprintf_l(char *_DstBuf, const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vsprintf_l(_DstBuf, _Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+
+  __mingw_ovr int __cdecl _vscprintf_l(const char *_Format, _locale_t _Locale, va_list _ArgList)
+  {
+    return __stdio_common_vsprintf(_CRT_INTERNAL_PRINTF_STANDARD_SNPRINTF_BEHAVIOR, NULL, 0, _Format, _Locale, _ArgList);
+  }
+  __mingw_ovr int __cdecl _scprintf_l(const char *_Format, _locale_t _Locale, ...)
+  {
+    __builtin_va_list _ArgList;
+    int _Ret;
+    __builtin_va_start(_ArgList, _Locale);
+    _Ret = _vscprintf_l(_Format, _Locale, _ArgList);
+    __builtin_va_end(_ArgList);
+    return _Ret;
+  }
+#else /* _UCRT */
+  int __cdecl fprintf_s(FILE *_File,const char *_Format,...);
+  _CRTIMP int __cdecl _fscanf_s_l(FILE *_File,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl fscanf_s(FILE *_File, const char *_Format, ...);
+  int __cdecl printf_s(const char *_Format,...);
+  _CRTIMP int __cdecl _scanf_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _scanf_s_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl scanf_s(const char *_Format, ...);
+  _CRTIMP int __cdecl _snprintf_c(char *_DstBuf,size_t _MaxCount,const char *_Format,...);
+  _CRTIMP int __cdecl _vsnprintf_c(char *_DstBuf,size_t _MaxCount,const char *_Format,va_list _ArgList);
+
+  _CRTIMP int __cdecl _fscanf_l(FILE *_File,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _sscanf_l(const char *_Src,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _sscanf_s_l(const char *_Src,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl sscanf_s(const char *_Src,const char *_Format,...);
+  _CRTIMP int __cdecl _snscanf_s(const char *_Src,size_t _MaxCount,const char *_Format,...);
+  _CRTIMP int __cdecl _snscanf_l(const char *_Src,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _snscanf_s_l(const char *_Src,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  int __cdecl vfprintf_s(FILE *_File,const char *_Format,va_list _ArgList);
+  int __cdecl vprintf_s(const char *_Format,va_list _ArgList);
+
+  int __cdecl vsnprintf_s(char *_DstBuf,size_t _DstSize,size_t _MaxCount,const char *_Format,va_list _ArgList);
+
+  _CRTIMP int __cdecl _vsnprintf_s(char *_DstBuf,size_t _DstSize,size_t _MaxCount,const char *_Format,va_list _ArgList);
+
+  _SECIMP int __cdecl vsprintf_s(char *_DstBuf,size_t _Size,const char *_Format,va_list _ArgList);
+
+  _SECIMP int __cdecl sprintf_s(char *_DstBuf,size_t _DstSize,const char *_Format,...);
+
+  _CRTIMP int __cdecl _snprintf_s(char *_DstBuf,size_t _DstSize,size_t _MaxCount,const char *_Format,...);
+
+  _CRTIMP int __cdecl _fprintf_p(FILE *_File,const char *_Format,...);
+  _CRTIMP int __cdecl _printf_p(const char *_Format,...);
+  _CRTIMP int __cdecl _sprintf_p(char *_Dst,size_t _MaxCount,const char *_Format,...);
+  _CRTIMP int __cdecl _vfprintf_p(FILE *_File,const char *_Format,va_list _ArgList);
+  _CRTIMP int __cdecl _vprintf_p(const char *_Format,va_list _ArgList);
+  _CRTIMP int __cdecl _vsprintf_p(char *_Dst,size_t _MaxCount,const char *_Format,va_list _ArgList);
+  _CRTIMP int __cdecl _scprintf_p(const char *_Format,...);
+  _SECIMP int __cdecl _vscprintf_p(const char *_Format,va_list _ArgList);
+  _CRTIMP int __cdecl _printf_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _printf_p_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vprintf_l(const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _vprintf_p_l(const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _fprintf_l(FILE *_File,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _fprintf_p_l(FILE *_File,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vfprintf_l(FILE *_File,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _vfprintf_p_l(FILE *_File,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _sprintf_l(char *_DstBuf,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _sprintf_p_l(char *_DstBuf,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vsprintf_l(char *_DstBuf,const char *_Format,_locale_t,va_list _ArgList);
+  _CRTIMP int __cdecl _vsprintf_p_l(char *_DstBuf,size_t _MaxCount,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _scprintf_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _scprintf_p_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vscprintf_l(const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _vscprintf_p_l(const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _printf_s_l(const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vprintf_s_l(const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _fprintf_s_l(FILE *_File,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vfprintf_s_l(FILE *_File,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _sprintf_s_l(char *_DstBuf,size_t _DstSize,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vsprintf_s_l(char *_DstBuf,size_t _DstSize,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _snprintf_s_l(char *_DstBuf,size_t _DstSize,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vsnprintf_s_l(char *_DstBuf,size_t _DstSize,size_t _MaxCount,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _snprintf_l(char *_DstBuf,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _snprintf_c_l(char *_DstBuf,size_t _MaxCount,const char *_Format,_locale_t _Locale,...);
+  _CRTIMP int __cdecl _vsnprintf_l(char *_DstBuf,size_t _MaxCount,const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _vsnprintf_c_l(char *_DstBuf,size_t _MaxCount,const char *,_locale_t _Locale,va_list _ArgList);
+#endif /* !_UCRT */
+
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3(int,vsnprintf_s,char,_DstBuf,size_t,_MaxCount,const char*,_Format,va_list,_ArgList)
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3(int,_vsnprintf_s,char,_DstBuf,size_t,_MaxCount,const char*,_Format,va_list,_ArgList)
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2(int, vsprintf_s, char, _DstBuf, const char*, _Format, va_list, _ArgList)
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1_ARGLIST(int,sprintf_s,vsprintf_s,char,_DstBuf,const char*,_Format)
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2_ARGLIST(int,_snprintf_s,_vsnprintf_s,char,_DstBuf,size_t,_MaxCount,const char*,_Format)
+
+  _CRTIMP errno_t __cdecl fopen_s(FILE **_File,const char *_Filename,const char *_Mode);
+  _CRTIMP errno_t __cdecl freopen_s(FILE** _File, const char *_Filename, const char *_Mode, FILE *_Stream);
+
+  _CRTIMP char* __cdecl gets_s(char*,rsize_t);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0(char*,get_s,char,_DstBuf)
+
+  _CRTIMP errno_t __cdecl tmpfile_s(FILE **_File);
+
+  _CRTIMP errno_t __cdecl tmpnam_s(char*,rsize_t);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0(errno_t,tmpnam_s,char,_DstBuf)
+
+#if __MSVCRT_VERSION__ >= 0x800
+  _CRTIMP size_t __cdecl _fread_nolock_s(void *_DstBuf,size_t _DstSize,size_t _ElementSize,size_t _Count,FILE *_File);
+#endif
+
+_CRT_END_C_HEADER
 
 #endif

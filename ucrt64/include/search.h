@@ -9,14 +9,13 @@
 #include <crtdefs.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+_CRT_BEGIN_C_HEADER
 
 #ifndef _CRT_ALGO_DEFINED
 #define _CRT_ALGO_DEFINED
   void *__cdecl bsearch(const void *_Key,const void *_Base,size_t _NumOfElements,size_t _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *));
   void __cdecl qsort(void *_Base,size_t _NumOfElements,size_t _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *));
+  _CRTIMP void __cdecl qsort_s(void *_Base,size_t _NumOfElements,size_t _SizeOfElements,int (__cdecl *_PtFuncCompare)(void *,const void *,const void *),void *_Context);
 #endif
   _CRTIMP void *__cdecl _lfind(const void *_Key,const void *_Base,unsigned int *_NumOfElements,unsigned int _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *));
   _CRTIMP void *__cdecl _lsearch(const void *_Key,void *_Base,unsigned int *_NumOfElements,unsigned int _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *));
@@ -25,6 +24,9 @@ extern "C" {
   void *__cdecl lfind(const void *_Key,const void *_Base,unsigned int *_NumOfElements,unsigned int _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *)) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
   void *__cdecl lsearch(const void *_Key,void *_Base,unsigned int *_NumOfElements,unsigned int _SizeOfElements,int (__cdecl *_PtFuncCompare)(const void *,const void *)) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
+
+  _CRTIMP void *__cdecl _lfind_s(const void *_Key,const void *_Base,unsigned int *_NumOfElements,size_t _SizeOfElements,int (__cdecl *_PtFuncCompare)(void *,const void *,const void *),void *_Context);
+  _CRTIMP void *__cdecl _lsearch_s(const void *_Key,void *_Base,unsigned int *_NumOfElements,size_t _SizeOfElements,int (__cdecl *_PtFuncCompare)(void *,const void *,const void *),void *_Context);
 
 /*
 Documentation for these POSIX definitions and prototypes can be found in 
@@ -66,10 +68,6 @@ void __cdecl twalk (const void *, void (*)(const void *, VISIT, int));
 void __cdecl tdestroy(void *, void (*)(void *))  __MINGW_ATTRIB_NONNULL (2);
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-#include <sec_api/search_s.h>
+_CRT_END_C_HEADER
 
 #endif

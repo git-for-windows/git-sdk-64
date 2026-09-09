@@ -5,7 +5,7 @@
 # Prepare a package to use libtool.
 # Written by Gary V. Vaughan <gary@gnu.org>, 2003
 
-# Copyright (C) 2003-2019, 2021-2024 Free Software Foundation, Inc.
+# Copyright (C) 2003-2019, 2021-2026 Free Software Foundation, Inc.
 # This is free software; see the source for copying conditions.  There is NO
 # warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
@@ -20,7 +20,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 ## ------ ##
@@ -2696,7 +2696,7 @@ test extract-trace = "$progname" && func_main "$@"
 # End:
 
 # Set a version string.
-scriptversion='(GNU libtool) 2.5.4'
+scriptversion='(GNU libtool) 2.6.2'
 
 # func_version
 # ------------
@@ -3072,6 +3072,33 @@ func_copy ()
     else
       my_copycmd=$LN_S
       my_copy_type=linking
+
+      # The Windows linker, mklink, swaps link_name and target.
+      case $my_copycmd in
+      *mklink*)
+        my_temp=$my_destfile
+        my_destfile=$my_srcfile
+        my_srcfile=$my_temp
+
+        my_copy_msg="$my_copy_type file '$my_destfile'"
+        $opt_verbose && my_copy_msg="$my_copycmd $my_srcfile $my_destdir"
+
+        my_destfile=`cygpath -aw "$my_destfile"`
+        my_srcfile=`cygpath -aw "$my_srcfile"`
+
+        if test -d "$my_destfile"; then
+          case $host_os,$build_os in
+          mingw*,cygwin*)
+            my_copycmd="$my_copycmd /d" ;;
+          mingw*,*) # MSYS
+            my_copycmd="$my_copycmd //d" ;;
+          *)
+            my_copycmd="$my_copycmd /d" ;;
+          esac
+        fi
+      ;;
+      *) ;;
+      esac
     fi
     my_copy_msg="$my_copy_type file '$my_destfile'"
     $opt_verbose && my_copy_msg="$my_copycmd $my_srcfile $my_destdir"

@@ -12,23 +12,7 @@
 #include <stdio.h>
 #endif
 
-#pragma pack(push,_CRT_PACKING)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef NULL
-#ifdef __cplusplus
-#ifndef _WIN64
-#define NULL 0
-#else
-#define NULL 0LL
-#endif  /* W64 */
-#else
-#define NULL ((void *)0)
-#endif
-#endif
+_CRT_BEGIN_C_HEADER
 
 /**
  * Internal CRT stuff.
@@ -151,9 +135,6 @@ unsigned int __cdecl __mingw_filename_cp(void);
 /* Variant of _isleadbyte_l() function which takes codepage (instead of _locale_t). */
 int __cdecl __mingw_isleadbyte_cp(int c, unsigned int cp);
 
-#ifdef __cplusplus
-}
-#endif
+_CRT_END_C_HEADER
 
-#pragma pack(pop)
 #endif

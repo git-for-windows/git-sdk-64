@@ -149,7 +149,7 @@ int BN_is_prime_fasttest_ex(const BIGNUM *p, int nchecks, BN_CTX *ctx,
 
 <p>BN_is_prime_ex(), BN_is_prime_fasttest_ex(), BN_is_prime(), BN_is_prime_fasttest() and BN_check_prime return 0 if the number is composite, 1 if it is prime with an error probability of less than 0.25^<b>nchecks</b>, and -1 on error.</p>
 
-<p>BN_generate_prime() returns the prime number on success, <b>NULL</b> otherwise.</p>
+<p>BN_generate_prime() returns the prime number on success, <b>NULL</b> otherwise. Please note that the <b>ret</b> BIGNUM is freed on failure and must not be used or freed by the caller in such case.</p>
 
 <p>BN_GENCB_new returns a pointer to a BN_GENCB structure on success, or <b>NULL</b> otherwise.</p>
 
@@ -188,7 +188,7 @@ BN_GENCB_free(callback);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

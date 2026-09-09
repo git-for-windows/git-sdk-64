@@ -214,9 +214,11 @@ If an unknown option is given, an error message is output; the exit code is 0.
 </p>
 <p>
 <b>--colo[u]r[=&#60;always,auto,never&#62;]</b>
-By default, the output is coloured if the output file is a terminal (<b>auto</b>).
-Force or suppress output of ANSI colour escapes with <b>always</b> and <b>never</b>
-respectively.
+With <b>auto</b>, the output is coloured if the output is to a terminal. Force or
+suppress output of ANSI colour escapes with <b>always</b> (or no specifier
+provided) and <b>never</b> respectively. If no colour option is provided, the
+default is <b>auto</b>, unless the NO_COLOR environment variable is defined and
+non-empty.
 </p>
 <p>
 <b>-d</b>
@@ -861,7 +863,7 @@ when it can never be used.
 The <b>framesize</b> modifier shows the size, in bytes, of each storage frame
 used by <b>pcre2_match()</b> for handling backtracking. The size depends on the
 number of capturing parentheses in the pattern. A vector of these frames is
-used at matching time; its overall size is shown when the <b>heaframes_size</b>
+used at matching time; its overall size is shown when the <b>heapframes_size</b>
 subject modifier is set.
 </p>
 <p>
@@ -2303,7 +2305,7 @@ Cambridge, England.
 </p>
 <h2><a name="SEC21" href="#TOC1">REVISION</a></h2>
 <p>
-Last updated: 12 October 2025
+Last updated: 22 August 2026
 <br>
 Copyright &copy; 1997-2024 University of Cambridge.
 <br>

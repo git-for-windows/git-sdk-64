@@ -1,0 +1,19 @@
+# p11-kit(8) completion                                       -*- shell-script -*-
+
+_p11-kit()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    if [[ $cur == -* ]]; then
+        local opts="--help --verbose -q --quiet"
+        COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+        return
+    elif [[ $cword -eq 1 ]]; then
+        local commands='list-mechanisms generate-keypair import-object export-object delete-object list-objects add-profile delete-profile list-profiles list-modules list-tokens print-config extract server remote'
+        COMPREPLY=( $(compgen -W "$commands" -- "$cur") )
+    fi
+} &&
+complete -F _p11-kit p11-kit
+
+# ex: filetype=sh

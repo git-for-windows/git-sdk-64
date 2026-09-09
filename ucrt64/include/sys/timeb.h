@@ -12,40 +12,7 @@
 #error Only Win32 target is supported!
 #endif
 
-#pragma pack(push,_CRT_PACKING)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef _CRTIMP
-#define _CRTIMP __declspec(dllimport)
-#endif
-
-#ifdef _USE_32BIT_TIME_T
-#ifdef _WIN64
-#undef _USE_32BIT_TIME_T
-#endif
-#endif
-
-#ifndef _TIME32_T_DEFINED
-  typedef long __time32_t;
-#define _TIME32_T_DEFINED
-#endif
-
-#ifndef _TIME64_T_DEFINED
-  __MINGW_EXTENSION typedef __int64 __time64_t;
-#define _TIME64_T_DEFINED
-#endif
-
-#ifndef _TIME_T_DEFINED
-#ifdef _USE_32BIT_TIME_T
-  typedef __time32_t time_t;
-#else
-  typedef __time64_t time_t;
-#endif
-#define _TIME_T_DEFINED
-#endif
+_CRT_BEGIN_C_HEADER
 
 #ifndef _TIMEB_DEFINED
 #define _TIMEB_DEFINED
@@ -77,6 +44,8 @@ extern "C" {
 
   _CRTIMP void __cdecl _ftime64(struct __timeb64 *_Time);
   _CRTIMP void __cdecl _ftime32(struct __timeb32 *_Time);
+  _CRTIMP errno_t __cdecl _ftime64_s(struct __timeb64 *_Time);
+  _CRTIMP errno_t __cdecl _ftime32_s(struct __timeb32 *_Time);
 
 /*
  * To prevent ABI issues, the mingw-w64 runtime should not call the
@@ -86,9 +55,11 @@ extern "C" {
 #ifndef _USE_32BIT_TIME_T
 #define _timeb __timeb64
 #define _ftime _ftime64
+#define _ftime_s _ftime64_s
 #else
 #define _timeb __timeb32
 #define _ftime _ftime32
+#define _ftime_s _ftime32_s
 #endif
 #endif /* _CRTBLD */
 
@@ -129,11 +100,6 @@ struct itimerspec {
 #endif
 #endif /* _CRTBLD */
 
-#ifdef __cplusplus
-}
-#endif
+_CRT_END_C_HEADER
 
-#pragma pack(pop)
-
-#include <sec_api/sys/timeb_s.h>
 #endif

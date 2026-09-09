@@ -9,9 +9,9 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Thu Apr  2 19:54:57 UTC 2026
+ * Configuration time: Tue Aug  4 08:26:28 UTC 2026
  * Configured by     : runneradmin
- * Target system     : cygwin_nt-10.0-20348 runnervm1t8t9 3.6.7-f2802c5f.x86_64 2026-03-15 08:40 utc x86_64 cygwin 
+ * Target system     : cygwin_nt-10.0-20348 runnervmfqxbp 3.6.10-8fbd9808.x86_64 2026-07-31 07:26 utc x86_64 cygwin 
  */
 
 #ifndef _config_h_
@@ -1375,7 +1375,7 @@
  *	feature tests from Configure are generally more reliable.
  */
 #define OSNAME "cygwin"		/**/
-#define OSVERS "3.6.7-f2802c5f.x86_64"		/**/
+#define OSVERS "3.6.10-8fbd9808.x86_64"		/**/
 
 /* CAT2:
  *	This macro concatenates 2 tokens together.

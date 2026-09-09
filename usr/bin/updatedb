@@ -1,6 +1,6 @@
 #! /bin/sh
 # updatedb -- build a locate pathname database
-# Copyright (C) 1994-2024 Free Software Foundation, Inc.
+# Copyright (C) 1994-2026 Free Software Foundation, Inc.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 #set -x
 
 version='
-updatedb (GNU findutils) 4.10.0
-Copyright (C) 1994-2024 Free Software Foundation, Inc.
+updatedb (GNU findutils) 4.11.0
+Copyright (C) 1994-2026 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -39,7 +39,7 @@ Written by Eric B. Decker, James Youngman, and Kevin Dalley.
 # character encoding errors in text-based tools like "sort".  To avoid
 # this, we set LC_ALL=C.  This will, presumably, not work perfectly on
 # systems where LC_ALL is not the way to do locale configuration or
-# some other seting can override this.
+# some other setting can override this.
 LC_ALL=C
 export LC_ALL
 
@@ -147,7 +147,7 @@ select_shell() {
 # Any global options for find?
 : ${FINDOPTIONS=}
 
-# What shell shoud we use?  We should use a POSIX-ish sh.
+# What shell should we use?  We should use a POSIX-ish sh.
 : ${SHELL="/bin/sh"}
 
 # Non-network directories to put in the database.
@@ -242,14 +242,14 @@ checkbinary () {
     if test -x "$1" ; then
 	: ok
     else
-      eval echo "updatedb needs to be able to execute $1, but cannot." >&2
+      echo "updatedb needs to be able to execute '$1', but cannot." >&2
       exit 1
     fi
 }
 
-for binary in $find $frcode
+for binary in "$find" "$frcode"
 do
-  checkbinary $binary
+  checkbinary "$binary"
 done
 
 

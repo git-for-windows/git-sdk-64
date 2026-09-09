@@ -1,0 +1,67 @@
+# trust(1) completion                                       -*- shell-script -*-
+
+_trust()
+{
+    local cur prev words cword
+    _init_completion || return
+
+    local commands command
+
+    commands='list extract extract-compat anchor dump check-format'
+
+    if [[ $cword -eq 1 ]]; then
+        COMPREPLY=( $(compgen -W "$commands" -- "$cur") )
+    else
+        command=${words[1]}
+        case $prev in
+            --filter)
+                list=""
+                case $command in
+                    extract|list)
+                        list="ca-anchors trust-policy blocklist certificates pkcs11:"
+                        ;;
+                    dump)
+                        list="all pkcs11:"
+                        ;;
+                esac
+                COMPREPLY=( $(compgen -W "$list" -- "$cur") )
+                return
+                ;;
+            --purpose)
+                COMPREPLY=( $(compgen -W "server-auth client-auth email code-signing" -- "$cur") )
+                return
+                ;;
+            --format)
+                options='x509-file x509-directory pem-bundle pem-directory
+                    pem-directory-hash openssl-bundle openssl-directory
+                    java-cacarts'
+                COMPREPLY=( $(compgen -W "$options" -- "$cur") )
+                return
+                ;;
+        esac
+
+        if [[ "$cur" == -* ]]; then
+            # possible options for the command
+            case $command in
+                list)
+                    options='--filter --purpose'
+                    ;;
+                extract)
+                    options='--comment --filter --format --overwrite --purpose'
+                    ;;
+                anchor)
+                    options='--remove --store'
+                    ;;
+                dump)
+                    options='--filter'
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "$options --verbose --help --quiet" -- "$cur") )
+        else
+            _filedir
+        fi
+    fi
+} &&
+complete -F _trust trust
+
+# ex: filetype=sh

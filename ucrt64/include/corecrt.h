@@ -9,10 +9,12 @@
 
 #include <_mingw.h>
 
+_CRT_BEGIN_C_HEADER
+
 #ifndef __WIDL__
+/* Obsolete because of buggy behaviour */
 #undef _CRT_PACKING
 #define _CRT_PACKING 8
-#pragma pack(push,_CRT_PACKING)
 #endif
 
 #ifdef __ERRCODE_DEFINED_MS
@@ -139,6 +141,16 @@ typedef __time64_t time_t;
 #endif
 #endif /* _TIME_T_DEFINED */
 
+#if defined(_UCRT) || defined(__LARGE_MBSTATE_T)
+  typedef struct _Mbstatet {
+    unsigned long _Wchar;
+    unsigned short _Byte, _State;
+  } _Mbstatet;
+  typedef _Mbstatet mbstate_t;
+#else
+  typedef int mbstate_t;
+#endif
+
 #ifndef _CRT_SECURE_CPP_NOTHROW
 #define _CRT_SECURE_CPP_NOTHROW throw()
 #endif
@@ -150,6 +162,52 @@ typedef __time64_t time_t;
 #define __CRTDECL __cdecl
 #endif
 #endif
+
+#ifndef _CONST_RETURN
+#ifdef __cplusplus
+#define _CONST_RETURN const
+#define _CRT_CONST_CORRECT_OVERLOADS
+#else
+#define _CONST_RETURN
+#endif
+#endif
+
+#define _WConst_return _CONST_RETURN
+
+#ifndef _STATIC_ASSERT
+#if (defined(__cpp_static_assert) && __cpp_static_assert >= 201411L) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
+#define _STATIC_ASSERT(expr) static_assert(expr)
+#elif defined(__cpp_static_assert)
+#define _STATIC_ASSERT(expr) static_assert(expr, #expr)
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
+#define _STATIC_ASSERT(expr) _Static_assert(expr, #expr)
+#elif defined(_MSC_VER)
+#define _STATIC_ASSERT(expr) typedef char __static_assert_t[(expr)]
+#else
+#define _STATIC_ASSERT(expr) extern void __static_assert_t(int [(expr)?1:-1])
+#endif
+#endif
+
+#ifndef NULL
+#ifdef __cplusplus
+#ifndef _WIN64
+#define NULL 0
+#else
+#define NULL 0LL
+#endif  /* W64 */
+#else
+#define NULL ((void *)0)
+#endif
+#endif
+
+#if defined(__LIBMSVCRT__)
+/* When building mingw-w64, this should be blank.  */
+#define _SECIMP
+#else
+#ifndef _SECIMP
+#define _SECIMP __declspec(dllimport)
+#endif /* _SECIMP */
+#endif /* defined(__LIBMSVCRT__) */
 
 #ifdef _DEBUG
 _CRTIMP void __cdecl _invalid_parameter(const wchar_t *expression, const wchar_t *function_name, const wchar_t *file_name, unsigned int line_number, __UINTPTR_TYPE__ reserved);
@@ -469,8 +527,6 @@ typedef struct tagLC_ID {
 #endif /* !WINAPI_FAMILY */
 #endif /* _CRT_USE_WINAPI_FAMILY_DESKTOP_APP */
 
-#ifndef __WIDL__
-#pragma pack(pop)
-#endif
+_CRT_END_C_HEADER
 
 #endif /* _INC_CORECRT */

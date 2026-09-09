@@ -59,7 +59,8 @@ int OSSL_FUNC_kem_encapsulate(void *ctx, unsigned char *out, size_t *outlen,
                               unsigned char *secret, size_t *secretlen);
 
 /* Decapsulation */
-int OSSL_FUNC_kem_decapsulate_init(void *ctx, void *provkey);
+int OSSL_FUNC_kem_decapsulate_init(void *ctx, void *provkey,
+                                   const OSSL_PARAM params[]);
 int OSSL_FUNC_kem_auth_decapsulate_init(void *ctx, void *provkey,
                                         void *provauthkey,
                                         const OSSL_PARAM params[]);
@@ -119,7 +120,9 @@ OSSL_FUNC_kem_settable_ctx_params   OSSL_FUNC_KEM_SETTABLE_CTX_PARAMS</code></pr
 
 <h2 id="Asymmetric-Key-Encapsulation-Functions">Asymmetric Key Encapsulation Functions</h2>
 
-<p>OSSL_FUNC_kem_encapsulate_init() initialises a context for an asymmetric encapsulation given a provider side asymmetric kem context in the <i>ctx</i> parameter, a pointer to a provider key object in the <i>provkey</i> parameter and the <i>name</i> of the algorithm. The <i>params</i>, if not NULL, should be set on the context in a manner similar to using OSSL_FUNC_kem_set_ctx_params(). The key object should have been previously generated, loaded or imported into the provider using the key management (OSSL_OP_KEYMGMT) operation (see provider-keymgmt(7)&gt;.</p>
+<p>OSSL_FUNC_kem_encapsulate_init() initialises a context for an asymmetric encapsulation given a provider side asymmetric kem context in the <i>ctx</i> parameter, a pointer to a provider key object in the <i>provkey</i> parameter.</p>
+
+<p>The <i>params</i>, if not NULL, should be set on the context in a manner similar to using OSSL_FUNC_kem_set_ctx_params(). The key object should have been previously generated, loaded or imported into the provider using the key management (OSSL_OP_KEYMGMT) operation (see <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>.</p>
 
 <p>OSSL_FUNC_kem_auth_encapsulate_init() is similar to OSSL_FUNC_kem_encapsulate_init(), but also passes an additional authentication key <i>provauthkey</i> which cannot be NULL.</p>
 
@@ -129,7 +132,9 @@ OSSL_FUNC_kem_settable_ctx_params   OSSL_FUNC_KEM_SETTABLE_CTX_PARAMS</code></pr
 
 <h2 id="Decapsulation-Functions">Decapsulation Functions</h2>
 
-<p>OSSL_FUNC_kem_decapsulate_init() initialises a context for an asymmetric decapsulation given a provider side asymmetric kem context in the <i>ctx</i> parameter, a pointer to a provider key object in the <i>provkey</i> parameter, and a <i>name</i> of the algorithm. The key object should have been previously generated, loaded or imported into the provider using the key management (OSSL_OP_KEYMGMT) operation (see provider-keymgmt(7)&gt;.</p>
+<p>OSSL_FUNC_kem_decapsulate_init() initialises a context for an asymmetric decapsulation given a provider side asymmetric kem context in the <i>ctx</i> parameter, a pointer to a provider key object in the <i>provkey</i> parameter.</p>
+
+<p>The <i>params</i>, if not NULL, should be set on the context in a manner similar to using OSSL_FUNC_kem_set_ctx_params(). The key object should have been previously generated, loaded or imported into the provider using the key management (OSSL_OP_KEYMGMT) operation (see <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>.</p>
 
 <p>OSSL_FUNC_kem_auth_decapsulate_init() is similar to OSSL_FUNC_kem_decapsulate_init(), but also passes an additional authentication key <i>provauthkey</i> which cannot be NULL.</p>
 
@@ -187,7 +192,7 @@ OSSL_FUNC_kem_settable_ctx_params   OSSL_FUNC_KEM_SETTABLE_CTX_PARAMS</code></pr
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

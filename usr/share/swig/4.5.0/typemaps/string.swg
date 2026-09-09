@@ -1,0 +1,49 @@
+%ensure_fragment(SWIG_AsCharPtrAndSize)
+%ensure_fragment(SWIG_FromCharPtrAndSize)
+
+%types(char *);
+
+%fragment("SWIG_pchar_descriptor","header") {
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static swig_type_info* info = 0;
+  if (!info) {
+    info = SWIG_TypeQuery("_p_char");
+  }
+  return info;
+}
+}
+
+%fragment("SWIG_strnlen","header",fragment="SWIG_FromCharPtrAndSize") {
+SWIGINTERN size_t
+SWIG_strnlen(const char* s, size_t maxlen)
+{
+  const char *p;
+  for (p = s; maxlen-- && *p; p++)
+    ;
+  return (size_t)(p - s);
+}
+}
+
+%fragment("SWIG_NewCopyCharArray","header") {
+SWIGINTERNINLINE char *SWIG_NewCopyCharArray(const char *cptr, size_t size)
+{
+  char *ret = NULL;
+  if (size > 0 && cptr != NULL) {
+    ret = %new_array(size,char);
+    if (ret != NULL) {
+      memcpy(ret, cptr, size * sizeof(char));
+    }
+  }
+  return ret;
+}
+}
+
+%include <typemaps/strings.swg>
+%typemaps_string(%checkcode(STRING), %checkcode(CHAR),
+		 SWIGWARN_TYPEMAP_CHARLEAK_MSG,
+		 char, Char, SWIG_AsCharPtrAndSize, SWIG_FromCharPtrAndSize,
+		 strlen, SWIG_strnlen,
+		 SWIG_NewCopyCharArray,
+		"<limits.h>", CHAR_MIN, CHAR_MAX)

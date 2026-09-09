@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-migrate(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,8 +450,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs migrate</code> &lt;mode&gt; [options] [--] [branch &#8230;&#8203;]</p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs migrate</strong> <em>&lt;mode&gt;</em> [<em>options</em>] [<strong>--</strong>] [<em>branch</em> ...]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -631,10 +633,9 @@ those changes to your remotes.</p>
 </dd>
 <dt class="hdlist1"><code>--skip-fetch</code></dt>
 <dd>
-<p>  Assumes that the known set of remote references is complete, and should not be
-  refreshed when determining the set of "un-pushed" commits to migrate. Has no
-  effect when combined with
-<code>--include-ref</code> or <code>--exclude-ref</code>.</p>
+<p>Assumes that the known set of remote references is complete, and should not be
+refreshed when determining the set of "un-pushed" commits to migrate. Has no
+effect when combined with <code>--include-ref</code> or <code>--exclude-ref</code>.</p>
 </dd>
 <dt class="hdlist1"><code>--everything</code></dt>
 <dd>
@@ -701,11 +702,20 @@ change this behavior.</p>
 <dt class="hdlist1"><code>--unit=&lt;unit&gt;</code></dt>
 <dd>
 <p>Format the number of bytes in each entry as a quantity of the storage unit
-provided. Valid units include: * b, kib, mib, gib, tib, pib - for IEC storage
-units * b, kb, mb, gb, tb, pb - for SI storage units</p>
+provided. Valid units include:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>b, kib, mib, gib, tib, pib - for IEC storage units</p>
+</li>
+<li>
+<p>b, kb, mb, gb, tb, pb - for SI storage units</p>
 <div class="paragraph">
 <p>If a <code>--unit</code> is not specified, the largest unit that can fit the number
 of counted bytes as a whole number quantity is chosen.</p>
+</div>
+</li>
+</ul>
 </div>
 </dd>
 <dt class="hdlist1"><code>--pointers=[follow|no-follow|ignore]</code></dt>
@@ -1045,29 +1055,89 @@ option.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_migrate_without_rewriting_local_history">Migrate without rewriting local history</h3>
+<h3 id="_migrate_without_rewriting_local_history_using_migrate_import_no_rewrite">Migrate without rewriting local history (using migrate import --no-rewrite)</h3>
 <div class="paragraph">
 <p>You can also migrate files without modifying the existing history of
-your repository. Note that in the examples below, files in
-subdirectories are not included because they are not explicitly
-specified.</p>
+your repository.</p>
 </div>
 <div class="paragraph">
-<p>Without a specified commit message:</p>
+<p>Migrating to Git LFS in a single new commit, without specifying a commit message:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git lfs migrate import --no-rewrite test.zip *.mp3 *.psd</pre>
+<pre>$ git lfs track "*.zip" "*.mp3" "*.psd"
+$ git add .gitattributes
+$ git commit -m "add Git LFS attributes"
+
+$ git lfs migrate import --no-rewrite --yes test.zip audios/*.mp3 images/*.psd</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>With a specified commit message:</p>
+<p>Note that the <code><strong>.mp3</code> and <code></strong>.psd</code> filename patterns are not quoted and
+so will be expanded by the shell, not by the <code>git lfs migrate import</code>
+command.  See the remarks following the next example for further details.</p>
+</div>
+<div class="paragraph">
+<p>Migrating to Git LFS in a single new commit, with a specified commit message:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>$ git lfs migrate import --no-rewrite \
-  -m "Import test.zip, .mp3, .psd files in root of repo" \
-  test.zip *.mp3 *.psd</pre>
+<pre>$ git lfs track "*.zip" "*.mp3" "*.psd"
+$ git add .gitattributes
+$ git commit -m "add Git LFS attributes"
+
+$ git lfs migrate import --no-rewrite --yes \
+  -m "Import test.zip, audios/*.mp3, and images/*.psd files" \
+  test.zip audios/*.mp3 images/*.psd</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <code><strong>.mp3</code> and <code></strong>.psd</code> filename patterns are not quoted and
+so will be expanded by the shell, not by the <code>git lfs migrate import</code>
+command. Using quotation marks around such patterns with the
+<code>--no-rewrite</code> option is not supported, as the command expects a list
+of files (possibly as expanded by the shell) and will not search for
+all files matching a quoted filename pattern.</p>
+</div>
+<div class="paragraph">
+<p>Additional commands may be used to find and list all files matching a set
+of patterns, of course. In a POSIX-compliant environment such as Linux,
+macOS, or Git Bash on Windows, the example above could be combined with
+the <code>find(1)</code> and <code>sed(1)</code> commands as follows, so long as the resulting
+list of files does not cause the length of the expanded command line to
+exceed the maximum permitted by the shell:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git lfs migrate import --no-rewrite --yes \
+  $(find . -name "*.zip" -o -name "*.mp3" -o -name "*.psd" | sed "s/^\.\///")</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note also that the <code>git lfs track</code> command will by default change the
+modification timestamps on any existing files which match the given
+filename patterns so the files will appear "dirty" to Git and thereby
+prompt the user to convert them to Git LFS files. The subsequent
+<code>git lfs migrate import</code> command will then caution that the working tree
+contains modifications and ask the user for confirmation to proceed
+unless the <code>--yes</code> option is specified, as in the examples above.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migrate_without_rewriting_local_history_using_add_renormalize">Migrate without rewriting local history (using add --renormalize)</h3>
+<div class="paragraph">
+<p>As an alternative to using <code>git lfs migrate import</code> with the <code>--no-rewrite</code>
+option to migrate files to Git LFS without modifying the existing history
+of your repository, if you have Git v2.16.0 or higher installed, you can
+use the <code>--renormalize</code> option of the <code>git add</code> command to achieve
+the same result.  For example:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git lfs track "*.zip" "*.mp3" "*.psd"
+$ git add .gitattributes
+$ git add --renormalize .
+$ git commit -m "Import all *.zip, *.mp3, and *.psd files to Git LFS"</pre>
 </div>
 </div>
 </div>

@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>NAME_CONSTRAINTS_check</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>NAME_CONSTRAINTS_check, NAME_CONSTRAINTS_check_CN - check a certificate&#39;s names against a name constraints extension</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/x509v3.h&gt;
+
+int NAME_CONSTRAINTS_check(const X509 *x, NAME_CONSTRAINTS *nc);
+int NAME_CONSTRAINTS_check_CN(const X509 *x, NAME_CONSTRAINTS *nc);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>NAME_CONSTRAINTS_check() tests whether the names asserted by certificate <i>x</i> satisfy the name constraints <i>nc</i>. It implements the matching primitive of RFC 5280 section 4.2.1.10: given a constraint set (a <b>NAME_CONSTRAINTS</b> structure containing zero or more <b>permittedSubtrees</b> and <b>excludedSubtrees</b>) and a candidate certificate, decide whether the certificate&#39;s names fall within the permitted subtrees and outside the excluded subtrees.</p>
+
+<p>The names considered by NAME_CONSTRAINTS_check() are:</p>
+
+<ul>
+
+<li><p>The certificate&#39;s subject distinguished name, matched as a <b>directoryName</b> general-name type. The subject is considered only when it is nonempty.</p>
+
+</li>
+<li><p>Each <b>emailAddress</b> attribute appearing within the subject distinguished name, matched as an <b>rfc822Name</b> general-name type. These attributes are the historical, pre-SAN way of expressing an email address in a certificate&#39;s subject, and RFC 5280 requires that they be subjected to name-constraint checking.</p>
+
+</li>
+<li><p>Each entry in the certificate&#39;s subject alternative name extension, matched according to its declared general-name type.</p>
+
+</li>
+</ul>
+
+<p>NAME_CONSTRAINTS_check() implements matching for the following general-name types: <b>directoryName</b>, <b>dNSName</b>, <b>rfc822Name</b>, <b>uniformResourceIdentifier</b>, and <b>iPAddress</b>. The <b>otherName</b> form <b>id-on-SmtpUTF8Mailbox</b> (RFC 8398) is additionally matched against <b>rfc822Name</b> subtrees. Any other general-name type, including <b>x400Address</b>, <b>ediPartyName</b>, <b>registeredID</b>, and other <b>otherName</b> forms, yields <b>X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE</b>.</p>
+
+<p>For each name considered, the function evaluates two conditions:</p>
+
+<ul>
+
+<li><p>If <i>nc</i> contains at least one <b>permittedSubtree</b> of the same general-name type as the name, the name must match at least one of those permitted subtrees. If <i>nc</i> contains no permitted subtrees of that type, no permitted-subtrees test is imposed on names of that type.</p>
+
+</li>
+<li><p>The name must not match any <b>excludedSubtree</b> of the same general-name type in <i>nc</i>.</p>
+
+</li>
+</ul>
+
+<p>The function returns at the first violation encountered; it does not collect or report multiple failures.</p>
+
+<p>For <b>dNSName</b> entries, matching follows the byte/label algorithm of RFC 5280 section 4.2.1.10, which RFC 5280 mandates when no protocol-specific matching rules apply. Because this match is performed without awareness of any specific higher-level protocol, additional matching rules defined by later or more specific protocols must be applied independently of this function to the certificate chain.</p>
+
+<p>NAME_CONSTRAINTS_check() performs only the constraint match for a single certificate against a single constraint set. It does <b>not</b> perform the chain-wide enforcement of RFC 5280 section 6.1.4(g)-(j): callers wishing to enforce name constraints across an entire certification path must walk the chain themselves and apply each ancestor&#39;s constraint set to certificates lower in the chain, observing the usual exceptions (for example, self-issued intermediate certificates are exempt from constraints imposed by certificates above them, except when they are the leaf of the chain). For full RFC 5280 name-constraint enforcement integrated with chain validation, applications should use <a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a>, which performs this internally.</p>
+
+<p>NAME_CONSTRAINTS_check() enforces an implementation limit on the product of the certificate&#39;s name count and the constraint set&#39;s subtree count, to prevent computationally expensive matching on pathological input. If that limit is exceeded the function returns <b>X509_V_ERR_UNSPECIFIED</b> without performing any matching. The current limit is 2**20 (1,048,576) on the product of the name count (subject DN entries plus <b>subjectAltName</b> entries) and the subtree count (<b>permittedSubtrees</b> plus <b>excludedSubtrees</b>).</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>NAME_CONSTRAINTS_check() returns <b>X509_V_OK</b> if every name considered satisfies the constraints. Otherwise it returns one of the following <b>X509_V_ERR_*</b> codes:</p>
+
+<dl>
+
+<dt id="X509_V_ERR_PERMITTED_VIOLATION"><b>X509_V_ERR_PERMITTED_VIOLATION</b></dt>
+<dd>
+
+<p>A name of a type for which <i>nc</i> contains at least one permitted subtree failed to match any of those subtrees.</p>
+
+</dd>
+<dt id="X509_V_ERR_EXCLUDED_VIOLATION"><b>X509_V_ERR_EXCLUDED_VIOLATION</b></dt>
+<dd>
+
+<p>A name matched an excluded subtree.</p>
+
+</dd>
+<dt id="X509_V_ERR_SUBTREE_MINMAX"><b>X509_V_ERR_SUBTREE_MINMAX</b></dt>
+<dd>
+
+<p>A subtree in <i>nc</i> specified a <b>minimum</b> other than 0 or a <b>maximum</b> at all. RFC 5280 requires that these <b>GeneralSubtree</b> fields not be used, and a constraint set that uses them cannot be processed.</p>
+
+</dd>
+<dt id="X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE"><b>X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE</b></dt>
+<dd>
+
+<p>A general-name type for which matching is not implemented was encountered. The list of supported types is given in the DESCRIPTION above.</p>
+
+</dd>
+<dt id="X509_V_ERR_UNSUPPORTED_NAME_SYNTAX"><b>X509_V_ERR_UNSUPPORTED_NAME_SYNTAX</b></dt>
+<dd>
+
+<p>A name in the certificate is encoded in a way that cannot be matched (for example, an <b>emailAddress</b> attribute in the subject that is not encoded as an <b>IA5String</b>).</p>
+
+</dd>
+<dt id="X509_V_ERR_UNSPECIFIED"><b>X509_V_ERR_UNSPECIFIED</b></dt>
+<dd>
+
+<p>The product of the certificate&#39;s name count and the constraint set&#39;s subtree count exceeded the implementation limit; no matching was performed.</p>
+
+</dd>
+</dl>
+
+<p>Other <b>X509_V_ERR_*</b> codes may be returned by deeper name-matching helpers (for example, codes arising from individual general-name type comparisons). Callers should treat the return value as the authoritative success/failure signal and treat any value other than <b>X509_V_OK</b> as a failure, rather than enumerating the specific codes above.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>NAME_CONSTRAINTS_check() does not match the certificate&#39;s commonName against <b>dNSName</b> name constraints; that check is provided by a separate function, <b>NAME_CONSTRAINTS_check_CN</b>(). The commonName-as-DNS-identity practice is a legacy concern: modern certificates assert DNS identities through <b>dNSName</b> entries in the subject alternative name extension, which NAME_CONSTRAINTS_check() already covers. NAME_CONSTRAINTS_check_CN() is required only for older certificates that express a DNS identity through their commonName instead of, or in addition to, the SAN; for certificates conforming to modern profiles a call to NAME_CONSTRAINTS_check() alone is generally sufficient.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>RFC 9525&#39;s wildcard semantics apply only to presented-identifier matching for TLS service identity, and explicitly call out they are not valid for any other purpose; they do not define wildcard handling for name-constraint matching. NAME_CONSTRAINTS_check() therefore follows RFC 5280&#39;s requirements for when this is undefined, and treats the <b>*</b> character in a <b>dNSName</b> as a literal label component, per the RFC 5280 algorithm, which is often contrary to caller expectation.</p>
+
+<p>Even if specified in the future, due to the &quot;fallback implementation&quot; nature of matching wildcards in SAN <b>dNSName</b> entries specified by RFC 5280, name constraint behaviour in the presence of wildcards should not be strictly relied upon across implementations and protocols. This matters most for the use of <b>excluded names</b> constraints, which should not be relied upon to reliably constrain signing certificates for a PKI in a security dependent manner unless the consumers of these certificates are themselves known to be constrained by other means to only use implementations that provide different semantics, or the PKI can be constrained by other means to ensure that wildcards are never issued from such signing certificates.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set_flags.html">X509_VERIFY_PARAM_set_flags(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>NAME_CONSTRAINTS_check() was added in OpenSSL 1.0.0.</p>
+
+<p>NAME_CONSTRAINTS_check_CN() was added in OpenSSL 1.1.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

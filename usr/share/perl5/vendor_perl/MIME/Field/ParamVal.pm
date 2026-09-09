@@ -80,7 +80,7 @@ use MIME::Tools qw(:config :msgs);
 #------------------------------
 
 # The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.517";
+$VERSION = "5.518";
 
 
 #------------------------------
@@ -90,7 +90,7 @@ $VERSION = "5.517";
 #------------------------------
 
 # Pattern to match parameter names (like fieldnames, but = not allowed):
-my $PARAMNAME = '[^\x00-\x1f\x80-\xff :=]+';
+my $PARAMNAME = '[^\x00-\x1f\x80-\xff :=]+?';
 
 # Pattern to match the first value on the line:
 my $FIRST    = '[^\s\;\x00-\x1f\x80-\xff]*';
@@ -110,12 +110,18 @@ my $QUOTED_STRING = '"([^\\\\"]*(?:\\\\.(?:[^\\\\"]*))*)"';
 # Encoded token:
 my $ENCTOKEN = "=\\?[^?]*\\?[A-Za-z]\\?[^?]+\\?=";
 
+# pattern to match comments
+my $COMMENT  = '\([^\)]*\)';
+
 # Pattern to match spaces or comments:
-my $SPCZ     = '(?:\s|\([^\)]*\))*';
+my $SPCZ     = '(?:\s|' . $COMMENT . ')*';
 
 # Pattern to match non-semicolon as fallback for broken MIME
 # produced by some viruses
 my $BADTOKEN = '[^;]+';
+
+# Pattern to match whitespace allowed in header
+my $WSP      = '[\t\ ]';
 
 #------------------------------
 #
@@ -237,13 +243,25 @@ sub parse_params {
     $raw =~ m/\A$SPCZ($FIRST)$SPCZ/og or return {};    # nada!
     $params{'_'} = $1;
 
+    my $boundary_leftover = 0;
+    my $saw_semicolon= 0;
+
     # Extract subsequent parameters.
     # No, we can't just "split" on semicolons: they're legal in quoted strings!
     while (1) {                     # keep chopping away until done...
-	$raw =~ m/\G[^;]*(\;$SPCZ)+/og or last;             # skip leading separator
-	$raw =~ m/\G($PARAMNAME)\s*=\s*/og or last;      # give up if not a param
+	$saw_semicolon = 0;
+	$raw =~ m/\G([^;]*)(\;$SPCZ)+/ogc or last;             # skip leading separator
+	my $leftover = $1;
+	$saw_semicolon = 1;
+
+	# the previous param was 'boundary' and we had leftover data
+	if (defined($leftover) && length($leftover) > 0 && defined($param) && $param eq 'boundary') {
+	    $boundary_leftover = 1;
+	}
+
+	$raw =~ m/\G($PARAMNAME)($COMMENT|$WSP)*=($COMMENT|$WSP)*/ogc or last;      # give up if not a param
 	$param = lc($1);
-	$raw =~ m/\G(?:$QUOTED_STRING|($ENCTOKEN)|($TOKEN)|($BADTOKEN)|())/g or last;
+	$raw =~ m/\G(?:$QUOTED_STRING|($ENCTOKEN)|($TOKEN)|($BADTOKEN)|())/gc or last;
 	my ($qstr, $enctoken, $token, $badtoken, $empty_value) = ($1, $2, $3, $4, $5);
 	if (defined($qstr)) {
             # unescape
@@ -251,16 +269,23 @@ sub parse_params {
 	}
 	if (defined($badtoken)) {
 	    # Strip leading/trailing whitespace from badtoken
-	    $badtoken =~ s/^\s+//;
-	    $badtoken =~ s/\s+\z//;
+	    $badtoken =~ s/^$WSP+//;
+	    $badtoken =~ s/$WSP+\z//;
 
 	    # Only keep token parameters in badtoken;
 	    # cut it off at the first non-token char.  CPAN RT #105455
+	    my $old_badtoken = $badtoken;
 	    $badtoken =~ /^($TOKEN)*/;
 	    $badtoken = $1;
 	    if (defined($badtoken)) {
 		    # Cut it off at first whitespace too
 		    $badtoken =~ s/\s.*//;
+	    }
+
+	    # there was a leftover after the last valid token
+	    if ($param eq 'boundary') {
+		$boundary_leftover = 1 if defined($badtoken) && $badtoken ne $old_badtoken;
+		$boundary_leftover = 1 if !defined($badtoken) && length($old_badtoken) > 0;
 	    }
 	}
 	$val = defined($qstr) ? $qstr :
@@ -268,6 +293,12 @@ sub parse_params {
 	     (defined($badtoken) ? $badtoken :
               (defined($token) ? $token : $empty_value)));
 
+        # Mark parse ambiguous if boundary parameter is encoded
+        if ($param eq 'boundary') {
+                if (defined($val) && $val =~ /^=\?.*\?[A-Z]\?.*\?=$/i) {
+                        $params{'@boundary_ambiguous'} = 1;
+                }
+        }
 	# Do RFC 2231 processing
 	# Pick out the parts of the parameter
 	if ($param =~ /\*/ &&
@@ -298,6 +329,14 @@ sub parse_params {
         }
     }
 
+    # the last field was 'boundary' and there were non separator characters left
+    my $pos = pos($raw);
+    if (($param // '') eq 'boundary' && defined($pos) && $pos < length($raw) && !$saw_semicolon) {
+	$boundary_leftover = 1;
+    }
+
+    my $boundary_is_rfc2231 = 0;
+
     # Extract reconstructed parameters
     foreach $param (keys %rfc2231params) {
 	# If we got any rfc-2231 parameters, then
@@ -310,6 +349,9 @@ sub parse_params {
 	    $params{$param} .= $rfc2231params{$param}{$part};
 	}
 	if ($rfc2231encoding_is_used{$param}) {
+	    # there is no reason for the boundary to be encoded this way, since
+	    # non-ascii characters are not allowed later anyway, so mark this
+	    $boundary_is_rfc2231 = 1 if $param eq 'boundary';
 	    my($enc, $lang, $val) = rfc2231decode($params{$param});
 	    if (defined $enc) {
 		# re-encode as QP, preserving charset and language info
@@ -340,6 +382,11 @@ sub parse_params {
     if (%empty_params) {
         $params{'@empty_parameters'} = [ sort(keys(%empty_params)) ];
     }
+
+    if ($boundary_is_rfc2231 || $boundary_leftover) {
+	$params{'@boundary_ambiguous'} = 1;
+    }
+
     # Done:
     \%params;
 }

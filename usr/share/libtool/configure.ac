@@ -1,6 +1,6 @@
 # Process this file with autoconf to create configure. -*- autoconf -*-
 #
-#    Copyright (C) 2004-2005, 2007-2008, 2011-2019, 2021-2024 Free
+#    Copyright (C) 2004-2005, 2007-2008, 2011-2019, 2021-2026 Free
 #    Software Foundation, Inc.
 #    Written by Gary V. Vaughan, 2004
 #

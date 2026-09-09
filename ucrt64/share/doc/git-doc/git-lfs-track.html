@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-track(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,8 +450,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs track</code> [options] [&lt;pattern&gt;&#8230;&#8203;]</p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs track</strong> [<em>options</em>] [<em>&lt;pattern&gt;</em>...]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -479,14 +481,14 @@ use <code>--filename</code> or escape the character with a backslash.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>--verbose</code></dt>
 <dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>If enabled, have <code>git lfs track</code> log files which it will touch. Disabled by
 default.</p>
 </dd>
-<dt class="hdlist1"><code>--dry-run</code></dt>
 <dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>If enabled, have <code>git lfs track</code> log all actions it would normally take
 (adding entries to .gitattributes, touching files on disk, etc) without
@@ -500,14 +502,22 @@ doing.</p>
 <p>Disabled by default.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>-j</code></dt>
+<dt class="hdlist1"><code>--json</code></dt>
+<dd>
+<p>Writes the currently tracked patterns as JSON to STDOUT, if the command
+exits successfully. Intended for interoperation with external tools.
+Can not be combined with any <code>&lt;pattern&gt;</code> arguments. If <code>--no-excluded</code> is
+also provided, that option will have no effect.</p>
+</dd>
 <dt class="hdlist1"><code>--filename</code></dt>
 <dd>
 <p>Treat the arguments as literal filenames, not as patterns. Any special glob
 characters in the filename will be escaped when writing the <code>.gitattributes</code>
 file.</p>
 </dd>
-<dt class="hdlist1"><code>--lockable</code></dt>
 <dt class="hdlist1"><code>-l</code></dt>
+<dt class="hdlist1"><code>--lockable</code></dt>
 <dd>
 <p>Make the paths 'lockable', meaning they should be locked to edit them, and
 will be made read-only in the working copy when not locked.</p>
@@ -519,11 +529,13 @@ locked.</p>
 </dd>
 <dt class="hdlist1"><code>--no-excluded</code></dt>
 <dd>
-<p>  Do not list patterns that are excluded in the output; only list patterns that
-  are tracked.
---no-modify-attrs:
-  Makes matched entries stat-dirty so that Git can re-index files you wish to
-  convert to LFS. Does not modify any <code>.gitattributes</code> file(s).</p>
+<p>Do not list patterns that are excluded in the output; only list patterns that
+are tracked.</p>
+</dd>
+<dt class="hdlist1"><code>--no-modify-attrs</code></dt>
+<dd>
+<p>Makes matched entries stat-dirty so that Git can re-index files you wish to
+convert to LFS. Does not modify any <code>.gitattributes</code> file(s).</p>
 </dd>
 </dl>
 </div>

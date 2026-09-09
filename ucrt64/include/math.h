@@ -14,8 +14,6 @@
 
 struct _exception;
 
-#pragma pack(push,_CRT_PACKING)
-
 #define	_DOMAIN		1	/* domain error in argument */
 #define	_SING		2	/* singularity */
 #define	_OVERFLOW	3	/* range overflow */
@@ -105,9 +103,7 @@ template <typename type1> struct __mingw_types_compatible_p<type1, const type1> 
 #endif
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+_CRT_BEGIN_C_HEADER
 
 #ifndef __MINGW_SOFTMATH
 #define __MINGW_SOFTMATH
@@ -151,8 +147,6 @@ extern "C" {
 #define HUGE_VAL _HUGE
 #endif /* __GNUC__ */
 
-#ifndef _EXCEPTION_DEFINED
-#define _EXCEPTION_DEFINED
   struct _exception {
     int type;
     const char *name;
@@ -166,7 +160,6 @@ extern "C" {
   void __mingw_setusermatherr (int (__cdecl *)(struct _exception *));
   _CRTIMP void __setusermatherr(int (__cdecl *)(struct _exception *));
   #define __setusermatherr __mingw_setusermatherr
-#endif
 
 #define MATH_ERRNO 1
 #define MATH_ERREXCEPT 2
@@ -278,10 +271,7 @@ extern "C" {
   _CRTIMP double __cdecl _y0(double _X);
   _CRTIMP double __cdecl _y1(double _X);
   _CRTIMP double __cdecl _yn(int _X,double _Y);
-#ifndef _CRT_MATHERR_DEFINED
-#define _CRT_MATHERR_DEFINED
-  _CRTIMP int __cdecl _matherr (struct _exception *);
-#endif
+  int __cdecl _matherr (struct _exception *);
 
 /* These are also declared in Mingw float.h; needed here as well to work 
    around GCC build issues.  */
@@ -1450,13 +1440,9 @@ int __cdecl isnand32(_Decimal32 _X);
 
 #endif /* __STDC_WANT_DEC_FP__ */
 
-#ifdef __cplusplus
-}
-#endif
+_CRT_END_C_HEADER
 
 #endif	/* Not RC_INVOKED */
-
-#pragma pack(pop)
 
 #endif /* End _MATH_H_ */
 

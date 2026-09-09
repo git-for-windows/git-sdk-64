@@ -46,7 +46,7 @@
   <a href="#4.1">4.1. Alt+Up does nothing on a Linux console. How can I make it scroll?</a><br>
   <a href="#4.2">4.2. How can I make Ctrl+Shift+Left/Right select words on urxvt?</a><br>
   <a href="#4.3">4.3. How do I remove an unwanted Byte Order Mark?</a><br>
-  <a href="#4.4">4.4. With what keystroke can I paste text from the clipboard into nano?</a><br>
+  <a href="#4.4">4.4. Where did Ctrl+T in the Search menu go?</a><br>
   <a href="#4.5">4.5. How do I select text for or paste text from the clipboard when nano's mouse support is turned on?</a><br>
   <a href="#4.6">4.6. When I paste text into a document, each line gets indented further than the last. Why? And how can I stop this?</a><br>
   <a href="#4.7">4.7. When I paste from Windows into a remote nano, nano rewraps the lines. What gives?</a><br>
@@ -92,7 +92,7 @@
 <h3 id="1.3">1.3. Why the name change from TIP?</h3>
 <blockquote><p>On January 10, 2000, TIP was officially renamed to nano because of a namespace conflict with another program called 'tip'. The original 'tip' program &quot;establishes a full duplex terminal connection to a remote host&quot;, and was included with many older Unix systems (and newer ones like Solaris). The conflict was not noticed at first because there is no 'tip' utility included with most GNU/Linux distributions (where nano was developed).</p></blockquote>
 <h3 id="1.4">1.4. What is the current version of nano?</h3>
-<blockquote><p>The current version of nano <i>should</i> be <b>9.1</b>.  Of course, you should always check the <a href="https://nano-editor.org/">nano homepage</a> to see what the latest and greatest version is.</p></blockquote>
+<blockquote><p>The current version of nano <i>should</i> be <b>9.2</b>.  Of course, you should always check the <a href="https://nano-editor.org/">nano homepage</a> to see what the latest and greatest version is.</p></blockquote>
 <h3 id="1.5">1.5. I want to read the man page without having to download the program!</h3>
 <blockquote><p>Jeez, demanding, aren't we? Okay, look <a href="https://nano-editor.org/dist/latest/nano.1.html">here</a>.</p></blockquote>
 <hr width="100%">
@@ -168,8 +168,10 @@
   <p>There's also the <b>--enable-tiny</b> option which disables everything above, as well as some larger chunks of the program (like the undo/redo code and the code for selecting text). Also, if you know you don't need other languages, you can use <b>--disable-nls</b> to disable internationalization and save a few kilobytes. And finally, there's always good old <b>strip</b> to remove all unneeded symbols.</p>
 </blockquote>
 <h3 id="3.6">3.6. Tell me more about this multibuffer stuff!</h3>
-<blockquote><p>To use multiple file buffers, you must not have configured nano with <b>--disable-multibuffer</b> nor with <b>--enable-tiny</b> (use <b>nano -V</b> to check the compilation options). Then when you want to insert a file into its own buffer instead of into the current file, just hit <b>Meta-F</b> after typing <b>^R</b>. If you always want files to be loaded into their own buffers, use the <b>-F</b> or <b>--multibuffer</b> flag when you invoke nano, or add <b>set multibuffer</b> to your .nanorc file.</p>
-  <p>You can move between the buffers you have open with the <b>Meta-&lt;</b> and <b>Meta-&gt;</b> keys, or more easily without holding Shift: <b>Meta-,</b> and <b>Meta-.</b> (clear as mud, right? =-). When you have more than one buffer open, the ^X shortcut will say &quot;Close&quot;, instead of &quot;Exit&quot;.</p></blockquote>
+<blockquote><p>To use multiple file buffers, you must not have configured nano with <b>--disable-multibuffer</b> nor with <b>--enable-tiny</b> (use <b>nano -V</b> to check the compilation options). Then when you want to insert a file into its own buffer instead of into the current file, just hit <b>Meta-F</b> after typing <b>^R</b>.</p>
+  <p>If you want files to be loaded always into their own buffers, use the <b>-F</b> or <b>--multibuffer</b> flag when you invoke nano, or add <b>set multibuffer</b> to your .nanorc file.  (Since nano-9.2 these options are named <b>--newbuffer</b> and <b>set newbuffer</b>.)</p>
+  <p>You can switch between open buffers with <b>Meta-,</b> and <b>Meta-.</b> (Alt+comma and Alt+period).</p>
+  <p>When you have more than one buffer open, the help lines will say &quot;<i>Close</i>&quot; instead of &quot;<i>Exit</i>&quot; for the <b>^X</b> shortcut.</p></blockquote>
 <h3 id="3.7">3.7. Tell me more about this verbatim input stuff!</h3>
 <blockquote><p>When you want to insert a literal character into the file you're editing, such as a control character that nano usually treats as a command, first press <b>Meta-V</b> (if you're not at a prompt, you'll get the message &quot;Verbatim Input&quot; on the status bar), then press the key(s) that generate the character you want.</p>
   <p>Alternatively, if Unicode support is enabled (see section <a href="#5.3">5.3</a>), you can press <b>Meta-V</b> and then type a six-digit hexadecimal code (from 000000 to 10FFFF, case-insensitive), and the character with the corresponding value will be inserted. The status bar will change to &quot;Unicode Input: ......&quot; when you do this.</p></blockquote>
@@ -222,8 +224,12 @@
 <h3 id="4.3">4.3. How do I remove an unwanted Byte Order Mark?</h3>
 <blockquote><p>To check whether a file contains a Byte Order Mark (BOM), open the file and type <b>Ctrl+Home</b>. If there is a BOM, the status bar will tell you so. Now type <b>Delete</b> to remove the BOM, and <b>^S</b> to save the file.</p>
   <p>If you've accidentally deleted a Byte Order Mark from a file that needs it, and you want to restore it, then type: <b>Ctrl+Home Alt+V feff Enter</b>. Verify that the BOM is back with <b>Ctrl+Home</b>, and save the file with <b>^S</b>.  (Note that on Unix, files should not contain a BOM.)</p></blockquote>
-<h3 id="4.4">4.4. With what keystroke can I paste text from the clipboard into nano?</h3>
-<blockquote><p>In most desktop environments <b>Shift+Insert</b> pastes the contents of the clipboard.</p></blockquote>
+<h3 id="4.4">4.4. Where did Ctrl+T in the Search menu go?</h3>
+<blockquote><p>Actually, the <b>Ctrl+T</b> toggle is still there &mdash; it's just not listed in the help lines nor in the help text, and the function it executes cannot be rebound to another key.  If you do want to use another key, you can emulate the rebinding with something like this in your .nanorc:</p>
+<pre>
+    bind ^E "{cancel}{gotoline}" search
+    bind ^E "{cancel}{whereis}" gotoline</pre>
+<p>But since forever there are also direct keystrokes for jumping to a line number: <b>Ctrl+/</b> and <b>Alt+G</b> in the main menu.</p></blockquote>
 <h3 id="4.5">4.5. How do I select text for or paste text from the clipboard when nano's mouse support is turned on?</h3>
 <blockquote><p>Try holding down the Shift key and selecting or pasting the text as you normally would.</p></blockquote>
 <h3 id="4.6">4.6. When I paste text into a document, each line gets indented further than the last. Why? And how can I stop this?</h3>

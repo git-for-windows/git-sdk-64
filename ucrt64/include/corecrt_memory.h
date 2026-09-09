@@ -8,32 +8,12 @@
 
 #include <crtdefs.h>
 
-#if defined(__LIBMSVCRT__)
-/* When building mingw-w64, this should be blank.  */
-#define _SECIMP
-#else
-#ifndef _SECIMP
-#define _SECIMP __declspec(dllimport)
-#endif /* _SECIMP */
-#endif /* defined(__LIBMSVCRT__) */
+_CRT_BEGIN_C_HEADER
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef _CONST_RETURN
-#define _CONST_RETURN
-#endif
-
-#define _WConst_return _CONST_RETURN
-
-#ifndef _CRT_MEMORY_DEFINED
-#define _CRT_MEMORY_DEFINED
   _CRTIMP void *__cdecl _memccpy(void *_Dst,const void *_Src,int _Val,size_t _MaxCount);
 #if !defined(__STRICT_ANSI__) || defined(_GNU_SOURCE) || __STDC_VERSION__ + 0 >= 202311L || _XOPEN_SOURCE + 0 >= 600
   void * __cdecl memccpy(void *_Dst,const void *_Src,int _Val,size_t _Size);
 #endif
-  _CONST_RETURN void *__cdecl memchr(const void *_Buf ,int _Val,size_t _MaxCount);
   _CRTIMP int __cdecl _memicmp(const void *_Buf1,const void *_Buf2,size_t _Size);
   _CRTIMP int __cdecl _memicmp_l(const void *_Buf1,const void *_Buf2,size_t _Size,_locale_t _Locale);
   int __cdecl memcmp(const void *_Buf1,const void *_Buf2,size_t _Size);
@@ -49,9 +29,17 @@ extern "C" {
   void * __cdecl memccpy(void *_Dst,const void *_Src,int _Val,size_t _Size) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
   int __cdecl memicmp(const void *_Buf1,const void *_Buf2,size_t _Size) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
-#endif
+
+_CRT_END_C_HEADER
 
 #ifdef __cplusplus
+extern "C++" {
+  const void* __cdecl memchr(const void*, int, size_t) __MINGW_ASM_CALL(memchr);
+  inline void* __cdecl memchr(void* _Buf, int _Val, size_t _MaxCount)
+  { return const_cast<void*>(memchr(const_cast<const void*>(_Buf), _Val, _MaxCount)); }
 }
+#else
+  void* __cdecl memchr(const void* _Buf, int _Val, size_t _MaxCount);
 #endif
+
 #endif

@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/d/S/B/src/Python-3.12.13
-abs_builddir=	/d/S/B/src/Python-3.12.13
+abs_srcdir=	/d/S/B/src/Python-3.12.14
+abs_builddir=	/d/S/B/src/Python-3.12.14
 
 
 CC=		gcc
@@ -717,13 +717,16 @@ LIBEXPAT_HEADERS= \
 		Modules/expat/expat.h \
 		Modules/expat/expat_config.h \
 		Modules/expat/expat_external.h \
+		Modules/expat/fallthrough.h \
 		Modules/expat/iasciitab.h \
 		Modules/expat/internal.h \
 		Modules/expat/latin1tab.h \
+		Modules/expat/memory_sanitizer.h \
 		Modules/expat/nametab.h \
 		Modules/expat/pyexpatns.h \
 		Modules/expat/siphash.h \
 		Modules/expat/utf8tab.h \
+		Modules/expat/xcsinc.c \
 		Modules/expat/xmlrole.h \
 		Modules/expat/xmltok.h \
 		Modules/expat/xmltok_impl.h \
@@ -1231,6 +1234,8 @@ Programs/_bootstrap_python.o: Programs/_bootstrap_python.c $(BOOTSTRAP_HEADERS) 
 _bootstrap_python: $(LIBRARY_OBJS_OMIT_FROZEN) Programs/_bootstrap_python.o Modules/getpath.o Modules/Setup.local
 	$(LINKCC) $(PY_LDFLAGS_NOLTO) -o $@ $(LIBRARY_OBJS_OMIT_FROZEN) \
 		Programs/_bootstrap_python.o Modules/getpath.o $(LIBS) $(MODLIBS) $(SYSLIBS)
+	# Dummy pybuilddir.txt  is needed for _bootstrap_python to be runnable
+	@echo "none" > ./pybuilddir.txt
 
 
 ############################################################################

@@ -1,6 +1,6 @@
 /* lt__private.h -- internal apis for libltdl
 
-   Copyright (C) 2004-2008, 2011-2019, 2021-2024 Free Software
+   Copyright (C) 2004-2008, 2011-2019, 2021-2026 Free Software
    Foundation, Inc.
    Written by Gary V. Vaughan, 2004
 

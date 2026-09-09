@@ -4,7 +4,7 @@ require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(guess_media_type media_suffix);
 @EXPORT_OK = qw(add_type add_encoding read_media_types);
-our $VERSION = '6.04';
+our $VERSION = '6.05';
 
 use strict;
 use Scalar::Util qw(blessed);

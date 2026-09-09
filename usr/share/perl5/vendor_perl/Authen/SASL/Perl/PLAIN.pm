@@ -2,7 +2,7 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
 
-package Authen::SASL::Perl::PLAIN 2.2000;
+package Authen::SASL::Perl::PLAIN 2.2100;
 
 use strict;
 use warnings;
@@ -104,7 +104,7 @@ Authen::SASL::Perl::PLAIN - Plain Login Authentication class
 
 =head1 VERSION
 
-version 2.2000
+version 2.2100
 
 =head1 SYNOPSIS
 

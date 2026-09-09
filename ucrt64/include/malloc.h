@@ -8,30 +8,12 @@
 
 #include <crtdefs.h>
 
-#pragma pack(push,_CRT_PACKING)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+_CRT_BEGIN_C_HEADER
 
 #ifdef _WIN64
 #define _HEAP_MAXREQ 0xFFFFFFFFFFFFFFE0
 #else
 #define _HEAP_MAXREQ 0xFFFFFFE0
-#endif
-
-#ifndef _STATIC_ASSERT
-#if (defined(__cpp_static_assert) && __cpp_static_assert >= 201411L) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
-#define _STATIC_ASSERT(expr) static_assert(expr)
-#elif defined(__cpp_static_assert)
-#define _STATIC_ASSERT(expr) static_assert(expr, #expr)
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#define _STATIC_ASSERT(expr) _Static_assert(expr, #expr)
-#elif defined(_MSC_VER)
-#define _STATIC_ASSERT(expr) typedef char __static_assert_t[(expr)]
-#else
-#define _STATIC_ASSERT(expr) extern void __static_assert_t(int [(expr)?1:-1])
-#endif
 #endif
 
 /* Return codes for _heapwalk()  */
@@ -46,15 +28,12 @@ extern "C" {
 #define _FREEENTRY 0
 #define _USEDENTRY 1
 
-#ifndef _HEAPINFO_DEFINED
-#define _HEAPINFO_DEFINED
  /* The structure used to walk through the heap with _heapwalk.  */
   typedef struct _heapinfo {
     int *_pentry;
     size_t _size;
     int _useflag;
   } _HEAPINFO;
-#endif
 
 #define _amblksiz (*__p__amblksiz())
   _CRTIMP unsigned int *__cdecl __p__amblksiz(void);
@@ -242,10 +221,7 @@ size_t __mingw_aligned_msize (void *memblock, size_t alignment, size_t offset);
 #endif
 
 #ifdef HEAPHOOK
-#ifndef _HEAPHOOK_DEFINED
-#define _HEAPHOOK_DEFINED
   typedef int (__cdecl *_HEAPHOOK)(int,size_t,void *,void **);
-#endif
 
   _CRTIMP _HEAPHOOK __cdecl _setheaphook(_HEAPHOOK _NewHook);
 
@@ -257,10 +233,6 @@ size_t __mingw_aligned_msize (void *memblock, size_t alignment, size_t offset);
 #define _HEAP_EXPAND 6
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-#pragma pack(pop)
+_CRT_END_C_HEADER
 
 #endif /* _MALLOC_H_ */

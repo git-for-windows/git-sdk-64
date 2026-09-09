@@ -159,7 +159,7 @@ my $singleton_parameter_headers =
 #------------------------------
 
 ### The package version, both in 1.23 style *and* usable by MakeMaker:
-$VERSION = "5.517";
+$VERSION = "5.518";
 
 ### Sanity (we put this test after our own version, for CPAN::):
 use Mail::Header 1.06 ();
@@ -205,6 +205,8 @@ Content-Disposition header.
 A Content-Type or Content-Disposition header contains a repeated
 parameter.
 
+A Content-Type header contains a boundary that is ambiguous.
+
 =back
 
 Messages with ambiguous content should be treated as a security risk.
@@ -229,6 +231,11 @@ sub ambiguous_content {
             return 1;
         }
     }
+
+    if ($self->mime_attr('content-type.@boundary_ambiguous')) {
+        return 1;
+    }
+
     return 0;
 }
 #------------------------------
@@ -869,7 +876,10 @@ multipart or if there is no specified boundary.
 sub multipart_boundary {
     my $self = shift;
     my $value =  $self->mime_attr('content-type.boundary');
-    (!defined($value)) ? undef : $value;
+    return undef unless defined($value);
+    $value = decode_mimewords($value);
+    $value =~ s/\s+$//;                  # kill trailing whitespace, per RFC 2046
+    return $value;
 }
 
 #------------------------------

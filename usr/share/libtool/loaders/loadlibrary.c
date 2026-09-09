@@ -1,6 +1,6 @@
 /* loader-loadlibrary.c --  dynamic linking for Win32
 
-   Copyright (C) 1998-2000, 2004-2008, 2010-2019, 2021-2024 Free
+   Copyright (C) 1998-2000, 2004-2008, 2010-2019, 2021-2026 Free
    Software Foundation, Inc.
    Written by Thomas Tanner, 1998
 
@@ -95,8 +95,8 @@ get_vtable (lt_user_data loader_data)
 
 #include <windows.h>
 
-#define LOCALFREE(mem)					     LT_STMT_START { \
-	if (mem) { LocalFree ((void *)mem); mem = NULL; }    } LT_STMT_END
+#define LOCALFREE(mem)					     LT_STMT_START \
+	if (mem) { LocalFree ((void *)mem); mem = NULL; }    LT_STMT_END
 #define LOADLIB__SETERROR(errmsg) LT__SETERRORSTR (loadlibraryerror (errmsg))
 #define LOADLIB_SETERROR(errcode) LOADLIB__SETERROR (LT__STRERROR (errcode))
 

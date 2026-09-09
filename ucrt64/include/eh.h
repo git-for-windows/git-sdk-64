@@ -3,21 +3,17 @@
  * This file is part of the mingw-w64 runtime package.
  * No warranty is given; refer to the file DISCLAIMER.PD within this package.
  */
+#ifndef _EH_H_
+#define _EH_H_
 
 #ifndef __cplusplus
 #error eh.h is only for C++!
 #endif
 
+#include <crtdefs.h>
 #include <typeinfo>
 
-#include <crtdefs.h>
-
-#ifndef _EH_H_
-#define _EH_H_
-
 #ifndef RC_INVOKED
-
-#pragma pack(push,_CRT_PACKING)
 
 typedef void (__cdecl *terminate_function)();
 typedef void (__cdecl *terminate_handler)();
@@ -37,7 +33,6 @@ extern "C" _CRTIMP unexpected_function __cdecl _get_unexpected(void);
 _CRTIMP _se_translator_function __cdecl _set_se_translator(_se_translator_function _NewPtFunc);
 _CRTIMP bool __cdecl __uncaught_exception();
 
-#pragma pack(pop)
 #endif
 #endif /* End _EH_H_ */
 

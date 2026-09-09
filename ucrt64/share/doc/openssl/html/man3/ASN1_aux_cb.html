@@ -76,7 +76,7 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <dt id="flags"><i>flags</i></dt>
 <dd>
 
-<p>Flags which indicate the auxiliarly functionality supported.</p>
+<p>Flags which indicate the auxiliary functionality supported.</p>
 
 <p>The <b>ASN1_AFLG_REFCOUNT</b> flag indicates that objects support reference counting.</p>
 
@@ -119,7 +119,7 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 </dd>
 </dl>
 
-<p>During the processing of an <b>ASN1_VALUE</b> object the callbacks set via <i>asn1_cb</i> or <i>asn1_const_cb</i> will be invoked as a result of various events indicated via the <i>operation</i> parameter. The value of <i>*in</i> will be the <b>ASN1_VALUE</b> object being processed based on the template in <i>it</i>. An additional operation specific parameter may be passed in <i>exarg</i>. The currently supported operations are as follows. The callbacks should return a positive value on success or zero on error, unless otherwise noted below.</p>
+<p>During the processing of an <b>ASN1_VALUE</b> object the callbacks set via <i>asn1_cb</i> or <i>asn1_const_cb</i> will be invoked as a result of various events indicated via the <i>operation</i> parameter. The value of <i>*in</i> will be the <b>ASN1_VALUE</b> object being processed based on the template in <i>it</i>. An additional operation specific parameter may be passed in <i>exarg</i>. The currently supported operations are as follows. Unless noted otherwise below, the callbacks should return a positive value on success and zero on error; some operations recognise additional return values, and a few do not consult the return value at all.</p>
 
 <dl>
 
@@ -138,13 +138,13 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <dt id="ASN1_OP_FREE_PRE"><b>ASN1_OP_FREE_PRE</b></dt>
 <dd>
 
-<p>Invoked when processing a <b>CHOICE</b>, <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately before an <b>ASN1_VALUE</b> is freed. If the callback originally constructed the <b>ASN1_VALUE</b> via <b>ASN1_OP_NEW_PRE</b> then it should free it at this point and return 2 from the callback. Otherwise it should return 1 for success or 0 on error.</p>
+<p>Invoked when processing a <b>CHOICE</b>, <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately before an <b>ASN1_VALUE</b> is freed. If the callback originally constructed the <b>ASN1_VALUE</b> via <b>ASN1_OP_NEW_PRE</b> then it should free it at this point and return 2; the caller will then skip its normal freeing. Any other return value (including zero) causes the caller to proceed with normal freeing; the hook cannot signal an error.</p>
 
 </dd>
 <dt id="ASN1_OP_FREE_POST"><b>ASN1_OP_FREE_POST</b></dt>
 <dd>
 
-<p>Invoked when processing a <b>CHOICE</b>, <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately after <b>ASN1_VALUE</b> sub-structures are freed.</p>
+<p>Invoked when processing a <b>CHOICE</b>, <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately after <b>ASN1_VALUE</b> sub-structures are freed. The caller does not consult the return value from this hook.</p>
 
 </dd>
 <dt id="ASN1_OP_D2I_PRE"><b>ASN1_OP_D2I_PRE</b></dt>
@@ -174,7 +174,7 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <dt id="ASN1_OP_PRINT_PRE"><b>ASN1_OP_PRINT_PRE</b></dt>
 <dd>
 
-<p>Invoked when processing a <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately before printing the <b>ASN1_VALUE</b>. The <i>exarg</i> argument will be a pointer to an <b>ASN1_PRINT_ARG</b> structure (see below).</p>
+<p>Invoked when processing a <b>SEQUENCE</b> or <b>NDEF_SEQUENCE</b> structure immediately before printing the <b>ASN1_VALUE</b>. The <i>exarg</i> argument will be a pointer to an <b>ASN1_PRINT_ARG</b> structure (see below). If the callback has fully printed the value itself it should return 2; the caller will then skip the per-field printing loop and the matching <b>ASN1_OP_PRINT_POST</b> callback. Return zero on error or any other positive value to continue with normal printing.</p>
 
 </dd>
 <dt id="ASN1_OP_PRINT_POST"><b>ASN1_OP_PRINT_POST</b></dt>
@@ -283,7 +283,26 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>The callbacks return 0 on error and a positive value on success. Some operations require specific positive success values as noted above.</p>
+<p>In general the callbacks return zero on error and a positive value on success. Several operations have additional or different return-value semantics, summarised here:</p>
+
+<ul>
+
+<li><p><b>ASN1_OP_NEW_PRE</b> recognises a return of 2, meaning that the callback has allocated the <b>ASN1_VALUE</b> itself and normal allocation should be skipped.</p>
+
+</li>
+<li><p><b>ASN1_OP_FREE_PRE</b> recognises a return of 2, meaning that the callback has freed the <b>ASN1_VALUE</b> itself and normal freeing should be skipped. Other return values (including zero) cause normal freeing to proceed; the hook cannot signal an error.</p>
+
+</li>
+<li><p><b>ASN1_OP_FREE_POST</b>&#39;s return value is not consulted by the caller.</p>
+
+</li>
+<li><p><b>ASN1_OP_PRINT_PRE</b> recognises a return of 2, meaning that the callback has printed the value itself; the caller will skip the per-field printing loop and the matching <b>ASN1_OP_PRINT_POST</b> invocation.</p>
+
+</li>
+<li><p><b>ASN1_OP_STREAM_PRE</b>, <b>ASN1_OP_STREAM_POST</b>, <b>ASN1_OP_DETACHED_PRE</b>, and <b>ASN1_OP_DETACHED_POST</b> treat any non-positive return value (zero or negative) as an error.</p>
+
+</li>
+</ul>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -295,7 +314,7 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

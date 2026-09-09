@@ -1,6 +1,6 @@
 /* lt_system.h -- system portability abstraction layer
 
-   Copyright (C) 2004, 2007, 2010-2019, 2021-2024 Free Software
+   Copyright (C) 2004, 2007, 2010-2019, 2021-2026 Free Software
    Foundation, Inc.
    Written by Gary V. Vaughan, 2004
 
@@ -62,15 +62,15 @@ License along with GNU Libltdl.  If not, see <https://www.gnu.org/licenses/>.
 /* LT_STMT_START/END are used to create macros that expand to a
    a single compound statement in a portable way.  */
 #if defined  __GNUC__ && !defined  __STRICT_ANSI__ && !defined  __cplusplus
-#  define LT_STMT_START        (void)(
-#  define LT_STMT_END          )
+#  define LT_STMT_START        (void)({
+#  define LT_STMT_END          })
 #else
 #  if (defined sun || defined __sun__)
-#    define LT_STMT_START      if (1)
-#    define LT_STMT_END        else (void)0
+#    define LT_STMT_START      if (1){
+#    define LT_STMT_END        }else (void)0
 #  else
-#    define LT_STMT_START      do
-#    define LT_STMT_END        while (0)
+#    define LT_STMT_START      do{
+#    define LT_STMT_END        }while (0)
 #  endif
 #endif
 

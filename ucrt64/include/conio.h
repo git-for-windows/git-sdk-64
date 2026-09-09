@@ -11,9 +11,7 @@
 #include <corecrt_wconio.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+_CRT_BEGIN_C_HEADER
 
 /**
  * Functions to read/write strings from/to console.
@@ -21,6 +19,8 @@ extern "C" {
 
   _CRTIMP char *__cdecl _cgets(char *_Buffer) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP int __cdecl _cputs(const char *_Str);
+  _SECIMP errno_t __cdecl _cgets_s (char *_Buffer,size_t _Size,size_t *_SizeRead);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, _cgets_s, char, _Buffer, size_t*, _SizeRead)
 
 #ifndef	NO_OLDNAMES
   char *__cdecl cgets(char *_Buffer) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
@@ -55,6 +55,13 @@ extern "C" {
 /**
  * Formatted console I/O functions.
  */
+
+  _SECIMP int __cdecl _cprintf_s (const char *_Format,...);
+  _SECIMP int __cdecl _cprintf_s_l (const char *_Format,_locale_t _Locale,...);
+  _SECIMP int __cdecl _vcprintf_s (const char *_Format,va_list _ArgList);
+  _SECIMP int __cdecl _vcprintf_s_l (const char *_Format,_locale_t _Locale,va_list _ArgList);
+  _CRTIMP int __cdecl _cscanf_s(const char *_Format,...);
+  _CRTIMP int __cdecl _cscanf_s_l(const char *_Format,_locale_t _Locale,...);
 
 #ifdef _UCRT
   int __cdecl __conio_common_vcprintf(unsigned __int64 _Options, const char *_Format, _locale_t _Locale, va_list _ArgList);
@@ -193,10 +200,6 @@ extern "C" {
 #endif /* NO_OLDNAMES */
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-#include <sec_api/conio_s.h>
+_CRT_END_C_HEADER
 
 #endif

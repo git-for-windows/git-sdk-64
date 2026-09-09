@@ -338,7 +338,7 @@
 <dt id="rsa_oaep_md:digest"><b>rsa_oaep_md:</b><i>digest</i></dt>
 <dd>
 
-<p>Sets the digest used for the OAEP hash function. If not explicitly set then SHA256 is used.</p>
+<p>Sets the digest used for the OAEP hash function. If not explicitly set then SHA1 is used.</p>
 
 </dd>
 <dt id="rsa_pkcs1_implicit_rejection:flag"><b>rsa_pkcs1_implicit_rejection:</b><i>flag</i></dt>
@@ -619,7 +619,7 @@ $ openssl pkeyutl -sign -in file.txt -inkey slh-dsa.pem -out sig</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>Since OpenSSL 3.5, the <b>-digest</b> option implies <b>-rawin</b>, and these two options are no longer required when signing or verifying with an Ed25519 or Ed448 key.</p>
+<p>Since OpenSSL 3.5, the <b>-digest</b> option implies <b>-rawin</b>. The <b>-rawin</b> option is no longer required when signing or verifying with a key type that does not support a prehash digest, such as Ed25519, Ed448, ML-DSA, or SLH-DSA. For these key types, <b>-digest</b> is not supported.</p>
 
 <p>Also since OpenSSL 3.5, the <b>-kemop</b> option is no longer required for any of the supported algorithms, the only supported <b>mode</b> is now the default.</p>
 

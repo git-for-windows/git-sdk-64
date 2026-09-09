@@ -1,6 +1,6 @@
 /* ltdl.c -- system independent dlopen wrapper
 
-   Copyright (C) 1998-2000, 2004-2008, 2011-2019, 2021-2024 Free
+   Copyright (C) 1998-2000, 2004-2008, 2011-2019, 2021-2026 Free
    Software Foundation, Inc.
    Written by Thomas Tanner, 1998
 
@@ -785,10 +785,9 @@ find_handle_callback (char *filename, void *data, void *data2)
   if (notfound)
     return 0;
 
-  /* Try to dlopen the file, but do not continue searching in any
-     case.  */
+  /* Try to dlopen the file. */
   if (tryall_dlopen (phandle, filename, advise, 0) != 0)
-    *phandle = 0;
+    return 0;
 
   return 1;
 }
@@ -1368,9 +1367,12 @@ try_dlopen (lt_dlhandle *phandle, const char *filename, const char *ext,
 	    }
 #endif
 #if defined LT_DLSEARCH_PATH
-	  if (!file && *sys_dlsearch_path)
+	  if (!file)
 	    {
-	      file = find_file (sys_dlsearch_path, base_name, &dir);
+	      if (*sys_dlsearch_path)
+	        {
+	          file = find_file (sys_dlsearch_path, base_name, &dir);
+	        }
 	    }
 #endif
 	}
@@ -1917,24 +1919,27 @@ lt_dlforeachfile (const char *search_path,
       is_done = foreach_dirinpath (user_search_path, 0,
 				   foreachfile_callback, fpptr, data);
       if (!is_done)
-	{
-	  is_done = foreach_dirinpath (getenv(LTDL_SEARCHPATH_VAR), 0,
+	      {
+	        is_done = foreach_dirinpath (getenv(LTDL_SEARCHPATH_VAR), 0,
 				       foreachfile_callback, fpptr, data);
-	}
+	      }
 
 #if defined LT_MODULE_PATH_VAR
       if (!is_done)
-	{
-	  is_done = foreach_dirinpath (getenv(LT_MODULE_PATH_VAR), 0,
-				       foreachfile_callback, fpptr, data);
-	}
+      {
+          is_done = foreach_dirinpath (getenv(LT_MODULE_PATH_VAR), 0,
+               foreachfile_callback, fpptr, data);
+      }
 #endif
 #if defined LT_DLSEARCH_PATH
-      if (!is_done && *sys_dlsearch_path)
-	{
-	  is_done = foreach_dirinpath (sys_dlsearch_path, 0,
-				       foreachfile_callback, fpptr, data);
-	}
+      if (!is_done)
+	      {
+          if (*sys_dlsearch_path)
+            {
+              is_done = foreach_dirinpath (sys_dlsearch_path, 0,
+                   foreachfile_callback, fpptr, data);
+            }
+        }
 #endif
     }
 

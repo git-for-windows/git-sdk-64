@@ -8,8 +8,6 @@
 
 #include <crtdefs.h>
 
-#pragma pack(push,_CRT_PACKING)
-
 #define _CPPLIB_VER 405
 #define __PURE_APPDOMAIN_GLOBAL
 
@@ -141,8 +139,6 @@
 #define _CSTD ::
 #endif
 
-#define _C_LIB_DECL extern "C" {
-#define _END_C_LIB_DECL }
 #define _EXTERN_C extern "C" {
 #define _END_EXTERN_C }
 #else
@@ -154,8 +150,6 @@
 #define _C_STD_END
 #define _CSTD
 
-#define _C_LIB_DECL
-#define _END_C_LIB_DECL
 #define _EXTERN_C
 #define _END_EXTERN_C
 #endif
@@ -261,10 +255,6 @@ _STD_END
 _C_STD_BEGIN
 _CRTIMP void __cdecl _Atexit(void (__cdecl *)(void));
 
-#if !defined(_UCRT) && !defined(__LARGE_MBSTATE_T)
-typedef int _Mbstatet;
-#endif
-
 #define _ATEXIT_T void
 #define _Mbstinit(x) mbstate_t x = {0}
 _C_STD_END
@@ -272,5 +262,4 @@ _C_STD_END
 #define _EXTERN_TEMPLATE template
 #define _THROW_BAD_ALLOC _THROW1(...)
 
-#pragma pack(pop)
 #endif

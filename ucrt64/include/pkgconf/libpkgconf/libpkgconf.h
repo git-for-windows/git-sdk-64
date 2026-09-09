@@ -71,8 +71,8 @@ typedef struct pkgconf_license_ pkgconf_license_t;
 #define PKGCONF_FOREACH_LIST_ENTRY_REVERSE(tail, value) \
 	for ((value) = (tail); (value) != NULL; (value) = (value)->prev)
 
-#define LIBPKGCONF_VERSION	30004
-#define LIBPKGCONF_VERSION_STR	"3.0.4"
+#define LIBPKGCONF_VERSION	30007
+#define LIBPKGCONF_VERSION_STR	"3.0.7"
 
 struct pkgconf_queue_ {
 	pkgconf_node_t iter;
@@ -475,11 +475,15 @@ PKGCONF_API bool pkgconf_default_error_handler(const char *msg, const pkgconf_cl
 #ifndef PKGCONF_LITE
 #if defined(__GNUC__) || defined(__INTEL_COMPILER)
 #define PKGCONF_TRACE(client, ...) do { \
-		pkgconf_trace(client, __FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__); \
+		const pkgconf_client_t *pkgconf_trace_client_ = (client); \
+		if (pkgconf_trace_client_ != NULL && pkgconf_trace_client_->trace_handler != NULL) \
+			pkgconf_trace(pkgconf_trace_client_, __FILE__, __LINE__, __PRETTY_FUNCTION__, __VA_ARGS__); \
 	} while (0)
 #else
 #define PKGCONF_TRACE(client, ...) do { \
-		pkgconf_trace(client, __FILE__, __LINE__, __func__, __VA_ARGS__); \
+		const pkgconf_client_t *pkgconf_trace_client_ = (client); \
+		if (pkgconf_trace_client_ != NULL && pkgconf_trace_client_->trace_handler != NULL) \
+			pkgconf_trace(pkgconf_trace_client_, __FILE__, __LINE__, __func__, __VA_ARGS__); \
 	} while (0)
 #endif
 #else
@@ -517,6 +521,7 @@ PKGCONF_API pkgconf_dependency_t *pkgconf_dependency_copy(pkgconf_client_t *clie
 
 /* argvsplit.c */
 PKGCONF_API int pkgconf_argv_split(const char *src, int *argc, char ***argv);
+PKGCONF_API int pkgconf_argv_split_raw(const char *src, int *argc, char ***argv);
 PKGCONF_API void pkgconf_argv_free(char **argv);
 
 /* fragment.c */
@@ -530,14 +535,31 @@ typedef struct pkgconf_fragment_render_ops_ {
 } pkgconf_fragment_render_ops_t;
 
 typedef bool (*pkgconf_fragment_filter_func_t)(const pkgconf_client_t *client, const pkgconf_fragment_t *frag, void *data);
+
+/* A cursor accelerates repeated pkgconf_fragment_copy() calls into the same
+ * destination list by maintaining a sorted index of the fragments already
+ * present, so that the deduplication lookup is a bsearch() rather than a linear
+ * scan of the (potentially large) accumulator.
+ */
+typedef struct pkgconf_fragment_cursor_ {
+	pkgconf_list_t *list;
+	pkgconf_fragment_t **index;
+	size_t count;
+	size_t alloc;
+} pkgconf_fragment_cursor_t;
+
 PKGCONF_API bool pkgconf_fragment_parse(pkgconf_client_t *client, pkgconf_list_t *list, pkgconf_list_t *vars, const char *value, unsigned int flags);
 PKGCONF_API void pkgconf_fragment_insert(pkgconf_client_t *client, pkgconf_list_t *list, char type, const char *data, bool tail);
 PKGCONF_API bool pkgconf_fragment_add(pkgconf_client_t *client, pkgconf_list_t *list, pkgconf_list_t *vars, const char *string, unsigned int flags);
 PKGCONF_API void pkgconf_fragment_copy(const pkgconf_client_t *client, pkgconf_list_t *list, const pkgconf_fragment_t *base, bool is_private);
+PKGCONF_API void pkgconf_fragment_cursor_init(pkgconf_fragment_cursor_t *cursor, pkgconf_list_t *list);
+PKGCONF_API void pkgconf_fragment_cursor_deinit(pkgconf_fragment_cursor_t *cursor);
+PKGCONF_API void pkgconf_fragment_copy_cursor(const pkgconf_client_t *client, pkgconf_fragment_cursor_t *cursor, const pkgconf_fragment_t *base, bool is_private);
 PKGCONF_API void pkgconf_fragment_copy_list(const pkgconf_client_t *client, pkgconf_list_t *list, const pkgconf_list_t *base);
 PKGCONF_API void pkgconf_fragment_delete(pkgconf_list_t *list, pkgconf_fragment_t *node);
 PKGCONF_API void pkgconf_fragment_free(pkgconf_list_t *list);
 PKGCONF_API void pkgconf_fragment_filter(const pkgconf_client_t *client, pkgconf_list_t *dest, pkgconf_list_t *src, pkgconf_fragment_filter_func_t filter_func, void *data);
+PKGCONF_API void pkgconf_fragment_filter_splice(const pkgconf_client_t *client, pkgconf_list_t *dest, pkgconf_list_t *src, pkgconf_fragment_filter_func_t filter_func, void *data);
 PKGCONF_API bool pkgconf_fragment_render_buf(const pkgconf_list_t *list, pkgconf_buffer_t *buf, bool escape, const pkgconf_fragment_render_ops_t *ops, char delim);
 PKGCONF_API bool pkgconf_fragment_has_system_dir(const pkgconf_client_t *client, const pkgconf_fragment_t *frag);
 PKGCONF_API bool pkgconf_is_locale_utf8(void);
@@ -611,6 +633,21 @@ static inline bool pkgconf_span_contains(unsigned char c, const pkgconf_span_t *
 	return false;
 }
 
+/* A set of byte values as a 256-bit map, so that membership is a single test
+ * rather than a walk over a span list.  Build one with
+ * pkgconf_charset_from_spans() and keep it: the point is to hoist the span
+ * walk out of any per-byte loop. */
+typedef struct pkgconf_charset_ {
+	uint64_t words[4];
+} pkgconf_charset_t;
+
+static inline bool pkgconf_charset_contains(const pkgconf_charset_t *charset, unsigned char c)
+{
+	return (charset->words[c >> 6] >> (c & 63)) & 1;
+}
+
+PKGCONF_API void pkgconf_charset_from_spans(pkgconf_charset_t *charset, const pkgconf_span_t *spans, size_t nspans);
+
 PKGCONF_API bool pkgconf_buffer_append(pkgconf_buffer_t *buffer, const char *text);
 PKGCONF_API bool pkgconf_buffer_append_slice(pkgconf_buffer_t *buf, const char *p, size_t n);
 PKGCONF_API bool pkgconf_buffer_append_fmt(pkgconf_buffer_t *buffer, const char *fmt, ...) PRINTFLIKE(2, 3);
@@ -628,6 +665,7 @@ PKGCONF_API bool pkgconf_buffer_contains_byte(const pkgconf_buffer_t *haystack, 
 PKGCONF_API bool pkgconf_buffer_match(const pkgconf_buffer_t *haystack, const pkgconf_buffer_t *needle);
 PKGCONF_API bool pkgconf_buffer_subst(pkgconf_buffer_t *dest, const pkgconf_buffer_t *src, const char *pattern, const char *value);
 PKGCONF_API bool pkgconf_buffer_escape(pkgconf_buffer_t *dest, const pkgconf_buffer_t *src, const pkgconf_span_t *spans, size_t nspans);
+PKGCONF_API bool pkgconf_buffer_escape_charset(pkgconf_buffer_t *dest, const pkgconf_buffer_t *src, const pkgconf_charset_t *charset);
 
 /*
  * !doc
@@ -718,21 +756,41 @@ static inline void pkgconf_buffer_reset(pkgconf_buffer_t *buffer)
 /*
  * !doc
  *
+ * .. c:function:: static inline void pkgconf_buffer_rewind(pkgconf_buffer_t *buffer)
+ *
+ *    Truncate the buffer to empty while retaining its allocation, so it can be
+ *    refilled without reallocating.  Unlike pkgconf_buffer_reset(), the backing
+ *    storage is kept.
+ *
+ *    :param pkgconf_buffer_t *buffer: The buffer to rewind.
+ *    :return: nothing
+ */
+static inline void pkgconf_buffer_rewind(pkgconf_buffer_t *buffer)
+{
+	if (buffer->base != NULL)
+	{
+		buffer->end = buffer->base;
+		*buffer->base = '\0';
+	}
+}
+
+/*
+ * !doc
+ *
  * .. c:function:: static inline char *pkgconf_buffer_freeze(pkgconf_buffer_t *buffer)
  *
- *    Free the underlying buffer, copying the underlying string.
- *    The string must be freed by the caller.
+ *    Hand ownership of the underlying storage to the caller as a string and
+ *    empty the buffer.  The string must be freed by the caller.
  *
  *    :param pkgconf_buffer_t *buffer: The buffer to freeze.
- *    :return: The underlying string, copied.
+ *    :return: The underlying string.
  */
 static inline char *pkgconf_buffer_freeze(pkgconf_buffer_t *buffer)
 {
-	if (buffer->base == NULL)
-		return NULL;
+	char *out = buffer->base;
 
-	char *out = pkgconf_strndup(pkgconf_buffer_str(buffer), pkgconf_buffer_len(buffer));
-	pkgconf_buffer_reset(buffer);
+	buffer->base = buffer->end = NULL;
+
 	return out;
 }
 

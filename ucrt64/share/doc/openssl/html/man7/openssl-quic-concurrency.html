@@ -21,6 +21,7 @@
       <li><a href="#Legacy-Blocking-Support-Compatibility">Legacy Blocking Support Compatibility</a></li>
     </ul>
   </li>
+  <li><a href="#THREAD-CANCELLATION">THREAD CANCELLATION</a></li>
   <li><a href="#RECOMMENDED-USAGE">RECOMMENDED USAGE</a></li>
   <li><a href="#CONFIGURING-A-CONCURRENCY-MODEL">CONFIGURING A CONCURRENCY MODEL</a>
     <ul>
@@ -117,6 +118,16 @@
 <p>OpenSSL 3.2 and 3.3 contained a buggy implementation of blocking QUIC I/O calls which is only reliable under single-threaded usage. This functionality is always available in the Single-Threaded Concurrency Model (SCM), where it works reliably.</p>
 
 <p>For compatibility reasons, this functionality is also available under the default concurrency model if the application does not explicitly specify a concurrency model or disable it. This is known as Legacy Blocking Compatibility Mode, and its usage is not recommended for multi-threaded applications.</p>
+
+<h1 id="THREAD-CANCELLATION">THREAD CANCELLATION</h1>
+
+<p>The restrictions in <a href="../man7/openssl-threads.html">&quot;THREAD CANCELLATION&quot; in openssl-threads(7)</a> also apply to OpenSSL QUIC APIs, including calls used in nonblocking mode.</p>
+
+<p>CCM and TACM use domain-wide synchronisation during API processing. Event processing may perform network I/O while it is held, which can be a POSIX cancellation point. Interruption can leave later use or teardown of the domain unsafe.</p>
+
+<p>TACM and CCM with <b>SSL_DOMAIN_FLAG_BLOCKING</b> also maintain internal wait state for blocking calls. If interruption prevents cleanup of this state, later calls on the affected domain can block indefinitely. <a href="../man3/SSL_poll.html">SSL_poll(3)</a> can maintain such state in multiple domains in one call.</p>
+
+<p>Because most blocking QUIC functions do not provide a per-call timeout, applications requiring prompt cooperative cancellation should use nonblocking mode and an application-driven event loop as described in <a href="../man7/openssl-quic.html">&quot;APPLICATION-DRIVEN EVENT LOOPS&quot; in openssl-quic(7)</a>, waiting for the application cancellation event alongside QUIC events. Alternatively, an application can call <a href="../man3/SSL_poll.html">SSL_poll(3)</a> with a finite timeout and check a cancellation condition between calls.</p>
 
 <h1 id="RECOMMENDED-USAGE">RECOMMENDED USAGE</h1>
 
@@ -239,11 +250,11 @@
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/openssl-quic.html">openssl-quic(7)</a>, <a href="../man3/SSL_handle_events.html">SSL_handle_events(3)</a>, <a href="../man3/SSL_get_event_timeout.html">SSL_get_event_timeout(3)</a>, <a href="../man3/OSSL_QUIC_client_thread_method.html">OSSL_QUIC_client_thread_method(3)</a>, <a href="../man3/SSL_CTX_set_domain_flags.html">SSL_CTX_set_domain_flags(3)</a>, <a href="../man3/SSL_new_domain.html">SSL_new_domain(3)</a></p>
+<p><a href="../man7/openssl-quic.html">openssl-quic(7)</a>, <a href="../man7/openssl-threads.html">openssl-threads(7)</a>, <a href="../man3/SSL_handle_events.html">SSL_handle_events(3)</a>, <a href="../man3/SSL_get_event_timeout.html">SSL_get_event_timeout(3)</a>, <a href="../man3/SSL_get_rpoll_descriptor.html">SSL_get_rpoll_descriptor(3)</a>, <a href="../man3/SSL_get_wpoll_descriptor.html">SSL_get_wpoll_descriptor(3)</a>, <a href="../man3/SSL_poll.html">SSL_poll(3)</a>, <a href="../man3/OSSL_QUIC_client_thread_method.html">OSSL_QUIC_client_thread_method(3)</a>, <a href="../man3/SSL_CTX_set_domain_flags.html">SSL_CTX_set_domain_flags(3)</a>, <a href="../man3/SSL_new_domain.html">SSL_new_domain(3)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

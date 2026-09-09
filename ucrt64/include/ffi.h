@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi 3.7.1
+   libffi 3.8.0
      - Copyright (c) 2011, 2014, 2019, 2021, 2022, 2024, 2025, 2026 Anthony Green
      - Copyright (c) 1996-2003, 2007, 2008 Red Hat, Inc.
 
@@ -79,9 +79,10 @@ extern "C" {
 #define FFI_TYPE_COMPLEX    15
 #define FFI_TYPE_UINT128    16
 #define FFI_TYPE_SINT128    17
+#define FFI_TYPE_VECTOR     18
 
 /* This should always refer to the last type code (for sanity checks).  */
-#define FFI_TYPE_LAST       FFI_TYPE_SINT128
+#define FFI_TYPE_LAST       FFI_TYPE_VECTOR
 
 #include <ffitarget.h>
 
@@ -323,8 +324,8 @@ size_t ffi_java_raw_size (ffi_cif *cif) __attribute__((deprecated));
 
 /* ---- Version API ------------------------------------------------------ */
 
-#define FFI_VERSION_STRING "3.7.1"
-#define FFI_VERSION_NUMBER 30701
+#define FFI_VERSION_STRING "3.8.0"
+#define FFI_VERSION_NUMBER 30800
 
 #ifndef LIBFFI_ASM
 /* Return a version string. */
@@ -535,7 +536,11 @@ void ffi_call(ffi_cif *cif,
    ffi_call_plan_alloc returns NULL only on allocation failure; a signature
    with no fast path is still valid and ffi_call_plan_invoke falls back to
    ffi_call for it.  A plan is immutable once built, so it may be shared and
-   invoked concurrently from multiple threads.  */
+   invoked concurrently from multiple threads.
+
+   ffi_call_plan_size reports the total number of bytes libffi allocated for a
+   plan, so that callers tracking the footprint of long-lived plans do not have
+   to guess at the size of an opaque type.  */
 typedef struct ffi_call_plan ffi_call_plan;
 
 FFI_API
@@ -549,6 +554,9 @@ void ffi_call_plan_invoke (ffi_call_plan *plan,
 
 FFI_API
 void ffi_call_plan_free (ffi_call_plan *plan);
+
+FFI_API
+size_t ffi_call_plan_size (ffi_call_plan *plan);
 
 FFI_API
 ffi_status ffi_get_struct_offsets (ffi_abi abi, ffi_type *struct_type,

@@ -8,27 +8,16 @@
 
 #include <crtdefs.h>
 #include <corecrt_memory.h>
+#include <corecrt_wstring.h>
+
+_CRT_BEGIN_C_HEADER
 
 #ifdef __cplusplus
-extern "C" {
+/* Tell libstdc++ and libc++ we have provided the correct ISO C++ overloads */
+#define __CORRECT_ISO_CPP_STRING_H_PROTO
 #endif
 
-#ifndef _NLSCMP_DEFINED
-#define _NLSCMP_DEFINED
 #define _NLSCMPERROR 2147483647
-#endif
-
-#ifndef NULL
-#ifdef __cplusplus
-#ifndef _WIN64
-#define NULL 0
-#else
-#define NULL 0LL
-#endif  /* W64 */
-#else
-#define NULL ((void *)0)
-#endif
-#endif
 
   char * __cdecl _strset(char *_Str,int _Val) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   char * __cdecl _strset_l(char *_Str,int _Val,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
@@ -59,7 +48,6 @@ extern "C" {
 #if !defined(__STRICT_ANSI__) || defined(_GNU_SOURCE) || __STDC_VERSION__ + 0 >= 202311L || _POSIX_C_SOURCE + 0 >= 200809L || _XOPEN_SOURCE + 0 >= 700
   char *__cdecl strndup(const char *_Src,size_t _MaxCount);
 #endif
-  _CONST_RETURN char *__cdecl strchr(const char *_Str,int _Val);
   _CRTIMP int __cdecl _stricmp(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _strcmpi(const char *_Str1,const char *_Str2);
   _CRTIMP int __cdecl _stricmp_l(const char *_Str1,const char *_Str2,_locale_t _Locale);
@@ -83,11 +71,8 @@ extern "C" {
   char *strncpy(char * __restrict__ _Dest,const char * __restrict__ _Source,size_t _Count) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP char *__cdecl _strnset(char *_Str,int _Val,size_t _MaxCount) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
   _CRTIMP char *__cdecl _strnset_l(char *str,int c,size_t count,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CONST_RETURN char *__cdecl strpbrk(const char *_Str,const char *_Control);
-  _CONST_RETURN char *__cdecl strrchr(const char *_Str,int _Ch);
   _CRTIMP char *__cdecl _strrev(char *_Str);
   size_t __cdecl strspn(const char *_Str,const char *_Control);
-  _CONST_RETURN char *__cdecl strstr(const char *_Str,const char *_SubStr);
   _CRTIMP char *__cdecl strtok(char * __restrict__ _Str,const char * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
 #pragma push_macro("strtok_r")
 #undef strtok_r
@@ -119,95 +104,74 @@ extern "C" {
   char *__cdecl strupr(char *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
 #endif
 
-#ifndef _WSTRING_DEFINED
-#define _WSTRING_DEFINED
+  _CRTIMP errno_t __cdecl _strset_s(char *_Dst,size_t _DstSize,int _Value);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, _strset_s, char, _Dst, int, _Value)
+  _CRTIMP errno_t __cdecl _strerror_s(char *_Buf,size_t _SizeInBytes,const char *_ErrMsg);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, _strerror_s, char, _Buf, const char *, _ErrMsg)
+  _SECIMP errno_t __cdecl strerror_s(char *_Buf,size_t _SizeInBytes,int _ErrNum);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, strerror_s, char, _Buf, int, _ErrNum)
+  _CRTIMP errno_t __cdecl _strlwr_s(char *_Str,size_t _Size);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0(errno_t, _strlwr_s, char, _Str)
+  _CRTIMP errno_t __cdecl _strlwr_s_l(char *_Str,size_t _Size,_locale_t _Locale);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, _strlwr_s_l, char, _Str, _locale_t, _Locale)
+  _CRTIMP errno_t __cdecl _strnset_s(char *_Str,size_t _Size,int _Val,size_t _MaxCount);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2(errno_t, _strnset_s, char, _Str, int, _Val, size_t, _MaxCount)
+  _CRTIMP errno_t __cdecl _strupr_s(char *_Str,size_t _Size);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_0(errno_t, _strupr_s, char, _Str)
+  _CRTIMP errno_t __cdecl _strupr_s_l(char *_Str,size_t _Size,_locale_t _Locale);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, _strupr_s_l, char, _Str, _locale_t, _Locale)
 
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma push_macro("_wcsdup")
-#undef _wcsdup
-#endif
-  _CRTIMP wchar_t *__cdecl _wcsdup(const wchar_t *_Str);
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma pop_macro("_wcsdup")
-#endif
-  wchar_t *__cdecl wcscat(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CONST_RETURN wchar_t *__cdecl wcschr(const wchar_t *_Str,wchar_t _Ch);
-  int __cdecl wcscmp(const wchar_t *_Str1,const wchar_t *_Str2);
-  wchar_t *__cdecl wcscpy(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  size_t __cdecl wcscspn(const wchar_t *_Str,const wchar_t *_Control);
-  size_t __cdecl wcslen(const wchar_t *_Str);
-  size_t __cdecl wcsnlen(const wchar_t *_Src,size_t _MaxCount);
-  wchar_t *wcsncat(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source,size_t _Count) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  int __cdecl wcsncmp(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount);
-  wchar_t *wcsncpy(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source,size_t _Count) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  wchar_t *__cdecl _wcsncpy_l(wchar_t * __restrict__ _Dest,const wchar_t * __restrict__ _Source,size_t _Count,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CONST_RETURN wchar_t *__cdecl wcspbrk(const wchar_t *_Str,const wchar_t *_Control);
-  _CONST_RETURN wchar_t *__cdecl wcsrchr(const wchar_t *_Str,wchar_t _Ch);
-  size_t __cdecl wcsspn(const wchar_t *_Str,const wchar_t *_Control);
-  _CONST_RETURN wchar_t *__cdecl wcsstr(const wchar_t *_Str,const wchar_t *_SubStr);
-  _CRTIMP wchar_t *__cdecl wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim,wchar_t ** __restrict__ _Ptr) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *__cdecl _wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-#if defined(_CRT_NON_CONFORMING_WCSTOK) && !defined(__cplusplus)
-  #define wcstok _wcstok
-#endif
-#if !defined(_CRT_NO_INLINE_DEPRECATED_WCSTOK) && defined(__cplusplus)
-  extern "C++" inline wchar_t *__cdecl wcstok(wchar_t * __restrict__ _Str,const wchar_t * __restrict__ _Delim) { return _wcstok(_Str, _Delim); }
-#endif
-  _CRTIMP wchar_t *__cdecl _wcserror(int _ErrNum) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *__cdecl __wcserror(const wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP int __cdecl _wcsicmp(const wchar_t *_Str1,const wchar_t *_Str2);
-  _CRTIMP int __cdecl _wcsicmp_l(const wchar_t *_Str1,const wchar_t *_Str2,_locale_t _Locale);
-  _CRTIMP int __cdecl _wcsnicmp(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount);
-  _CRTIMP int __cdecl _wcsnicmp_l(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount,_locale_t _Locale);
-  _CRTIMP wchar_t *__cdecl _wcsnset(wchar_t *_Str,wchar_t _Val,size_t _MaxCount) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *__cdecl _wcsrev(wchar_t *_Str);
-  _CRTIMP wchar_t *__cdecl _wcsset(wchar_t *_Str,wchar_t _Val) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *__cdecl _wcslwr(wchar_t *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *_wcslwr_l(wchar_t *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *__cdecl _wcsupr(wchar_t *_String) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP wchar_t *_wcsupr_l(wchar_t *_String,_locale_t _Locale) __MINGW_ATTRIB_DEPRECATED_SEC_WARN;
-  _CRTIMP size_t __cdecl wcsxfrm(wchar_t * __restrict__ _Dst,const wchar_t * __restrict__ _Src,size_t _MaxCount);
-  _CRTIMP size_t __cdecl _wcsxfrm_l(wchar_t * __restrict__ _Dst,const wchar_t * __restrict__ _Src,size_t _MaxCount,_locale_t _Locale);
-  _CRTIMP int __cdecl wcscoll(const wchar_t *_Str1,const wchar_t *_Str2);
-  _CRTIMP int __cdecl _wcscoll_l(const wchar_t *_Str1,const wchar_t *_Str2,_locale_t _Locale);
-  _CRTIMP int __cdecl _wcsicoll(const wchar_t *_Str1,const wchar_t *_Str2);
-  _CRTIMP int __cdecl _wcsicoll_l(const wchar_t *_Str1,const wchar_t *_Str2,_locale_t _Locale);
-  _CRTIMP int __cdecl _wcsncoll(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount);
-  _CRTIMP int __cdecl _wcsncoll_l(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount,_locale_t _Locale);
-  _CRTIMP int __cdecl _wcsnicoll(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount);
-  _CRTIMP int __cdecl _wcsnicoll_l(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount,_locale_t _Locale);
+  _CRTIMP errno_t __cdecl strncat_s(char *_Dst,size_t _DstSizeInChars,const char *_Src,size_t _MaxCount);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2(errno_t, strncat_s, char, _Dst, const char *, _Src, size_t, _MaxCount)
+  _CRTIMP errno_t __cdecl _strncat_s_l(char *_Dst,size_t _DstSizeInChars,const char *_Src,size_t _MaxCount,_locale_t _Locale);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3(errno_t, _strncat_s_l, char, _Dst, const char *, _Src, size_t, _MaxCount, _locale_t, _Locale)
+  _CRTIMP errno_t __cdecl strcpy_s(char *_Dst, rsize_t _SizeInBytes, const char *_Src);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, strcpy_s, char, _Dest, const char *, _Source)
+  _CRTIMP errno_t __cdecl strncpy_s(char *_Dst, size_t _DstSizeInChars, const char *_Src, size_t _MaxCount);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_2(errno_t, strncpy_s, char, _Dest, const char *, _Source, size_t, _MaxCount)
+  _CRTIMP errno_t __cdecl _strncpy_s_l(char *_Dst, size_t _DstSizeInChars, const char *_Src, size_t _MaxCount, _locale_t _Locale);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_3(errno_t, _strncpy_s_l, char, _Dest, const char *, _Source, size_t, _MaxCount, _locale_t, _Locale)
+  _CRTIMP char *__cdecl strtok_s(char *_Str,const char *_Delim,char **_Context);
+  _CRTIMP char *__cdecl _strtok_s_l(char *_Str,const char *_Delim,char **_Context,_locale_t _Locale);
+  _CRTIMP errno_t __cdecl strcat_s(char *_Dst, rsize_t _SizeInBytes, const char * _Src);
+  __DEFINE_CPP_OVERLOAD_SECURE_FUNC_0_1(errno_t, strcat_s, char, _Dest, const char *, _Source)
 
-#ifndef	NO_OLDNAMES
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma push_macro("wcsdup")
-#undef wcsdup
-#endif
-  wchar_t *__cdecl wcsdup(const wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-#if defined(_DEBUG) && defined(_CRTDBG_MAP_ALLOC)
-#pragma pop_macro("wcsdup")
-#endif
-#define wcswcs wcsstr
-  int __cdecl wcsicmp(const wchar_t *_Str1,const wchar_t *_Str2) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  int __cdecl wcsnicmp(const wchar_t *_Str1,const wchar_t *_Str2,size_t _MaxCount) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  wchar_t *__cdecl wcsnset(wchar_t *_Str,wchar_t _Val,size_t _MaxCount) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  wchar_t *__cdecl wcsrev(wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  wchar_t *__cdecl wcsset(wchar_t *_Str,wchar_t _Val) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  wchar_t *__cdecl wcslwr(wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  wchar_t *__cdecl wcsupr(wchar_t *_Str) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-  int __cdecl wcsicoll(const wchar_t *_Str1,const wchar_t *_Str2) __MINGW_ATTRIB_DEPRECATED_MSVC2005;
-#endif
-#endif
+  __forceinline size_t __cdecl strnlen_s(const char * _src, size_t _count) {
+    return _src ? strnlen(_src, _count) : 0;
+  }
+
+  _SECIMP errno_t __cdecl memmove_s(void *_dest,size_t _numberOfElements,const void *_src,size_t _count);
+
+_CRT_END_C_HEADER
 
 #ifdef __cplusplus
-}
-#endif
+extern "C++" {
+  const char* __cdecl strchr(const char*, int) __MINGW_ASM_CALL(strchr);
+  inline char* __cdecl strchr(char* _Str, int _Val)
+  { return const_cast<char*>(strchr(const_cast<const char*>(_Str), _Val)); }
 
-#include <sec_api/string_s.h>
+  const char* __cdecl strpbrk(const char*, const char*) __MINGW_ASM_CALL(strpbrk);
+  inline char* __cdecl strpbrk(char* _Str, const char* _Control)
+  { return const_cast<char*>(strpbrk(const_cast<const char*>(_Str), _Control)); }
+
+  const char* __cdecl strrchr(const char*, int) __MINGW_ASM_CALL(strrchr);
+  inline char* __cdecl strrchr(char* _Str, int _Val)
+  { return const_cast<char*>(strrchr(const_cast<const char*>(_Str), _Val)); }
+
+  const char* __cdecl strstr(const char*, const char*) __MINGW_ASM_CALL(strstr);
+  inline char* __cdecl strstr(char* _Str, const char* _SubStr)
+  { return const_cast<char*>(strstr(const_cast<const char*>(_Str), _SubStr)); }
+}
+#else
+  char* __cdecl strchr(const char* _Str, int _Val);
+  char* __cdecl strpbrk(const char* _Str, const char* _Control);
+  char* __cdecl strrchr(const char* _Str, int _Val);
+  char* __cdecl strstr(const char* _Str, const char* _SubStr);
+#endif
 
 #if __MINGW_FORTIFY_LEVEL > 0
-#ifdef __cplusplus
-extern "C" {
-#endif
+
+_CRT_BEGIN_C_HEADER
 
 __mingw_bos_declare;
 
@@ -292,9 +256,8 @@ wchar_t * wcscat(wchar_t * __restrict__ __dst, const wchar_t * __restrict__ __sr
   return __mingw_call_wcscat(__dst, __src);
 }
 
-#ifdef __cplusplus
-}
-#endif
+_CRT_END_C_HEADER
+
 #endif /* __MINGW_FORTIFY_LEVEL > 0 */
 
 #endif

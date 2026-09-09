@@ -13,48 +13,9 @@
 #include <crtdefs.h>
 #include <io.h>
 
-#pragma pack(push,_CRT_PACKING)
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef _CRTIMP
-#define _CRTIMP __declspec(dllimport)
-#endif
+_CRT_BEGIN_C_HEADER
 
 #include <sys/types.h>
-
-#ifdef _USE_32BIT_TIME_T
-#ifdef _WIN64
-#undef _USE_32BIT_TIME_T
-#endif
-#endif
-
-#ifndef _TIME32_T_DEFINED
-  typedef long __time32_t;
-#define _TIME32_T_DEFINED
-#endif
-
-#ifndef _TIME64_T_DEFINED
-  __MINGW_EXTENSION typedef __int64 __time64_t;
-#define _TIME64_T_DEFINED
-#endif
-
-#ifndef _TIME_T_DEFINED
-#ifdef _USE_32BIT_TIME_T
-  typedef __time32_t time_t;
-#else
-  typedef __time64_t time_t;
-#endif
-#define _TIME_T_DEFINED
-#endif
-
-#ifndef _WCHAR_T_DEFINED
-  typedef unsigned short wchar_t;
-#define _WCHAR_T_DEFINED
-#endif
-
 #include <_mingw_stat64.h>
 
 #define _S_IFMT 0xF000
@@ -75,13 +36,10 @@ extern "C" {
   _CRTIMP int __cdecl _stat32i64(const char *_Name,struct _stat32i64 *_Stat);
   _CRTIMP int __cdecl _stat64i32(const char *_Name,struct _stat64i32 *_Stat);
 
-#ifndef _WSTAT_DEFINED
-#define _WSTAT_DEFINED
   _CRTIMP int __cdecl _wstat32(const wchar_t *_Name,struct _stat32 *_Stat);
   _CRTIMP int __cdecl _wstat32i64(const wchar_t *_Name,struct _stat32i64 *_Stat);
   _CRTIMP int __cdecl _wstat64i32(const wchar_t *_Name,struct _stat64i32 *_Stat);
   _CRTIMP int __cdecl _wstat64(const wchar_t *_Name,struct _stat64 *_Stat);
-#endif
 
 #ifndef	NO_OLDNAMES
 #define	_S_IFBLK	0x6000	/* Block: Is this ever set under w32? */
@@ -189,11 +147,7 @@ int __cdecl wstat64(const wchar_t *_Filename, struct stat64 *_Stat);
 
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-#pragma pack(pop)
+_CRT_END_C_HEADER
 
 #endif /* _INC_STAT */
 

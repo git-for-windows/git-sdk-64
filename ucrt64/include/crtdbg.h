@@ -3,29 +3,13 @@
  * This file is part of the mingw-w64 runtime package.
  * No warranty is given; refer to the file DISCLAIMER.PD within this package.
  */
-#include <crtdefs.h>
-#include <sal.h>
-
 #ifndef _INC_CRTDBG
 #define _INC_CRTDBG
 
-#pragma pack(push,_CRT_PACKING)
+#include <crtdefs.h>
+#include <sal.h>
 
-#ifndef NULL
-#ifdef __cplusplus
-#ifndef _WIN64
-#define NULL 0
-#else
-#define NULL 0LL
-#endif  /* W64 */
-#else
-#define NULL ((void *)0)
-#endif
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+_CRT_BEGIN_C_HEADER
 
   typedef void *_HFILE;
 
@@ -94,20 +78,6 @@ extern "C" {
     size_t lTotalCount;
   } _CrtMemState;
 
-#ifndef _STATIC_ASSERT
-#if (defined(__cpp_static_assert) && __cpp_static_assert >= 201411L) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
-#define _STATIC_ASSERT(expr) static_assert(expr)
-#elif defined(__cpp_static_assert)
-#define _STATIC_ASSERT(expr) static_assert(expr, #expr)
-#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-#define _STATIC_ASSERT(expr) _Static_assert(expr, #expr)
-#elif defined(_MSC_VER)
-#define _STATIC_ASSERT(expr) typedef char __static_assert_t[(expr)]
-#else
-#define _STATIC_ASSERT(expr) extern void __static_assert_t(int [(expr)?1:-1])
-#endif
-#endif
-
 #ifndef _DEBUG
 
 #ifndef _ASSERT
@@ -169,6 +139,8 @@ extern "C" {
 #define _malloca_dbg(s,t,f,l) _malloca(s)
 #define _freea_dbg(p,t) _freea(p)
 
+#define _dupenv_s_dbg(ps1,size,s2,t,f,l) _dupenv_s(ps1,size,s2)
+#define _wdupenv_s_dbg(ps1,size,s2,t,f,l) _wdupenv_s(ps1,size,s2)
 #define _strdup_dbg(s,t,f,l) _strdup(s)
 #define _wcsdup_dbg(s,t,f,l) _wcsdup(s)
 #define _mbsdup_dbg(s,t,f,l) _mbsdup(s)
@@ -436,8 +408,8 @@ _CRTIMP int __cdecl _CrtGetCheckCount(void);
 
 #endif /* _DEBUG */
 
-#ifdef __cplusplus
-}
+_CRT_END_C_HEADER
+
 /*
   void *__cdecl operator new[](size_t _Size);
   inline void *__cdecl operator new(size_t _Size,int,const char *,int) { return ::operator new(_Size); }
@@ -446,10 +418,5 @@ _CRTIMP int __cdecl _CrtGetCheckCount(void);
   inline void __cdecl operator delete(void *_P,int,const char *,int) { ::operator delete(_P); }
   inline void __cdecl operator delete[](void *_P,int,const char *,int) { ::operator delete[](_P); }
  */
-#endif
-
-#pragma pack(pop)
-
-#include <sec_api/crtdbg_s.h>
 
 #endif

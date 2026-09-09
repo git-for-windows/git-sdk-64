@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-fetch(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,8 +450,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs fetch</code> [options] [&lt;remote&gt; [&lt;ref&gt;&#8230;&#8203;]]</p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs fetch</strong> [<em>options</em>] [<em>&lt;remote&gt;</em> [<em>&lt;ref&gt;</em>...]]
+<strong>git lfs fetch</strong> [<em>options</em>] <em>&lt;remote&gt;</em> <strong>--stdin</strong></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -485,11 +488,13 @@ specify.</p>
 <p>Specify lfs.fetchexclude just for this invocation; see
 <a href="#_include_and_exclude">INCLUDE AND EXCLUDE</a>.</p>
 </dd>
+<dt class="hdlist1"><code>-r</code></dt>
 <dt class="hdlist1"><code>--recent</code></dt>
 <dd>
 <p>Download objects referenced by recent branches &amp; commits in addition to those
 that would otherwise be downloaded. See <a href="#_recent_changes">RECENT CHANGES</a>.</p>
 </dd>
+<dt class="hdlist1"><code>-a</code></dt>
 <dt class="hdlist1"><code>--all</code></dt>
 <dd>
 <p>Download all objects that are referenced by any commit reachable from the refs
@@ -498,8 +503,13 @@ This is primarily for backup and migration purposes. Cannot be combined with
 --recent or --include/--exclude. Ignores any globally configured include and
 exclude paths to ensure that all objects are downloaded.</p>
 </dd>
-<dt class="hdlist1"><code>--prune</code></dt>
+<dt class="hdlist1"><code>--stdin</code></dt>
+<dd>
+<p>Read a list of newline-delimited refs from standard input instead of the
+command line.</p>
+</dd>
 <dt class="hdlist1"><code>-p</code></dt>
+<dt class="hdlist1"><code>--prune</code></dt>
 <dd>
 <p>Prune old and unreferenced objects after fetching, equivalent to running <code>git
 lfs prune</code> afterwards. See git-lfs-prune(1) for more details.</p>
@@ -508,15 +518,18 @@ lfs prune</code> afterwards. See git-lfs-prune(1) for more details.</p>
 <dd>
 <p>Also fetch objects that are already present locally.</p>
 </dd>
-<dt class="hdlist1"><code>--dry-run</code></dt>
 <dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Print what would be fetched, without actually fetching anything.</p>
 </dd>
-<dt class="hdlist1"><code>--json</code></dt>
 <dt class="hdlist1"><code>-j</code></dt>
+<dt class="hdlist1"><code>--json</code></dt>
 <dd>
-<p>Give the output in a stable JSON format for scripts.</p>
+<p>Writes the details of all object transfer requests as JSON to STDOUT,
+if the command exits successfully. Intended for interoperation with
+external tools. When <code>--dry-run</code> is also specified, writes the details
+of the transfers that would occur if the objects were fetched.</p>
 </dd>
 </dl>
 </div>

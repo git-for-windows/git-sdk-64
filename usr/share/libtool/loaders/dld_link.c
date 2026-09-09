@@ -1,6 +1,6 @@
 /* loader-dld_link.c -- dynamic linking with dld
 
-   Copyright (C) 1998-2000, 2004, 2006-2008, 2011-2019, 2021-2024 Free
+   Copyright (C) 1998-2000, 2004, 2006-2008, 2011-2019, 2021-2026 Free
    Software Foundation, Inc.
    Written by Thomas Tanner, 1998
 

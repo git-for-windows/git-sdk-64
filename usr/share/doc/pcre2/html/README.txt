@@ -519,13 +519,14 @@ system. The following are installed (file names are all relative to the
     *.html (lots more pages, hyperlinked from index.html)
 
   Text file documentation (share/doc/pcre2):
-    AUTHORS
+    AUTHORS.md
     COPYING
     ChangeLog
-    LICENCE
+    LICENCE.md
     NEWS
     README
-    SECURITY
+    SECURITY.md
+    SUPPORT-LIFECYCLE.md
     pcre2.txt         (a concatenation of the man(3) pages)
     pcre2test.txt     the pcre2test man page
     pcre2grep.txt     the pcre2grep man page
@@ -920,6 +921,7 @@ The distribution should contain the files listed below.
   LICENCE.md               conditions for the use of PCRE2
   COPYING                  the same, using GNU's standard name
   SECURITY.md              information on reporting vulnerabilities
+  SUPPORT-LIFECYCLE.md     information on the support policy
   Makefile.in              ) template for Unix Makefile, which is built by
                            )   "configure"
   Makefile.am              ) the automake input that was used to create
@@ -962,10 +964,10 @@ The distribution should contain the files listed below.
   testdata/testoutput*     expected test results
   testdata/grep*           input and output for pcre2grep tests
   testdata/*               other supporting test files
-  src/libpcre2-8.sym       )
-  src/libpcre2-16.sym      ) symbol version scripts for the GNU and Sun linkers
-  src/libpcre2-32.sym      )
-  src/libpcre2-posix.sym   )
+  src/libpcre2-8.sym.in     )
+  src/libpcre2-16.sym.in    ) symbol version script templates for the
+  src/libpcre2-32.sym.in    ) GNU, BSD and Sun linkers
+  src/libpcre2-posix.sym.in )
 
 (D) Auxiliary files for CMake support
 
@@ -991,6 +993,7 @@ The distribution should contain the files listed below.
   BUILD.bazel             ) files used by the Bazel
   MODULE.bazel            )   build system
   build.zig               file used by zig's build system
+  build.zig.zon           file used by zig's package manager
 
 (G) Auxiliary files for building PCRE2 under OpenVMS
 
@@ -999,7 +1002,7 @@ The distribution should contain the files listed below.
   vms/pcre2.h_patch       )
   vms/stdint.h            )
 
-=============================
-Last updated: 15 October 2025
-=============================
+============================
+Last updated: 08 August 2026
+============================
 

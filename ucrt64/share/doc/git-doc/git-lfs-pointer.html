@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-pointer(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,11 +450,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs pointer --file=path/to/file</code><br>
-<code>git lfs pointer --file=path/to/file --pointer=path/to/pointer</code><br>
-<code>git lfs pointer --file=path/to/file --stdin</code><br>
-<code>git lfs pointer --check --file=path/to/file</code></p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs pointer</strong> <strong>--file=</strong><em>path/to/file</em>
+<strong>git lfs pointer</strong> <strong>--file=</strong><em>path/to/file</em> <strong>--pointer=</strong><em>path/to/pointer</em>
+<strong>git lfs pointer</strong> <strong>--file=</strong><em>path/to/file</em> <strong>--stdin</strong>
+<strong>git lfs pointer --check</strong> <strong>--file=</strong><em>path/to/file</em></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -472,10 +474,12 @@ consistency between different Git LFS implementations.</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><code>-f</code></dt>
 <dt class="hdlist1"><code>--file</code></dt>
 <dd>
 <p>A local file to build the pointer from.</p>
 </dd>
+<dt class="hdlist1"><code>-p</code></dt>
 <dt class="hdlist1"><code>--pointer</code></dt>
 <dd>
 <p>A local file including the contents of a pointer generated from another
@@ -500,6 +504,10 @@ pointer. Exits 1 otherwise.</p>
 canonical; that is, it would be the one created by Git LFS. If it is not,
 exits 2. The default, for backwards compatibility, is <code>--no-strict</code>, but this
 may change in a future version.</p>
+</dd>
+<dt class="hdlist1"><code>--no-extensions</code></dt>
+<dd>
+<p>Don&#8217;t print the extensions of the pointer.</p>
 </dd>
 </dl>
 </div>

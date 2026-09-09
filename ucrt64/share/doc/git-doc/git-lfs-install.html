@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-install(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,8 +450,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs install</code> [options]</p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs install</strong> [<em>options</em>]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -487,15 +489,18 @@ and clean filters if they are not already set.</p>
 </div>
 <div class="dlist">
 <dl>
+<dt class="hdlist1"><code>-f</code></dt>
 <dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Sets the "lfs" smudge and clean filters, overwriting existing values.</p>
 </dd>
+<dt class="hdlist1"><code>-l</code></dt>
 <dt class="hdlist1"><code>--local</code></dt>
 <dd>
 <p>Sets the "lfs" smudge and clean filters in the local repository&#8217;s git config,
 instead of the global git config (~/.gitconfig).</p>
 </dd>
+<dt class="hdlist1"><code>-w</code></dt>
 <dt class="hdlist1"><code>--worktree</code></dt>
 <dd>
 <p>Sets the "lfs" smudge and clean filters in the current working tree&#8217;s git
@@ -506,6 +511,7 @@ one working tree is in use, <code>--worktree</code> has the same effect as <code
 This option is only available if the installed Git version is at least 2.20.0
 and therefore supports the "worktreeConfig" extension.</p>
 </dd>
+<dt class="hdlist1"><code>-m</code></dt>
 <dt class="hdlist1"><code>--manual</code></dt>
 <dd>
 <p>Print instructions for manually updating your hooks to include git-lfs
@@ -517,6 +523,12 @@ hooks and you want to retain their functionality.</p>
 <p>Sets the "lfs" smudge and clean filters in the system git config, e.g.
 /etc/gitconfig instead of the global git config (~/.gitconfig).</p>
 </dd>
+<dt class="hdlist1"><code>--file=&lt;file&gt;</code></dt>
+<dd>
+<p>Sets the <code>lfs</code> smudge and clean filters in the Git configuration file
+specified by the <code>&lt;file&gt;</code> argument.</p>
+</dd>
+<dt class="hdlist1"><code>-s</code></dt>
 <dt class="hdlist1"><code>--skip-smudge</code></dt>
 <dd>
 <p>Skips automatic downloading of objects on clone or pull. This requires a

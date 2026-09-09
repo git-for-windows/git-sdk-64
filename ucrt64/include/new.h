@@ -13,12 +13,9 @@
 #include <crtdefs.h>
 #pragma push_macro("new")
 #undef new
-extern "C" {
 #endif
 
-#ifndef __NOTHROW_T_DEFINED
-#define __NOTHROW_T_DEFINED
-#endif
+_CRT_BEGIN_C_HEADER
 
 #ifndef __PLACEMENT_NEW_INLINE
 #define __PLACEMENT_NEW_INLINE
@@ -27,22 +24,17 @@ extern "C" {
 _CRTIMP int __cdecl _query_new_mode(void);
 _CRTIMP int __cdecl _set_new_mode(int _NewMode);
 
-#ifndef _PNH_DEFINED
 typedef int (__cdecl *_PNH)(size_t);
-#define _PNH_DEFINED
-#endif
 
 _CRTIMP _PNH __cdecl _query_new_handler(void);
 _CRTIMP _PNH __cdecl _set_new_handler(_PNH _NewHandler);
 
-#ifndef _NO_ANSI_NH_DEFINED
 #define _NO_ANSI_NEW_HANDLER ((new_handler)-1)
 #define _NO_ANSI_NEW_HANDLER_M ((_new_handler_m)-1)
-#define _NO_ANSI_NH_DEFINED
-#endif
+
+_CRT_END_C_HEADER
 
 #ifdef __cplusplus
-}
 #pragma pop_macro("new")
 #endif
 

@@ -124,6 +124,22 @@ class StyleTest(AbstractTkTest, unittest.TestCase):
 
         self.style.theme_use(curr_theme)
 
+    def test_theme_settings(self):
+        style = self.style
+        theme = style.theme_use()
+        style.theme_settings(theme, {
+            'Test.TLabel': {
+                'configure': {'foreground': 'red', 'background': 'blue'},
+                'map': {'foreground': [('active', 'green')]},
+            },
+        })
+        self.assertEqual(style.lookup('Test.TLabel', 'foreground'), 'red')
+        self.assertEqual(style.lookup('Test.TLabel', 'background'), 'blue')
+        self.assertEqual(style.map('Test.TLabel', 'foreground'),
+                         [('active', 'green')])
+        self.assertRaises(tkinter.TclError, style.theme_settings,
+                          'nonexistingname', {})
+
     def test_configure_custom_copy(self):
         style = self.style
 
@@ -404,7 +420,8 @@ class StyleTest(AbstractTkTest, unittest.TestCase):
 
         b = ttk.Label(self.root, style='TestWidget')
         b.pack(expand=True, fill='both')
-        self.assertEqual(b.winfo_reqwidth(), 134)
+        # The exact width varies with the Tk version and display scaling.
+        self.assertGreater(b.winfo_reqwidth(), 130)
         self.assertEqual(b.winfo_reqheight(), 100)
 
         style.theme_use(curr_theme)

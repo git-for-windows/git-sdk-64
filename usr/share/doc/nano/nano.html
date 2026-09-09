@@ -53,7 +53,7 @@ ul.no-bullet {list-style: none}
 
 <div class="top" id="Top">
 <span id="SEC_Top"></span>
-<p>This manual documents GNU <code>nano</code>, version 9.1.
+<p>This manual documents GNU <code>nano</code>, version 9.2.
 </p>
 
 
@@ -469,8 +469,9 @@ that a tab at that position would take up.
 </p>
 </dd>
 <dt><span><samp>-F</samp></span></dt>
-<dt><span><samp>--multibuffer</samp></span></dt>
+<dt><span><samp>--newbuffer</samp></span></dt>
 <dd><p>Read a file into a new buffer by default.
+(The old form of this option, <samp>--multibuffer</samp>, is deprecated.)
 </p>
 </dd>
 <dt><span><samp>-G</samp></span></dt>
@@ -1226,8 +1227,9 @@ See <a href="#set-keycolor"><code>set keycolor</code></a> for valid color names.
 cursor, set the mark (with two clicks), or execute shortcuts.
 </p>
 </dd>
-<dt><span><code>set multibuffer</code></span></dt>
+<dt><span><code>set newbuffer</code></span></dt>
 <dd><p>When reading in a file with <kbd>^R</kbd>, insert it into a new buffer by default.
+(The old form of this option, <code>set multibuffer</code>, is deprecated.)
 </p>
 </dd>
 <dt><span><code>set noconvert</code></span></dt>
@@ -1733,7 +1735,7 @@ is used) because its keycode is identical to that of the Backspace key.
 </dd>
 <dt><span><code>insert</code></span></dt>
 <dd><p>Inserts a file into the current buffer (at the current cursor position),
-or into a new buffer when option <code>multibuffer</code> is set.
+or into a new buffer when option <code>newbuffer</code> is set.
 </p>
 </dd>
 <dt><span><code>whereis</code></span></dt>
@@ -2090,8 +2092,8 @@ region) is piped to the command.
 </p>
 </dd>
 <dt><span><code>flipnewbuffer</code></span></dt>
-<dd><p>Toggles between inserting into the current buffer and into a new
-empty buffer.
+<dd><p>When reading in a file or executing a command, toggles between inserting
+the result into the current buffer and into a new empty buffer.
 </p>
 </dd>
 <dt><span><code>flipconvert</code></span></dt>

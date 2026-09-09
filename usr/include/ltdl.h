@@ -1,6 +1,6 @@
 /* ltdl.h -- generic dlopen functions
 
-   Copyright (C) 1998-2000, 2004-2005, 2007-2008, 2011-2019, 2021-2024
+   Copyright (C) 1998-2000, 2004-2005, 2007-2008, 2011-2019, 2021-2026
    Free Software Foundation, Inc.
    Written by Thomas Tanner, 1998
 
@@ -33,6 +33,10 @@ License along with GNU Libltdl.  If not, see <https://www.gnu.org/licenses/>.
 #include <libltdl/lt_system.h>
 #include <libltdl/lt_error.h>
 #include <libltdl/lt_dlloader.h>
+
+#if defined _WIN32 && !defined __CYGWIN__
+#include <io.h>
+#endif
 
 LT_BEGIN_C_DECLS
 

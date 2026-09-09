@@ -10,8 +10,8 @@ use strict;
 
 use Config;
 "$Config{'archname'}-$Config{'osvers'}" eq
-"x86_64\-cygwin\-thread\-multi-3\.6\.7\-f2802c5f\.x86_64" or
-	die "Errno architecture (x86_64\-cygwin\-thread\-multi-3\.6\.7\-f2802c5f\.x86_64) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
+"x86_64\-cygwin\-thread\-multi-3\.6\.10\-8fbd9808\.x86_64" or
+	die "Errno architecture (x86_64\-cygwin\-thread\-multi-3\.6\.10\-8fbd9808\.x86_64) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
 our $VERSION = "1.38";
 $VERSION = eval $VERSION;

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 2.0.25">
+<meta name="generator" content="Asciidoctor 2.0.26">
 <title>git-lfs-prune(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -450,8 +450,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>git lfs prune</code> [options]</p>
+<div class="listingblock synopsis">
+<div class="content">
+<pre class="highlight"><code><strong>git lfs prune</strong> [<em>options</em>]</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -516,13 +518,13 @@ gitignore(5).</p>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><code>--dry-run</code></dt>
 <dt class="hdlist1"><code>-d</code></dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Don&#8217;t actually delete anything, just report on what would have been done</p>
 </dd>
-<dt class="hdlist1"><code>--force</code></dt>
 <dt class="hdlist1"><code>-f</code></dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Prune all objects except unpushed objects, including objects required for
 currently checked out refs. Implies <code>--recent</code>.</p>
@@ -532,8 +534,8 @@ currently checked out refs. Implies <code>--recent</code>.</p>
 <p>Prune even objects that would normally be preserved by the
 configuration options specified below in <a href="#_recent_files">RECENT FILES</a>.</p>
 </dd>
-<dt class="hdlist1"><code>--verify-remote</code></dt>
 <dt class="hdlist1"><code>-c</code></dt>
+<dt class="hdlist1"><code>--verify-remote</code></dt>
 <dd>
 <p>Contact the remote and check that copies of reachable files we would delete
 definitely exist before deleting. See <a href="#_verify_remote">VERIFY REMOTE</a>.</p>
@@ -560,8 +562,8 @@ lfs.pruneverifyunreachablealways was enabled in settings. See
 the execution or continue the deletion of verified objects. See
 <a href="#_verify_remote">VERIFY REMOTE</a>.</p>
 </dd>
-<dt class="hdlist1"><code>--verbose</code></dt>
 <dt class="hdlist1"><code>-v</code></dt>
+<dt class="hdlist1"><code>--verbose</code></dt>
 <dd>
 <p>Report the full detail of what is/would be deleted.</p>
 </dd>
@@ -583,25 +585,28 @@ few days.</p>
 <div class="paragraph">
 <p>Here are the git-config(1) settings that control this behaviour:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>lfs.pruneoffsetdays</code> The number of extra days added to the fetch
-recent settings when using them to decide when to prune. So for a
-reference to be considered old enough to prune, it has to be this many
-days older than the oldest reference that would be downloaded via
-<code>git lfs fetch --recent</code>. Only used if the relevant fetch recent 'days'
-setting is non-zero. Default 3 days.</p>
-</li>
-<li>
-<p><code>lfs.fetchrecentrefsdays</code> <code>lfs.fetchrecentremoterefs</code>
-<code>lfs.fetchrecentcommitsdays</code> These have the same meaning as
-git-lfs-fetch(1) with the <code>--recent</code> option, they are used as a base for
-the offset above. Anything which falls outside of this offsetted window
-is considered old enough to prune. If a day value is zero, that
-condition is not used at all to retain objects and they will be pruned.</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>lfs.pruneoffsetdays</code></dt>
+<dd>
+<p>The number of extra days added to the fetch recent settings when using
+them to decide when to prune. So for a reference to be considered old
+enough to prune, it has to be this many days older than the oldest
+reference that would be downloaded via <code>git lfs fetch --recent</code>.
+Only used if the relevant fetch recent 'days' setting is non-zero.
+Default 3 days.</p>
+</dd>
+<dt class="hdlist1"><code>lfs.fetchrecentrefsdays</code></dt>
+<dt class="hdlist1"><code>lfs.fetchrecentremoterefs</code></dt>
+<dt class="hdlist1"><code>lfs.fetchrecentcommitsdays</code></dt>
+<dd>
+<p>These have the same meaning as git-lfs-fetch(1) with the <code>--recent</code>
+option, they are used as a base for the offset above. Anything which
+falls outside of this offsetted window is considered old enough to
+prune. If a day value is zero, that condition is not used at all to
+retain objects and they will be pruned.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>

@@ -1,0 +1,257 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OPENSSL_armcap</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>OPENSSL_armcap - the Arm processor capabilities vector</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>env OPENSSL_armcap=... &lt;application&gt;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>libcrypto supports a range of Arm instruction set extensions. These extensions are represented by bits in the Arm processor capabilities vector. When libcrypto initializes, it stores the results returned by Arm CPU capabilities detection logic in the Arm processor capabilities vector. The CPU capabilities detection methods are OS-dependent, using a combination of information gathered by the kernel during boot, and probe functions that attempt to execute instructions and trap illegal instruction signals with a signal handler.</p>
+
+<p>To override the set of extensions available to an application, set the <b>OPENSSL_armcap</b> environment variable before starting the application. The environment variable is assigned a numerical value that denotes the bits in the Arm processor capabilities vector. The arm_arch.h header file defines the possible values, which are explained in detail below.</p>
+
+<p>Multiple extensions are enabled by logically OR-ing the values that represent the desired extensions.</p>
+
+<p><b>Notes</b>: Attempting to executing an instruction from an extension that the target CPU does not support will result in an illegal instruction exception (SIGILL).</p>
+
+<p>Please note that not all possible values in the Arm processor capabilities vector are actual processor capabilities. Some values represent OpenSSL performance preferences for some implementations which only make sense on specific CPUs.</p>
+
+<p>The following extensions are defined:</p>
+
+<dl>
+
+<dt id="x0001">0x0001</dt>
+<dd>
+
+<p>Name: <b>ARMV7_NEON</b></p>
+
+<p>Meaning: Indicates support for the Armv7 Neon SIMD extensions on the processor.</p>
+
+<p>Effect: Enables various Armv7 Neon SIMD implementations.</p>
+
+</dd>
+<dt id="x00002">0x00002</dt>
+<dd>
+
+<p>Name: <b>ARMV7_TICK</b></p>
+
+<p>Meaning: Indicates support for the Armv7 system timer on the processor.</p>
+
+<p>Effect: This is used as a seed for some random number generators.</p>
+
+</dd>
+<dt id="x00004">0x00004</dt>
+<dd>
+
+<p>Name: <b>ARMV8_AES</b></p>
+
+<p>Meaning: Indicates support for the Armv8.0 AES hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables various Armv8.0 AES hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00008">0x00008</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SHA1</b></p>
+
+<p>Meaning: Indicates support for the Armv8.0 SHA1 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables various Armv8.0 SHA1 hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00010">0x00010</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SHA256</b></p>
+
+<p>Meaning: Indicates support for the Armv8.0 SHA256 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables various Armv8.0 SHA256 hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00020">0x00020</dt>
+<dd>
+
+<p>Name: <b>ARMV8_PMULL</b></p>
+
+<p>Meaning: Indicates support for the Armv8.0 polynomial multiplication hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Used to hardware-accelerate polynomial multiplication, for example in AES-GCM.</p>
+
+</dd>
+<dt id="x00040">0x00040</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SHA512</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SHA512 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables Armv8.2 SHA512 hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00080">0x00080</dt>
+<dd>
+
+<p>Name: <b>ARMV8_CPUID</b></p>
+
+<p>Meaning: Indicates support for the Armv8.0 hardware identification extensions on the processor.</p>
+
+<p>Effect: Allows implementations to change their behaviour, dependant on the processor platform in order to achieve better performance.</p>
+
+</dd>
+<dt id="x00100">0x00100</dt>
+<dd>
+
+<p>Name: <b>ARMV8_RNG</b></p>
+
+<p>Meaning: Indicates support for the Armv8.5 hardware random number generation extensions on the processor.</p>
+
+<p>Effect: Enables hardware random number generation on supported AArch64 processors.</p>
+
+</dd>
+<dt id="x00200">0x00200</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SM3</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SM3 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables Armv8.2 SM3 hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00400">0x00400</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SM4</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SM4 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables Armv8.2 SM4 hardware-accelerated implementations.</p>
+
+</dd>
+<dt id="x00800">0x00800</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SHA3</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SHA3 hardware-acceleration extensions on the processor.</p>
+
+<p>Effect: Enables SHA3 hardware-accelerated implementations (see also ARMV8_HAVE_SHA3_AND_WORTH_USING).</p>
+
+</dd>
+<dt id="x01000">0x01000</dt>
+<dd>
+
+<p>Name: <b>ARMV8_UNROLL8_EOR3</b></p>
+
+<p>Meaning: Indicates support for the Arm EOR3 instruction, which is a part of the Armv8.2 SHA3 extensions, and enables 8x Loop unrolling in the AES-CTR implementation.</p>
+
+<p>Effect: Enables the 8x loop unrolling utilising EOR3 implementation of AES-CTR on platforms that support the SHA3 extension and have enough vector bandwidth.</p>
+
+</dd>
+<dt id="x02000">0x02000</dt>
+<dd>
+
+<p>Name: <b>ARMV8_SVE</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SVE hardware extension on the processor.</p>
+
+<p>Effect: Enables various Armv8.2 SVE implementations.</p>
+
+</dd>
+<dt id="x04000">0x04000</dt>
+<dd>
+
+<p>Name: <b>ARMV9_SVE2</b></p>
+
+<p>Meaning: Indicates support for the Armv9.0 SVE2 hardware extension on the processor.</p>
+
+<p>Effect: Enables various Armv9.0 SVE2 implementations.</p>
+
+</dd>
+<dt id="x08000">0x08000</dt>
+<dd>
+
+<p>Name: <b>ARMV8_HAVE_SHA3_AND_WORTH_USING</b></p>
+
+<p>Meaning: Indicates support for the Armv8.2 SHA3 hardware-acceleration extensions on the processor, and that the hardware bandwidth is sufficient for it to be worth using.</p>
+
+<p>Effect: On certain Apple platforms, although the SHA3 extension is supported, it is actually slower than other implementations. This flag disables the hardware-accelerated SHA3 implementations on these platforms.</p>
+
+</dd>
+<dt id="x10000">0x10000</dt>
+<dd>
+
+<p>Name: <b>ARMV8_UNROLL12_EOR3</b></p>
+
+<p>Meaning: Indicates support for the Arm EOR3 instruction, which is a part of the Armv8.2 SHA3 extensions, and enables 12x loop unrolling in the AES-CTR implementation.</p>
+
+<p>Effect: Enables the 12x loop unrolling utilising EOR3 implementation of AES-CTR on platforms that support the extension and have enough vector bandwidth.</p>
+
+</dd>
+<dt id="x20000">0x20000</dt>
+<dd>
+
+<p>Name: <b>ARMV9_SVE2_POLY1305</b></p>
+
+<p>Meaning: Indicates support for the Armv9.0 SVE2 hardware extension, and enables its use in the Poly1305 implementation.</p>
+
+<p>Effect: Enables the Armv9.0 SVE2 Poly1305 implementation if SVE2 is enabled, the vector length is greater than 128 bits, and the vector length is a power of 2.</p>
+
+</dd>
+</dl>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>Not available.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>Check currently detected capabilities:</p>
+
+<pre><code>$ openssl info -cpusettings
+OPENSSL_armcap=0x987d</code></pre>
+
+<p>The detected capabilities in the above example indicate that ARMV7_NEON, ARMV8_AES, ARMV8_SHA1, ARMV8_SHA256, ARMV8_PMULL, ARMV8_SHA512, ARMV8_SHA3, ARMV8_UNROLL8_EOR3, and ARMV8_HAVE_SHA3_AND_WORTH_USING are enabled.</p>
+
+<p>Disable all instruction set extensions:</p>
+
+<pre><code>export OPENSSL_armcap=0x00</code></pre>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

@@ -1,6 +1,6 @@
 /* lt__alloc.c -- internal memory management interface
 
-   Copyright (C) 2004, 2006-2007, 2011-2019, 2021-2024 Free Software
+   Copyright (C) 2004, 2006-2007, 2011-2019, 2021-2026 Free Software
    Foundation, Inc.
    Written by Gary V. Vaughan, 2004
 
