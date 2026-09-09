@@ -110,7 +110,7 @@ jobs:
           printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git &&
 
           # Restrict `PATH` to MSYS2
-          PATH="/ucrt64/bin:/usr/bin:/C/Windows/system32"
+          PATH="/ucrt64/bin:/usr/bin:/usr/bin/core_perl:/C/Windows/system32"
 
           sh -x /usr/src/build-extra/please.sh build-mingw-w64-git --only-ucrt64 --build-src-pkg -o artifacts HEAD &&
           cp bundle-artifacts/ver artifacts/ &&
