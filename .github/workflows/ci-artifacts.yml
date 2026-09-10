@@ -75,7 +75,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
-          for path in mingw64/bin/7z.exe mingw64/bin/7z.dll mingw64/lib/7zip/7zCon.sfx
+          for path in ucrt64/bin/7z.exe ucrt64/bin/7z.dll ucrt64/lib/7zip/7zCon.sfx
           do
             git --git-dir=git-sdk-64.git show HEAD:$path >${path##*/}
           done &&
