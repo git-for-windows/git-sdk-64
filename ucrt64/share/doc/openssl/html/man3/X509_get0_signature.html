@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_get0_signature, X509_REQ_set0_signature, X509_REQ_set1_signature_algo, X509_get_signature_nid, X509_get0_tbs_sigalg, X509_REQ_get0_signature, X509_REQ_get_signature_nid, X509_CRL_get0_signature, X509_CRL_get_signature_nid, X509_CRL_get0_tbs_sigalg, X509_get_signature_info, X509_SIG_INFO_get, X509_SIG_INFO_set, X509_ACERT_get0_signature, X509_ACERT_get0_info_sigalg, X509_ACERT_get_signature_nid - signature information</p>
+<p>X509_get0_signature, X509_REQ_set0_signature, X509_REQ_set1_signature_algo, X509_get_signature_nid, X509_get0_tbs_sigalg, X509_REQ_get0_signature, X509_REQ_get_signature_nid, X509_CRL_get0_signature, X509_CRL_get_signature_nid, X509_ACERT_get0_signature, X509_ACERT_get0_info_sigalg, X509_ACERT_get_signature_nid, X509_get_signature_info, X509_SIG_INFO_get, X509_SIG_INFO_set - signature information</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -48,7 +48,6 @@
                               const ASN1_BIT_STRING **psig,
                               const X509_ALGOR **palg);
  int X509_CRL_get_signature_nid(const X509_CRL *crl);
- const X509_ALGOR *X509_CRL_get0_tbs_sigalg(const X509_crl *crl);
 
  int X509_get_signature_info(X509 *x, int *mdnid, int *pknid, int *secbits,
                              uint32_t *flags);
@@ -70,17 +69,17 @@
 
 <p>X509_set0_signature() and X509_REQ_set1_signature_algo() are the equivalent setters for the two values of X509_get0_signature().</p>
 
-<p>X509_get0_tbs_sigalg() and X509_CRL_get0_tbs_sigalg() return the signature algorithm in the signed portion of the certificate or CRL.</p>
+<p>X509_get0_tbs_sigalg() returns the signature algorithm in the signed portion of <b>x</b>.</p>
 
 <p>X509_get_signature_nid() returns the NID corresponding to the signature algorithm of <b>x</b>.</p>
 
 <p>X509_REQ_get0_signature(), X509_REQ_get_signature_nid() X509_CRL_get0_signature() and X509_CRL_get_signature_nid() perform the same function for certificate requests and CRLs.</p>
 
+<p>X509_ACERT_get0_signature(), X509_ACERT_get_signature_nid() and X509_ACERT_get0_info_sigalg() perform the same function for attribute certificates.</p>
+
 <p>X509_get_signature_info() retrieves information about the signature of certificate <b>x</b>. The NID of the signing digest is written to <b>*mdnid</b>, the public key algorithm to <b>*pknid</b>, the effective security bits to <b>*secbits</b> and flag details to <b>*flags</b>. Any of the parameters can be set to <b>NULL</b> if the information is not required.</p>
 
 <p>X509_SIG_INFO_get() and X509_SIG_INFO_set() get and set information about a signature in an <b>X509_SIG_INFO</b> structure. They are only used by implementations of algorithms which need to set custom signature information: most applications will never need to call them.</p>
-
-<p>X509_ACERT_get0_signature(), X509_ACERT_get_signature_nid() and X509_ACERT_get0_info_sigalg() perform the same function for attribute certificates.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -112,11 +111,9 @@
 
 <p>The X509_ACERT_get0_signature(), X509_ACERT_get0_info_sigalg() and X509_ACERT_get_signature_nid() functions were added in OpenSSL 3.4.</p>
 
-<p>The X509_CRL_get0_tbs_sigalg() function was added in OpenSSL 3.6.</p>
-
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

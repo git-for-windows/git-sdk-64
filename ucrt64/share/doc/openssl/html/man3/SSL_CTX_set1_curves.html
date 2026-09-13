@@ -62,7 +62,7 @@ int SSL_CTX_get0_implemented_groups(SSL_CTX *ctx, int all,
 
 <p>For a TLS client, the groups are used directly in the supported groups extension. The extension&#39;s preference order, to be evaluated by the server, is determined by the order of the elements in the array.</p>
 
-<p>For a TLS 1.2 server, the groups determine the selected group. If <b>SSL_OP_SERVER_PREFERENCE</b> is set, the order of the elements in the array determines the selected group. Otherwise, the order is ignored and the client&#39;s order determines the selection.</p>
+<p>For a TLS 1.2 server, the groups determine the selected group. If <b>SSL_OP_CIPHER_SERVER_PREFERENCE</b> is set, the order of the elements in the array determines the selected group. Otherwise, the order is ignored and the client&#39;s order determines the selection.</p>
 
 <p>For a TLS 1.3 server, the groups determine the selected group, but selection is more complex. A TLS 1.3 client sends both a group list and predicted keyshares for a subset of groups. A server choosing a group outside the client&#39;s predicted subset incurs an extra roundtrip. However, in some situations, the most preferred group may not be predicted.</p>
 
@@ -101,7 +101,7 @@ $ openssl list -tls1_3 -tls-groups</code></pre>
 
 <p>If a group name is preceded by <code>*</code>, a key share will be sent for this group. When preceding <code>DEFAULT</code> with <code>*</code>, a key share will be sent for the first group of the OpenSSL built-in default list of groups. If no <code>*</code> is used anywhere in the list, a single key share for the leftmost valid group is sent. A maximum of 4 key shares are supported. Example: &quot;P-521:*P-256/*P-384&quot; will add P-521, P-256 and P-384 to the supported groups extension in a <code>ClientHello</code> and will send key shares for P-256 and P-384.</p>
 
-<p>For a TLS 1.3 server, the groups in the string <i>list</i> will be used to determine which group is used for the key agreement. The preference order of the group tuples is determined by the order of the tuples in the array, and the preference order of the groups within a group tuple is determined by the order of the groups in the tuple. Server preference can be enforced by setting <b>SSL_OP_SERVER_PREFERENCE</b> using <b>SSL_set_options</b> (default: client preference).</p>
+<p>For a TLS 1.3 server, the groups in the string <i>list</i> will be used to determine which group is used for the key agreement. The preference order of the group tuples is determined by the order of the tuples in the array, and the preference order of the groups within a group tuple is determined by the order of the groups in the tuple. Server preference can be enforced by setting <b>SSL_OP_CIPHER_SERVER_PREFERENCE</b> using <b>SSL_set_options</b> (default: client preference).</p>
 
 <p>The server will select the group to be used for a key agreement using the following pseudo-code algorithm:</p>
 
@@ -111,7 +111,7 @@ $ openssl list -tls1_3 -tls-groups</code></pre>
             IF current key-share group is also part of current group tuple: SH, return success
         FOR each client supported groups
             IF current supported group is also part of current group tuple: HRR, return success
-    ELSE (= server preference = with SSL_OP_SERVER_PREFERENCE option set)
+    ELSE (= server preference = with SSL_OP_CIPHER_SERVER_PREFERENCE option set)
         FOR each group in current tuple
             IF current group is also part of client key-share groups: SH, return success
         FOR each group in current tuple

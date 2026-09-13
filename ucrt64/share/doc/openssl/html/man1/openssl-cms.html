@@ -66,7 +66,7 @@
 
 <p>Encryption options:</p>
 
-<p>[<b>-originator</b> <i>file</i>] [<b>-recip</b> <i>file</i>] [<i>recipient-cert</i> ...] [<b>-<i>cipher</i></b>] [<b>-kekcipher</b> <i>cipher</i>] [<b>-wrap</b> <i>cipher</i>] [<b>-aes128-wrap</b>] [<b>-aes192-wrap</b>] [<b>-aes256-wrap</b>] [<b>-des3-wrap</b>] [<b>-debug_decrypt</b>] [<b>-recip_kdf</b> <i>kdf</i>] [<b>-recip_ukm</b> <i>ukm</i>]</p>
+<p>[<b>-originator</b> <i>file</i>] [<b>-recip</b> <i>file</i>] [<i>recipient-cert</i> ...] [<b>-<i>cipher</i></b>] [<b>-wrap</b> <i>cipher</i>] [<b>-aes128-wrap</b>] [<b>-aes192-wrap</b>] [<b>-aes256-wrap</b>] [<b>-des3-wrap</b>] [<b>-debug_decrypt</b>]</p>
 
 <p>Signing options:</p>
 
@@ -412,12 +412,6 @@
 <p>If not specified, AES-256-CBC is used as the default. Only used with <b>-encrypt</b> and <b>-EncryptedData_encrypt</b> commands.</p>
 
 </dd>
-<dt id="kekcipher-cipher"><b>-kekcipher</b> <i>cipher</i></dt>
-<dd>
-
-<p>Cipher algorithm to use for password key encryption. This option is relevant when a password for password recipient information is provided using <b>-pwri_password</b>, and an AEAD encryption algorithm is selected. In such cases, a non-AEAD algorithm should be specified using this option.</p>
-
-</dd>
 <dt id="wrap-cipher"><b>-wrap</b> <i>cipher</i></dt>
 <dd>
 
@@ -434,18 +428,6 @@
 <dd>
 
 <p>This option sets the <b>CMS_DEBUG_DECRYPT</b> flag. This option should be used with caution: see the notes section below.</p>
-
-</dd>
-<dt id="recip_kdf"><b>-recip_kdf</b></dt>
-<dd>
-
-<p>This option sets the KDF used to generate the key encryption key in the <b>KEMRecipientInfo</b> type. Any KDF that takes <b>OSSL_KDF_PARAM_KEY</b> and <b>OSSL_KDF_PARAM_INFO</b> parameters and is otherwise fully defined by its name or OID can be used, for example <b>HKDF-SHA256</b>.</p>
-
-</dd>
-<dt id="recip_ukm"><b>-recip_ukm</b></dt>
-<dd>
-
-<p>This option sets the <b>KEMRecipientInfo</b> type&#39;s optional user keying material (UKM) in hexadecimal form. The UKM will be encoded, along with other information, into the <b>OSSL_KDF_PARAM_INFO</b> parameter of the <b>KEMRecipientInfo</b> type&#39;s KDF.</p>
 
 </dd>
 </dl>
@@ -907,8 +889,6 @@
 <p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
 
 <p>The <b>-digest</b> option was added in OpenSSL 3.2.</p>
-
-<p>The <b>-recip_kdf</b> and <b>-recip_ukm</b> options were added in OpenSSL 3.6.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -5,9 +5,7 @@ var base_8h =
     [ "LZMA_STREAM_INIT", "base_8h.html#af31f0c8b6f14359cd082b9559f7f3e01", null ],
     [ "lzma_bool", "base_8h.html#abbc819c74b484c846825ae1388a50a59", null ],
     [ "lzma_internal", "base_8h.html#ab1a60127c640135687a5bcc232cec906", null ],
-    [ "lzma_reserved_enum", "base_8h.html#a05805a07754b2aa22f7d443eb7ece41a", [
-      [ "LZMA_RESERVED_ENUM", "base_8h.html#a05805a07754b2aa22f7d443eb7ece41aa01aa8862db0188a8b3f15753daf7228e", null ]
-    ] ],
+    [ "lzma_reserved_enum", "base_8h.html#a05805a07754b2aa22f7d443eb7ece41a", null ],
     [ "lzma_ret", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6e", [
       [ "LZMA_OK", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eac003781ccb81bbd5578e29abed8a8cfe", null ],
       [ "LZMA_STREAM_END", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea91ecc6fab14c13ad36224afbcb4e55c4", null ],
@@ -21,15 +19,7 @@ var base_8h =
       [ "LZMA_DATA_ERROR", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea3aa72729a844790e39b4e1101a731dfb", null ],
       [ "LZMA_BUF_ERROR", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea9ca0ecb62459bdc84d6af47d16b23ae5", null ],
       [ "LZMA_PROG_ERROR", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea2dac8d451cb38da8550653d0d7be4ec2", null ],
-      [ "LZMA_SEEK_NEEDED", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea6cf28e5345851f13bd798a4eab8cc939", null ],
-      [ "LZMA_RET_INTERNAL1", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea9d8db142d9eb52fd4144067960134bd7", null ],
-      [ "LZMA_RET_INTERNAL2", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea61600315d14264e71b9d84c9e0dc8c2f", null ],
-      [ "LZMA_RET_INTERNAL3", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eaecbf288ad566d7e9be964fe8aaae1f7b", null ],
-      [ "LZMA_RET_INTERNAL4", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea8ef14e6224613ad41131f636680db548", null ],
-      [ "LZMA_RET_INTERNAL5", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eaf08066ae531b78d7cd063de49759a7eb", null ],
-      [ "LZMA_RET_INTERNAL6", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eaf509a2a300729012881f244e29c3e7b1", null ],
-      [ "LZMA_RET_INTERNAL7", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eae310792b4e549cf8710e0f3c945d7541", null ],
-      [ "LZMA_RET_INTERNAL8", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6eafc98304440d802c1d3f20cb027e19995", null ]
+      [ "LZMA_SEEK_NEEDED", "base_8h.html#a8494e0457e1463d6d2b6836018d87b6ea6cf28e5345851f13bd798a4eab8cc939", null ]
     ] ],
     [ "lzma_action", "base_8h.html#aa92efcbf3cecfcac79c81fc645fce77e", [
       [ "LZMA_RUN", "base_8h.html#aa92efcbf3cecfcac79c81fc645fce77ea868472b76492afcaef54020a481890b1", null ],

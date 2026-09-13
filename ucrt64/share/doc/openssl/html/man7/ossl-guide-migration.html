@@ -15,11 +15,6 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#OPENSSL-3.6">OPENSSL 3.6</a>
-    <ul>
-      <li><a href="#Main-Changes-from-OpenSSL-3.5">Main Changes from OpenSSL 3.5</a></li>
-    </ul>
-  </li>
   <li><a href="#OPENSSL-3.1">OPENSSL 3.1</a>
     <ul>
       <li><a href="#Main-Changes-from-OpenSSL-3.0">Main Changes from OpenSSL 3.0</a></li>
@@ -154,13 +149,7 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>This guide details the changes required to migrate to new versions of OpenSSL, covering OpenSSL 3.0 and later versions. For earlier versions, refer to <a href="https://github.com/openssl/openssl/blob/master/CHANGES.md">https://github.com/openssl/openssl/blob/master/CHANGES.md</a>. For an overview of some of the key concepts introduced since OpenSSL 3.0, see <a href="../man7/crypto.html">crypto(7)</a>.</p>
-
-<h1 id="OPENSSL-3.6">OPENSSL 3.6</h1>
-
-<h2 id="Main-Changes-from-OpenSSL-3.5">Main Changes from OpenSSL 3.5</h2>
-
-<p>The functions EVP_PKEY_asn1_*() and <a href="../man3/EVP_PKEY_get0_asn1.html">EVP_PKEY_get0_asn1(3)</a> were deprecated in favour of the provider API. EVP_PKEY_assign_[DSA|SIPHASH]() were also deprecated. Please use the new high level and provider API.</p>
+<p>This guide details the changes required to migrate to new versions of OpenSSL. Currently this covers OpenSSL 3.0 &amp; 3.1. For earlier versions refer to <a href="https://github.com/openssl/openssl/blob/master/CHANGES.md">https://github.com/openssl/openssl/blob/master/CHANGES.md</a>. For an overview of some of the key concepts introduced in OpenSSL 3.0 see <a href="../man7/crypto.html">crypto(7)</a>.</p>
 
 <h1 id="OPENSSL-3.1">OPENSSL 3.1</h1>
 
@@ -1648,7 +1637,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <p><b>openssl speed</b> no longer uses low-level API calls. This implies some of the performance numbers might not be comparable with the previous releases due to higher overhead. This applies particularly to measuring performance on smaller data chunks.</p>
 
-<p><b>openssl dhparam</b>, <b>openssl dsa</b>, <b>openssl gendsa</b>, <b>openssl dsaparam</b>, <b>openssl genrsa</b> and <b>openssl rsa</b> have been modified to use PKEY APIs. <b>openssl genrsa</b> and <b>openssl rsa</b> now write PKCS #8 keys by default.</p>
+<p>b&lt;openssl dhparam&gt;, <b>openssl dsa</b>, <b>openssl gendsa</b>, <b>openssl dsaparam</b>, <b>openssl genrsa</b> and <b>openssl rsa</b> have been modified to use PKEY APIs. <b>openssl genrsa</b> and <b>openssl rsa</b> now write PKCS #8 keys by default.</p>
 
 <h3 id="Default-settings">Default settings</h3>
 
@@ -1743,7 +1732,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

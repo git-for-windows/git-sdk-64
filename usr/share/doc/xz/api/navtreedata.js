@@ -49,9 +49,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"structlzma__index__iter.html#a0fc4959fab08e1a6a4902c728c735a99"
+"structlzma__index__iter_1_1_0fstruct_0e_8stream.html"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronization';
-var SYNCOFFMSG = 'click to enable panel synchronization';
-var LISTOFALLMEMBERS = 'List of all members';
+const SYNCONMSG = 'click to disable panel synchronization';
+const SYNCOFFMSG = 'click to enable panel synchronization';
+const LISTOFALLMEMBERS = 'List of all members';

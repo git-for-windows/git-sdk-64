@@ -67,15 +67,15 @@ int EVP_PKEY_verify(EVP_PKEY_CTX *ctx,
 
 <p>EVP_PKEY_verify_init_ex2() is the same as EVP_PKEY_verify_init_ex(), but works with an explicitly fetched <b>EVP_SIGNATURE</b> <i>algo</i>. A context <i>ctx</i> without a pre-loaded key cannot be used with this function. Depending on what algorithm was fetched, certain details revolving around the treatment of the input to EVP_PKEY_verify() may be pre-determined, and in that case, those details may normally not be changed. See <a href="#NOTES">&quot;NOTES&quot;</a> below for a deeper explanation.</p>
 
-<p>EVP_PKEY_verify_message_init() initializes a public key algorithm context <i>ctx</i> for verifying an unlimited size message using the algorithm given by <i>algo</i> and the key given through <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a> or <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>. Passing the message is supported both in a one-shot fashion using EVP_PKEY_verify(), and through the combination of EVP_PKEY_verify_message_update() and EVP_PKEY_verify_message_final(). This function enables using algorithms that can process input of arbitrary length, such as ED25519, RSA-SHA256 and similar.</p>
+<p>EVP_PKEY_verify_message_init() initializes a public key algorithm context <i>ctx</i> for verifying an unlimited size message using the algorithm given by <i>algo</i> and the key given through <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a> or <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>. Passing the message is supported both in a one-shot fashion using EVP_PKEY_verify(), and through the combination of EVP_PKEY_verify_update() and EVP_PKEY_verify_final(). This function enables using algorithms that can process input of arbitrary length, such as ED25519, RSA-SHA256 and similar.</p>
 
-<p>EVP_PKEY_CTX_set_signature() specifies the <i>siglen</i> bytes long signature <i>sig</i> to be verified against by EVP_PKEY_verify_message_final(). It <i>must</i> be used together with EVP_PKEY_verify_message_update() and EVP_PKEY_verify_message_final(). See <a href="#NOTES">&quot;NOTES&quot;</a> below for a deeper explanation.</p>
+<p>EVP_PKEY_CTX_set_signature() specifies the <i>siglen</i> bytes long signature <i>sig</i> to be verified against by EVP_PKEY_verify_final(). It <i>must</i> be used together with EVP_PKEY_verify_update() and EVP_PKEY_verify_final(). See <a href="#NOTES">&quot;NOTES&quot;</a> below for a deeper explanation.</p>
 
-<p>EVP_PKEY_verify_message_update() adds <i>inlen</i> bytes from <i>in</i> to the data to be processed for verification. The signature algorithm specification and implementation determine how the input bytes are processed and if there&#39;s a limit on the total size of the input. See <a href="#NOTES">&quot;NOTES&quot;</a> below for a deeper explanation.</p>
+<p>EVP_PKEY_verify_update() adds <i>inlen</i> bytes from <i>in</i> to the data to be processed for verification. The signature algorithm specification and implementation determine how the input bytes are processed and if there&#39;s a limit on the total size of the input. See <a href="#NOTES">&quot;NOTES&quot;</a> below for a deeper explanation.</p>
 
-<p>EVP_PKEY_verify_message_final() verifies the processed data, given only <i>ctx</i>. The signature to verify against must have been given with EVP_PKEY_CTX_set_signature().</p>
+<p>EVP_PKEY_verify_final() verifies the processed data, given only <i>ctx</i>. The signature to verify against must have been given with EVP_PKEY_CTX_set_signature().</p>
 
-<p>EVP_PKEY_verify() is a one-shot function that performs the same thing as EVP_PKEY_CTX_set_signature() call with <i>sig</i> and <i>siglen</i> as parameters, followed by a single EVP_PKEY_verify_message_update() call with <i>tbs</i> and <i>tbslen</i>, followed by EVP_PKEY_verify_message_final() call.</p>
+<p>EVP_PKEY_verify() is a one-shot function that performs the same thing as EVP_PKEY_CTX_set_signature() call with <i>sig</i> and <i>siglen</i> as parameters, followed by a single EVP_PKEY_verify_update() call with <i>tbs</i> and <i>tbslen</i>, followed by EVP_PKEY_verify_final() call.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -279,7 +279,7 @@ ret = EVP_PKEY_verify_message_final(ctx);
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

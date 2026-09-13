@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>DEFINE_STACK_OF, DEFINE_STACK_OF_CONST, DEFINE_SPECIAL_STACK_OF, DEFINE_SPECIAL_STACK_OF_CONST, sk_TYPE_num, sk_TYPE_value, sk_TYPE_new, sk_TYPE_new_null, sk_TYPE_reserve, sk_TYPE_free, sk_TYPE_zero, sk_TYPE_delete, sk_TYPE_delete_ptr, sk_TYPE_push, sk_TYPE_unshift, sk_TYPE_pop, sk_TYPE_shift, sk_TYPE_pop_free, sk_TYPE_insert, sk_TYPE_set, sk_TYPE_find, sk_TYPE_find_ex, sk_TYPE_find_all, sk_TYPE_sort, sk_TYPE_is_sorted, sk_TYPE_dup, sk_TYPE_deep_copy, sk_TYPE_set_cmp_func, sk_TYPE_new_reserve, OPENSSL_sk_deep_copy, OPENSSL_sk_delete, OPENSSL_sk_delete_ptr, OPENSSL_sk_dup, OPENSSL_sk_find, OPENSSL_sk_find_ex, OPENSSL_sk_find_all, OPENSSL_sk_free, OPENSSL_sk_insert, OPENSSL_sk_is_sorted, OPENSSL_sk_new, OPENSSL_sk_new_null, OPENSSL_sk_new_reserve, OPENSSL_sk_num, OPENSSL_sk_pop, OPENSSL_sk_pop_free, OPENSSL_sk_push, OPENSSL_sk_reserve, OPENSSL_sk_set, OPENSSL_sk_set_thunks, OPENSSL_sk_set_cmp_func, OPENSSL_sk_shift, OPENSSL_sk_sort, OPENSSL_sk_unshift, OPENSSL_sk_value, OPENSSL_sk_zero - stack container</p>
+<p>DEFINE_STACK_OF, DEFINE_STACK_OF_CONST, DEFINE_SPECIAL_STACK_OF, DEFINE_SPECIAL_STACK_OF_CONST, sk_TYPE_num, sk_TYPE_value, sk_TYPE_new, sk_TYPE_new_null, sk_TYPE_reserve, sk_TYPE_free, sk_TYPE_zero, sk_TYPE_delete, sk_TYPE_delete_ptr, sk_TYPE_push, sk_TYPE_unshift, sk_TYPE_pop, sk_TYPE_shift, sk_TYPE_pop_free, sk_TYPE_insert, sk_TYPE_set, sk_TYPE_find, sk_TYPE_find_ex, sk_TYPE_find_all, sk_TYPE_sort, sk_TYPE_is_sorted, sk_TYPE_dup, sk_TYPE_deep_copy, sk_TYPE_set_cmp_func, sk_TYPE_new_reserve, OPENSSL_sk_deep_copy, OPENSSL_sk_delete, OPENSSL_sk_delete_ptr, OPENSSL_sk_dup, OPENSSL_sk_find, OPENSSL_sk_find_ex, OPENSSL_sk_find_all, OPENSSL_sk_free, OPENSSL_sk_insert, OPENSSL_sk_is_sorted, OPENSSL_sk_new, OPENSSL_sk_new_null, OPENSSL_sk_new_reserve, OPENSSL_sk_num, OPENSSL_sk_pop, OPENSSL_sk_pop_free, OPENSSL_sk_push, OPENSSL_sk_reserve, OPENSSL_sk_set, OPENSSL_sk_set_cmp_func, OPENSSL_sk_shift, OPENSSL_sk_sort, OPENSSL_sk_unshift, OPENSSL_sk_value, OPENSSL_sk_zero - stack container</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -154,9 +154,7 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 
 <p>It is not an error to call <b>sk_<i>TYPE</i>_num</b>(), <b>sk_<i>TYPE</i>_value</b>(), <b>sk_<i>TYPE</i>_free</b>(), <b>sk_<i>TYPE</i>_zero</b>(), <b>sk_<i>TYPE</i>_pop_free</b>(), <b>sk_<i>TYPE</i>_delete</b>(), <b>sk_<i>TYPE</i>_delete_ptr</b>(), <b>sk_<i>TYPE</i>_pop</b>(), <b>sk_<i>TYPE</i>_shift</b>(), <b>sk_<i>TYPE</i>_find</b>(), <b>sk_<i>TYPE</i>_find_ex</b>(), and <b>sk_<i>TYPE</i>_find_all</b>() on a NULL stack, empty stack, or with an invalid index. An error is not raised in these conditions.</p>
 
-<p>The underlying utility <b>OPENSSL_sk_</b> API should not be used directly. It defines these functions: OPENSSL_sk_deep_copy(), OPENSSL_sk_delete(), OPENSSL_sk_delete_ptr(), OPENSSL_sk_dup(), OPENSSL_sk_find(), OPENSSL_sk_find_ex(), OPENSSL_sk_find_all(), OPENSSL_sk_free(), OPENSSL_sk_insert(), OPENSSL_sk_is_sorted(), OPENSSL_sk_new(), OPENSSL_sk_new_null(), OPENSSL_sk_new_reserve(), OPENSSL_sk_num(), OPENSSL_sk_pop(), OPENSSL_sk_pop_free(), OPENSSL_sk_push(), OPENSSL_sk_reserve(), OPENSSL_sk_set(), OPENSSL_sk_set_cmp_func(), OPENSSL_sk_set_thunks(), OPENSSL_sk_shift(), OPENSSL_sk_sort(), OPENSSL_sk_unshift(), OPENSSL_sk_value(), OPENSSL_sk_zero().</p>
-
-<p>OPENSSL_sk_set_thunks(), while public by necessity, is actually an internal function and should not be used.</p>
+<p>The underlying utility <b>OPENSSL_sk_</b> API should not be used directly. It defines these functions: OPENSSL_sk_deep_copy(), OPENSSL_sk_delete(), OPENSSL_sk_delete_ptr(), OPENSSL_sk_dup(), OPENSSL_sk_find(), OPENSSL_sk_find_ex(), OPENSSL_sk_find_all(), OPENSSL_sk_free(), OPENSSL_sk_insert(), OPENSSL_sk_is_sorted(), OPENSSL_sk_new(), OPENSSL_sk_new_null(), OPENSSL_sk_new_reserve(), OPENSSL_sk_num(), OPENSSL_sk_pop(), OPENSSL_sk_pop_free(), OPENSSL_sk_push(), OPENSSL_sk_reserve(), OPENSSL_sk_set(), OPENSSL_sk_set_cmp_func(), OPENSSL_sk_shift(), OPENSSL_sk_sort(), OPENSSL_sk_unshift(), OPENSSL_sk_value(), OPENSSL_sk_zero().</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -193,8 +191,6 @@ const TYPE *sk_FUNCNAME_value(STACK_OF(TYPE) *sk, int idx);</code></pre>
 <p>From OpenSSL 3.2.0, the <b>sk_<i>TYPE</i>_find</b>(), <b>sk_<i>TYPE</i>_find_ex</b>() and <b>sk_<i>TYPE</i>_find_all</b>() calls are read-only and do not sort the stack. To avoid any performance implications this change introduces, <b>sk_<i>TYPE</i>_sort</b>() should be called before these find operations.</p>
 
 <p>Before OpenSSL 3.3.0 <b>sk_<i>TYPE</i>_push</b>() returned -1 if <i>sk</i> was NULL. It was changed to return 0 in this condition as for other errors.</p>
-
-<p>OPENSSL_sk_set_thunks() was added in OpenSSL 3.6.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -25,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_STORE_CTX_new_ex, X509_STORE_CTX_new, X509_STORE_CTX_cleanup, X509_STORE_CTX_free, X509_STORE_CTX_init, X509_STORE_CTX_init_rpk, X509_STORE_CTX_set0_trusted_stack, X509_STORE_CTX_set_cert, X509_STORE_CTX_set0_crls, X509_STORE_CTX_set0_rpk, X509_STORE_CTX_get0_param, X509_STORE_CTX_set0_param, X509_STORE_CTX_get0_untrusted, X509_STORE_CTX_set0_untrusted, X509_STORE_CTX_get_num_untrusted, X509_STORE_CTX_get0_chain, X509_STORE_CTX_set0_verified_chain, X509_STORE_CTX_get0_rpk, X509_STORE_CTX_set_default, X509_STORE_CTX_set_verify, X509_STORE_CTX_verify_fn, X509_STORE_CTX_set_ocsp_resp, X509_STORE_CTX_set_purpose, X509_STORE_CTX_set_trust, X509_STORE_CTX_purpose_inherit - X509_STORE_CTX initialisation</p>
+<p>X509_STORE_CTX_new_ex, X509_STORE_CTX_new, X509_STORE_CTX_cleanup, X509_STORE_CTX_free, X509_STORE_CTX_init, X509_STORE_CTX_init_rpk, X509_STORE_CTX_set0_trusted_stack, X509_STORE_CTX_set_cert, X509_STORE_CTX_set0_crls, X509_STORE_CTX_set0_rpk, X509_STORE_CTX_get0_param, X509_STORE_CTX_set0_param, X509_STORE_CTX_get0_untrusted, X509_STORE_CTX_set0_untrusted, X509_STORE_CTX_get_num_untrusted, X509_STORE_CTX_get0_chain, X509_STORE_CTX_set0_verified_chain, X509_STORE_CTX_get0_rpk, X509_STORE_CTX_set_default, X509_STORE_CTX_set_verify, X509_STORE_CTX_verify_fn, X509_STORE_CTX_set_purpose, X509_STORE_CTX_set_trust, X509_STORE_CTX_purpose_inherit - X509_STORE_CTX initialisation</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -62,7 +62,6 @@ int X509_STORE_CTX_set_default(X509_STORE_CTX *ctx, const char *name);
 typedef int (*X509_STORE_CTX_verify_fn)(X509_STORE_CTX *);
 void X509_STORE_CTX_set_verify(X509_STORE_CTX *ctx, X509_STORE_CTX_verify_fn verify);
 
-void X509_STORE_CTX_set_ocsp_resp(X509_STORE_CTX *ctx, STACK_OF(OCSP_RESPONSE) *sk);
 int X509_STORE_CTX_set_purpose(X509_STORE_CTX *ctx, int purpose);
 int X509_STORE_CTX_set_trust(X509_STORE_CTX *ctx, int trust);
 int X509_STORE_CTX_purpose_inherit(X509_STORE_CTX *ctx, int def_purpose,
@@ -128,8 +127,6 @@ int X509_STORE_CTX_purpose_inherit(X509_STORE_CTX *ctx, int def_purpose,
 
 <p>X509 certificates may contain information about what purposes keys contained within them can be used for. For example &quot;TLS WWW Server Authentication&quot; or &quot;Email Protection&quot;. This &quot;key usage&quot; information is held internally to the certificate itself. In addition the trust store containing trusted certificates can declare what purposes we trust different certificates for. This &quot;trust&quot; information is not held within the certificate itself but is &quot;meta&quot; information held alongside it. This &quot;meta&quot; information is associated with the certificate after it is issued and could be determined by a system administrator. For example a certificate might declare that it is suitable for use for both &quot;TLS WWW Server Authentication&quot; and &quot;TLS Client Authentication&quot;, but a system administrator might only trust it for the former. An X.509 certificate extension exists that can record extended key usage information to supplement the purpose information described above. This extended mechanism is arbitrarily extensible and not well suited for a generic library API; applications that need to validate extended key usage information in certificates will need to define a custom &quot;purpose&quot; (see below) or supply a nondefault verification callback (<a href="../man3/X509_STORE_set_verify_cb_func.html">X509_STORE_set_verify_cb_func(3)</a>).</p>
 
-<p>X509_STORE_CTX_set_ocsp_resp() sets the OCSP response(s) for the verification of a certificate chain or for including in the TLS handshake, when the client requests OCSP stapling. The stack of OCSP responses <i>sk</i> is not copied but just stored to the context. <i>ctx</i> holds a pointer to the stack, so the stack must outlive the <i>ctx</i>.</p>
-
 <p>X509_STORE_CTX_set_purpose() sets the purpose for the target certificate being verified in the <i>ctx</i>. Built-in available values for the <i>purpose</i> argument are <b>X509_PURPOSE_SSL_CLIENT</b>, <b>X509_PURPOSE_SSL_SERVER</b>, <b>X509_PURPOSE_NS_SSL_SERVER</b>, <b>X509_PURPOSE_SMIME_SIGN</b>, <b>X509_PURPOSE_SMIME_ENCRYPT</b>, <b>X509_PURPOSE_CRL_SIGN</b>, <b>X509_PURPOSE_ANY</b>, <b>X509_PURPOSE_OCSP_HELPER</b>, <b>X509_PURPOSE_TIMESTAMP_SIGN</b> and <b>X509_PURPOSE_CODE_SIGN</b>. It is also possible to create a custom purpose value. Setting a purpose requests that the key usage and extended key usage (EKU) extensions optionally declared within the certificate and its chain are verified to be consistent with that purpose. For SSL client, SSL server, and S/MIME purposes, the EKU is checked also for the CA certificates along the chain, including any given trust anchor certificate. Potentially also further checks are done (depending on the purpose given). Every purpose also has an associated default trust value, which will also be set at the same time. During verification, this trust setting will be verified to check whether it is consistent with the trust set by the system administrator for certificates in the chain.</p>
 
 <p>X509_STORE_CTX_set_trust() sets the trust value for the target certificate being verified in the <i>ctx</i>. Built-in available values for the <i>trust</i> argument are <b>X509_TRUST_COMPAT</b>, <b>X509_TRUST_SSL_CLIENT</b>, <b>X509_TRUST_SSL_SERVER</b>, <b>X509_TRUST_EMAIL</b>, <b>X509_TRUST_OBJECT_SIGN</b>, <b>X509_TRUST_OCSP_SIGN</b>, <b>X509_TRUST_OCSP_REQUEST</b> and <b>X509_TRUST_TSA</b>. It is also possible to create a custom trust value. Since X509_STORE_CTX_set_purpose() also sets the trust value it is normally sufficient to only call that function. If both are called then X509_STORE_CTX_set_trust() should be called after X509_STORE_CTX_set_purpose() since the trust setting of the last call will be used.</p>
@@ -166,7 +163,7 @@ int X509_STORE_CTX_purpose_inherit(X509_STORE_CTX *ctx, int def_purpose,
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The X509_STORE_CTX_set0_crls() function was added in OpenSSL 1.0.0. The X509_STORE_CTX_get_num_untrusted() function was added in OpenSSL 1.1.0. The X509_STORE_CTX_new_ex() function was added in OpenSSL 3.0. The X509_STORE_CTX_init_rpk(), X509_STORE_CTX_get0_rpk(), and X509_STORE_CTX_set0_rpk() functions were added in OpenSSL 3.2. X509_STORE_CTX_set_ocsp_resp() function was added in OpenSSL 3.6.</p>
+<p>The X509_STORE_CTX_set0_crls() function was added in OpenSSL 1.0.0. The X509_STORE_CTX_get_num_untrusted() function was added in OpenSSL 1.1.0. The X509_STORE_CTX_new_ex() function was added in OpenSSL 3.0. The X509_STORE_CTX_init_rpk(), X509_STORE_CTX_get0_rpk(), and X509_STORE_CTX_set0_rpk() functions were added in OpenSSL 3.2.</p>
 
 <p>There is no need to call X509_STORE_CTX_cleanup() explicitly since OpenSSL 3.0.</p>
 

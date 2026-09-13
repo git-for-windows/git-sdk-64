@@ -23,15 +23,13 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_accept_stream, SSL_get_accept_stream_queue_len, SSL_ACCEPT_STREAM_NO_BLOCK, SSL_ACCEPT_STREAM_UNI, SSL_ACCEPT_STREAM_BIDI - accept an incoming QUIC stream from a QUIC peer</p>
+<p>SSL_accept_stream, SSL_get_accept_stream_queue_len, SSL_ACCEPT_STREAM_NO_BLOCK - accept an incoming QUIC stream from a QUIC peer</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
 #define SSL_ACCEPT_STREAM_NO_BLOCK
-#define SSL_ACCEPT_STREAM_UNI
-#define SSL_ACCEPT_STREAM_BIDI
 
 SSL *SSL_accept_stream(SSL *ssl, uint64_t flags);
 
@@ -46,8 +44,6 @@ size_t SSL_get_accept_stream_queue_len(SSL *ssl);</code></pre>
 <p>The caller is responsible for managing the lifetime of the returned QUIC stream SSL object; for more information, see <a href="../man3/SSL_free.html">SSL_free(3)</a>.</p>
 
 <p>This function will block if the QUIC connection SSL object is configured in blocking mode (see <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a>), but this may be bypassed by passing the flag <b>SSL_ACCEPT_STREAM_NO_BLOCK</b> in <i>flags</i>. If this flag is set, this function never blocks.</p>
-
-<p>By default, this function will return the first incoming stream, whether it is unidirectional or bidirectional. Passing the flag <b>SSL_ACCEPT_STREAM_UNI</b> or <b>SSL_ACCEPT_STREAM_BIDI</b> will return the first stream that is unidirectional or bidirectional, respectively. If these flags are both set, either type can be returned. A NULL return value may mean that there are still streams that can be dequeued.</p>
 
 <p>Calling SSL_accept_stream() if there is no default stream already present inhibits the future creation of a default stream. See <a href="../man7/openssl-quic.html">openssl-quic(7)</a>.</p>
 
@@ -73,7 +69,7 @@ size_t SSL_get_accept_stream_queue_len(SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -33,7 +33,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_KDF, EVP_KDF_fetch, EVP_KDF_free, EVP_KDF_up_ref, EVP_KDF_CTX, EVP_KDF_CTX_new, EVP_KDF_CTX_free, EVP_KDF_CTX_dup, EVP_KDF_CTX_reset, EVP_KDF_derive, EVP_KDF_CTX_set_SKEY, EVP_KDF_derive_SKEY, EVP_KDF_CTX_get_kdf_size, EVP_KDF_get0_provider, EVP_KDF_CTX_kdf, EVP_KDF_is_a, EVP_KDF_get0_name, EVP_KDF_names_do_all, EVP_KDF_get0_description, EVP_KDF_CTX_get_params, EVP_KDF_CTX_set_params, EVP_KDF_do_all_provided, EVP_KDF_get_params, EVP_KDF_gettable_params, EVP_KDF_gettable_ctx_params, EVP_KDF_settable_ctx_params, EVP_KDF_CTX_gettable_params, EVP_KDF_CTX_settable_params - EVP KDF routines</p>
+<p>EVP_KDF, EVP_KDF_fetch, EVP_KDF_free, EVP_KDF_up_ref, EVP_KDF_CTX, EVP_KDF_CTX_new, EVP_KDF_CTX_free, EVP_KDF_CTX_dup, EVP_KDF_CTX_reset, EVP_KDF_derive, EVP_KDF_CTX_get_kdf_size, EVP_KDF_get0_provider, EVP_KDF_CTX_kdf, EVP_KDF_is_a, EVP_KDF_get0_name, EVP_KDF_names_do_all, EVP_KDF_get0_description, EVP_KDF_CTX_get_params, EVP_KDF_CTX_set_params, EVP_KDF_do_all_provided, EVP_KDF_get_params, EVP_KDF_gettable_params, EVP_KDF_gettable_ctx_params, EVP_KDF_settable_ctx_params, EVP_KDF_CTX_gettable_params, EVP_KDF_CTX_settable_params - EVP KDF routines</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -50,10 +50,6 @@ void EVP_KDF_CTX_reset(EVP_KDF_CTX *ctx);
 size_t EVP_KDF_CTX_get_kdf_size(EVP_KDF_CTX *ctx);
 int EVP_KDF_derive(EVP_KDF_CTX *ctx, unsigned char *key, size_t keylen,
                    const OSSL_PARAM params[]);
-int EVP_KDF_CTX_set_SKEY(EVP_KDF_CTX *ctx, EVP_SKEY *key, const char *paramname);
-EVP_SKEY *EVP_KDF_derive_SKEY(EVP_KDF_CTX *ctx, EVP_SKEYMGMT *mgmt,
-                              const char *key_type, const char *propquery,
-                              size_t keylen, const OSSL_PARAM params[]);
 int EVP_KDF_up_ref(EVP_KDF *kdf);
 void EVP_KDF_free(EVP_KDF *kdf);
 EVP_KDF *EVP_KDF_fetch(OSSL_LIB_CTX *libctx, const char *algorithm,
@@ -82,7 +78,7 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 
 <p>The EVP KDF routines are a high-level interface to Key Derivation Function algorithms and should be used instead of algorithm-specific functions.</p>
 
-<p>After creating a <b>EVP_KDF_CTX</b> for the required algorithm using EVP_KDF_CTX_new(), inputs to the algorithm are supplied either by passing them as part of the EVP_KDF_derive() or EVP_KDF_derive_SKEY() call or using calls to EVP_KDF_CTX_set_params() or EVP_KDF_CTX_set_SKEY() before calling EVP_KDF_derive() or EVP_KDF_derive_SKEY() to derive the key.</p>
+<p>After creating a <b>EVP_KDF_CTX</b> for the required algorithm using EVP_KDF_CTX_new(), inputs to the algorithm are supplied either by passing them as part of the EVP_KDF_derive() call or using calls to EVP_KDF_CTX_set_params() before calling EVP_KDF_derive() to derive the key.</p>
 
 <h2 id="Types">Types</h2>
 
@@ -115,10 +111,6 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 <p>EVP_KDF_CTX_reset() resets the context to the default state as if the context had just been created.</p>
 
 <p>EVP_KDF_derive() processes any parameters in <i>Params</i> and then derives <i>keylen</i> bytes of key material and places it in the <i>key</i> buffer. If the algorithm produces a fixed amount of output then an error will occur unless the <i>keylen</i> parameter is equal to that output size, as returned by EVP_KDF_CTX_get_kdf_size().</p>
-
-<p>EVP_KDF_derive_SKEY() behaves similarly except it returns an <b>EVP_SKEY</b> object. If the <i>skeymgmt</i> argument is explicitly passed, it will be used for the generated key. If the <i>skeymgmt</i> argument is NULL, the <i>key_type</i> and <i>propquery</i> will be used for fetching the <b>EVP_SKEYMGMT</b> object linked to the key. If the KDF doesn&#39;t support dealing with opaque keys or the passed <b>EVP_SKEYMGMT</b> is from a different provider than the KDF method, the operation will try to perform export/import through the raw format.</p>
-
-<p>EVP_KDF_CTX_set_SKEY() allows setting an skey object as the input parameter for the derivation functions. As different KDFs may accept several parameters as key names, we can specify the particular parameter name we set. If null is passed, the parameter <b>OSSL_KDF_PARAM_KEY</b> is implied. It is used when the input key is represented by <b>EVP_SKEY</b> rather than raw bytes.</p>
 
 <p>EVP_KDF_get_params() retrieves details about the implementation <i>kdf</i>. The set of parameters given with <i>params</i> determine exactly what parameters should be retrieved. Note that a parameter that is unknown in the underlying context is simply ignored.</p>
 
@@ -246,8 +238,6 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 
 <p>EVP_KDF_names_do_all() returns 1 if the callback was called for all names. A return value of 0 means that the callback was not called for any names.</p>
 
-<p>EVP_KDF_derive_SKEY() returns the <b>EVP_SKEY</b> object on success or NULL on failure.</p>
-
 <p>The remaining functions return 1 for success and 0 for failure.</p>
 
 <h1 id="NOTES">NOTES</h1>
@@ -262,11 +252,9 @@ const OSSL_PROVIDER *EVP_KDF_get0_provider(const EVP_KDF *kdf);</code></pre>
 
 <p>This functionality was added in OpenSSL 3.0.</p>
 
-<p>EVP_KDF_derive_SKEY() and EVP_KDF_CTX_set_SKEY() functions were introduced in OpenSSL 3.6.</p>
-
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

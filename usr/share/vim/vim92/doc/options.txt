@@ -1,4 +1,4 @@
-*options.txt*	For Vim version 9.2.  Last change: 2026 Jul 22
+*options.txt*	For Vim version 9.2.  Last change: 2026 Sep 07
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -3007,7 +3007,14 @@ A jump table for the options with a short description can be found at |Q_op|.
 			local to window
 			{not available when compiled without the |+syntax|
 			feature}
-	Highlight the text line of the cursor with CursorLine |hl-CursorLine|.
+	Highlighting used for the line the cursor is on:
+
+	CursorLine		the text line |hl-CursorLine|
+	CursorLineFold		the fold column |hl-CursorLineFold|
+	CursorLineSign		the sign column |hl-CursorLineSign|
+	CursorLineNr		the line number, when 'cursorlineopt' contains
+				"number" |hl-CursorLineNr|
+
 	Useful to easily spot the cursor.  Will make screen redrawing slower.
 	When Visual mode is active the highlighting isn't used to make it
 	easier to see the selected text.
@@ -3583,6 +3590,10 @@ A jump table for the options with a short description can be found at |Q_op|.
 	To ignore all but some events, a "-" prefix can be used: >
 	    :set ei=all,-WinLeave
 <
+	Events that are triggered by comparing the current state against a
+	stored one, such as |CursorMoved| and |TextChanged|, are not triggered
+	afterwards for what happened while they were ignored.
+
 						*'eventignorewin'* *'eiw'*
 'eventignorewin' 'eiw'	string	(default "")
 			window-local
@@ -3986,7 +3997,6 @@ A jump table for the options with a short description can be found at |Q_op|.
 	The function should return a List, which is handled similarly to the
 	return value of a |:command-completion-customlist| function.
 
-	The function is called only once per |:find| command invocation.
 	The function can process all the directories specified in 'path'.
 
 	If a match is found, the function should return a |List| containing
@@ -4494,7 +4504,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 						*'guiheadroom'* *'ghr'*
 'guiheadroom' 'ghr'	number	(default 50)
 			global
-			{only for GTK and X11 GUI}
+			{only for GTK and X11 GUI, except GTK4 GUI}
 	The number of pixels subtracted from the screen height when fitting
 	the GUI window on the screen.  Set this before the GUI is started,
 	e.g., in your |gvimrc| file.  When zero, the whole screen height will
@@ -5030,6 +5040,9 @@ A jump table for the options with a short description can be found at |Q_op|.
 <	"S-space" means shift+space.  This is the activation key for kinput2 +
 	canna (Japanese), and ami (Korean).
 
+	Note that when using the GTK4 GUI, this option is not supported. The
+	only valid value for this option will be an empty string.
+
 				*'imcmdline'* *'imc'* *'noimcmdline'* *'noimc'*
 'imcmdline' 'imc'	boolean (default off)
 			global
@@ -5394,9 +5407,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	expand "$HOME/.viminfo".  Maybe you should change 'iskeyword' instead.
 
 						*'iskeyword'* *'isk'*
-'iskeyword' 'isk'	string (Vim default for Win32:
-					    "@,48-57,_,128-167,224-235"
-				   otherwise:  "@,48-57,_,192-255"
+'iskeyword' 'isk'	string (Vim default: "@,48-57,_,192-255"
 				Vi default: "@,48-57,_")
 			local to buffer
 	Keywords are used in searching and recognizing with many commands:
@@ -5680,6 +5691,12 @@ A jump table for the options with a short description can be found at |Q_op|.
 		0: never
 		1: only if there are at least two windows
 		2: always
+
+	Here "last window" means the last window in a column, i.e. the bottom-
+	most one, just above the command line.  A window with another window
+	below it always has a status line, since it also visually separates
+	those.
+
 	The screen looks nicer with a status line if you have several
 	windows, but it takes another screen line. |status-line|
 
@@ -6894,7 +6911,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 'printexpr' 'pexpr'	string	(default: see below)
 			global
 			{only available when compiled with the |+printer|
-			and |+postscript| features}
+			and |+postscript| or |+pango| features}
 	Expression used to print the PostScript produced with |:hardcopy|.
 	See |pexpr-option|.
 	This option cannot be set from a |modeline| or in the |sandbox|, for
@@ -7335,7 +7352,8 @@ A jump table for the options with a short description can be found at |Q_op|.
 		    emoji might be rendered beyond the bounding box of drawing
 		    cell.
 
-	Other render types are currently not supported.
+	Other render types are currently not supported.  See also
+	'guiligatures'.
 
 						*'report'*
 'report'		number	(default 2)
@@ -10509,7 +10527,7 @@ A jump table for the options with a short description can be found at |Q_op|.
 	  exacttext	When this flag is present, search pattern completion
 			(e.g., in |/|, |?|, |:s|, |:g|, |:v|, and |:vim|)
 			shows exact buffer text as menu items, without
-			preserving regex artifacts like position
+			preserving regexp artifacts like position
 			anchors (e.g., |/\<|).  This provides more intuitive
 			menu items that match the actual buffer text.
 			However, searches may be less accurate since the
