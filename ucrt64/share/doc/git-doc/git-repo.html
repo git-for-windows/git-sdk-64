@@ -454,7 +454,7 @@ pre>code {
 <div class="verseblock">
 <pre class="content"><code>git</code> <code>repo</code> <code>info</code> [<code>--format=</code>(<code>lines</code>|<code>nul</code>) | <code>-z</code>] [<code>--all</code> | <em>&lt;key&gt;</em>&#8230;&#8203;]
 <code>git</code> <code>repo</code> <code>info</code> <code>--keys</code> [<code>--format=</code>(<code>lines</code>|<code>nul</code>) | <code>-z</code>]
-<code>git</code> <code>repo</code> <code>structure</code> [<code>--format=</code>(<code>table</code>|<code>lines</code>|<code>nul</code>) | <code>-z</code>]</pre>
+<code>git</code> <code>repo</code> <code>structure</code> [<em>&lt;options&gt;</em>]</pre>
 </div>
 </div>
 </div>
@@ -526,7 +526,7 @@ through the flag <code>--format</code>. The following formats are supported:</p>
 </dl>
 </div>
 </dd>
-<dt class="hdlist1"><code>structure</code> [<code>--format=</code>(<code>table</code>|<code>lines</code>|<code>nul</code>) | <code>-z</code>]</dt>
+<dt class="hdlist1"><code>structure</code></dt>
 <dd>
 <p>Retrieve statistics about the current repository structure. The
 following kinds of information are reported:</p>
@@ -546,6 +546,38 @@ following kinds of information are reported:</p>
 </li>
 <li>
 <p>Largest reachable objects in the repository by type</p>
+</li>
+<li>
+<p>Optionally, the top-<em>N</em> largest paths by count, on-disk size, and
+inflated size (see <code>--top</code> below)</p>
+<div class="paragraph">
+<p>By default every reference enumerated by <code>for-each-ref</code> contributes to
+the counts and object walk. Use <code>--ref-filter</code> to narrow the scope.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>--ref-filter=</code><em>&lt;pattern&gt;</em></dt>
+<dd>
+<p>Only count references whose full name matches one of the
+given &lt;pattern&gt;s, and only seed the object walk from
+those references. The option is repeatable; multiple
+patterns form a union. Patterns use the same <code>wildmatch</code>
+semantics as <code>git</code> <code>for-each-ref</code>'s positional arguments,
+so <code>*</code> does not cross <code>/</code>. Examples:
+<code>--ref-filter=</code>'refs/heads/*' for local branches,
+<code>--ref-filter=</code>'refs/tags/v*' for release tags,
+<code>--ref-filter=</code>'refs/remotes/origin/*' for a single
+remote&#8217;s branches.</p>
+</dd>
+<dt class="hdlist1"><code>--top=</code><em>&lt;n&gt;</em></dt>
+<dd>
+<p>Also report the <em>n</em> largest paths in the repository,
+separately for trees and blobs and separately ranked by
+object count, on-disk size, and inflated size. Defaults
+to <code>0</code>, which suppresses the detail tables. The default
+can also be set via the <code>repo.structure.top</code> configuration
+variable; an explicit <code>--top=</code><em>&lt;n&gt;</em> on the command line
+overrides the configured value.</p>
 <div class="paragraph">
 <p>The output format can be chosen through the flag <code>--format</code>. Three formats are
 supported:</p>
@@ -574,6 +606,9 @@ the delimiter between the key and value instead of <em>=</em>. Unlike the
 quoted.</p>
 <div class="paragraph">
 <p><code>-z</code> is an alias for <code>--format=nul</code>.</p>
+</div>
+</dd>
+</dl>
 </div>
 </dd>
 </dl>
@@ -607,6 +642,25 @@ values that they return:</p>
 <dt class="hdlist1"><code>object.format</code></dt>
 <dd>
 <p>The object format (hash algorithm) used in the repository.</p>
+</dd>
+<dt class="hdlist1"><code>path.commondir.absolute</code></dt>
+<dd>
+<p>The canonical absolute path to the Git repository&#8217;s common
+directory (the shared .<code>git</code> directory containing objects,
+refs, and global configuration).</p>
+</dd>
+<dt class="hdlist1"><code>path.commondir.relative</code></dt>
+<dd>
+<p>The path to the Git repository&#8217;s common directory relative to
+the current working directory.</p>
+</dd>
+<dt class="hdlist1"><code>path.gitdir.absolute</code></dt>
+<dd>
+<p>The canonical absolute path to the Git repository directory (the .<code>git</code> directory).</p>
+</dd>
+<dt class="hdlist1"><code>path.gitdir.relative</code></dt>
+<dd>
+<p>The path to the Git repository directory relative to the current working directory.</p>
 </dd>
 <dt class="hdlist1"><code>references.format</code></dt>
 <dd>
@@ -674,7 +728,7 @@ using the <code>nul</code> format:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

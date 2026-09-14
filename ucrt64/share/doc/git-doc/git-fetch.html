@@ -1930,6 +1930,39 @@ bundle URI. If you modify the URI at <code>fetch.bundleURI</code>, then be sure 
 remove the value for the <code>fetch.bundleCreationToken</code> value before fetching.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>fetch.followRemoteHEAD</code></dt>
+<dd>
+<p>When fetching using a default refspec, this setting determines how to handle
+differences between a fetched remote&#8217;s <code>HEAD</code> and the local
+<code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> symbolic-ref.  Its value is one of</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>create</code></dt>
+<dd>
+<p>Create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> if a ref exists on the remote, but not locally.
+An existing symbolic-ref will not be touched.  This is the default value.</p>
+</dd>
+<dt class="hdlist1"><code>warn</code></dt>
+<dd>
+<p>Display a warning if the remote advertises a different <code>HEAD</code> than what is
+set locally.  Behaves like "create" if the local symbolic-ref doesn&#8217;t exist.</p>
+</dd>
+<dt class="hdlist1"><code>always</code></dt>
+<dd>
+<p>Silently update <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> whenever the remote advertises a new
+value.</p>
+</dd>
+<dt class="hdlist1"><code>never</code></dt>
+<dd>
+<p>Never create or modify the <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> symbolic-ref.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -1964,7 +1997,7 @@ submodule, that submodule cannot be fetched until it is cloned e.g. by <code>git
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

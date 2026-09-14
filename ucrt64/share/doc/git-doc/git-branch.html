@@ -457,6 +457,7 @@ pre>code {
 	   [<code>--column</code>[<code>=</code><em>&lt;options&gt;</em>] | <code>--no-column</code>] [<code>--sort=</code><em>&lt;key&gt;</em>]
 	   [<code>--merged</code> [<em>&lt;commit&gt;</em>]] [<code>--no-merged</code> [<em>&lt;commit&gt;</em>]]
 	   [<code>--contains</code> [<em>&lt;commit&gt;</em>]] [<code>--no-contains</code> [<em>&lt;commit&gt;</em>]]
+	   [(<code>--forked</code> <em>&lt;branch&gt;</em>)&#8230;&#8203;]
 	   [<code>--points-at</code> <em>&lt;object&gt;</em>] [<code>--format=</code><em>&lt;format&gt;</em>]
 	   [(<code>-r</code>|<code>--remotes</code>) | (<code>-a</code>|<code>--all</code>)]
 	   [<code>--list</code>] [<em>&lt;pattern&gt;</em>&#8230;&#8203;]
@@ -467,7 +468,8 @@ pre>code {
 <code>git</code> <code>branch</code> (<code>-m</code>|<code>-M</code>) [<em>&lt;old-branch&gt;</em>] <em>&lt;new-branch&gt;</em>
 <code>git</code> <code>branch</code> (<code>-c</code>|<code>-C</code>) [<em>&lt;old-branch&gt;</em>] <em>&lt;new-branch&gt;</em>
 <code>git</code> <code>branch</code> (<code>-d</code>|<code>-D</code>) [<code>-r</code>] <em>&lt;branch-name&gt;</em>&#8230;&#8203;
-<code>git</code> <code>branch</code> <code>--edit-description</code> [<em>&lt;branch-name&gt;</em>]</pre>
+<code>git</code> <code>branch</code> <code>--edit-description</code> [<em>&lt;branch-name&gt;</em>]
+<code>git</code> <code>branch</code> [<code>--dry-run</code>] (<code>--delete-merged</code> <em>&lt;pattern&gt;</em>)&#8230;&#8203; [<em>&lt;branch-pattern&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
 </div>
@@ -501,7 +503,8 @@ merged into the named commit (i.e. the branches whose tip commits are
 reachable from the named commit) will be listed.  With <code>--no-merged</code> only
 branches not merged into the named commit will be listed.  If the <em>&lt;commit&gt;</em>
 argument is missing it defaults to <code>HEAD</code> (i.e. the tip of the current
-branch).</p>
+branch).  With <code>--forked</code>, only branches whose configured upstream matches
+the given branch or pattern will be listed.</p>
 </div>
 <div class="paragraph">
 <p>The command&#8217;s second form creates a new branch head named <em>&lt;branch-name&gt;</em>
@@ -680,6 +683,65 @@ the pattern(s).</p>
 <p>Print the name of the current branch. In detached <code>HEAD</code> state,
 nothing is printed.</p>
 </dd>
+<dt class="hdlist1"><code>--delete-merged</code> <em>&lt;pattern&gt;</em></dt>
+<dd>
+<p>Delete local branches whose configured upstream matches
+<em>&lt;pattern&gt;</em>, but only when their tip is reachable from that
+upstream. In other words, the work on the branch has already
+landed on the upstream it tracks, so the local copy is no longer
+needed. <em>&lt;pattern&gt;</em> may name a ref, a remote (using the branch its
+<code>HEAD</code> points at), or a shell-style glob. The option can be
+repeated to widen the upstream match.
+Optional <em>&lt;branch-pattern&gt;</em> arguments limit which local branches
+are considered, e.g. <code>git</code> <code>branch</code> <code>--delete-merged</code> 'origin/*'
+'topic-*'.</p>
+<div class="paragraph">
+<p>A branch is not deleted when:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>its configured upstream ref no longer exists,</p>
+</li>
+<li>
+<p>it is checked out in any worktree,</p>
+</li>
+<li>
+<p>pushing it to the remote configured by
+<code>branch.</code><em>&lt;name&gt;</em><code>.remote</code> would update its upstream, so it cannot be
+distinguished from a branch that just looks fully merged right
+after a pull; this is determined by the remote&#8217;s configured push and
+fetch refspecs,</p>
+</li>
+<li>
+<p>it is the local upstream of a branch that is not being deleted, or</p>
+</li>
+<li>
+<p><code>branch.</code><em>&lt;name&gt;</em><code>.deleteMerged</code> is set to <code>false</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When such a local upstream branch has its own upstream deleted by the
+same operation, its upstream configuration is cleared.</p>
+</div>
+<div class="paragraph">
+<p>A branch whose work has not yet been merged into its upstream is
+silently skipped. Delete it with <code>git</code> <code>branch</code> <code>-D</code> if you want to
+remove it anyway.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>--dry-run</code></dt>
+<dd>
+<p>With <code>--delete-merged</code>, print which branches would be
+deleted and exit without touching any ref.  Useful for
+sanity-checking a wide pattern like 'origin/*' before
+committing to the deletion.</p>
+</dd>
 <dt class="hdlist1"><code>-v</code></dt>
 <dt class="hdlist1"><code>-vv</code></dt>
 <dt class="hdlist1"><code>--verbose</code></dt>
@@ -811,6 +873,15 @@ if not specified). Implies <code>--list</code>.</p>
 <dd>
 <p>Only list branches whose tips are not reachable from
 <em>&lt;commit&gt;</em> (<code>HEAD</code> if not specified). Implies <code>--list</code>.</p>
+</dd>
+<dt class="hdlist1"><code>--forked</code> <em>&lt;branch&gt;</em></dt>
+<dd>
+<p>Only list branches whose configured upstream matches
+<em>&lt;branch&gt;</em>. The argument can be a ref (e.g. <code>origin/main</code>,
+<code>master</code>), a remote name like <code>origin</code> for the branch its
+<code>origin/HEAD</code> points at, or a shell-style glob (e.g.
+'origin/*'). The option can be repeated to widen the
+filter. Implies <code>--list</code>.</p>
 </dd>
 <dt class="hdlist1"><code>--points-at</code> <em>&lt;object&gt;</em></dt>
 <dd>
@@ -960,7 +1031,8 @@ from branch <em>&lt;name&gt;</em>.  When you pull from one place (e.g. your
 upstream) and push to another place (e.g. your own publishing
 repository), you would want to set <code>remote.pushDefault</code> to
 specify the remote to push to for all branches, and use this
-option to override it for a specific branch.</p>
+option to override it for a specific branch.
+The value may be the name of a configured remote or a repository URL.</p>
 </dd>
 <dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.merge</code></dt>
 <dd>
@@ -1015,6 +1087,14 @@ for details).</p>
 <code>git</code> <code>branch</code> <code>--edit-description</code>. Branch description is
 automatically added to the <code>format-patch</code> cover letter or
 <code>request-pull</code> summary.</p>
+</dd>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.deleteMerged</code></dt>
+<dd>
+<p>If set to <code>false</code>, branch <em>&lt;name&gt;</em> is exempt from
+<code>git</code> <code>branch</code> <code>--delete-merged</code>.  Useful for a topic branch you
+intend to develop further after an initial round has been
+merged upstream.  Defaults to true.  Explicit deletion via
+<code>git</code> <code>branch</code> <code>-d</code> is unaffected.</p>
 </dd>
 </dl>
 </div>
@@ -1163,7 +1243,7 @@ a branch?"</a> in the Git User&#8217;s Manual.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

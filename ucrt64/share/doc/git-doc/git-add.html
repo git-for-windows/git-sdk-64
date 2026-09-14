@@ -455,7 +455,7 @@ pre>code {
 <pre class="content"><code>git</code> <code>add</code> [<code>--verbose</code> | <code>-v</code>] [<code>--dry-run</code> | <code>-n</code>] [<code>--force</code> | <code>-f</code>] [<code>--interactive</code> | <code>-i</code>] [<code>--patch</code> | <code>-p</code>]
 	[<code>--edit</code> | <code>-e</code>] [<code>--</code>[<code>no-</code>]<code>all</code> | <code>-A</code> | <code>--</code>[<code>no-</code>]<code>ignore-removal</code> | [<code>--update</code> | <code>-u</code>]] [<code>--sparse</code>]
 	[<code>--intent-to-add</code> | <code>-N</code>] [<code>--refresh</code>] [<code>--ignore-errors</code>] [<code>--ignore-missing</code>] [<code>--renormalize</code>]
-	[<code>--chmod=</code>(<code>+</code>|<code>-</code>)<code>x</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]]
+	[<code>--resolved</code>] [<code>--chmod=</code>(<code>+</code>|<code>-</code>)<code>x</code>] [<code>--pathspec-from-file=</code><em>&lt;file&gt;</em> [<code>--pathspec-file-nul</code>]]
 	[<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]</pre>
 </div>
 </div>
@@ -691,6 +691,15 @@ in order to correct files added with wrong <em>CRLF/LF</em> line endings.
 This option implies <code>-u</code>. Lone CR characters are untouched, thus
 while a <em>CRLF</em> cleans to <em>LF</em>, a <em>CRCRLF</em> sequence is only partially
 cleaned to <em>CRLF</em>.</p>
+</dd>
+<dt class="hdlist1"><code>--resolved</code></dt>
+<dd>
+<p>Update the index for unmerged paths matching <em>&lt;pathspec&gt;</em> where
+no conflict markers remain in the working tree. Unmerged paths
+without conflict markers (including binary files and file
+deletions) are staged as resolved, while any path with leftover
+conflict markers causes the command to refuse to stage any files.
+Cannot be combined with <code>-u</code> or <code>-A</code>.</p>
 </dd>
 <dt class="hdlist1"><code>--chmod=</code>(<code>+</code>|<code>-</code>)<code>x</code></dt>
 <dd>
@@ -1051,7 +1060,7 @@ naming convention for configuration variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

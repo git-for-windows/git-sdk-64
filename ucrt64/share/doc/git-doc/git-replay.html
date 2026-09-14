@@ -453,7 +453,7 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content">(EXPERIMENTAL!) <em>git replay</em> ([--contained] --onto=&lt;newbase&gt; | --advance=&lt;branch&gt; | --revert=&lt;branch&gt;)
-                             [--ref=&lt;ref&gt;] [--ref-action=&lt;mode&gt;] &lt;revision-range&gt;</pre>
+                             [--ref=&lt;ref&gt;] [--ref-action=&lt;mode&gt;] [--linearize] &lt;revision-range&gt;</pre>
 </div>
 </div>
 </div>
@@ -542,22 +542,42 @@ This option is incompatible with <code>--contained</code>.</p>
 <p>Control how references are updated. The mode can be:</p>
 <div class="openblock">
 <div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p><code>update</code> (default): Update refs directly using an atomic transaction.
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>update</code></dt>
+<dd>
+<p>(default) Update refs directly using an atomic transaction.
 All refs are updated or none are (all-or-nothing behavior).</p>
-</li>
-<li>
-<p><code>print</code>: Output update-ref commands for pipeline use. This is the
+</dd>
+<dt class="hdlist1"><code>print</code></dt>
+<dd>
+<p>Output update-ref commands for pipeline use. This is the
 traditional behavior where output can be piped to <code>git</code> <code>update-ref</code> <code>--stdin</code>.</p>
-</li>
-</ul>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="paragraph">
 <p>The default mode can be configured via the <code>replay.refAction</code> configuration variable.</p>
+</div>
+</dd>
+<dt class="hdlist1">--linearize</dt>
+<dd>
+<p>In this mode, each replayed commit is stacked on top of the
+previously replayed one, so all replayed commits are flattened into
+a single linear history.</p>
+<div class="paragraph">
+<p>When a merge commit is encountered, all commits in the range reachable
+from the merge commit are replayed into the linear history, and the
+merge commit itself is dropped. A ref that pointed to a merge commit is
+updated to the merge&#8217;s last replayed ancestor. (This matches the
+behavior of git-rebase(1)'s <code>--no-rebase-merges</code> option.)</p>
+</div>
+<div class="paragraph">
+<p><code>--linearize</code> cannot be combined with multiple branches or with
+<code>--contained</code>. To linearize several branches, replay them in separate
+<code>git</code> <code>replay</code> invocations.</p>
 </div>
 </dd>
 <dt class="hdlist1">&lt;revision-range&gt;</dt>
@@ -1752,6 +1772,39 @@ to use bare commit IDs instead of branch names.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">replay.refAction</dt>
+<dd>
+<p>Specifies the default mode for handling reference updates.
+The value can be:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>update</code></dt>
+<dd>
+<p>(default) Update refs directly using an atomic transaction.</p>
+</dd>
+<dt class="hdlist1"><code>print</code></dt>
+<dd>
+<p>Output update-ref commands for pipeline use.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>See <code>--ref-action</code>.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_git">GIT</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1762,7 +1815,7 @@ to use bare commit IDs instead of branch names.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

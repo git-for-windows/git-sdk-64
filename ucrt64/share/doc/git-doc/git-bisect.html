@@ -453,7 +453,7 @@ pre>code {
 <div class="sectionbody">
 <div class="verseblock">
 <pre class="content"><code>git</code> <code>bisect</code> <code>start</code> [<code>--term-</code>(<code>bad</code>|<code>new</code>)<code>=</code><em>&lt;term-new&gt;</em> <code>--term-</code>(<code>good</code>|<code>old</code>)<code>=</code><em>&lt;term-old&gt;</em>]
-		 [<code>--no-checkout</code>] [<code>--first-parent</code>] [<em>&lt;bad&gt;</em> [<em>&lt;good&gt;</em>&#8230;&#8203;]] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]
+		 [<code>--no-checkout</code>] [<code>--first-parent</code>] [<code>--reset-when-found</code>[<code>=</code><em>&lt;where&gt;</em>]] [<em>&lt;bad&gt;</em> [<em>&lt;good&gt;</em>&#8230;&#8203;]] [<code>--</code>] [<em>&lt;pathspec&gt;</em>&#8230;&#8203;]
 <code>git</code> <code>bisect</code> (<code>bad</code>|<code>new</code>|<em>&lt;term-new&gt;</em>) [<em>&lt;rev&gt;</em>]
 <code>git</code> <code>bisect</code> (<code>good</code>|<code>old</code>|<em>&lt;term-old&gt;</em>) [<em>&lt;rev&gt;</em>&#8230;&#8203;]
 <code>git</code> <code>bisect</code> <code>terms</code> [<code>--term-</code>(<code>good</code>|<code>old</code>) | <code>--term-</code>(<code>bad</code>|<code>new</code>)]
@@ -463,7 +463,7 @@ pre>code {
 <code>git</code> <code>bisect</code> (<code>visualize</code>|<code>view</code>)
 <code>git</code> <code>bisect</code> <code>replay</code> <em>&lt;logfile&gt;</em>
 <code>git</code> <code>bisect</code> <code>log</code>
-<code>git</code> <code>bisect</code> <code>run</code> <em>&lt;cmd&gt;</em> [<em>&lt;arg&gt;</em>&#8230;&#8203;]
+<code>git</code> <code>bisect</code> <code>run</code> [<code>--reset-when-found</code>[<code>=</code><em>&lt;where&gt;</em>]] <em>&lt;cmd&gt;</em> [<em>&lt;arg&gt;</em>&#8230;&#8203;]
 <code>git</code> <code>bisect</code> <code>help</code></pre>
 </div>
 </div>
@@ -921,6 +921,18 @@ ignored.</p>
 branch contained broken or non-buildable commits, but the merge itself was OK.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>--reset-when-found</code>[<code>=</code><em>&lt;where&gt;</em>]</dt>
+<dd>
+<p>Once the first bad commit is found, report it and clean up the
+bisection state. <em>&lt;where&gt;</em> may be <code>original</code> to return to the commit
+checked out before <code>git</code> <code>bisect</code> <code>start</code>, or <code>found</code> to leave the first
+bad commit checked out. If <em>&lt;where&gt;</em> is omitted, it defaults to
+<code>original</code>.</p>
+<div class="paragraph">
+<p>This option may be given to <code>git</code> <code>bisect</code> <code>start</code> or to <code>git</code> <code>bisect</code> <code>run</code>. It
+cannot be used for a bisection started with <code>--no-checkout</code>.</p>
+</div>
+</dd>
 </dl>
 </div>
 </div>
@@ -1098,7 +1110,7 @@ $ git bisect broken HEAD~10</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

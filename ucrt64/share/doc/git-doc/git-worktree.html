@@ -696,7 +696,9 @@ in <a href="git-read-tree.html">git-read-tree(1)</a>.</p>
 of creating a new branch from <code>HEAD</code>, if there exists a tracking
 branch in exactly one remote matching the basename of <em>&lt;path&gt;</em>,
 base the new branch on the remote-tracking branch, and mark
-the remote-tracking branch as "upstream" from the new branch.</p>
+the remote-tracking branch as "upstream" from the new branch. If
+there are multiple matches, the command fails. If there is no
+match, the command falls back to creating a new branch from <code>HEAD</code>.</p>
 <div class="paragraph">
 <p>This can also be set up as the default behaviour by using the
 <code>worktree.guessRemote</code> config option.</p>
@@ -1104,8 +1106,9 @@ creating a new branch from HEAD.  If <code>worktree.guessRemote</code> is
 set to true, <code>worktree</code> <code>add</code> tries to find a remote-tracking
 branch whose name uniquely matches the new branch name.  If
 such a branch exists, it is checked out and set as "upstream"
-for the new branch.  If no such match can be found, it falls
-back to creating a new branch from the current <code>HEAD</code>.</p>
+for the new branch.  If multiple matches are found, the command
+fails.  If no such match can be found, it falls back to
+creating a new branch from the current <code>HEAD</code>.</p>
 </dd>
 <dt class="hdlist1"><code>worktree.useRelativePaths</code></dt>
 <dd>
@@ -1144,7 +1147,7 @@ checkouts of a superproject.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

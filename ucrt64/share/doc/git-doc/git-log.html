@@ -2031,6 +2031,15 @@ Lanes over the limit are replaced with a truncation mark <em>~</em>.
 By default it is set to 0 (no limit), zero and negative values
 are ignored and treated as no limit.</p>
 </dd>
+<dt class="hdlist1"><code>--no-graph-indent</code></dt>
+<dt class="hdlist1"><code>--graph-indent</code></dt>
+<dd>
+<p>When used with <code>--graph</code>, indent visual roots (commits with no parents
+or whose parents are not shown) to differentiate them from commits that
+are vertically adjacent but unrelated. Enabled by default. Use
+<code>--no-graph-indent</code> to disable or set <code>log.graphIndent</code> to set a
+default preference.</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -3827,7 +3836,7 @@ and non-existent in <code>git</code> <code>diff</code> <code>--cached</code>. Th
 reverted with <code>--ita-visible-in-index</code>. Both options are
 experimental and could be removed in future.</p>
 </dd>
-<dt class="hdlist1">--max-depth=&lt;depth&gt;</dt>
+<dt class="hdlist1"><code>--max-depth=</code><em>&lt;depth&gt;</em></dt>
 <dd>
 <p>For each pathspec given on command line, descend at most <em>&lt;depth&gt;</em>
 levels of directories. A value of <code>-1</code> means no limit.
@@ -4411,13 +4420,17 @@ details. Defaults to <code>separate</code>.</p>
 <dd>
 <p>If <code>true</code>, <code>git</code> <code>log</code> will act as if the <code>--follow</code> option was used when
 a single &lt;path&gt; is given.  This has the same limitations as <code>--follow</code>,
-i.e. it cannot be used to follow multiple files and does not work well
-on non-linear history.</p>
+i.e. it cannot be used to follow multiple files.</p>
 </dd>
 <dt class="hdlist1"><code>log.graphColors</code></dt>
 <dd>
 <p>A list of colors, separated by commas, that can be used to draw
 history lines in <code>git</code> <code>log</code> <code>--graph</code>.</p>
+</dd>
+<dt class="hdlist1"><code>log.graphIndent</code></dt>
+<dd>
+<p>If <code>true</code>, indent visual roots when rendering the graphs with <code>--graph</code>.
+Set true by default. It can be overriden with <code>--</code>[<code>no-</code>]<code>graph-indent</code>.</p>
 </dd>
 <dt class="hdlist1"><code>log.showRoot</code></dt>
 <dd>
@@ -4536,7 +4549,7 @@ See <code>notes.rewrite.</code><em>&lt;command&gt;</em> above for a further desc
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

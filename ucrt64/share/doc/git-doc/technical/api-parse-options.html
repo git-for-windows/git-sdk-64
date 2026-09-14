@@ -656,8 +656,94 @@ used with subcommands when combined with <code>PARSE_OPT_SUBCOMMAND_OPTIONAL</co
 <div class="sectionbody">
 <div class="paragraph">
 <p>The main data structure is an array of the <code>option</code> struct,
-say <code>static</code> <code>struct</code> <code>option</code> <code>builtin_add_options</code>[].
-There are some macros to easily define options:</p>
+say <code>static</code> <code>struct</code> <code>option</code> <code>builtin_add_options</code>[].</p>
+</div>
+<div class="sect2">
+<h3 id="_option_flags">Option flags</h3>
+<div class="paragraph">
+<p>Each option can carry flags in the <code>flags</code> field of its <code>option</code>
+struct. These are per-option flags and are distinct from the
+<code>parse_options</code>() flags described above; they are usually set through
+the <code>OPT_*_F</code>() macro variants (see below) rather than by hand. They
+are the bitwise-or of:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>PARSE_OPT_OPTARG</code></dt>
+<dd>
+<p>The option&#8217;s argument is optional, i.e. both <code>--option</code> and
+<code>--option=</code><em>&lt;value&gt;</em> are accepted.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_NOARG</code></dt>
+<dd>
+<p>The option takes no argument at all. Using <code>--option=</code><em>&lt;value&gt;</em>
+is rejected.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_NONEG</code></dt>
+<dd>
+<p>Disable the automatically generated negated <code>--no-option</code>
+form.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_HIDDEN</code></dt>
+<dd>
+<p>Hide the option: it is omitted from the usage shown by
+<code>git</code> <em>&lt;cmd&gt;</em> <code>-h</code>, but is still shown by <code>git</code> <em>&lt;cmd&gt;</em> <code>--help-all</code>.
+The option is parsed as usual either way. This is meant for
+deprecated, advanced or otherwise uncommon options.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_LASTARG_DEFAULT</code></dt>
+<dd>
+<p>The no-argument form is only accepted when the option is the
+last token on the command line; used earlier, it still
+requires an argument. Should not be combined with
+<code>PARSE_OPT_OPTARG</code>.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_NODASH</code></dt>
+<dd>
+<p>The option is a single character without a leading dash, such
+as the <code>+</code> used by some commands.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_LITERAL_ARGHELP</code></dt>
+<dd>
+<p>Use the argument help string (<code>argh</code>) verbatim in the usage
+output instead of surrounding it with &lt;&gt; or []. Useful when
+<code>argh</code> already contains a hand-formatted description.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_FROM_ALIAS</code></dt>
+<dd>
+<p>Internal flag, set on options that were expanded from a
+configured alias. It should not be set by callers.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_NOCOMPLETE</code></dt>
+<dd>
+<p>Do not offer this option for completion.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_COMP_ARG</code></dt>
+<dd>
+<p>The option&#8217;s argument, rather than the option itself, is what
+should be completed.</p>
+</dd>
+<dt class="hdlist1"><code>PARSE_OPT_CMDMODE</code></dt>
+<dd>
+<p>The option is one of several mutually exclusive "command mode"
+options that share the same variable. Using more than one of
+them at once is rejected.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_macros">Macros</h3>
+<div class="paragraph">
+<p>There are some macros to easily define options:</p>
+</div>
+<div class="paragraph">
+<p>Many of the macros below have an <code>_F</code> variant (for example <code>OPT_BOOL_F</code>,
+<code>OPT_STRING_F</code>, <code>OPT_INTEGER_F</code>, <code>OPT_SET_INT_F</code>, <code>OPT_BIT_F</code> and
+<code>OPT_CALLBACK_F</code>) that takes an additional trailing <code>flags</code> argument.
+That argument is the bitwise-or of the per-option flags described in the
+"Option flags" section above; the non-<code>_F</code> macros are simply defined
+with <code>flags</code> set to <code>0</code>.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -691,10 +777,23 @@ There are some macros to easily define options:</p>
 describes the group or an empty string.
 Start the description with an upper-case letter.</p>
 </dd>
+<dt class="hdlist1"><code>OPT_HIDDEN_GROUP</code>(<code>description</code>)</dt>
+<dd>
+<p>Like <code>OPT_GROUP</code>(), but the group header carries
+<code>PARSE_OPT_HIDDEN</code>, so it is only shown by <code>--help-all</code> and not
+by <code>-h</code>. Use it to label a group that contains only hidden
+options, which would otherwise show an empty header under <code>-h</code>.</p>
+</dd>
 <dt class="hdlist1"><code>OPT_BOOL</code>(<code>short,</code> <code>long,</code> &amp;int_var, <code>description</code>)</dt>
 <dd>
 <p>Introduce a boolean option. <code>int_var</code> is set to one with
 <code>--option</code> and set to zero with <code>--no-option</code>.</p>
+</dd>
+<dt class="hdlist1"><code>OPT_HIDDEN_BOOL</code>(<code>short,</code> <code>long,</code> &amp;int_var, <code>description</code>)</dt>
+<dd>
+<p>Like <code>OPT_BOOL</code>(), but the option carries <code>PARSE_OPT_HIDDEN</code>,
+so it is hidden from <code>-h</code> while still being shown by
+<code>--help-all</code>.</p>
 </dd>
 <dt class="hdlist1"><code>OPT_COUNTUP</code>(<code>short,</code> <code>long,</code> &amp;int_var, <code>description</code>)</dt>
 <dd>
@@ -857,6 +956,7 @@ omitted at the end.</p>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="_option_callbacks">Option Callbacks</h2>
 <div class="sectionbody">
@@ -925,7 +1025,7 @@ for real-world examples.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

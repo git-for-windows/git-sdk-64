@@ -452,10 +452,10 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><em>git send-email</em> [&lt;options&gt;] (&lt;file&gt;|&lt;directory&gt;)&#8230;&#8203;
-<em>git send-email</em> [&lt;options&gt;] &lt;format-patch-options&gt;
-<em>git send-email</em> --dump-aliases
-<em>git send-email</em> --translate-aliases</pre>
+<pre class="content"><code>git</code> <code>send-email</code> [<em>&lt;options&gt;</em>] (<em>&lt;file&gt;</em>|<em>&lt;directory&gt;</em>)&#8230;&#8203;
+<code>git</code> <code>send-email</code> [<em>&lt;options&gt;</em>] <em>&lt;format-patch-options&gt;</em>
+<code>git</code> <code>send-email</code> <code>--dump-aliases</code>
+<code>git</code> <code>send-email</code> <code>--translate-aliases</code></pre>
 </div>
 </div>
 </div>
@@ -506,13 +506,13 @@ and the <code>Subject:</code> of the message as the second line.</p>
 <h3 id="_composing">Composing</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--annotate</dt>
+<dt class="hdlist1"><code>--annotate</code></dt>
 <dd>
 <p>Review and edit each patch you&#8217;re about to send. Default is the value
 of <code>sendemail.annotate</code>. See the CONFIGURATION section for
 <code>sendemail.multiEdit</code>.</p>
 </dd>
-<dt class="hdlist1">--bcc=&lt;address&gt;,&#8230;&#8203;</dt>
+<dt class="hdlist1"><code>--bcc=</code><em>&lt;address&gt;</em><code>,..</code>.</dt>
 <dd>
 <p>Specify a <code>Bcc:</code> value for each email. Default is the value of
 <code>sendemail.bcc</code>.</p>
@@ -520,7 +520,7 @@ of <code>sendemail.annotate</code>. See the CONFIGURATION section for
 <p>This option may be specified multiple times.</p>
 </div>
 </dd>
-<dt class="hdlist1">--cc=&lt;address&gt;,&#8230;&#8203;</dt>
+<dt class="hdlist1"><code>--cc=</code><em>&lt;address&gt;</em><code>,..</code>.</dt>
 <dd>
 <p>Specify a starting <code>Cc:</code> value for each email.
 Default is the value of <code>sendemail.cc</code>.</p>
@@ -528,7 +528,7 @@ Default is the value of <code>sendemail.cc</code>.</p>
 <p>This option may be specified multiple times.</p>
 </div>
 </dd>
-<dt class="hdlist1">--compose</dt>
+<dt class="hdlist1"><code>--compose</code></dt>
 <dd>
 <p>Invoke a text editor (see GIT_EDITOR in <a href="git-var.html">git-var(1)</a>)
 to edit an introductory message for the patch series.</p>
@@ -547,7 +547,7 @@ removed.</p>
 <p>See the CONFIGURATION section for <code>sendemail.multiEdit</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--from=&lt;address&gt;</dt>
+<dt class="hdlist1"><code>--from=</code><em>&lt;address&gt;</em></dt>
 <dd>
 <p>Specify the sender of the emails.  If not specified on the command line,
 the value of the <code>sendemail.from</code> configuration option is used.  If
@@ -556,13 +556,13 @@ user will be prompted for the value.  The default for the prompt will be
 the value of <code>GIT_AUTHOR_IDENT</code>, or <code>GIT_COMMITTER_IDENT</code> if that is not
 set, as returned by <code>git</code> <code>var</code> <code>-l</code>.</p>
 </dd>
-<dt class="hdlist1">--reply-to=&lt;address&gt;</dt>
+<dt class="hdlist1"><code>--reply-to=</code><em>&lt;address&gt;</em></dt>
 <dd>
 <p>Specify the address where replies from recipients should go to.
 Use this if replies to messages should go to another address than what
 is specified with the <code>--from</code> parameter.</p>
 </dd>
-<dt class="hdlist1">--in-reply-to=&lt;identifier&gt;</dt>
+<dt class="hdlist1"><code>--in-reply-to=</code><em>&lt;identifier&gt;</em></dt>
 <dd>
 <p>Make the first mail (or all the mails with <code>--no-thread</code>) appear as a
 reply to the given Message-ID, which avoids breaking threads to
@@ -590,8 +590,8 @@ illustration below where [<code>PATCH</code> <code>v2</code> <code>0/3</code>] i
 is not set, this will be prompted for.</p>
 </div>
 </dd>
-<dt class="hdlist1">--outlook-id-fix</dt>
-<dt class="hdlist1">--no-outlook-id-fix</dt>
+<dt class="hdlist1"><code>--outlook-id-fix</code></dt>
+<dt class="hdlist1"><code>--no-outlook-id-fix</code></dt>
 <dd>
 <p>Microsoft Outlook SMTP servers discard the Message-ID sent via email and
 assign a new random Message-ID, thus breaking threads.</p>
@@ -603,17 +603,17 @@ rewritten Message-ID the same way as Outlook servers do.</p>
 </div>
 <div class="paragraph">
 <p>Without this option specified, the fix is done by default when talking
-to <em>smtp.office365.com</em> or <em>smtp-mail.outlook.com</em>. Use
+to <code>smtp.office365.com</code> or <code>smtp-mail.outlook.com</code>. Use
 <code>--no-outlook-id-fix</code> to disable even when talking to these two servers.</p>
 </div>
 </dd>
-<dt class="hdlist1">--subject=&lt;string&gt;</dt>
+<dt class="hdlist1"><code>--subject=</code><em>&lt;string&gt;</em></dt>
 <dd>
 <p>Specify the initial subject of the email thread.
 Only necessary if <code>--compose</code> is also set.  If <code>--compose</code>
 is not set, this will be prompted for.</p>
 </dd>
-<dt class="hdlist1">--to=&lt;address&gt;,&#8230;&#8203;</dt>
+<dt class="hdlist1"><code>--to=</code><em>&lt;address&gt;</em><code>,..</code>.</dt>
 <dd>
 <p>Specify the primary recipient of the emails generated. Generally, this
 will be the upstream maintainer of the project involved. Default is the
@@ -623,23 +623,23 @@ and <code>--to-cmd</code> is not specified, this will be prompted for.</p>
 <p>This option may be specified multiple times.</p>
 </div>
 </dd>
-<dt class="hdlist1">--8bit-encoding=&lt;encoding&gt;</dt>
+<dt class="hdlist1"><code>--8bit-encoding=</code><em>&lt;encoding&gt;</em></dt>
 <dd>
 <p>When encountering a non-ASCII message or subject that does not
 declare its encoding, add headers/quoting to indicate it is
-encoded in &lt;encoding&gt;.  Default is the value of the
+encoded in <em>&lt;encoding&gt;</em>.  Default is the value of the
 <code>sendemail.assume8bitEncoding</code>; if that is unspecified, this
 will be prompted for if any non-ASCII files are encountered.</p>
 <div class="paragraph">
 <p>Note that no attempts whatsoever are made to validate the encoding.</p>
 </div>
 </dd>
-<dt class="hdlist1">--compose-encoding=&lt;encoding&gt;</dt>
+<dt class="hdlist1"><code>--compose-encoding=</code><em>&lt;encoding&gt;</em></dt>
 <dd>
 <p>Specify encoding of compose message. Default is the value of the
 <code>sendemail.composeEncoding</code>; if that is unspecified, UTF-8 is assumed.</p>
 </dd>
-<dt class="hdlist1">--transfer-encoding=(7bit|8bit|quoted-printable|base64|auto)</dt>
+<dt class="hdlist1"><code>--transfer-encoding=</code>(<code>7bit</code>|<code>8bit</code>|<code>quoted-printable</code>|<code>base64</code>|<code>auto</code>)</dt>
 <dd>
 <p>Specify the transfer encoding to be used to send the message over SMTP.
 <code>7bit</code> will fail upon encountering a non-ASCII message. <code>quoted-printable</code>
@@ -653,8 +653,8 @@ even more opaque. <code>auto</code> will use <code>8bit</code> when possible, an
 value; if that is unspecified, default to <code>auto</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--xmailer</dt>
-<dt class="hdlist1">--no-xmailer</dt>
+<dt class="hdlist1"><code>--xmailer</code></dt>
+<dt class="hdlist1"><code>--no-xmailer</code></dt>
 <dd>
 <p>Add (or prevent adding) the <code>X-Mailer:</code> header.  By default,
 the header is added, but it can be turned off by setting the
@@ -667,7 +667,7 @@ the header is added, but it can be turned off by setting the
 <h3 id="_sending">Sending</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--envelope-sender=&lt;address&gt;</dt>
+<dt class="hdlist1"><code>--envelope-sender=</code><em>&lt;address&gt;</em></dt>
 <dd>
 <p>Specify the envelope sender used to send the emails.
 This is useful if your default address is not the address that is
@@ -677,7 +677,7 @@ suitable privileges for the <code>-f</code> parameter.  Default is the value of 
 <code>sendemail.envelopeSender</code> configuration variable; if that is
 unspecified, choosing the envelope sender is left to your MTA.</p>
 </dd>
-<dt class="hdlist1">--sendmail-cmd=&lt;command&gt;</dt>
+<dt class="hdlist1"><code>--sendmail-cmd=</code><em>&lt;command&gt;</em></dt>
 <dd>
 <p>Specify a command to run to send the email. The command should
 be sendmail-like; specifically, it must support the <code>-i</code> option.
@@ -686,7 +686,7 @@ is the value of <code>sendemail.sendmailCmd</code>.  If unspecified, and if
 <code>--smtp-server</code> is also unspecified, <code>git</code> <code>send-email</code> will search
 for <code>sendmail</code> in <code>/usr/sbin</code>, <code>/usr/lib</code> and <code>$PATH</code>.</p>
 </dd>
-<dt class="hdlist1">--smtp-encryption=&lt;encryption&gt;</dt>
+<dt class="hdlist1"><code>--smtp-encryption=</code><em>&lt;encryption&gt;</em></dt>
 <dd>
 <p>Specify in what way encrypting begins for the SMTP connection.
 Valid values are <code>ssl</code> and <code>tls</code>. Any other value reverts to plain
@@ -701,7 +701,7 @@ server, which are not the default. Commonly found alternative port for
 documentation or your server configuration to make sure
 for your own case. Default is the value of <code>sendemail.smtpEncryption</code>.</p>
 </dd>
-<dt class="hdlist1">--smtp-domain=&lt;FQDN&gt;</dt>
+<dt class="hdlist1"><code>--smtp-domain=</code><em>&lt;FQDN&gt;</em></dt>
 <dd>
 <p>Specify the Fully Qualified Domain Name (FQDN) used in the
 HELO/EHLO command to the SMTP server.  Some servers require the
@@ -709,7 +709,7 @@ FQDN to match your IP address.  If not set, <code>git</code> <code>send-email</c
 to determine your FQDN automatically.  Default is the value of
 <code>sendemail.smtpDomain</code>.</p>
 </dd>
-<dt class="hdlist1">--smtp-auth=&lt;mechanisms&gt;</dt>
+<dt class="hdlist1"><code>--smtp-auth=</code><em>&lt;mechanisms&gt;</em></dt>
 <dd>
 <p>Whitespace-separated list of allowed SMTP-AUTH mechanisms. This setting
 forces using only the listed mechanisms. Example:</p>
@@ -727,7 +727,7 @@ special value <code>none</code> maybe specified to completely disable authentica
 independently of <code>--smtp-user</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--smtp-pass[=&lt;password&gt;]</dt>
+<dt class="hdlist1"><code>--smtp-pass</code>[<code>=</code><em>&lt;password&gt;</em>]</dt>
 <dd>
 <p>Password for SMTP-AUTH. The argument is optional: If no
 argument is specified, then the empty string is used as
@@ -741,11 +741,11 @@ specified (with <code>--smtp-pass</code> or <code>sendemail.smtpPass</code>), th
 a password is obtained using <a href="git-credential.html">git-credential(1)</a>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--no-smtp-auth</dt>
+<dt class="hdlist1"><code>--no-smtp-auth</code></dt>
 <dd>
 <p>Disable SMTP authentication. Short hand for <code>--smtp-auth=none</code>.</p>
 </dd>
-<dt class="hdlist1">--smtp-server=&lt;host&gt;</dt>
+<dt class="hdlist1"><code>--smtp-server=</code><em>&lt;host&gt;</em></dt>
 <dd>
 <p>Specify the outgoing SMTP server to use (e.g.
 <code>smtp.example.com</code> or a raw IP address).  If unspecified, and if
@@ -760,7 +760,7 @@ command names.  For those use cases, consider using <code>--sendmail-cmd</code>
 instead.</p>
 </div>
 </dd>
-<dt class="hdlist1">--smtp-server-port=&lt;port&gt;</dt>
+<dt class="hdlist1"><code>--smtp-server-port=</code><em>&lt;port&gt;</em></dt>
 <dd>
 <p>Specify a port different from the default port (SMTP
 servers typically listen to smtp port 25, but may also listen to
@@ -769,7 +769,7 @@ symbolic port names (e.g. <code>submission</code> instead of 587)
 are also accepted. The port can also be set with the
 <code>sendemail.smtpServerPort</code> configuration variable.</p>
 </dd>
-<dt class="hdlist1">--smtp-server-option=&lt;option&gt;</dt>
+<dt class="hdlist1"><code>--smtp-server-option=</code><em>&lt;option&gt;</em></dt>
 <dd>
 <p>Specify the outgoing SMTP server option to use.
 Default value can be specified by the <code>sendemail.smtpServerOption</code>
@@ -780,11 +780,11 @@ to pass to the server. Likewise, different lines in the configuration files
 must be used for each option.</p>
 </div>
 </dd>
-<dt class="hdlist1">--smtp-ssl</dt>
+<dt class="hdlist1"><code>--smtp-ssl</code></dt>
 <dd>
 <p>Legacy alias for <code>--smtp-encryption</code> <code>ssl</code>.</p>
 </dd>
-<dt class="hdlist1">--smtp-ssl-cert-path &lt;path&gt;</dt>
+<dt class="hdlist1"><code>--smtp-ssl-cert-path</code> <em>&lt;path&gt;</em></dt>
 <dd>
 <p>Path to a store of trusted CA certificates for SMTP SSL/TLS
 certificate validation (either a directory that has been processed
@@ -798,7 +798,7 @@ Defaults to the value of the <code>sendemail.smtpSSLCertPath</code> configuratio
 variable, if set, or the backing SSL library&#8217;s compiled-in default
 otherwise (which should be the best choice on most platforms).</p>
 </dd>
-<dt class="hdlist1">--smtp-ssl-client-cert &lt;path&gt;</dt>
+<dt class="hdlist1"><code>--smtp-ssl-client-cert</code> <em>&lt;path&gt;</em></dt>
 <dd>
 <p>Path to the client certificate file to present if requested by the
 server. This option is required when the server is set up to verify
@@ -808,7 +808,7 @@ configuration variable or the <code>--smtp-ssl-client-key</code> option. Default
 to the value of the <code>sendemail.smtpSSLClientCert</code> configuration
 variable, if set.</p>
 </dd>
-<dt class="hdlist1">--smtp-ssl-client-key &lt;path&gt;</dt>
+<dt class="hdlist1"><code>--smtp-ssl-client-key</code> <em>&lt;path&gt;</em></dt>
 <dd>
 <p>Path to the client private key file that corresponds to the client
 certificate. To avoid misconfiguration, this option must be used in
@@ -819,19 +819,19 @@ of the certificate. Visit <a href="https://metacpan.org/pod/IO::Socket::SSL" cla
 more details. Defaults to the value of the <code>sendemail.smtpSSLClientKey</code>
 configuration variable, if set.</p>
 </dd>
-<dt class="hdlist1">--smtp-user=&lt;user&gt;</dt>
+<dt class="hdlist1"><code>--smtp-user=</code><em>&lt;user&gt;</em></dt>
 <dd>
 <p>Username for SMTP-AUTH. Default is the value of <code>sendemail.smtpUser</code>;
 if a username is not specified (with <code>--smtp-user</code> or <code>sendemail.smtpUser</code>),
 then authentication is not attempted.</p>
 </dd>
-<dt class="hdlist1">--smtp-debug=(0|1)</dt>
+<dt class="hdlist1"><code>--smtp-debug=</code>(<code>0</code>|<code>1</code>)</dt>
 <dd>
 <p>Enable (1) or disable (0) debug output. If enabled, SMTP
 commands and replies will be printed. Useful to debug TLS
 connection and authentication problems.</p>
 </dd>
-<dt class="hdlist1">--imap-sent-folder=&lt;folder&gt;</dt>
+<dt class="hdlist1"><code>--imap-sent-folder=</code><em>&lt;folder&gt;</em></dt>
 <dd>
 <p>Some email providers (e.g. iCloud) do not send a copy of the emails sent
 using SMTP to the <code>Sent</code> folder or similar in your mailbox. Use this option
@@ -845,8 +845,8 @@ IMAP folder of your choice.</p>
 for instructions.</p>
 </div>
 </dd>
-<dt class="hdlist1">--use-imap-only</dt>
-<dt class="hdlist1">--no-use-imap-only</dt>
+<dt class="hdlist1"><code>--use-imap-only</code></dt>
+<dt class="hdlist1"><code>--no-use-imap-only</code></dt>
 <dd>
 <p>If this is set, all emails will only be copied to the IMAP folder specified
 with <code>--imap-sent-folder</code> or <code>sendemail.imapSentFolder</code> and will not be sent
@@ -860,9 +860,9 @@ variable can be used to enable it.</p>
 for instructions.</p>
 </div>
 </dd>
-<dt class="hdlist1">--batch-size=&lt;num&gt;</dt>
+<dt class="hdlist1"><code>--batch-size=</code><em>&lt;num&gt;</em></dt>
 <dd>
-<p>Some email servers (e.g. <em>smtp.163.com</em>) limit the number of emails to be
+<p>Some email servers (e.g. <code>smtp.163.com</code>) limit the number of emails to be
 sent per session (connection) and this will lead to a failure when
 sending many messages.  With this option, send-email will disconnect after
 sending <em>&lt;num&gt;</em> messages and wait for a few seconds
@@ -871,7 +871,7 @@ You may want to use some form of credential helper to avoid having to
 retype your password every time this happens.  Defaults to the
 <code>sendemail.smtpBatchSize</code> configuration variable.</p>
 </dd>
-<dt class="hdlist1">--relogin-delay=&lt;int&gt;</dt>
+<dt class="hdlist1"><code>--relogin-delay=</code><em>&lt;int&gt;</em></dt>
 <dd>
 <p>Waiting <em>&lt;int&gt;</em> seconds before reconnecting to SMTP server. Used together
 with <code>--batch-size</code> option.  Defaults to the <code>sendemail.smtpReloginDelay</code>
@@ -884,33 +884,33 @@ configuration variable.</p>
 <h3 id="_automating">Automating</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--no-to</dt>
-<dt class="hdlist1">--no-cc</dt>
-<dt class="hdlist1">--no-bcc</dt>
+<dt class="hdlist1"><code>--no-to</code></dt>
+<dt class="hdlist1"><code>--no-cc</code></dt>
+<dt class="hdlist1"><code>--no-bcc</code></dt>
 <dd>
 <p>Clear any list of <code>To:</code>, <code>Cc:</code>, <code>Bcc:</code> addresses previously
 set via config.</p>
 </dd>
-<dt class="hdlist1">--no-identity</dt>
+<dt class="hdlist1"><code>--no-identity</code></dt>
 <dd>
 <p>Clear the previously read value of <code>sendemail.identity</code> set
 via config, if any.</p>
 </dd>
-<dt class="hdlist1">--to-cmd=&lt;command&gt;</dt>
+<dt class="hdlist1"><code>--to-cmd=</code><em>&lt;command&gt;</em></dt>
 <dd>
 <p>Specify a command to execute once per patch file which
 should generate patch file specific <code>To:</code> entries.
 Output of this command must be single email address per line.
 Default is the value of <code>sendemail.toCmd</code> configuration value.</p>
 </dd>
-<dt class="hdlist1">--cc-cmd=&lt;command&gt;</dt>
+<dt class="hdlist1"><code>--cc-cmd=</code><em>&lt;command&gt;</em></dt>
 <dd>
 <p>Specify a command to execute once per patch file which
 should generate patch file specific <code>Cc:</code> entries.
 Output of this command must be single email address per line.
 Default is the value of <code>sendemail.ccCmd</code> configuration value.</p>
 </dd>
-<dt class="hdlist1">--header-cmd=&lt;command&gt;</dt>
+<dt class="hdlist1"><code>--header-cmd=</code><em>&lt;command&gt;</em></dt>
 <dd>
 <p>Specify a command that is executed once per outgoing message
 and output RFC 2822 style header lines to be inserted into
@@ -919,12 +919,12 @@ set, its value is always used. When <code>--header-cmd</code> is provided
 at the command line, its value takes precedence over the
 <code>sendemail.headerCmd</code> configuration variable.</p>
 </dd>
-<dt class="hdlist1">--no-header-cmd</dt>
+<dt class="hdlist1"><code>--no-header-cmd</code></dt>
 <dd>
 <p>Disable any header command in use.</p>
 </dd>
-<dt class="hdlist1">--chain-reply-to</dt>
-<dt class="hdlist1">--no-chain-reply-to</dt>
+<dt class="hdlist1"><code>--chain-reply-to</code></dt>
+<dt class="hdlist1"><code>--no-chain-reply-to</code></dt>
 <dd>
 <p>If this is set, each email will be sent as a reply to the previous
 email sent.  If disabled with <code>--no-chain-reply-to</code>, all emails after
@@ -933,38 +933,38 @@ this, it is recommended that the first file given be an overview of the
 entire patch series. Disabled by default, but the <code>sendemail.chainReplyTo</code>
 configuration variable can be used to enable it.</p>
 </dd>
-<dt class="hdlist1">--identity=&lt;identity&gt;</dt>
+<dt class="hdlist1"><code>--identity=</code><em>&lt;identity&gt;</em></dt>
 <dd>
 <p>A configuration identity. When given, causes values in the
 <code>sendemail.</code><em>&lt;identity&gt;</em> subsection to take precedence over
 values in the <code>sendemail</code> section. The default identity is
 the value of <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">--signed-off-by-cc</dt>
-<dt class="hdlist1">--no-signed-off-by-cc</dt>
+<dt class="hdlist1"><code>--signed-off-by-cc</code></dt>
+<dt class="hdlist1"><code>--no-signed-off-by-cc</code></dt>
 <dd>
 <p>If this is set, add emails found in the <code>Signed-off-by</code> trailer or <code>Cc:</code>
 lines to the cc list. Default is the value of <code>sendemail.signedOffByCc</code>
 configuration value; if that is unspecified, default to
 <code>--signed-off-by-cc</code>.</p>
 </dd>
-<dt class="hdlist1">--cc-cover</dt>
-<dt class="hdlist1">--no-cc-cover</dt>
+<dt class="hdlist1"><code>--cc-cover</code></dt>
+<dt class="hdlist1"><code>--no-cc-cover</code></dt>
 <dd>
 <p>If this is set, emails found in <code>Cc:</code> headers in the first patch of
 the series (typically the cover letter) are added to the cc list
 for each email set. Default is the value of <code>sendemail.ccCover</code>
 configuration value; if that is unspecified, default to <code>--no-cc-cover</code>.</p>
 </dd>
-<dt class="hdlist1">--to-cover</dt>
-<dt class="hdlist1">--no-to-cover</dt>
+<dt class="hdlist1"><code>--to-cover</code></dt>
+<dt class="hdlist1"><code>--no-to-cover</code></dt>
 <dd>
 <p>If this is set, emails found in <code>To:</code> headers in the first patch of
 the series (typically the cover letter) are added to the to list
 for each email set. Default is the value of <code>sendemail.toCover</code>
 configuration value; if that is unspecified, default to <code>--no-to-cover</code>.</p>
 </dd>
-<dt class="hdlist1">--suppress-cc=&lt;category&gt;</dt>
+<dt class="hdlist1"><code>--suppress-cc=</code><em>&lt;category&gt;</em></dt>
 <dd>
 <p>Specify an additional category of recipients to suppress the
 auto-cc of:</p>
@@ -1014,15 +1014,15 @@ that is unspecified, default to <code>self</code> if <code>--suppress-from</code
 specified, as well as <code>body</code> if <code>--no-signed-off-by-cc</code> is specified.</p>
 </div>
 </dd>
-<dt class="hdlist1">--suppress-from</dt>
-<dt class="hdlist1">--no-suppress-from</dt>
+<dt class="hdlist1"><code>--suppress-from</code></dt>
+<dt class="hdlist1"><code>--no-suppress-from</code></dt>
 <dd>
 <p>If this is set, do not add the <code>From:</code> address to the <code>Cc:</code> list.
 Default is the value of <code>sendemail.suppressFrom</code> configuration
 value; if that is unspecified, default to <code>--no-suppress-from</code>.</p>
 </dd>
-<dt class="hdlist1">--thread</dt>
-<dt class="hdlist1">--no-thread</dt>
+<dt class="hdlist1"><code>--thread</code></dt>
+<dt class="hdlist1"><code>--no-thread</code></dt>
 <dd>
 <p>If this is set, the <code>In-Reply-To</code> and <code>References</code> headers will be
 added to each email sent.  Whether each mail refers to the
@@ -1043,8 +1043,8 @@ Failure to do so may not produce the expected result in the
 recipient&#8217;s MUA.</p>
 </div>
 </dd>
-<dt class="hdlist1">--mailmap</dt>
-<dt class="hdlist1">--no-mailmap</dt>
+<dt class="hdlist1"><code>--mailmap</code></dt>
+<dt class="hdlist1"><code>--no-mailmap</code></dt>
 <dd>
 <p>Use the mailmap file (see <a href="gitmailmap.html">gitmailmap(5)</a>) to map all
 addresses to their canonical real name and email address. Additional
@@ -1059,7 +1059,7 @@ values. Defaults to <code>sendemail.mailmap</code>.</p>
 <h3 id="_administering">Administering</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--confirm=&lt;mode&gt;</dt>
+<dt class="hdlist1"><code>--confirm=</code><em>&lt;mode&gt;</em></dt>
 <dd>
 <p>Confirm just before sending:</p>
 <div class="openblock">
@@ -1092,25 +1092,25 @@ is unspecified, default to <code>auto</code> unless any of the suppress options
 have been specified, in which case default to <code>compose</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--dry-run</dt>
+<dt class="hdlist1"><code>--dry-run</code></dt>
 <dd>
 <p>Do everything except actually send the emails.</p>
 </dd>
-<dt class="hdlist1">--format-patch</dt>
-<dt class="hdlist1">--no-format-patch</dt>
+<dt class="hdlist1"><code>--format-patch</code></dt>
+<dt class="hdlist1"><code>--no-format-patch</code></dt>
 <dd>
 <p>When an argument may be understood either as a reference or as a file name,
 choose to understand it as a format-patch argument (<code>--format-patch</code>)
 or as a file name (<code>--no-format-patch</code>). By default, when such a conflict
 occurs, <code>git</code> <code>send-email</code> will fail.</p>
 </dd>
-<dt class="hdlist1">--quiet</dt>
+<dt class="hdlist1"><code>--quiet</code></dt>
 <dd>
 <p>Make <code>git</code> <code>send-email</code> less verbose.  One line per email should be
 all that is output.</p>
 </dd>
-<dt class="hdlist1">--validate</dt>
-<dt class="hdlist1">--no-validate</dt>
+<dt class="hdlist1"><code>--validate</code></dt>
+<dt class="hdlist1"><code>--no-validate</code></dt>
 <dd>
 <p>Perform sanity checks on patches.
 Currently, validation means the following:</p>
@@ -1137,7 +1137,7 @@ this is due to SMTP limits as described by
 default to <code>--validate</code>.</p>
 </div>
 </dd>
-<dt class="hdlist1">--force</dt>
+<dt class="hdlist1"><code>--force</code></dt>
 <dd>
 <p>Send emails even if safety checks would prevent it.</p>
 </dd>
@@ -1148,14 +1148,14 @@ default to <code>--validate</code>.</p>
 <h3 id="_information">Information</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--dump-aliases</dt>
+<dt class="hdlist1"><code>--dump-aliases</code></dt>
 <dd>
 <p>Instead of the normal operation, dump the shorthand alias names from
 the configured alias file(s), one per line in alphabetical order. Note
 that this only includes the alias name and not its expanded email addresses.
 See <code>sendemail.aliasesFile</code> for more information about aliases.</p>
 </dd>
-<dt class="hdlist1">--translate-aliases</dt>
+<dt class="hdlist1"><code>--translate-aliases</code></dt>
 <dd>
 <p>Instead of the normal operation, read from standard input and
 interpret each line as an email alias. Translate it according to the
@@ -1178,24 +1178,24 @@ as what&#8217;s found there:</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">sendemail.identity</dt>
+<dt class="hdlist1"><code>sendemail.identity</code></dt>
 <dd>
 <p>A configuration identity. When given, causes values in the
 <code>sendemail.</code><em>&lt;identity&gt;</em> subsection to take precedence over
 values in the <code>sendemail</code> section. The default identity is
 the value of <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpEncryption</dt>
+<dt class="hdlist1"><code>sendemail.smtpEncryption</code></dt>
 <dd>
 <p>See <a href="git-send-email.html">git-send-email(1)</a> for description.  Note that this
 setting is not subject to the <code>identity</code> mechanism.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLCertPath</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLCertPath</code></dt>
 <dd>
 <p>Path to ca-certificates (either a directory or a single file).
 Set it to an empty string to disable certificate verification.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLClientCert</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLClientCert</code></dt>
 <dd>
 <p>Path to the client certificate file to present if requested by the
 server. This is required when the server is set up to verify client
@@ -1203,7 +1203,7 @@ certificates. If the corresponding private key is not included in the
 file, it must be supplied using <code>sendemail.smtpSSLClientKey</code> or the
 <code>--smtp-ssl-client-key</code> option.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLClientKey</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLClientKey</code></dt>
 <dd>
 <p>Path to the client private key file that corresponds to the client
 certificate. To avoid misconfiguration, this configuration must be used
@@ -1213,53 +1213,53 @@ client certificate, the choice of private key depends on the format of
 the certificate. Visit <a href="https://metacpan.org/pod/IO::Socket::SSL" class="bare">https://metacpan.org/pod/IO::Socket::SSL</a> for more
 details.</p>
 </dd>
-<dt class="hdlist1">sendemail.&lt;identity&gt;.*</dt>
+<dt class="hdlist1"><code>sendemail.</code><em>&lt;identity&gt;</em>.<em>&lt;config&gt;</em></dt>
 <dd>
-<p>Identity-specific versions of the <code>sendemail.*</code> parameters
+<p>Identity-specific versions of the <code>sendemail.</code><em>&lt;config&gt;</em> parameters
 found below, taking precedence over those when this
 identity is selected, through either the command-line or
 <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.multiEdit</dt>
+<dt class="hdlist1"><code>sendemail.multiEdit</code></dt>
 <dd>
 <p>If <code>true</code> (default), a single editor instance will be spawned to edit
 files you have to edit (patches when <code>--annotate</code> is used, and the
 summary when <code>--compose</code> is used). If <code>false</code>, files will be edited one
 after the other, spawning a new editor each time.</p>
 </dd>
-<dt class="hdlist1">sendemail.confirm</dt>
+<dt class="hdlist1"><code>sendemail.confirm</code></dt>
 <dd>
 <p>Sets the default for whether to confirm before sending. Must be
 one of <code>always</code>, <code>never</code>, <code>cc</code>, <code>compose</code>, or <code>auto</code>. See <code>--confirm</code>
 in the <a href="git-send-email.html">git-send-email(1)</a> documentation for the meaning of these
 values.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap</dt>
+<dt class="hdlist1"><code>sendemail.mailmap</code></dt>
 <dd>
 <p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--mailmap</code>,
 otherwise assume <code>--no-mailmap</code>. <code>False</code> by default.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap.file</dt>
+<dt class="hdlist1"><code>sendemail.mailmap.file</code></dt>
 <dd>
 <p>The location of a <a href="git-send-email.html">git-send-email(1)</a> specific augmenting
 mailmap file. The default mailmap and <code>mailmap.file</code> are loaded
 first. Thus, entries in this file take precedence over entries in
 the default mailmap locations. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap.blob</dt>
+<dt class="hdlist1"><code>sendemail.mailmap.blob</code></dt>
 <dd>
 <p>Like <code>sendemail.mailmap.file</code>, but consider the value as a reference
 to a blob in the repository. Entries in <code>sendemail.mailmap.file</code>
 take precedence over entries here. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.aliasesFile</dt>
+<dt class="hdlist1"><code>sendemail.aliasesFile</code></dt>
 <dd>
 <p>To avoid typing long email addresses, point this to one or more
 email aliases files.  You must also supply <code>sendemail.aliasFileType</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.aliasFileType</dt>
+<dt class="hdlist1"><code>sendemail.aliasFileType</code></dt>
 <dd>
-<p>Format of the file(s) specified in sendemail.aliasesFile. Must be
+<p>Format of the file(s) specified in <code>sendemail.aliasesFile</code>. Must be
 one of <code>mutt</code>, <code>mailrc</code>, <code>pine</code>, <code>elm</code>, <code>gnus</code>, or <code>sendmail</code>.</p>
 <div class="paragraph">
 <p>What an alias file in each format looks like can be found in
@@ -1271,7 +1271,7 @@ described below:</p>
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">sendmail</dt>
+<dt class="hdlist1"><code>sendmail</code></dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -1299,59 +1299,59 @@ recognized by the parser.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">sendemail.annotate</dt>
-<dt class="hdlist1">sendemail.bcc</dt>
-<dt class="hdlist1">sendemail.cc</dt>
-<dt class="hdlist1">sendemail.ccCmd</dt>
-<dt class="hdlist1">sendemail.chainReplyTo</dt>
-<dt class="hdlist1">sendemail.envelopeSender</dt>
-<dt class="hdlist1">sendemail.from</dt>
-<dt class="hdlist1">sendemail.headerCmd</dt>
-<dt class="hdlist1">sendemail.signedOffByCc</dt>
-<dt class="hdlist1">sendemail.smtpPass</dt>
-<dt class="hdlist1">sendemail.suppressCc</dt>
-<dt class="hdlist1">sendemail.suppressFrom</dt>
-<dt class="hdlist1">sendemail.to</dt>
-<dt class="hdlist1">sendemail.toCmd</dt>
-<dt class="hdlist1">sendemail.smtpDomain</dt>
-<dt class="hdlist1">sendemail.smtpServer</dt>
-<dt class="hdlist1">sendemail.smtpServerPort</dt>
-<dt class="hdlist1">sendemail.smtpServerOption</dt>
-<dt class="hdlist1">sendemail.smtpUser</dt>
-<dt class="hdlist1">sendemail.imapSentFolder</dt>
-<dt class="hdlist1">sendemail.useImapOnly</dt>
-<dt class="hdlist1">sendemail.thread</dt>
-<dt class="hdlist1">sendemail.transferEncoding</dt>
-<dt class="hdlist1">sendemail.validate</dt>
-<dt class="hdlist1">sendemail.xmailer</dt>
+<dt class="hdlist1"><code>sendemail.annotate</code></dt>
+<dt class="hdlist1"><code>sendemail.bcc</code></dt>
+<dt class="hdlist1"><code>sendemail.cc</code></dt>
+<dt class="hdlist1"><code>sendemail.ccCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.chainReplyTo</code></dt>
+<dt class="hdlist1"><code>sendemail.envelopeSender</code></dt>
+<dt class="hdlist1"><code>sendemail.from</code></dt>
+<dt class="hdlist1"><code>sendemail.headerCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.signedOffByCc</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpPass</code></dt>
+<dt class="hdlist1"><code>sendemail.suppressCc</code></dt>
+<dt class="hdlist1"><code>sendemail.suppressFrom</code></dt>
+<dt class="hdlist1"><code>sendemail.to</code></dt>
+<dt class="hdlist1"><code>sendemail.toCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpDomain</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServer</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServerPort</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServerOption</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpUser</code></dt>
+<dt class="hdlist1"><code>sendemail.imapSentFolder</code></dt>
+<dt class="hdlist1"><code>sendemail.useImapOnly</code></dt>
+<dt class="hdlist1"><code>sendemail.thread</code></dt>
+<dt class="hdlist1"><code>sendemail.transferEncoding</code></dt>
+<dt class="hdlist1"><code>sendemail.validate</code></dt>
+<dt class="hdlist1"><code>sendemail.xmailer</code></dt>
 <dd>
 <p>These configuration variables all provide a default for
 <a href="git-send-email.html">git-send-email(1)</a> command-line options. See its
 documentation for details.</p>
 </dd>
-<dt class="hdlist1">sendemail.outlookidfix</dt>
+<dt class="hdlist1"><code>sendemail.outlookidfix</code></dt>
 <dd>
 <p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--outlook-id-fix</code>,
 and if <code>false</code> assume <code>--no-outlook-id-fix</code>. If not specified, it will
 behave the same way as if <code>--outlook-id-fix</code> is not specified.</p>
 </dd>
-<dt class="hdlist1">sendemail.signedOffCc (deprecated)</dt>
+<dt class="hdlist1"><code>sendemail.signedOffCc</code> (deprecated)</dt>
 <dd>
 <p>Deprecated alias for <code>sendemail.signedOffByCc</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpBatchSize</dt>
+<dt class="hdlist1"><code>sendemail.smtpBatchSize</code></dt>
 <dd>
 <p>Number of messages to be sent per connection, after that a relogin
 will happen.  If the value is <code>0</code> or undefined, send all messages in
 one connection.
 See also the <code>--batch-size</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpReloginDelay</dt>
+<dt class="hdlist1"><code>sendemail.smtpReloginDelay</code></dt>
 <dd>
 <p>Seconds to wait before reconnecting to the smtp server.
 See also the <code>--relogin-delay</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.forbidSendmailVariables</dt>
+<dt class="hdlist1"><code>sendemail.forbidSendmailVariables</code></dt>
 <dd>
 <p>To avoid common misconfiguration mistakes, <a href="git-send-email.html">git-send-email(1)</a>
 will abort with a warning if any configuration options for <code>sendmail</code>
@@ -1616,7 +1616,7 @@ diffs as well.</p>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="git-format-patch.html">git-format-patch(1)</a>, <a href="git-imap-send.html">git-imap-send(1)</a>, mbox(5)</p>
+<p><a href="git-format-patch.html">git-format-patch(1)</a>, <a href="git-imap-send.html">git-imap-send(1)</a>, <code>mbox</code>(5)</p>
 </div>
 </div>
 </div>
@@ -1631,7 +1631,7 @@ diffs as well.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

@@ -462,7 +462,11 @@ pre>code {
 		   [(<code>--exclude=</code><em>&lt;pattern&gt;</em>)&#8230;&#8203;] [<code>--start-after=</code><em>&lt;marker&gt;</em>]
 		   [ <code>--stdin</code> | (<em>&lt;pattern&gt;</em><code>...</code>)]
 <code>git</code> <code>refs</code> <code>exists</code> <em>&lt;ref&gt;</em>
-<code>git</code> <code>refs</code> <code>optimize</code> [<code>--all</code>] [<code>--no-prune</code>] [<code>--auto</code>] [<code>--include</code> <em>&lt;pattern&gt;</em>] [<code>--exclude</code> <em>&lt;pattern&gt;</em>]</pre>
+<code>git</code> <code>refs</code> <code>optimize</code> [<code>--all</code>] [<code>--no-prune</code>] [<code>--auto</code>] [<code>--include</code> <em>&lt;pattern&gt;</em>] [<code>--exclude</code> <em>&lt;pattern&gt;</em>]
+<code>git</code> <code>refs</code> <code>create</code> [<code>--message=</code><em>&lt;reason&gt;</em>] [<code>--no-deref</code>] [<code>--create-reflog</code>] <em>&lt;ref&gt;</em> <em>&lt;new-value&gt;</em>
+<code>git</code> <code>refs</code> <code>delete</code> [<code>--message=</code><em>&lt;reason&gt;</em>] [<code>--no-deref</code>] <em>&lt;ref&gt;</em> [<em>&lt;old-value&gt;</em>]
+<code>git</code> <code>refs</code> <code>update</code> [<code>--message=</code><em>&lt;reason&gt;</em>] [<code>--no-deref</code>] [<code>--create-reflog</code>] <em>&lt;ref&gt;</em> <em>&lt;new-value&gt;</em> [<em>&lt;old-value&gt;</em>]
+<code>git</code> <code>refs</code> <code>rename</code> [<code>--message=</code><em>&lt;reason&gt;</em>] <em>&lt;old-ref&gt;</em> <em>&lt;new-ref&gt;</em></pre>
 </div>
 </div>
 </div>
@@ -482,6 +486,37 @@ pre>code {
 <dt class="hdlist1"><code>migrate</code></dt>
 <dd>
 <p>Migrate ref store between different formats.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The ref format migration has several known limitations in its current form:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It is not possible to migrate repositories that have worktrees.</p>
+</li>
+<li>
+<p>There is no way to block concurrent writes to the repository during an
+ongoing migration. Concurrent writes can lead to an inconsistent migrated
+state. Users are expected to block writes on a higher level. If your
+repository is registered for scheduled maintenance, it is recommended to
+unregister it first with <a href="git-maintenance.html">git-maintenance(1)</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These limitations may eventually be lifted.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </dd>
 <dt class="hdlist1"><code>verify</code></dt>
 <dd>
@@ -505,6 +540,32 @@ not verify whether the reference resolves to an actual object.</p>
 <p>Optimizes references to improve repository performance and reduce disk
 usage. This subcommand is an alias for <a href="git-pack-refs.html">git-pack-refs(1)</a> and
 offers identical functionality.</p>
+</dd>
+<dt class="hdlist1">create</dt>
+<dd>
+<p>Create the given reference, which must not already exist, pointing at
+<em>&lt;new-value&gt;</em>.</p>
+</dd>
+<dt class="hdlist1">delete</dt>
+<dd>
+<p>Delete the given reference. This subcommand mirrors <code>git</code> <code>update-ref</code> <code>-d</code>
+(see <a href="git-update-ref.html">git-update-ref(1)</a>). When <em>&lt;old-value&gt;</em> is given, the
+reference is only deleted after verifying that it currently contains
+<em>&lt;old-value&gt;</em>.</p>
+</dd>
+<dt class="hdlist1">update</dt>
+<dd>
+<p>Update the given reference to point at <em>&lt;new-value&gt;</em>. If <em>&lt;old-value&gt;</em>
+is given, the reference is only updated after verifying that it
+currently contains <em>&lt;old-value&gt;</em>. As a special case, an all-zeroes
+<em>&lt;new-value&gt;</em> deletes the branch, whereas an all-zeroes <em>&lt;old-value&gt;</em>
+ensures that the branch does not yet exist.</p>
+</dd>
+<dt class="hdlist1">rename</dt>
+<dd>
+<p>Rename the reference <em>&lt;oldref&gt;</em> to <em>&lt;newref&gt;</em>. The old reference must
+exist and the new reference must not yet exist, and both must have a
+well-formed name (see <a href="git-check-ref-format.html">git-check-ref-format(1)</a>).</p>
 </dd>
 </dl>
 </div>
@@ -750,30 +811,27 @@ provided to <code>--exclude</code> will be packed.</p>
 </dd>
 </dl>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_known_limitations">KNOWN LIMITATIONS</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The ref format migration has several known limitations in its current form:</p>
+<p>The following options are specific to commands which write references:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>It is not possible to migrate repositories that have worktrees.</p>
-</li>
-<li>
-<p>There is no way to block concurrent writes to the repository during an
-ongoing migration. Concurrent writes can lead to an inconsistent migrated
-state. Users are expected to block writes on a higher level. If your
-repository is registered for scheduled maintenance, it is recommended to
-unregister it first with git-maintenance(1).</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>These limitations may eventually be lifted.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>--create-reflog</code></dt>
+<dd>
+<p>Create a reflog for the reference even if one would not ordinarily be
+created.</p>
+</dd>
+<dt class="hdlist1"><code>--message=</code><em>&lt;reason&gt;</em></dt>
+<dd>
+<p>Use the given &lt;reason&gt; string for the reflog entry associated with the
+update. An empty message is rejected.</p>
+</dd>
+<dt class="hdlist1"><code>--no-deref</code></dt>
+<dd>
+<p>Operate on &lt;ref&gt; itself rather than the reference it points to via a
+symbolic ref.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -788,7 +846,7 @@ unregister it first with git-maintenance(1).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

@@ -906,7 +906,7 @@ sub get_patch_subject {
 		return "GIT: $1\n";
 	}
 	close $fh;
-	die sprintf(__("No subject line in %s?"), $fn);
+	die sprintf(__("No 'Subject:' line in '%s'\n"), $fn);
 }
 
 if ($compose) {
@@ -1658,7 +1658,7 @@ sub gen_header {
 	@recipients = unique_email_list(@recipients,@cc,@initial_bcc);
 	@recipients = (map { extract_valid_address_or_die($_) } @recipients);
 	my $date = format_2822_time($time++);
-	my $gitversion = '2.55.0.windows.5';
+	my $gitversion = '2.56.0.rc0.windows.1';
 	if ($gitversion =~ m/..GIT_VERSION../) {
 	    $gitversion = Git::version();
 	}

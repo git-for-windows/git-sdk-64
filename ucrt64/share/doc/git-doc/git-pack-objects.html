@@ -919,11 +919,13 @@ potential to improve delta compression especially in the presence
 of filenames that cause collisions in Git&#8217;s default name-hash
 algorithm.</p>
 <div class="paragraph">
-<p>Incompatible with <code>--delta-islands</code>. The <code>--use-bitmap-index</code> option is
-ignored in the presence of <code>--path-walk</code>. The <code>--path-walk</code> option
-supports the <code>--filter=</code><em>&lt;spec&gt;</em> forms <code>blob:none</code>, <code>blob:limit=</code><em>&lt;n&gt;</em>,
-<code>tree:0</code>, <code>object:type=</code><em>&lt;type&gt;</em>, and <code>sparse:</code><em>&lt;oid&gt;</em>. These supported filter
-types can be combined with the <code>combine:</code><em>&lt;spec&gt;</em><code>+</code><em>&lt;spec&gt;</em> form.</p>
+<p>When <code>--use-bitmap-index</code> is specified with <code>--path-walk</code>, a successful
+bitmap traversal is used for object enumeration, with path-walk
+remaining as the fallback traversal when the bitmap cannot satisfy the
+request. The <code>--path-walk</code> option supports the <code>--filter=</code><em>&lt;spec&gt;</em> forms
+<code>blob:none</code>, <code>blob:limit=</code><em>&lt;n&gt;</em>, <code>tree:0</code>, <code>object:type=</code><em>&lt;type&gt;</em>, and
+<code>sparse:</code><em>&lt;oid&gt;</em>. These supported filter types can be combined with the
+<code>combine:</code><em>&lt;spec&gt;</em><code>+</code><em>&lt;spec&gt;</em> form.</p>
 </div>
 </dd>
 </dl>
@@ -1073,7 +1075,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

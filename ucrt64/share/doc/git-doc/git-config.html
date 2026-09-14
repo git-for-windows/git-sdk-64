@@ -1455,6 +1455,59 @@ matches "foo" and everything inside, recursively.</p>
 <p>This is the same as <code>gitdir</code> except that matching is done
 case-insensitively (e.g. on case-insensitive file systems)</p>
 </dd>
+<dt class="hdlist1"><code>worktree</code></dt>
+<dd>
+<p>The data that follows the keyword <code>worktree</code> and a colon is used as a
+glob pattern. If the working directory of the current worktree matches
+the pattern, the include condition is met.</p>
+<div class="paragraph">
+<p>The worktree location is the path where files are checked out (as returned
+by <code>git</code> <code>rev-parse</code> <code>--show-toplevel</code>). This is different from <code>gitdir</code>, which
+matches the .<code>git</code> directory path. In a linked worktree, the worktree path
+is the directory where that worktree&#8217;s files are located, not the main
+repository&#8217;s .<code>git</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>The pattern uses the same glob syntax as <code>gitdir</code> (including <code>~/</code>, .<code>/</code>,
+<code>**/</code>, and trailing-<code>/</code> prefix matching). This condition will never match
+in a bare repository (which has no worktree).</p>
+</div>
+<div class="paragraph">
+<p>Unlike <code>gitdir</code>, the <code>worktree</code> condition currently matches only the
+realpath-resolved worktree location. If the working tree was entered via a
+symbolic link, a pattern that uses the symbolic-link spelling may not match;
+use the real path instead.</p>
+</div>
+<div class="paragraph">
+<p>This is useful when you want to apply configuration based on where the
+working tree is located on the filesystem. For example, a contributor who
+works on the same project both personally and as an employee can use
+different <code>user.name</code> and <code>user.email</code> values depending on which directory
+the worktree is checked out under:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[includeIf "worktree:/home/user/work/"]
+    path = ~/.config/git/work.inc
+[includeIf "worktree:/home/user/personal/"]
+    path = ~/.config/git/personal.inc</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>While <code>extensions.worktreeConfig</code> (see <a href="git-worktree.html">git-worktree(1)</a>) also supports
+per-worktree configuration, it stores the config inside each repository&#8217;s
+.<code>git/config.worktree</code> file and requires running <code>git</code> <code>config</code> <code>--worktree</code>
+inside each worktree individually. In contrast, <code>includeIf</code> "worktree:<code>...</code>"
+can be set once in a global or system-level configuration file (e.g.
+<code>~/.config/git/config</code>) and applies to all repositories at once based on
+their worktree location.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>worktree/i</code></dt>
+<dd>
+<p>This is the same as <code>worktree</code> except that matching is done
+case-insensitively (e.g. on case-insensitive file systems)</p>
+</dd>
 <dt class="hdlist1"><code>onbranch</code></dt>
 <dd>
 <p>The data that follows the keyword <code>onbranch</code> and a colon is taken to be a
@@ -1570,6 +1623,14 @@ unlikely what you want.</p>
 ; include for all repositories inside $HOME/to/group
 [includeIf "gitdir:~/to/group/"]
         path = /path/to/foo.inc
+
+; include if the worktree is at /path/to/project-build
+[includeIf "worktree:/path/to/project-build"]
+        path = build-config.inc
+
+; include for all worktrees inside /path/to/group
+[includeIf "worktree:/path/to/group/"]
+        path = group-config.inc
 
 ; relative paths are always relative to the including
 ; file (if the condition is true); their location is not
@@ -1816,6 +1877,12 @@ to create a local branch after the fact.</p>
 <dd>
 <p>Shown when a fast-forward is not possible.</p>
 </dd>
+<dt class="hdlist1">fetchRemoteHEADWarn</dt>
+<dd>
+<p>Shown when <a href="git-fetch.html">git-fetch(1)</a> reveals that a remote <code>HEAD</code>
+differs from what is set locally and the user has opted into
+receiving a warning in this situation.</p>
+</dd>
 <dt class="hdlist1">fetchShowForcedUpdates</dt>
 <dd>
 <p>Shown when <a href="git-fetch.html">git-fetch(1)</a> takes a long time
@@ -1886,6 +1953,13 @@ it resulted in a non-fast-forward error.</p>
 <p>Shown when <a href="git-push.html">git-push(1)</a> rejects a forced update of
 a branch when its remote-tracking ref has updates that we
 do not have locally.</p>
+</dd>
+<dt class="hdlist1">pushRepoLooksLikeRef</dt>
+<dd>
+<p>Shown when the repository given to <a href="git-push.html">git-push(1)</a> is not
+a configured remote but looks like a <em>&lt;remote&gt;</em><code>/</code><em>&lt;branch&gt;</em> ref,
+suggesting that the remote and branch be given as separate
+arguments.</p>
 </dd>
 <dt class="hdlist1">pushUnqualifiedRefname</dt>
 <dd>
@@ -2443,7 +2517,8 @@ from branch <em>&lt;name&gt;</em>.  When you pull from one place (e.g. your
 upstream) and push to another place (e.g. your own publishing
 repository), you would want to set <code>remote.pushDefault</code> to
 specify the remote to push to for all branches, and use this
-option to override it for a specific branch.</p>
+option to override it for a specific branch.
+The value may be the name of a configured remote or a repository URL.</p>
 </dd>
 <dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.merge</code></dt>
 <dd>
@@ -2498,6 +2573,14 @@ for details).</p>
 <code>git</code> <code>branch</code> <code>--edit-description</code>. Branch description is
 automatically added to the <code>format-patch</code> cover letter or
 <code>request-pull</code> summary.</p>
+</dd>
+<dt class="hdlist1"><code>branch.</code><em>&lt;name&gt;</em><code>.deleteMerged</code></dt>
+<dd>
+<p>If set to <code>false</code>, branch <em>&lt;name&gt;</em> is exempt from
+<code>git</code> <code>branch</code> <code>--delete-merged</code>.  Useful for a topic branch you
+intend to develop further after an initial round has been
+merged upstream.  Defaults to true.  Explicit deletion via
+<code>git</code> <code>branch</code> <code>-d</code> is unaffected.</p>
 </dd>
 <dt class="hdlist1">browser.&lt;tool&gt;.cmd</dt>
 <dd>
@@ -2584,6 +2667,12 @@ than one, Git will use as many workers as the number of logical cores
 available. This setting and <code>checkout.thresholdForParallelism</code> affect
 all commands that perform checkout. E.g. checkout, clone, reset,
 sparse-checkout, etc.</p>
+<div class="paragraph">
+<p>On Windows the number of workers is capped at 62, because the <code>poll</code>()
+emulation cannot wait on more worker pipes than that. A higher configured
+value, including the logical core count on a machine with many cores, is
+silently reduced to the cap.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -3796,6 +3885,15 @@ retry for 100ms).</p>
 lock the <code>packed-refs</code> file. Value 0 means not to retry at
 all; -1 means to try indefinitely. Default is 1000 (i.e.,
 retry for 1 second).</p>
+</dd>
+<dt class="hdlist1">core.configLockTimeout</dt>
+<dd>
+<p>The length of time, in milliseconds, to retry when trying to
+lock a configuration file for writing. Value 0 means not to
+retry at all; -1 means to try indefinitely. Default is 1000
+(i.e., retry for 1 second). This is read from the configuration
+that is already on disk before the lock is taken, so it can be
+set persistently like any other option.</p>
 </dd>
 <dt class="hdlist1">core.pager</dt>
 <dd>
@@ -5094,6 +5192,39 @@ value.</p>
 <p>The creation token values are chosen by the provider serving the specific
 bundle URI. If you modify the URI at <code>fetch.bundleURI</code>, then be sure to
 remove the value for the <code>fetch.bundleCreationToken</code> value before fetching.</p>
+</div>
+</dd>
+<dt class="hdlist1"><code>fetch.followRemoteHEAD</code></dt>
+<dd>
+<p>When fetching using a default refspec, this setting determines how to handle
+differences between a fetched remote&#8217;s <code>HEAD</code> and the local
+<code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> symbolic-ref.  Its value is one of</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>create</code></dt>
+<dd>
+<p>Create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> if a ref exists on the remote, but not locally.
+An existing symbolic-ref will not be touched.  This is the default value.</p>
+</dd>
+<dt class="hdlist1"><code>warn</code></dt>
+<dd>
+<p>Display a warning if the remote advertises a different <code>HEAD</code> than what is
+set locally.  Behaves like "create" if the local symbolic-ref doesn&#8217;t exist.</p>
+</dd>
+<dt class="hdlist1"><code>always</code></dt>
+<dd>
+<p>Silently update <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> whenever the remote advertises a new
+value.</p>
+</dd>
+<dt class="hdlist1"><code>never</code></dt>
+<dd>
+<p>Never create or modify the <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> symbolic-ref.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </dd>
 <dt class="hdlist1">filter.&lt;driver&gt;.clean</dt>
@@ -6807,7 +6938,7 @@ format=fixed email.  Default is <code>false</code>.</p>
 <dd>
 <p>Specify the authentication method for authenticating with the IMAP server.
 If Git was built with the NO_CURL option, or if your curl version is older
-than 7.34.0, or if you&#8217;re running git-imap-send with the <code>--no-curl</code>
+than 7.34.0, or if you&#8217;re running <code>git-imap-send</code> with the <code>--no-curl</code>
 option, the only supported methods are <code>PLAIN</code>, <code>CRAM-MD5</code>, <code>OAUTHBEARER</code>
 and <code>XOAUTH2</code>. If this is not set then <code>git</code> <code>imap-send</code> uses the basic IMAP
 plaintext <code>LOGIN</code> command.</p>
@@ -7022,13 +7153,17 @@ details. Defaults to <code>separate</code>.</p>
 <dd>
 <p>If <code>true</code>, <code>git</code> <code>log</code> will act as if the <code>--follow</code> option was used when
 a single &lt;path&gt; is given.  This has the same limitations as <code>--follow</code>,
-i.e. it cannot be used to follow multiple files and does not work well
-on non-linear history.</p>
+i.e. it cannot be used to follow multiple files.</p>
 </dd>
 <dt class="hdlist1"><code>log.graphColors</code></dt>
 <dd>
 <p>A list of colors, separated by commas, that can be used to draw
 history lines in <code>git</code> <code>log</code> <code>--graph</code>.</p>
+</dd>
+<dt class="hdlist1"><code>log.graphIndent</code></dt>
+<dd>
+<p>If <code>true</code>, indent visual roots when rendering the graphs with <code>--graph</code>.
+Set true by default. It can be overriden with <code>--</code>[<code>no-</code>]<code>graph-indent</code>.</p>
 </dd>
 <dt class="hdlist1"><code>log.showRoot</code></dt>
 <dd>
@@ -7213,7 +7348,7 @@ Otherwise, a positive value implies the command should run either when
 there are packfiles that need to be merged together to retain the
 geometric progression, or when there are at least this many loose
 objects that would be written into a new packfile. The default value is
-100.</p>
+6700.</p>
 </dd>
 <dt class="hdlist1">maintenance.geometric-repack.splitFactor</dt>
 <dd>
@@ -8121,24 +8256,166 @@ advertised regardless of this setting.</p>
 </dd>
 <dt class="hdlist1">promisor.acceptFromServer</dt>
 <dd>
-<p>If set to "all", a client will accept all the promisor remotes
-a server might advertise using the "promisor-remote"
-capability. If set to "knownName" the client will accept
-promisor remotes which are already configured on the client
-and have the same name as those advertised by the client. This
-is not very secure, but could be used in a corporate setup
-where servers and clients are trusted to not switch name and
-URLs. If set to "knownUrl", the client will accept promisor
-remotes which have both the same name and the same URL
-configured on the client as the name and URL advertised by the
-server. This is more secure than "all" or "knownName", so it
-should be used if possible instead of those options. Default
-is "none", which means no promisor remote advertised by a
-server will be accepted. By accepting a promisor remote, the
-client agrees that the server might omit objects that are
-lazily fetchable from this promisor remote from its responses
-to "fetch" and "clone" requests from the client. Name and URL
-comparisons are case sensitive. See <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+<p>Controls which promisor remotes advertised by a server (using the
+"promisor-remote" protocol capability) a client will accept. By
+accepting a promisor remote, the client agrees that the server
+might omit objects that are lazily fetchable from this promisor
+remote from its responses to "fetch" and "clone" requests.</p>
+<div class="paragraph">
+<p>Note that this option does not cause new remotes to be automatically
+created in the client&#8217;s configuration. It only allows remotes which
+are somehow already configured to be trusted for the current
+operation, or their fields to be updated (if <code>promisor.storeFields</code> is
+set and the remote already exists locally). To allow Git to
+automatically create and persist new remotes from server
+advertisements, use <code>promisor.acceptFromServerUrl</code>.</p>
+</div>
+<div class="paragraph">
+<p>The available options are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>none</code> (default): No promisor remote advertised by a server will be
+accepted.</p>
+</li>
+<li>
+<p><code>knownUrl</code>: The client will accept promisor remotes that are already
+configured on the client and have both the same name and the same URL
+as advertised by the server. This is more secure than <code>all</code> or
+<code>knownName</code>, and should be used if possible instead of those options.</p>
+</li>
+<li>
+<p><code>knownName</code>: The client will accept promisor remotes that are already
+configured on the client and have the same name as those advertised
+by the server. This is not very secure, but could be used in a corporate
+setup where servers and clients are trusted to not switch names and URLs.</p>
+</li>
+<li>
+<p><code>all</code>: The client will accept all the promisor remotes a server might
+advertise. This is the least secure option and should only be used in
+fully trusted environments.</p>
+<div class="paragraph">
+<p>Name and URL comparisons are case-sensitive. See <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>
+for protocol details.</p>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">promisor.acceptFromServerUrl</dt>
+<dd>
+<p>A glob pattern to specify which server-advertised URLs a
+client is allowed to act on. When a URL matches, the client
+will accept the advertised remote as a promisor remote, may
+automatically create a new remote configuration for it and may
+automatically accept field updates (such as authentication
+tokens) from the server, even if <code>promisor.acceptFromServer</code>
+is set to <code>none</code> (the default).</p>
+<div class="paragraph">
+<p>This option can appear multiple times in config files. An advertised
+URL will be accepted if it matches <em>ANY</em> glob pattern specified by
+this option in <em>ANY</em> config file read by Git.</p>
+</div>
+<div class="paragraph">
+<p>When both <code>promisor.acceptFromServer</code> and <code>promisor.acceptFromServerUrl</code>
+are set, <code>promisor.acceptFromServerUrl</code> is consulted first and takes
+precedence: if a matching pattern leads to acceptance (either by
+auto-configuring an unknown remote or by accepting field updates for
+a known remote whose URL matches both the local configuration and the
+allowlist), the advertised remote is accepted regardless of the
+<code>promisor.acceptFromServer</code> setting. If no pattern in
+<code>promisor.acceptFromServerUrl</code> triggers acceptance, the decision is
+left to <code>promisor.acceptFromServer</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note however that, even when an advertised URL matches a pattern in
+<code>promisor.acceptFromServerUrl</code>, an already-existing remote on the
+client whose name matches the advertised name but whose configured URL
+differs from the advertised one will <em>NOT</em> be accepted through
+<code>promisor.acceptFromServerUrl</code>. This prevents a server from silently
+re-pointing an existing client-side remote at a different URL. (Such a
+remote may still be accepted through <code>promisor.acceptFromServer=all</code>
+or <code>=knownName</code>, which have their own, looser semantics; see the
+documentation of that option.)</p>
+</div>
+<div class="paragraph">
+<p>Be <em>VERY</em> careful with these patterns: <code>*</code> matches any sequence of
+characters within the <em>host</em> and <em>path</em> parts of a URL (but cannot
+cross part boundaries). An overly broad pattern is a major security
+risk, as a matching URL allows a server to auto-configure new remotes
+and to update fields (such as authentication tokens) on known remotes
+without further confirmation. To minimize security risks, follow these
+guidelines:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start with a secure protocol scheme, like <code>https://</code> or <code>ssh://</code>.</p>
+</li>
+<li>
+<p>Only allow domain names or paths where you control and trust <em>ALL</em>
+the content. Be especially careful with shared hosting platforms
+like <code>github.com</code> or <code>gitlab.com</code>. A broad pattern like
+<code>https://gitlab.com/*</code> is dangerous because it trusts every
+repository on the entire platform. Always restrict such patterns to
+your specific organization or namespace (e.g.,
+<code>https://gitlab.com/your-org/*</code>).</p>
+</li>
+<li>
+<p>Never use globs at the end of domain names. For example,
+<code>https://cdn.your-org.com/*</code> might be safe, but
+<code>https://cdn.your-org.com*/*</code> is a major security risk because
+the latter matches <code>https://cdn.your-org.com.hacker.net/repo</code>.</p>
+</li>
+<li>
+<p>Be careful using globs at the beginning of domain names. While the
+code ensures a <code>*</code> in the host cannot cross into the path, a
+pattern like <code>https://*.example.com/*</code> will still match any
+subdomain. This is extremely dangerous on shared hosting platforms
+(e.g., <code>https://*.github.io/*</code> trusts every user&#8217;s site on the
+entire platform).</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Before matching, both the advertised URL and the pattern are
+normalized: the scheme and host are lowercased, percent-encoded
+characters are decoded where possible, and path segments like <code>..</code>
+are resolved. The port must also match exactly (e.g.,
+<code>https://example.com:8080/*</code> will not match a URL advertised on
+port 9999). The username and password components of the URL are
+ignored during matching. Note that embedding credentials in URLs is
+discouraged. Passing authentication tokens via the <code>token</code> field of
+the <code>promisor-remote</code> capability is strongly preferred.</p>
+</div>
+<div class="paragraph">
+<p>The glob pattern can optionally be prefixed with a remote name and an
+equals sign (e.g., <code>cdn=https://cdn.example.com/*</code>). If such a prefix
+is provided, accepted remotes will be saved under that name. If no
+such prefix is provided, a safe remote name will be automatically
+generated by sanitizing the URL and prefixing it with
+<code>promisor-auto-</code>.</p>
+</div>
+<div class="paragraph">
+<p>If a remote with the chosen name already exists but points to a
+different URL, Git will append a numeric suffix (e.g., <code>-1</code>, <code>-2</code>) to
+the name to prevent overwriting existing configurations. You should
+make sure that this doesn&#8217;t happen often though, as remotes will be
+rejected if the numeric suffix increases too much. In all cases, the
+original name advertised by the server is recorded in the
+<code>remote.</code><em>&lt;name&gt;</em><code>.advertisedAs</code> configuration variable for tracing and
+debugging purposes.</p>
+</div>
+<div class="paragraph">
+<p>For the security implications of accepting a promisor remote, see the
+documentation of <code>promisor.acceptFromServer</code>. For details on the
+protocol, see <a href="gitprotocol-v2.html">gitprotocol-v2(5)</a>.</p>
+</div>
 </dd>
 <dt class="hdlist1">promisor.checkFields</dt>
 <dd>
@@ -9013,6 +9290,16 @@ is activated in general via <code>remote.</code><em>&lt;name&gt;</em><code>.prun
 <p>When set to true, this remote will be used to fetch promisor
 objects.</p>
 </dd>
+<dt class="hdlist1">remote.&lt;name&gt;.advertisedAs</dt>
+<dd>
+<p>When a promisor remote is automatically configured using
+information advertised by a server through the
+<code>promisor-remote</code> protocol capability (see
+<code>promisor.acceptFromServerUrl</code>), the server&#8217;s originally
+advertised name is saved in this variable. This is for
+information, tracing and debugging purposes. Users should not
+typically modify or create such configuration entries.</p>
+</dd>
 <dt class="hdlist1">remote.&lt;name&gt;.partialclonefilter</dt>
 <dd>
 <p>The filter that will be applied when fetching from this	promisor remote.
@@ -9094,18 +9381,16 @@ the list from broader config scenarios.</p>
 </dd>
 <dt class="hdlist1">remote.&lt;name&gt;.followRemoteHEAD</dt>
 <dd>
-<p>How <a href="git-fetch.html">git-fetch(1)</a> should handle updates to <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
-when fetching using the configured refspecs of a remote.
-The default value is "create", which will create <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code>
-if it exists on the remote, but not locally; this will not touch an
-already existing local reference. Setting it to "warn" will print
-a message if the remote has a different value than the local one;
-in case there is no local reference, it behaves like "create".
-A variant on "warn" is "warn-if-not-$branch", which behaves like
-"warn", but if <code>HEAD</code> on the remote is <code>$branch</code> it will be silent.
-Setting it to "always" will silently update <code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> to
-the value on the remote.  Finally, setting it to "never" will never
-change or create the local reference.</p>
+<p>When fetching this remote using its default refspec, this setting determines
+how to handle differences between the remote&#8217;s <code>HEAD</code> and the local
+<code>remotes/</code><em>&lt;name&gt;</em><code>/HEAD</code> symbolic-ref.  Overrides the value of
+<code>fetch.followRemoteHEAD</code>.  See <code>fetch.followRemoteHEAD</code> for a description of
+accepted values.</p>
+<div class="paragraph">
+<p>In addition to the values supported by <code>fetch.followRemoteHEAD</code>, this setting
+may also take on the value "warn-if-not-<code>$branch</code>", which behaves like "warn",
+but ignores the warning if the remote&#8217;s <code>HEAD</code> is <code>remotes/</code><em>&lt;name&gt;</em><code>/$branch</code>.</p>
+</div>
 </dd>
 <dt class="hdlist1">remotes.&lt;group&gt;</dt>
 <dd>
@@ -9188,6 +9473,50 @@ during <code>git</code> <code>repack</code> <code>--write-midx=incremental</code
 <p>When the tip layer has fewer packs than this threshold, those packs are
 excluded from the geometric repack entirely, and are thus left
 unmodified. Must be at least 1. Defaults to 8.</p>
+</div>
+</dd>
+<dt class="hdlist1">replay.refAction</dt>
+<dd>
+<p>Specifies the default mode for handling reference updates.
+The value can be:</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>update</code></dt>
+<dd>
+<p>(default) Update refs directly using an atomic transaction.</p>
+</dd>
+<dt class="hdlist1"><code>print</code></dt>
+<dd>
+<p>Output update-ref commands for pipeline use.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>See <code>--ref-action</code> in <a href="git-replay.html">git-replay(1)</a> for details.</p>
+</div>
+</dd>
+<dt class="hdlist1">repo.structure.*</dt>
+<dd>
+<p>These variables adjust the default behavior of the
+<code>git</code> <code>repo</code> <code>structure</code> command.</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">top</dt>
+<dd>
+<p>This integer value implies <code>--top=</code><em>&lt;N&gt;</em>, specifying the
+number of largest paths to report in each detail table.
+Must be non-negative; defaults to <code>0</code>, which disables the
+detail tables.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </dd>
 <dt class="hdlist1">rerere.autoUpdate</dt>
@@ -9300,24 +9629,24 @@ repositories that are owned by root instead, then you can remove
 the <code>SUDO_UID</code> variable from root&#8217;s environment before invoking git.</p>
 </div>
 </dd>
-<dt class="hdlist1">sendemail.identity</dt>
+<dt class="hdlist1"><code>sendemail.identity</code></dt>
 <dd>
 <p>A configuration identity. When given, causes values in the
 <code>sendemail.</code><em>&lt;identity&gt;</em> subsection to take precedence over
 values in the <code>sendemail</code> section. The default identity is
 the value of <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpEncryption</dt>
+<dt class="hdlist1"><code>sendemail.smtpEncryption</code></dt>
 <dd>
 <p>See <a href="git-send-email.html">git-send-email(1)</a> for description.  Note that this
 setting is not subject to the <code>identity</code> mechanism.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLCertPath</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLCertPath</code></dt>
 <dd>
 <p>Path to ca-certificates (either a directory or a single file).
 Set it to an empty string to disable certificate verification.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLClientCert</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLClientCert</code></dt>
 <dd>
 <p>Path to the client certificate file to present if requested by the
 server. This is required when the server is set up to verify client
@@ -9325,7 +9654,7 @@ certificates. If the corresponding private key is not included in the
 file, it must be supplied using <code>sendemail.smtpSSLClientKey</code> or the
 <code>--smtp-ssl-client-key</code> option.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpSSLClientKey</dt>
+<dt class="hdlist1"><code>sendemail.smtpSSLClientKey</code></dt>
 <dd>
 <p>Path to the client private key file that corresponds to the client
 certificate. To avoid misconfiguration, this configuration must be used
@@ -9335,53 +9664,53 @@ client certificate, the choice of private key depends on the format of
 the certificate. Visit <a href="https://metacpan.org/pod/IO::Socket::SSL" class="bare">https://metacpan.org/pod/IO::Socket::SSL</a> for more
 details.</p>
 </dd>
-<dt class="hdlist1">sendemail.&lt;identity&gt;.*</dt>
+<dt class="hdlist1"><code>sendemail.</code><em>&lt;identity&gt;</em>.<em>&lt;config&gt;</em></dt>
 <dd>
-<p>Identity-specific versions of the <code>sendemail.*</code> parameters
+<p>Identity-specific versions of the <code>sendemail.</code><em>&lt;config&gt;</em> parameters
 found below, taking precedence over those when this
 identity is selected, through either the command-line or
 <code>sendemail.identity</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.multiEdit</dt>
+<dt class="hdlist1"><code>sendemail.multiEdit</code></dt>
 <dd>
 <p>If <code>true</code> (default), a single editor instance will be spawned to edit
 files you have to edit (patches when <code>--annotate</code> is used, and the
 summary when <code>--compose</code> is used). If <code>false</code>, files will be edited one
 after the other, spawning a new editor each time.</p>
 </dd>
-<dt class="hdlist1">sendemail.confirm</dt>
+<dt class="hdlist1"><code>sendemail.confirm</code></dt>
 <dd>
 <p>Sets the default for whether to confirm before sending. Must be
 one of <code>always</code>, <code>never</code>, <code>cc</code>, <code>compose</code>, or <code>auto</code>. See <code>--confirm</code>
 in the <a href="git-send-email.html">git-send-email(1)</a> documentation for the meaning of these
 values.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap</dt>
+<dt class="hdlist1"><code>sendemail.mailmap</code></dt>
 <dd>
 <p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--mailmap</code>,
 otherwise assume <code>--no-mailmap</code>. <code>False</code> by default.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap.file</dt>
+<dt class="hdlist1"><code>sendemail.mailmap.file</code></dt>
 <dd>
 <p>The location of a <a href="git-send-email.html">git-send-email(1)</a> specific augmenting
 mailmap file. The default mailmap and <code>mailmap.file</code> are loaded
 first. Thus, entries in this file take precedence over entries in
 the default mailmap locations. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.mailmap.blob</dt>
+<dt class="hdlist1"><code>sendemail.mailmap.blob</code></dt>
 <dd>
 <p>Like <code>sendemail.mailmap.file</code>, but consider the value as a reference
 to a blob in the repository. Entries in <code>sendemail.mailmap.file</code>
 take precedence over entries here. See <a href="gitmailmap.html">gitmailmap(5)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.aliasesFile</dt>
+<dt class="hdlist1"><code>sendemail.aliasesFile</code></dt>
 <dd>
 <p>To avoid typing long email addresses, point this to one or more
 email aliases files.  You must also supply <code>sendemail.aliasFileType</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.aliasFileType</dt>
+<dt class="hdlist1"><code>sendemail.aliasFileType</code></dt>
 <dd>
-<p>Format of the file(s) specified in sendemail.aliasesFile. Must be
+<p>Format of the file(s) specified in <code>sendemail.aliasesFile</code>. Must be
 one of <code>mutt</code>, <code>mailrc</code>, <code>pine</code>, <code>elm</code>, <code>gnus</code>, or <code>sendmail</code>.</p>
 <div class="paragraph">
 <p>What an alias file in each format looks like can be found in
@@ -9393,7 +9722,7 @@ described below:</p>
 <div class="content">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">sendmail</dt>
+<dt class="hdlist1"><code>sendmail</code></dt>
 <dd>
 <div class="ulist">
 <ul>
@@ -9421,59 +9750,59 @@ recognized by the parser.</p>
 </div>
 </div>
 </dd>
-<dt class="hdlist1">sendemail.annotate</dt>
-<dt class="hdlist1">sendemail.bcc</dt>
-<dt class="hdlist1">sendemail.cc</dt>
-<dt class="hdlist1">sendemail.ccCmd</dt>
-<dt class="hdlist1">sendemail.chainReplyTo</dt>
-<dt class="hdlist1">sendemail.envelopeSender</dt>
-<dt class="hdlist1">sendemail.from</dt>
-<dt class="hdlist1">sendemail.headerCmd</dt>
-<dt class="hdlist1">sendemail.signedOffByCc</dt>
-<dt class="hdlist1">sendemail.smtpPass</dt>
-<dt class="hdlist1">sendemail.suppressCc</dt>
-<dt class="hdlist1">sendemail.suppressFrom</dt>
-<dt class="hdlist1">sendemail.to</dt>
-<dt class="hdlist1">sendemail.toCmd</dt>
-<dt class="hdlist1">sendemail.smtpDomain</dt>
-<dt class="hdlist1">sendemail.smtpServer</dt>
-<dt class="hdlist1">sendemail.smtpServerPort</dt>
-<dt class="hdlist1">sendemail.smtpServerOption</dt>
-<dt class="hdlist1">sendemail.smtpUser</dt>
-<dt class="hdlist1">sendemail.imapSentFolder</dt>
-<dt class="hdlist1">sendemail.useImapOnly</dt>
-<dt class="hdlist1">sendemail.thread</dt>
-<dt class="hdlist1">sendemail.transferEncoding</dt>
-<dt class="hdlist1">sendemail.validate</dt>
-<dt class="hdlist1">sendemail.xmailer</dt>
+<dt class="hdlist1"><code>sendemail.annotate</code></dt>
+<dt class="hdlist1"><code>sendemail.bcc</code></dt>
+<dt class="hdlist1"><code>sendemail.cc</code></dt>
+<dt class="hdlist1"><code>sendemail.ccCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.chainReplyTo</code></dt>
+<dt class="hdlist1"><code>sendemail.envelopeSender</code></dt>
+<dt class="hdlist1"><code>sendemail.from</code></dt>
+<dt class="hdlist1"><code>sendemail.headerCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.signedOffByCc</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpPass</code></dt>
+<dt class="hdlist1"><code>sendemail.suppressCc</code></dt>
+<dt class="hdlist1"><code>sendemail.suppressFrom</code></dt>
+<dt class="hdlist1"><code>sendemail.to</code></dt>
+<dt class="hdlist1"><code>sendemail.toCmd</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpDomain</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServer</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServerPort</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpServerOption</code></dt>
+<dt class="hdlist1"><code>sendemail.smtpUser</code></dt>
+<dt class="hdlist1"><code>sendemail.imapSentFolder</code></dt>
+<dt class="hdlist1"><code>sendemail.useImapOnly</code></dt>
+<dt class="hdlist1"><code>sendemail.thread</code></dt>
+<dt class="hdlist1"><code>sendemail.transferEncoding</code></dt>
+<dt class="hdlist1"><code>sendemail.validate</code></dt>
+<dt class="hdlist1"><code>sendemail.xmailer</code></dt>
 <dd>
 <p>These configuration variables all provide a default for
 <a href="git-send-email.html">git-send-email(1)</a> command-line options. See its
 documentation for details.</p>
 </dd>
-<dt class="hdlist1">sendemail.outlookidfix</dt>
+<dt class="hdlist1"><code>sendemail.outlookidfix</code></dt>
 <dd>
 <p>If <code>true</code>, makes <a href="git-send-email.html">git-send-email(1)</a> assume <code>--outlook-id-fix</code>,
 and if <code>false</code> assume <code>--no-outlook-id-fix</code>. If not specified, it will
 behave the same way as if <code>--outlook-id-fix</code> is not specified.</p>
 </dd>
-<dt class="hdlist1">sendemail.signedOffCc (deprecated)</dt>
+<dt class="hdlist1"><code>sendemail.signedOffCc</code> (deprecated)</dt>
 <dd>
 <p>Deprecated alias for <code>sendemail.signedOffByCc</code>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpBatchSize</dt>
+<dt class="hdlist1"><code>sendemail.smtpBatchSize</code></dt>
 <dd>
 <p>Number of messages to be sent per connection, after that a relogin
 will happen.  If the value is <code>0</code> or undefined, send all messages in
 one connection.
 See also the <code>--batch-size</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.smtpReloginDelay</dt>
+<dt class="hdlist1"><code>sendemail.smtpReloginDelay</code></dt>
 <dd>
 <p>Seconds to wait before reconnecting to the smtp server.
 See also the <code>--relogin-delay</code> option of <a href="git-send-email.html">git-send-email(1)</a>.</p>
 </dd>
-<dt class="hdlist1">sendemail.forbidSendmailVariables</dt>
+<dt class="hdlist1"><code>sendemail.forbidSendmailVariables</code></dt>
 <dd>
 <p>To avoid common misconfiguration mistakes, <a href="git-send-email.html">git-send-email(1)</a>
 will abort with a warning if any configuration options for <code>sendmail</code>
@@ -10712,8 +11041,9 @@ creating a new branch from HEAD.  If <code>worktree.guessRemote</code> is
 set to true, <code>worktree</code> <code>add</code> tries to find a remote-tracking
 branch whose name uniquely matches the new branch name.  If
 such a branch exists, it is checked out and set as "upstream"
-for the new branch.  If no such match can be found, it falls
-back to creating a new branch from the current <code>HEAD</code>.</p>
+for the new branch.  If multiple matches are found, the command
+fails.  If no such match can be found, it falls back to
+creating a new branch from the current <code>HEAD</code>.</p>
 </dd>
 <dt class="hdlist1"><code>worktree.useRelativePaths</code></dt>
 <dd>
@@ -10770,7 +11100,7 @@ looks like</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

@@ -444,7 +444,7 @@ pre>code {
 <h1>git-interpret-trailers(1) Manual Page</h1>
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<p>git-interpret-trailers - Add or parse structured information in commit messages</p>
+<p>git-interpret-trailers - Add or parse metadata in commit messages</p>
 </div>
 </div>
 <div id="content">
@@ -462,9 +462,16 @@ pre>code {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Add or parse <em>trailer</em> lines that look similar to RFC 822 e-mail
-headers, at the end of the otherwise free-form part of a commit
-message. For example, in the following commit message</p>
+<p>Add or parse trailer metadata at the end of the otherwise
+free-form part of a commit message, or any other kind of text.</p>
+</div>
+<div class="paragraph">
+<p>A <em>trailer</em> in its simplest form is a key-value pair with a colon as a
+separator. The <em>key</em> consists of ASCII alphanumeric characters and
+hyphens (<code>-</code>). A <em>trailer block</em> consists of one or more trailers. The
+trailer block needs to be preceded by a blank line, where a <em>blank line</em>
+is either an empty or a whitespace-only line. For example, in the
+following commit message</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -509,10 +516,19 @@ the input is changed. They also make it possible to
 automatically add some trailers.</p>
 </div>
 <div class="paragraph">
-<p>By default, a <em>&lt;key&gt;</em><code>=</code><em>&lt;value&gt;</em> or <em>&lt;key&gt;</em><code>:</code><em>&lt;value&gt;</em> argument given
-using <code>--trailer</code> will be appended after the existing trailers only if
-the last trailer has a different (<em>&lt;key&gt;</em>, <em>&lt;value&gt;</em>) pair (or if there
-is no existing trailer). The <em>&lt;key&gt;</em> and <em>&lt;value&gt;</em> parts will be trimmed
+<p>Let&#8217;s consider new trailers added with <code>--trailer</code>.
+By default, the new trailer will appear at the end of the trailer block.
+Also by default, this new trailer will only be added
+if the last trailer is different to it.
+A trailer block will be created with only that trailer if a trailer
+block does not already exist. Recall that a trailer block needs to be
+preceded by a blank line, so a blank line will be inserted before the
+new trailer block in that case.</p>
+</div>
+<div class="paragraph">
+<p>This is how the new trailer is added: a <em>&lt;key&gt;</em><code>=</code><em>&lt;value&gt;</em> or
+<em>&lt;key&gt;</em><code>:</code><em>&lt;value&gt;</em> argument given using <code>--trailer</code> will be appended after
+the existing trailers. The <em>&lt;key&gt;</em> and <em>&lt;value&gt;</em> parts will be trimmed
 to remove starting and trailing whitespace, and the resulting trimmed
 <em>&lt;key&gt;</em> and <em>&lt;value&gt;</em> will appear in the output like this:</p>
 </div>
@@ -524,6 +540,17 @@ to remove starting and trailing whitespace, and the resulting trimmed
 <div class="paragraph">
 <p>This means that the trimmed <em>&lt;key&gt;</em> and <em>&lt;value&gt;</em> will be separated by
 "<code>:</code>&#160;" (one colon followed by one space).</p>
+</div>
+<div class="paragraph">
+<p>Existing trailers are extracted from the input by looking for the
+trailer block. A trailer block is a group of one or more lines that (i)
+is all trailers, or (ii) contains at least one Git-generated or
+user-configured trailer and consists of at
+least 25% trailers.
+The trailer block is by definition at the end of the commit message.
+The message in turn is either (i) at the end of the input, or (ii) the
+last non-whitespace lines before a line that starts with <code>---</code> (followed
+by a space or the end of the line).</p>
 </div>
 <div class="paragraph">
 <p>For convenience, a <em>&lt;key-alias&gt;</em> can be configured to make using <code>--trailer</code>
@@ -542,22 +569,6 @@ example, if you have</p>
 on the command line instead of <code>--trailer=</code>"Signed-off-by: <code>foo</code>".</p>
 </div>
 <div class="paragraph">
-<p>By default the new trailer will appear at the end of all the existing
-trailers. If there is no existing trailer, the new trailer will appear
-at the end of the input. A blank line will be added before the new
-trailer if there isn&#8217;t one already.</p>
-</div>
-<div class="paragraph">
-<p>Existing trailers are extracted from the input by looking for
-a group of one or more lines that (i) is all trailers, or (ii) contains at
-least one Git-generated or user-configured trailer and consists of at
-least 25% trailers.
-The group must be preceded by one or more empty (or whitespace-only) lines.
-The group must either be at the end of the input or be the last
-non-whitespace lines before a line that starts with <code>---</code> (followed by a
-space or the end of the line).</p>
-</div>
-<div class="paragraph">
 <p>When reading trailers, there can be no whitespace before or inside the
 <em>&lt;key&gt;</em>, but any number of regular space and tab characters are allowed
 between the <em>&lt;key&gt;</em> and the separator. There can be whitespaces before,
@@ -571,9 +582,33 @@ the "folding" in RFC 822. Example:</p>
   newlines in it.</pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_rules">OTHER RULES</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Note that trailers do not follow (nor are they intended to follow) many of the
-rules for RFC 822 headers. For example they do not follow the encoding rule.</p>
+<p>What was covered in the previous section are the rules that are relevant
+for regular use. The following points are included for completeness.</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>This command ignores comment lines (see <code>core.commentString</code> in
+<a href="git-config.html">git-config(1)</a>). This is for use with the <code>prepare-commit-msg</code>
+and <code>commit-msg</code> hooks.</p>
+</li>
+<li>
+<p>Candidate trailer lines that have <code>:</code> as the separator, that have no
+whitespace before the value part, and that start with <code>//</code> are not
+recognized as trailers. This is to avoid accidentally interpreting
+URLs as trailers (e.g. lines that start with <code>https://</code>).</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1090,6 +1125,32 @@ $ chmod +x .git/hooks/commit-msg</pre>
 </div>
 </div>
 </li>
+<li>
+<p>Here we try to use three different trailer keys. But it fails because
+two of them are not recognized as trailer keys.</p>
+<div class="listingblock">
+<div class="content">
+<pre>$ cat msg.txt
+subject
+
+Skapad-på: some-branch
+Hash-in-v6.11: 45c12d3269fe48f22834320c782ffe86c3560f2c
+Reviewed-by: Alice &lt;alice@example.com&gt;
+$ git interpret-trailers --only-trailers &lt;msg.txt
+$</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Recall that a trailer key has to consist of only ASCII alphanumeric
+characters and hyphens, and this does not hold for the two first
+supposed trailer keys. And now none are recognized as trailers because
+the candidate trailer block has at least one non-trailer line, even
+though <code>Reviewed-by</code> is a valid trailer key. Recall that a trailer block
+has to either (i) be all trailers, or (ii) consist of at least one
+Git-generated or user-configured trailer (and some other conditions).
+And (ii) is not satisfied since we have not configured any trailer keys.</p>
+</div>
+</li>
 </ul>
 </div>
 </div>
@@ -1113,7 +1174,7 @@ $ chmod +x .git/hooks/commit-msg</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

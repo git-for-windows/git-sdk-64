@@ -671,6 +671,14 @@ the output of <code>--batch</code>.</p>
 <p>Print object info for object reference <em>&lt;object&gt;</em>. This corresponds to the
 output of <code>--batch-check</code>.</p>
 </dd>
+<dt class="hdlist1">remote-object-info &lt;remote&gt; &lt;object&gt;&#8230;&#8203;</dt>
+<dd>
+<p>Print object info for object references <em>&lt;object&gt;</em> at specified
+<em>&lt;remote&gt;</em> without downloading objects from the remote.
+Raise an error when the <code>object-info</code> capability is not supported by the remote.
+Raise an error when no object references are provided.
+This command may be combined with <code>--buffer</code>.</p>
+</dd>
 <dt class="hdlist1">flush</dt>
 <dd>
 <p>Used with <code>--buffer</code> to execute all preceding commands that were issued
@@ -857,7 +865,8 @@ one per line, and print information based on the command given. With
 <code>--batch-command</code>, the <code>info</code> command followed by an object will print
 information about the object the same way <code>--batch-check</code> would, and the
 <code>contents</code> command followed by an object prints contents in the same way
-<code>--batch</code> would.</p>
+<code>--batch</code> would. The <code>remote-object-info</code> command followed by a remote and
+object IDs prints object info from the remote without downloading the objects.</p>
 </div>
 <div class="paragraph">
 <p>You can specify the information shown for each object by using a custom
@@ -907,6 +916,11 @@ after that first run of whitespace (i.e., the "rest" of the
 line) are output in place of the <code>%</code>(<code>rest</code>) atom.</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>The command <code>remote-object-info</code> only supports the <code>%</code>(<code>objectname</code>),
+<code>%</code>(<code>objectsize</code>) and <code>%</code>(<code>objecttype</code>) placeholders. See <code>CAVEATS</code> below for more
+information.</p>
 </div>
 <div class="paragraph">
 <p>If no format is specified, the default format is <code>%</code>(<code>objectname</code>)
@@ -1040,6 +1054,11 @@ scripting purposes.</p>
 <h2 id="_caveats">CAVEATS</h2>
 <div class="sectionbody">
 <div class="paragraph">
+<p>Note that only <code>%</code>(<code>objectname</code>), <code>%</code>(<code>objectsize</code>) and <code>%</code>(<code>objecttype</code>) are
+currently supported by the <code>remote-object-info</code> command. Using any other
+placeholder in the format string will return an empty string in its position.</p>
+</div>
+<div class="paragraph">
 <p>Note that the sizes of objects on disk are reported accurately, but care
 should be taken in drawing conclusions about which refs or objects are
 responsible for disk usage. The size of a packed non-delta object may be
@@ -1065,7 +1084,7 @@ will be reported.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

@@ -1257,6 +1257,12 @@ than one, Git will use as many workers as the number of logical cores
 available. This setting and <code>checkout.thresholdForParallelism</code> affect
 all commands that perform checkout. E.g. checkout, clone, reset,
 sparse-checkout, etc.</p>
+<div class="paragraph">
+<p>On Windows the number of workers is capped at 62, because the <code>poll</code>()
+emulation cannot wait on more worker pipes than that. A higher configured
+value, including the logical core count on a machine with many cores, is
+silently reduced to the cap.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1306,7 +1312,7 @@ default is 100.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>

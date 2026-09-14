@@ -454,7 +454,8 @@ pre>code {
 <div class="verseblock">
 <pre class="content"><em>git repack</em> [-a] [-A] [-d] [-f] [-F] [-l] [-n] [-q] [-b] [-m]
         [--window=&lt;n&gt;] [--depth=&lt;n&gt;] [--threads=&lt;n&gt;] [--keep-pack=&lt;pack-name&gt;]
-        [--write-midx[=&lt;mode&gt;]] [--name-hash-version=&lt;n&gt;] [--path-walk]</pre>
+        [--write-midx[=&lt;mode&gt;]] [--name-hash-version=&lt;n&gt;] [--path-walk]
+        [--filter=&lt;filter-spec&gt;] [--drop-filtered [--dry-run]]</pre>
 </div>
 </div>
 </div>
@@ -656,6 +657,47 @@ possible to access the objects in that packfile. See the
 <code>objects</code> and <code>objects/info/alternates</code> sections of
 <a href="gitrepository-layout.html">gitrepository-layout(5)</a>.</p>
 </dd>
+<dt class="hdlist1">--drop-filtered</dt>
+<dd>
+<p>Delete the local objects that match the <code>--filter</code> specification
+instead of keeping them in a separate packfile, reclaiming the
+disk space they occupy. This is intended for partial clones,
+where the filtered objects are promisor objects that remain
+recoverable from the promisor remote and are lazily re-fetched
+on demand when they are next needed.</p>
+<div class="paragraph">
+<p>Only large blobs are supported for now, so <code>--filter=blob:limit=</code><em>&lt;n&gt;</em>
+is currently the only accepted filter. Because dropped objects must be
+recoverable, this option requires a promisor remote to be configured
+and refuses to run otherwise.</p>
+</div>
+<div class="paragraph">
+<p>This option requires <code>-a</code>, and implies <code>-d</code>: the objects are dropped by
+rebuilding the promisor pack without them and then removing the now
+redundant old packs, so the redundant packs must be deleted for the
+space to actually be reclaimed. It is incompatible with <code>--filter-to</code>
+and with bitmap writing (<code>-b</code>/<code>--write-bitmap-index</code>), since filtering
+breaks the single-pack closure that bitmaps require. A bitmap setting
+coming from configuration is silently disabled for the duration of the
+command.</p>
+</div>
+<div class="paragraph">
+<p>As a convenience, since dropped objects remain recoverable by lazy fetch,
+<code>--drop-filtered</code> refuses to run while another operation
+(merge, rebase, am, cherry-pick, revert, or bisect) is in progress, to
+avoid a surprising network fetch mid-operation, and refuses to drop any
+blob that the current index references, since such a blob would only be
+lazily re-fetched by the next command that inspects the working tree.
+These checks are skipped in bare repositories, which have neither a
+working tree nor an index.</p>
+</div>
+</dd>
+<dt class="hdlist1">--dry-run</dt>
+<dd>
+<p>Only meaningful with <code>--drop-filtered</code>. List the objects that
+would be dropped, one object ID per line, without rebuilding any
+pack or deleting anything.</p>
+</dd>
 <dt class="hdlist1">-b</dt>
 <dt class="hdlist1">--write-bitmap-index</dt>
 <dd>
@@ -849,7 +891,7 @@ attribute <code>delta</code> set to false.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-20 15:49:04 UTC
+Last updated 2026-09-14 04:46:21 UTC
 </div>
 </div>
 </body>
