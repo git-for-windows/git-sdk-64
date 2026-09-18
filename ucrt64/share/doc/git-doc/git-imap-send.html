@@ -452,7 +452,7 @@ pre>code {
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="verseblock">
-<pre class="content"><code>git</code> <code>imap-send</code> [<code>-v</code>] [<code>-q</code>] [<code>--</code>[<code>no-</code>]<code>curl</code>] [(<code>--folder</code>|<code>-f</code>) <em>&lt;folder&gt;</em>]
+<pre class="content"><code>git</code> <code>imap-send</code> [<code>-v</code>] [<code>-q</code>] [<code>--</code>[<code>no-</code>]<code>curl</code>] [<code>--</code>[<code>no-</code>]<code>draft</code>] [(<code>--folder</code>|<code>-f</code>) <em>&lt;folder&gt;</em>]
 <code>git</code> <code>imap-send</code> <code>--list</code></pre>
 </div>
 </div>
@@ -510,6 +510,15 @@ option set.</p>
 <p>Talk to the IMAP server using git&#8217;s own IMAP routines instead of
 using libcurl.  Ignored if Git was built with the NO_OPENSSL option
 set.</p>
+</dd>
+<dt class="hdlist1"><code>--draft</code></dt>
+<dt class="hdlist1"><code>--no-draft</code></dt>
+<dd>
+<p>Mark uploaded messages with the IMAP <code>\Draft</code> flag. The default is <code>--no-draft</code>.</p>
+<div class="paragraph">
+<p>With libcurl, <code>--draft</code> requires version 8.13.0 or later.
+Older libcurl still uploads the message but cannot set the flag.</p>
+</div>
 </dd>
 <dt class="hdlist1"><code>--list</code></dt>
 <dd>
@@ -820,7 +829,7 @@ users may wish to visit this web page for more information:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 04:46:21 UTC
+Last updated 2026-09-17 14:34:55 UTC
 </div>
 </div>
 </body>

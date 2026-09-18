@@ -478,7 +478,8 @@ successfully made.</p>
 </li>
 <li>
 <p>The <code>CHERRY_PICK_HEAD</code> ref is set to point at the commit that
-introduced the change that is difficult to apply.</p>
+introduced the change that is difficult to apply, unless the
+<code>--no-commit</code> option was given.</p>
 </li>
 <li>
 <p>Paths in which the change applied cleanly are updated both
@@ -575,6 +576,12 @@ beginning state of your index.</p>
 <div class="paragraph">
 <p>This is useful when cherry-picking more than one commits'
 effect to your index in a row.</p>
+</div>
+<div class="paragraph">
+<p>This option does not record <code>CHERRY_PICK_HEAD</code>, so a plain <code>git</code> <code>commit</code>
+afterwards records you as the author.  That is by design: what you are
+building is your own work, which you keep changing before committing,
+rather than a reproduction of the original commit.</p>
 </div>
 </dd>
 <dt class="hdlist1">-s</dt>
@@ -824,7 +831,7 @@ matching context lines.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 04:46:21 UTC
+Last updated 2026-09-17 14:34:55 UTC
 </div>
 </div>
 </body>

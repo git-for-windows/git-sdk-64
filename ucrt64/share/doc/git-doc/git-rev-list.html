@@ -1838,6 +1838,21 @@ considered as missing too, and the traversal will ignore them. In case
 we cannot get their Object ID though, an error will be raised.</p>
 </div>
 </dd>
+<dt class="hdlist1"><code>--missing-only</code></dt>
+<dd>
+<p>When used together with <code>--missing=print</code> or <code>--missing=print-info</code>,
+suppress all output for present objects and print only the missing
+ones.  The selected <code>--missing=</code> format is preserved (so
+<code>--missing=print-info</code> still emits <code>path=</code> / <code>type=</code> fields), but the
+leading &#8220;?&#8221; prefix used by the non-<code>-z</code> forms is omitted.  This is
+useful for scripting, as a simpler and faster alternative to
+post-processing the output of <code>--missing=print</code>.</p>
+<div class="paragraph">
+<p>This option is incompatible with <code>--count</code> and <code>--disk-usage</code>.
+It is an error to use <code>--missing-only</code> without <code>--missing=print</code> or
+<code>--missing=print-info</code>.</p>
+</div>
+</dd>
 <dt class="hdlist1"><code>--exclude-promisor-objects</code></dt>
 <dd>
 <p>(For internal use only.)  Prefilter object traversal at
@@ -3047,7 +3062,7 @@ repository size (taking the size of <code>origin</code> as a baseline).</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 04:46:21 UTC
+Last updated 2026-09-17 14:34:55 UTC
 </div>
 </div>
 </body>
