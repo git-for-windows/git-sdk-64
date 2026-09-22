@@ -1,30 +1,33 @@
-#! /usr/bin/env perl
+#!/usr/bin/perl
 
 # chem - a groff preprocessor for producing chemical structure diagrams
-
-my $copyright = 'Copyright (C) 2006-2014, 2022'
-                . ' Free Software Foundation, Inc.';
+#
+# Copyright 2006 Free Software Foundation, Inc.
+#
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
-
-# This file is part of 'chem', which is part of 'groff'.
-
-# 'groff' is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License (GPL) version 2 as
-# published by the Free Software Foundation.
-
-# 'groff' is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-
-# The GPL2 license text is available in the internet at
-# <http://www.gnu.org/licenses/gpl-2.0.html>.
+#
+# This file is part of chem.
+#
+# chem is distributed with groff, the GNU roff typesetting system.
+#
+# groff is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+#
+# groff is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ########################################################################
 # settings
 ########################################################################
 
-my $chem_version = '1.0.6';
+my $chem_version = '1.0.7';
 my $groff_version = 'DEVELOPMENT';
 
 require v5.6;
@@ -40,16 +43,16 @@ use Math::Trig;
 
 # for catfile()
 use File::Spec;
+(undef,undef,my $prog)=File::Spec->splitpath($0);
 
 # $Bin is the directory where this script is located
 use FindBin;
 
-my $chem;
 my $File_chem_pic;
 
 my $is_in_source_tree;
 {
-  $is_in_source_tree = 1 if '1.23.0' eq '@' . 'VERSION' . '@';
+  $is_in_source_tree = 1 if '1.24.1' eq '@' . 'VERSION' . '@';
 }
 
 my %makevar;
@@ -58,13 +61,11 @@ if ($is_in_source_tree) {
   my $chem_dir = $FindBin::Bin;
   $makevar{'G'} = '';
   $File_chem_pic = File::Spec->catfile($chem_dir, 'chem.pic');
-  $chem = 'chem';
 } else {
-  $groff_version = '1.23.0';
+  $groff_version = '1.24.1';
   $makevar{'G'} = '';
-  $makevar{'PICDIR'} = '/usr/share/groff/1.23.0/pic';
-  $File_chem_pic = File::Spec->catfile($makevar{'PICDIR'}, 'chem.pic');
-  $chem = $makevar{'G'} . 'chem';
+  $makevar{'MACRODIR'} = '/usr/share/groff/1.24.1/tmac';
+  $File_chem_pic = File::Spec->catfile($makevar{'MACRODIR'}, 'chem.pic');
 }
 
 
@@ -1194,31 +1195,26 @@ sub setparams {
 } # setparams()
 
 
+# Use $0 in the usage message for consistency with groff's C++ programs.
+# This also informs the user with multiple versions available which they
+# are running.
 sub usage {
+  my $G = $makevar{'G'};
   print <<EOF;
-usage: $chem [file ...]
-usage: $chem { -h | --help | -v | --version }
+usage: $prog [file ...]
+usage: $prog { -v | --version }
+usage: $prog { -h | --help }
 
-$chem is a groff preprocessor for producing chemical structure
-diagrams.  It produces input for the $makevar{'G'}pic preprocessor.  If
-no file operands are given, or if file is "-", the standard input stream
-is read.
-
-Options:
- -h, --help     Display this message and exit.
- -v, --version  Display version information and exit.
+$prog is a groff(1) preprocessor for producing chemical structure
+diagrams.  It produces input for the ${G}pic(1) preprocessor.  See the
+$prog(1) manual page.
 EOF
 }
 
 
 sub version {
   print <<EOF;
-$chem (groff $groff_version) $chem_version
-$copyright
-License GPLv2: GNU GPL version 2
-<https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
+$prog (groff $groff_version) $chem_version
 EOF
 }
 

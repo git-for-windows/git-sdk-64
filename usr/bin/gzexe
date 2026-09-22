@@ -13,7 +13,7 @@
 # On Ultrix, /bin/sh is too buggy, change the first line to: #!/bin/sh5
 
 
-# Copyright (C) 1998, 2002, 2004, 2006-2007, 2010-2025 Free Software
+# Copyright (C) 1998, 2002, 2004, 2006-2007, 2010-2026 Free Software
 # Foundation, Inc.
 # Copyright (C) 1993 Jean-loup Gailly
 
@@ -35,8 +35,8 @@ nl='
 '
 IFS=" $tab$nl"
 
-version='gzexe (gzip) 1.14
-Copyright (C) 2025 Free Software Foundation, Inc.
+version='gzexe (gzip) 1.15
+Copyright (C) 2026 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
@@ -86,22 +86,22 @@ for i do
   esac
   if test ! -f "$file" || test ! -r "$file"; then
     res=$?
-    printf >&2 '%s\n' "$0: $i is not a readable regular file"
+    printf >&2 '%s\n' "$0: operand is not a readable regular file"
     continue
   fi
   if test $decomp -eq 0; then
     case `LC_ALL=C sed -n -e 1d -e '/^skip=[0-9][0-9]*$/p' -e 2q "$file"` in
     skip=[0-9] | skip=[0-9][0-9] | skip=[0-9][0-9][0-9])
-      printf >&2 '%s\n' "$0: $i is already gzexe'd"
+      printf >&2 '%s\n' "$0: file is already gzexe'd"
       continue;;
     esac
   fi
   if test -u "$file"; then
-    printf >&2 '%s\n' "$0: $i has setuid permission, unchanged"
+    printf >&2 '%s\n' "$0: file has setuid permission, unchanged"
     continue
   fi
   if test -g "$file"; then
-    printf >&2 '%s\n' "$0: $i has setgid permission, unchanged"
+    printf >&2 '%s\n' "$0: file has setgid permission, unchanged"
     continue
   fi
   case /$file in
@@ -109,7 +109,7 @@ for i do
   */dirname | */expr | */gzip | \
   */ln | */mkdir | */mktemp | */mv | */printf | */rm | \
   */sed | */sh | */sleep | */test | */tail)
-    printf >&2 '%s\n' "$0: $i might depend on itself"; continue;;
+    printf >&2 '%s\n' "$0: file might depend on itself"; continue;;
   esac
 
   dir=`dirname "$file"` || dir=$TMPDIR
@@ -127,9 +127,10 @@ for i do
     tmp=`mktemp "${dir}gzexeXXXXXXXXX"`
   else
     tmp=${dir}gzexe$$
+    (umask 77; set -C; > "$tmp")
   fi && { cp -p "$file" "$tmp" 2>/dev/null || cp "$file" "$tmp"; } || {
     res=$?
-    printf >&2 '%s\n' "$0: cannot copy $file"
+    printf >&2 '%s\n' "$0: cannot copy file"
     continue
   }
   if test -w "$tmp"; then
@@ -138,7 +139,7 @@ for i do
     writable=0
     chmod u+w "$tmp" || {
       res=$?
-      printf >&2 '%s\n' "$0: cannot chmod $tmp"
+      printf >&2 '%s\n' "$0: cannot chmod tmp directory"
       continue
     }
   fi
@@ -195,7 +196,7 @@ fi; exit $res
 EOF
     gzip -cv9 "$file") > "$tmp" || {
       res=$?
-      printf >&2 '%s\n' "$0: compression not possible for $i, file unchanged."
+      printf >&2 '%s\n' "$0: compression not possible, file unchanged."
       continue
     }
 
@@ -213,13 +214,13 @@ EOF
     esac
     tail $tail_n +$skip "$file" | gzip -cd > "$tmp" || {
       res=$?
-      printf >&2 '%s\n' "$0: $i probably not in gzexe format, file unchanged."
+      printf >&2 '%s\n' "$0: file probably not in gzexe format, file unchanged."
       continue
     }
   fi
   test $writable -eq 1 || chmod u-w "$tmp" || {
     res=$?
-    printf >&2 '%s\n' "$0: $tmp: cannot chmod"
+    printf >&2 '%s\n' "$0: cannot chmod tmp file"
     continue
   }
   ln -f "$file" "$file~" 2>/dev/null || {
@@ -227,12 +228,12 @@ EOF
     rm -f "$file~" && cp -p "$file" "$file~"
   } || {
     res=$?
-    printf >&2 '%s\n' "$0: cannot backup $i as $i~"
+    printf >&2 '%s\n' "$0: cannot backup file as file~"
     continue
   }
   mv -f "$tmp" "$file" || {
     res=$?
-    printf >&2 '%s\n' "$0: cannot rename $tmp to $i"
+    printf >&2 '%s\n' "$0: cannot rename tmp file to destination"
     continue
   }
   tmp=

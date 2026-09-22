@@ -1,23 +1,31 @@
 #!/usr/bin/perl
-# Copyright (C) 1989-2020 Free Software Foundation, Inc.
+# Copyright 1989-2025 Free Software Foundation, Inc.
 #
-# This file is part of groff.
+# This file is part of mm, a reimplementation of the Documenter's
+# Workbench (DWB) troff memorandum macro package for use with GNU troff.
+#
+# mm is distributed with groff, the GNU roff typesetting system.
 #
 # groff is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
-# Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
 #
-# groff is distributed in the hope that it will be useful, but WITHOUT ANY
-# WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# groff is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 # for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# Please submit bug reports using groff's 'BUG-REPORT' file to
+# http://savannah.gnu.org/bugs/?group=groff.
 
 use strict;
 use warnings;
+
+use Config;
 
 (my $progname = $0) =~s @.*/@@;
 
@@ -27,31 +35,60 @@ use warnings;
 # I do agree however that the previous way opened a whole bunch
 # of security holes.
 
-my $no_exec;
+my $want_only_ref_update = 0;
 
 if (grep(/^--help$/, @ARGV)) {
-	print "usage: mmroff [-x] [groff-option ...] [file ...]\n";
+	print <<EOF;
+usage: mmroff [-x] [groff-argument ...]
+usage: mmroff --version
+usage: mmroff --help
+
+$progname is a simple wrapper for groff(1), used to expand internal
+references in mm documents; see groff_mm(7).  It also handles the
+inclusion of PostScript images.  Documents that do not use these
+features of groff mm (the INITI, IND, INDP, INITR, SETR, GETHN, GETPN,
+GETR, GETST, PIC macros) do not require mmroff.  See the mmroff(1)
+manual page.
+EOF
 	exit;
 }
 
 if (grep(/^--version$/, @ARGV)) {
-	print "mmroff (groff) 1.23.0\n";
+	print "mmroff (groff) 1.24.1\n";
 	exit;
 }
 
 # check for -x and remove it
 if (grep(/^-x$/, @ARGV)) {
-	$no_exec++;
+	$want_only_ref_update = 1;
 	@ARGV = grep(!/^-x$/, @ARGV);
 }
 
+# Locate groff executable.
+my $path = $ENV{'GROFF_BIN_PATH'};
+my $groff;
+
+if ($path) {
+	for my $dir (split($Config{path_sep}, $path)) {
+		my $candidate = "$dir/groff";
+		if (-x $candidate) {
+			$groff = $candidate;
+			last;
+		}
+	}
+}
+
+$groff = "groff" if (!$groff);
+
 # mmroff should always have -mm, but not twice
 @ARGV = grep(!/^-mm$/, @ARGV);
-my $check_macro = "groff -rRef=1 -z -mm @ARGV";
-my $run_macro = "groff -mm @ARGV";
+my $first_pass = "$groff -rRef=1 -z -mm @ARGV";
+my $second_pass = "$groff -mm @ARGV";
 
-my (%cur, $rfilename, $max_height, $imacro, $max_width, @out, @indi);
-open(MACRO, "$check_macro 2>&1 |") || die "run $check_macro:$!";
+my (%cur, $rfilename, $imacro, @out, @indi);
+my $max_height = 0;
+my $max_width = 0;
+open(MACRO, "$first_pass 2>&1 |") || die "run $first_pass:$!";
 while(<MACRO>) {
 	if (m#^\.\\" Rfilename: (\S+)#) {
 		# remove all directories just to be more secure
@@ -81,7 +118,7 @@ while(<MACRO>) {
 		next;
 	}
 	if (m#^\.\\" PIC id (\d+)#) {
-		%cur = ('id', $1);
+		%cur = ('id' => $1);
 		next;
 	}
 	if (m#^\.\\" PIC file (\S+)#) {
@@ -117,8 +154,8 @@ if ($rfilename) {
 	close(OUT);
 }
 
-exit 0 if $no_exec;
-exit system($run_macro);
+exit 0 if $want_only_ref_update;
+exit system($second_pass);
 
 sub print_index {
 	my ($f, $ind, $macro) = @_;
@@ -135,8 +172,8 @@ sub print_index {
 }
 
 sub ps_calc {
+	return unless exists($cur{'llx'});
 	my ($f) = @_;
-
 	my $w = abs($cur{'llx'}-$cur{'urx'});
 	my $h = abs($cur{'lly'}-$cur{'ury'});
 	$max_width = $w if $w > $max_width;
@@ -152,14 +189,14 @@ sub ps_calc {
 	push(@out, ".nr pict*w!$id $w\n");
 	push(@out, ".nr pict*h!$id $h\n");
 }
-		
 
 sub psbb {
 	my ($f) = @_;
 
 	unless (open(IN, $f)) {
-		print STDERR "Warning: Postscript file $f:$!";
-		next;
+		print STDERR "$progname: warning: cannot open"
+			. " PostScript file $f: $!\n";
+		return;
 	}
 	while(<IN>) {
 		if (/^%%BoundingBox:\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/) {
@@ -171,7 +208,6 @@ sub psbb {
 	}
 	close(IN);
 }
-
 
 1;
 # Local Variables:

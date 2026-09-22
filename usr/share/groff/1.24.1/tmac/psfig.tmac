@@ -1,0 +1,109 @@
+.\" Define macros to support use of Trevor Darnell's "psfig",
+.\" distributed in volume 11 of comp.unix.sources, and not to be
+.\" confused with the unrelated TeX macro package "psfig" available at
+.\" CTAN.  (Neither is Free Software.)
+.\"
+.\" These macros require that psfig be patched as described in
+.\" "src/devices/grops/psfig.diff".
+.\"
+.\" This file is likely to disappear in a future groff release.
+.\"
+.\" Use groff's `PSPIC` macro instead.  See groff_tmac(5).
+.
+.do nr *groff_psfig_tmac_C \n[.cp]
+.cp 0
+.
+.de psfig-defs
+ps: mdef 100
+
+% wid ht llx lly urx ury psfigstart -
+
+/psfigstart {
+	/level1 save def
+	/ury exch def
+	/urx exch def
+	/lly exch def
+	/llx exch def
+	/ht exch u def
+	/wid exch u def
+	currentpoint ht add translate
+	wid urx llx sub div ht ury lly sub div neg scale
+	llx neg lly neg translate
+
+	% set the graphics state to default values
+	0 setgray
+	0 setlinecap
+	1 setlinewidth
+	0 setlinejoin
+	10 setmiterlimit
+	[] 0 setdash
+	newpath
+	/showpage {} def
+} bind def
+
+% psfigclip -
+
+/psfigclip {
+	currentpoint newpath
+	llx lly moveto
+	urx lly lineto
+	urx ury lineto
+	llx ury lineto
+	closepath clip
+	newpath moveto
+} bind def
+
+% psfigend -
+
+/psfigend {
+	level1 restore
+} bind def
+
+% globalstart -
+
+/globalstart {
+	% save the current space code on the stack
+	SC
+	level0 restore
+} bind def
+
+% globalend -
+
+/globalend {
+	end
+	BP
+	/SC exch def
+	DEFS begin
+} bind def
+..
+.de psfig-init
+.if \\n[.P] \{\
+\Y[psfig-defs]
+.	br
+.	sp -1
+.	ds psfig-init\" empty
+.	rm psfig-defs
+.\}
+..
+.de F+
+.br
+.psfig-init
+.nr psfig-fill \\n[.u]
+.nf
+.sp -.5
+.if !\\n[.$] .ce \\n[.R]
+..
+.de F-
+.br
+.ce 0
+.if \\n[psfig-fill] .fi
+..
+.
+.cp \n[*groff_psfig_tmac_C]
+.do rr *groff_psfig_tmac_C
+.
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set filetype=groff textwidth=72:

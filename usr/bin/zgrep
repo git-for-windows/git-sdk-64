@@ -3,7 +3,7 @@
 # zgrep -- a wrapper around a grep program that decompresses files as needed
 # Adapted from a version sent by Charles Levert <charles@comm.polymtl.ca>
 
-# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2025 Free Software Foundation,
+# Copyright (C) 1998, 2001-2002, 2006-2007, 2009-2026 Free Software Foundation,
 # Inc.
 
 # Copyright (C) 1993 Jean-loup Gailly
@@ -24,8 +24,8 @@
 grep='${GREP-'\''/usr/bin/grep'\''}'
 args=
 
-version='zgrep (gzip) 1.14
-Copyright (C) 2025 Free Software Foundation, Inc.
+version='zgrep (gzip) 1.15
+Copyright (C) 2026 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
@@ -110,7 +110,7 @@ while test $# -ne 0; do
 
   case $option in
   (-[drRzZ] | --di* | --exc* | --inc* | --rec* | --nu*)
-    printf >&2 '%s: %s: option not supported\n' "$0" "$option"
+    printf >&2 '%s: option not supported\n' "$0"
     exit 2;;
   (-e* | --reg*)
     have_pat=1;;
@@ -172,7 +172,7 @@ while test $# -ne 0; do
   esac
 
   case $option in
-  (*\'?*)
+  (*\'*)
     option=\'$(printf '%s\n' "$option" | LC_ALL=C sed "$escape");;
   (*)
     option="'$option'";;

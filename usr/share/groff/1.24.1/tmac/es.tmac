@@ -1,0 +1,191 @@
+.\" Spanish localization for groff
+.
+.\" Copyright 2023 Free Software Foundation, Inc.
+.\"
+.\" Written by Eloi Montaριs (em@ilsrv.com)
+.\"
+.\" This file is part of groff, the GNU roff typesetting system.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT
+.\" ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+.\" or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+.\" License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see
+.\" <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to em@ilsrv.com.
+.
+.do nr *groff_es_tmac_C \n[.cp]
+.cp 0
+.
+.
+.\" If changing from an existing locale, we need to preserve the state
+.\" of the "suppress hyphenation before a page location trap" bit.
+.nr locale*use-trap-hyphenation-mode 0
+.if d locale \
+.  if \n[.hy]=\n[\*[locale]*hyphenation-mode-trap] \
+.    nr locale*use-trap-hyphenation-mode 1
+.
+.
+.ds locale spanish\"
+.
+.
+.\" Predefined text translations
+.
+.ds \*[locale]-abstract SINOPSIS\"
+.ds \*[locale]-app ANEXO\"
+.ds \*[locale]-appendix_string Anexo\"
+.ds \*[locale]-april abril\"
+.ds \*[locale]-attribute_string por\"
+.ds \*[locale]-august agosto\"
+.ds \*[locale]-capec Ecuaci\[o ']n\"
+.ds \*[locale]-capex Documento\"
+.ds \*[locale]-capfg Ilustrati\[o ']n\"
+.ds \*[locale]-captb Tabla\"
+.ds \*[locale]-captc RESUMEN\"
+.ds \*[locale]-chapter_string Cap\[i ']tulo\"
+.ds \*[locale]-december diciembre\"
+.ds \*[locale]-draft_string Borrador\"
+.ds \*[locale]-endnote_string NOTAS\"
+.ds \*[locale]-february febrero\"
+.ds \*[locale]-finis_string FIN\"
+.ds \*[locale]-friday viernes\"
+.ds \*[locale]-january enero\"
+.ds \*[locale]-july julio\"
+.ds \*[locale]-june junio\"
+.ds \*[locale]-le LISTA DE ECUACIONES\"
+.ds \*[locale]-letapp LE\[I ']DO Y APROVADO\"
+.ds \*[locale]-letat A LA ATENCI\[O ']N DE:\"
+.ds \*[locale]-letcn CONFIDENCIAL\"
+.ds \*[locale]-letdate Fecha\"
+.ds \*[locale]-letfc Por favor acepte, Excelencia, mis mejores saludos.\"
+.ds \*[locale]-letns!0 Copia a\"
+.ds \*[locale]-letns!1 Copia (con destinatario) a\"
+.ds \*[locale]-letns!10 Copia (con destinatarios) a\"
+.ds \*[locale]-letns!11 Copia (sin destinatarios) a\"
+.ds \*[locale]-letns!12 Resumen solo para\"
+.ds \*[locale]-letns!13 Memor\[a ']ndum completo para\"
+.ds \*[locale]-letns!14 Cc:\"
+.ds \*[locale]-letns!2 Copia (sin destinatario) a\"
+.ds \*[locale]-letns!3 Destinatairo\"
+.ds \*[locale]-letns!4 Destinatairos\"
+.ds \*[locale]-letns!5 Adjunto\"
+.ds \*[locale]-letns!6 Adjuntos\"
+.ds \*[locale]-letns!7 Bajo cubierta separada\"
+.ds \*[locale]-letns!8 Carta a\"
+.ds \*[locale]-letns!9 Memor\[a ']ndum para\"
+.ds \*[locale]-letns!copy Copia \" (falta un espacio)\"
+.ds \*[locale]-letns!to " a\"
+.ds \*[locale]-letrn En referencia a:\"
+.ds \*[locale]-letsa A quien corresponda:\"
+.ds \*[locale]-letsj SUJETO:\"
+.ds \*[locale]-lf LISTA DE ILUSTRACIONES\"
+.ds \*[locale]-lt LISTA DE TABLAS\"
+.ds \*[locale]-lx LISTA DE DOCUMENTOS\"
+.ds \*[locale]-man-section1 Manual de commandos\"
+.ds \*[locale]-man-section2 Manual de llamadas del sistema\"
+.ds \*[locale]-man-section3 Manual de funciones de la liberia\"
+.ds \*[locale]-man-section4 Manual de interficies del kernel\"
+.ds \*[locale]-man-section5 Manual de formatos de ficheros\"
+.ds \*[locale]-man-section6 Manual de juegos\"
+.ds \*[locale]-man-section7 Manual de informaciones diversas\"
+.ds \*[locale]-man-section8 Manual para administradores de sistemas\"
+.ds \*[locale]-man-section9 Manual para desarrolladores del kernel\"
+.ds \*[locale]-march marzo\"
+.ds \*[locale]-may mayo\"
+.ds \*[locale]-monday lunes\"
+.ds \*[locale]-november noviembre\"
+.ds \*[locale]-october octubre\"
+.ds \*[locale]-paper A4\"
+.ds \*[locale]-qrf Ver chap\[i ']tulo \E*[Qrfh], p\[a ']gina \E*[Qrfp].\"
+.ds \*[locale]-references Bibliograf\[i ']a\"
+.ds \*[locale]-revision_string Rev.\"
+.ds \*[locale]-rp BIBLIOGRAF\[I ']A\"
+.ds \*[locale]-saturday s\[a ']bado\"
+.ds \*[locale]-september septiembre\"
+.ds \*[locale]-sunday domingo\"
+.ds \*[locale]-thursday jueves\"
+.ds \*[locale]-toc \[I ']ndice\"
+.ds \*[locale]-toc_header_string \[I ']ndice\"
+.ds \*[locale]-tuesday martes\"
+.ds \*[locale]-wednesday miercoles\"
+.
+.
+.\" Activate the translations
+.
+.mso trans.tmac
+.
+.
+.\" ms package
+.if r GS \{\
+.	\" update the date
+.	ds DY \n[dy] de \*[MO] de \n[year]
+.	\" set hyphenation mode
+.	nr HY 6
+.\}
+.
+.
+.\" mm package
+.if d PH \
+.	ds cov*local-date-format \En[dy] de \E*[MO\En[mo]] de \En[year]
+.
+.
+.\" Default encoding
+.mso latin9.tmac
+.
+.ss 12 0
+.
+.\" Set up hyphenation.
+.
+.\" Spanish hyphenation (\lefthyphenmin=2, \righthyphenmin=2)
+.nr \*[locale]*hyphenation-mode-base 1
+.nr \*[locale]*hyphenation-mode-trap 2
+.
+.ie \n[locale*use-trap-hyphenation-mode] \
+.  hydefault \n[\*[locale]*hyphenation-mode-trap]
+.el \
+.  hydefault \n[\*[locale]*hyphenation-mode-base]
+.
+.hy
+.
+.rr locale*use-trap-hyphenation-mode
+.
+.hcode α α  Α α
+.hcode ι ι  Ι ι
+.hcode ν ν  Ν ν
+.hcode σ σ  Σ σ
+.hcode ϊ ϊ  Ϊ ϊ
+.hcode ρ ρ  Ρ ρ
+.hcode ό ό  ά ό
+.
+.hla es
+.hpf hyphen.es
+.
+.
+.\" man package
+.if d an \
+.	an*reset-hyphenation-mode
+.
+.
+.\" me package
+.if d @R \{\
+.	ds _td_format \En(dy de \E*(mo de \En(y4
+.	ld
+.\}
+.
+.
+.cp \n[*groff_es_tmac_C]
+.do rr *groff_es_tmac_C
+.
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set filetype=groff textwidth=72:

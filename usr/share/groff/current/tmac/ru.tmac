@@ -1,0 +1,194 @@
+.\" Russian localization for groff
+.
+.\" Copyright 2022 Free Software Foundation, Inc.
+.\"
+.\" Written by Nikita Ivanov (nikita.vyach.ivanov@gmail.com)
+.\"
+.\" This file is part of groff, the GNU roff typesetting system.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT
+.\" ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+.\" or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+.\" License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see
+.\" <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to groff@gnu.org.
+.
+.do nr *groff_ru_tmac_C \n[.cp]
+.cp 0
+.
+.
+.\" If changing from an existing locale, we need to preserve the state
+.\" of the "suppress hyphenation before a page location trap" bit.
+.nr locale*use-trap-hyphenation-mode 0
+.if d locale \
+.  if \n[.hy]=\n[\*[locale]*hyphenation-mode-trap] \
+.    nr locale*use-trap-hyphenation-mode 1
+.
+.
+.ds locale russian\"
+.
+.
+.\" Predefined text translations
+.
+.ds \*[locale]-abstract АННОТАЦИЯ\"
+.ds \*[locale]-app Приложения\"
+.ds \*[locale]-appendix_string Приложения\"
+.ds \*[locale]-april апреля\"
+.ds \*[locale]-attribute_string \" empty
+.ds \*[locale]-august августа\"
+.ds \*[locale]-capec Уравнение\"
+.ds \*[locale]-capex Пример\"
+.ds \*[locale]-capfg Рисунок\"
+.ds \*[locale]-captb Таблица\"
+.ds \*[locale]-captc Оглавление\"
+.ds \*[locale]-chapter_string Глава\"
+.ds \*[locale]-december декабря\"
+.ds \*[locale]-draft_string Черновик\"
+.ds \*[locale]-endnote_string Примечания\"
+.ds \*[locale]-february февраля\"
+.ds \*[locale]-finis_string КОНЕЦ\"
+.ds \*[locale]-friday пятница\"
+.ds \*[locale]-january января\"
+.ds \*[locale]-july июля\"
+.ds \*[locale]-june июня\"
+.ds \*[locale]-le Уравнения\"
+.ds \*[locale]-letapp Одобрено:\"
+.ds \*[locale]-letat ВНИМАНИЕ:\"
+.ds \*[locale]-letcn КОНФИДЕНЦИАЛЬНО\"
+.ds \*[locale]-letdate дата\"
+.ds \*[locale]-letfc С наилучшими пожеланиями.\"
+.ds \*[locale]-letns!0 Копия к\"
+.ds \*[locale]-letns!1 Копия (со вложением) к\"
+.ds \*[locale]-letns!10 Копия (со вложениями) к\"
+.ds \*[locale]-letns!11 Копия (без вложений) к\"
+.ds \*[locale]-letns!12 Только сводка\"
+.ds \*[locale]-letns!13 Меморандум к\"
+.ds \*[locale]-letns!14 СС:\"
+.ds \*[locale]-letns!2 Копия (без вложения) к\"
+.ds \*[locale]-letns!3 Вложение\"
+.ds \*[locale]-letns!4 Вложения\"
+.ds \*[locale]-letns!5 Приложение\"
+.ds \*[locale]-letns!6 Приложения\"
+.ds \*[locale]-letns!7 Прилагается отдельно\"
+.ds \*[locale]-letns!8 Письмо к\"
+.ds \*[locale]-letns!9 Меморандум к\"
+.ds \*[locale]-letns!copy Копия \" don't remove the space!)
+.ds \*[locale]-letns!to " к\"
+.ds \*[locale]-letrn В ответ на:\"
+.ds \*[locale]-letsa Для предъявления по месту требования:\"
+.ds \*[locale]-letsj Тема:\"
+.ds \*[locale]-lf Рисунки\"
+.ds \*[locale]-lt Таблицы\"
+.ds \*[locale]-lx Примеры\"
+.ds \*[locale]-man-section1 Руководство по программам\"
+.ds \*[locale]-man-section2 Руководство по системным вызовам\"
+.ds \*[locale]-man-section3 Руководство по функциям библиотек\"
+.ds \*[locale]-man-section4 Руководство по специальным файлам\"
+.ds \*[locale]-man-section5 Руководство по форматам файлов\"
+.ds \*[locale]-man-section6 Руководство по играм\"
+.ds \*[locale]-man-section7 Различная информация\"
+.ds \*[locale]-man-section8 Руководство для администратора\"
+.ds \*[locale]-man-section9 Руководство для разработчика ядра\"
+.ds \*[locale]-march марта\"
+.ds \*[locale]-may мая\"
+.ds \*[locale]-monday понедельник\"
+.ds \*[locale]-november ноября\"
+.ds \*[locale]-october октября\"
+.ds \*[locale]-paper A4\"
+.ds \*[locale]-qrf Гл. \E[Qrfh], стр. \E*[Qrfp].\"
+.ds \*[locale]-references Библиографический список\"
+.ds \*[locale]-revision_string Вер.\"
+.ds \*[locale]-rp Библиографический список\"
+.ds \*[locale]-saturday суббота\"
+.ds \*[locale]-september сентября\"
+.ds \*[locale]-sunday воскресенье\"
+.ds \*[locale]-thursday четверг\"
+.ds \*[locale]-toc Оглавление\"
+.ds \*[locale]-toc_header_string Оглавление\"
+.ds \*[locale]-tuesday вторник\"
+.ds \*[locale]-wednesday среда\"
+.
+.
+.\" Activate the translations
+.
+.mso trans.tmac
+.
+.
+.\" ms package
+.if r GS \{\
+.	\" update the date
+.	ds DY \n[dy] \*[MO] \n[year]
+.	\" set hyphenation mode
+.	nr HY 8
+.\}
+.
+.
+.\" mm package
+.if d PH \
+.	ds cov*local-date-format \En[dy] \E*[MO\En[mo]] \En[year]
+.
+.
+.\" Default encoding
+.mso koi8-r.tmac
+.
+.ss 12 0
+.
+.\" Set up hyphenation.
+.
+.\" Russian hyphenation (\lefthyphenmin=2, \righthyphenmin=2)
+.nr \*[locale]*hyphenation-mode-base 1
+.nr \*[locale]*hyphenation-mode-trap 2
+.
+.ie \n[locale*use-trap-hyphenation-mode] \
+.  hydefault \n[\*[locale]*hyphenation-mode-trap]
+.el \
+.  hydefault \n[\*[locale]*hyphenation-mode-base]
+.
+.hy
+.
+.rr locale*use-trap-hyphenation-mode
+.
+.\" Check (heuristically) for output device coverage of Cyrillic script.
+.if !r \*[locale]*device-checked-for-glyph-coverage \{\
+.  if !c \[u0410] \{\
+.    tm \n[.F]: warning: font \n[.fn] may lack coverage of \
+Cyrillic script
+.    nr \*[locale]*device-checked-for-glyph-coverage 1
+.  \}
+.\}
+.
+.
+.hla ru
+.hpf hyphen.ru
+.
+.
+.\" man package
+.if d an \
+.	an*reset-hyphenation-mode
+.
+.
+.\" me package
+.if d @R \{\
+.	ds _td_format \En(dy \E*(mo \En(y4
+.	ld
+.\}
+.
+.
+.cp \n[*groff_ru_tmac_C]
+.do rr *groff_ru_tmac_C
+.
+.\" Local Variables:
+.\" mode: nroff
+.\" coding: cyrillic-koi8
+.\" fill-column: 72
+.\" End:
+.\" vim: set fileencoding=koi8-r filetype=groff textwidth=72:

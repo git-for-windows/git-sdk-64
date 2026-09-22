@@ -1,28 +1,31 @@
 #!/usr/bin/perl
-# grog - guess options for groff command
-# Inspired by doctype script in Kernighan & Pike, Unix Programming
-# Environment, pp 306-8.
-
-# Copyright (C) 1993-2021 Free Software Foundation, Inc.
-# Written by James Clark.
-# Rewritten in Perl by Bernd Warken <groff-bernd.warken-72@web.de>.
-# Hacked up by G. Branden Robinson, 2021.
-
-# This file is part of 'grog', which is part of 'groff'.
-
-# 'groff' is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-
-# 'groff' is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-
+# grog - guess groff command line for rendering a document argument
+#
+# Inspired by "doctype" script in Kernighan & Pike, _The Unix
+# Programming Environment_, pp. 306-8.
+#
+# Copyright 1991-2014 Free Software Foundation, Inc.
+#                2021 G. Branden Robinson
+#
+# Written in Bourne shell in groff 1.01 (ca. May 1991) by James Clark.
+# Rewritten in Perl by James Clark in groff 1.02 (ca. June 1991).
+# Many changes by Bernd Warken from May 2000-July 2015.
+# Hacked on by G. Branden Robinson since October 2017.
+#
+# This file is part of groff, the GNU roff typesetting system.
+#
+# groff is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+#
+# groff is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see
-# <http://www.gnu.org/licenses/gpl-2.0.html>.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use warnings;
 use strict;
@@ -36,9 +39,9 @@ my @requested_package = ();	# arguments to '-m' grog options
 my @inferred_preprocessor = ();	# preprocessors the document uses
 my @inferred_main_package = ();	# full-service package(s) detected
 my $main_package;		# full-service package we go with
-my $do_run = 0;			# run generated 'groff' command
 my $use_compatibility_mode = 0;	# is -C being passed to groff?
 
+# See subroutine interpret_line below for chem(1) handling.
 my %preprocessor_for_macro = (
   'EQ', 'eqn',
   'G1', 'grap',
@@ -47,17 +50,9 @@ my %preprocessor_for_macro = (
   '[',  'refer',
   #'so', 'soelim', # Can't be inferred this way; see grog man page.
   'TS', 'tbl',
-  'cstart',   'chem',
-  'lilypond', 'glilypond',
-  'Perl',     'gperl',
-  'pinyin',   'gpinyin',
 );
 
-my $program_name = $0;
-{
-  my ($v, $d, $f) = File::Spec->splitpath($program_name);
-  $program_name = $f;
-}
+(undef, undef, my $program_name) = File::Spec->splitpath($0);
 
 my %user_macro;
 my %score = ();
@@ -74,7 +69,7 @@ my $ms_score = 0;
 
 my $had_inference_problem = 0;
 my $had_processing_problem = 0;
-my $have_any_valid_arguments = 0;
+my $have_any_valid_operands = 0;
 
 
 sub fail {
@@ -84,7 +79,7 @@ sub fail {
 }
 
 
-sub warn {
+sub gripe {
   my $text = shift;
   print STDERR "$program_name: warning: $text\n";
 }
@@ -95,10 +90,9 @@ sub process_arguments {
   my $delayed_option = '';
   my $was_minus = 0;
   my $optarg = 0;
-  my $pdf_with_ligatures = 0;
 
   foreach my $arg (@ARGV) {
-    if ( $optarg ) {
+    if ($optarg) {
       push @command, $arg;
       $optarg = 0;
       next;
@@ -122,7 +116,7 @@ sub process_arguments {
       next;
     }
 
-    unless ( $arg =~ /^-/ ) { # file name, no opt, no optarg
+    unless ($arg =~ /^-/) { # file name, no opt, no optarg
       push @input_file, $arg;
       next;
     }
@@ -143,17 +137,12 @@ sub process_arguments {
     }
 
     # Handle options that cause an early exit.
-    &version() if ($arg eq '-v' || $arg eq '--version');
-    &usage(0) if ($arg eq '-h' || $arg eq '--help');
+    version() if ($arg eq '-v' || $arg eq '--version');
+    usage(0) if ($arg eq '-h' || $arg eq '--help');
 
     if ($arg =~ '^--.') {
-      if ($arg =~ '^--(run|with-ligatures)$') {
-	$do_run = 1             if ($arg eq '--run');
-	$pdf_with_ligatures = 1 if ($arg eq '--with-ligatures');
-      } else {
-        &fail("unrecognized grog option '$arg'; ignored");
-	&usage(1);
-      }
+      fail("unrecognized grog option '$arg'; ignored");
+      usage(1);
       next;
     }
 
@@ -175,39 +164,35 @@ sub process_arguments {
 
     # Treat anything else as (possibly clustered) groff options that
     # take no arguments.
+    my $cluster = '[abcCeEgGijklNpRsStUVXzZ]*';
 
-    # Our do_line() needs to know if it should do compatibility parsing.
-    $use_compatibility_mode = 1 if ($arg =~ /C/);
+    # Our interpret_line() must know if compatibility parsing is needed.
+    $use_compatibility_mode = 1 if ($arg =~ /^-${cluster}C${cluster}/);
 
     push @command, $arg;
-  }
-
-  if ($pdf_with_ligatures) {
-    push @command, '-P-y';
-    push @command, '-PU';
   }
 
   @input_file = ('-') unless (@input_file);
 } # process_arguments()
 
 
-sub process_input {
+sub read_input {
   foreach my $file (@input_file) {
-    unless ( open(FILE, $file eq "-" ? $file : "< $file") ) {
-      &fail("cannot open '$file': $!");
+    unless (open(FILE, $file eq "-" ? $file : "< $file")) {
+      fail("cannot open '$file': $!");
       next;
     }
 
-    $have_any_valid_arguments = 1;
+    $have_any_valid_operands = 1;
 
     while (my $line = <FILE>) {
       chomp $line;
-      &do_line($line);
+      interpret_line($line);
     }
 
     close(FILE);
   } # end foreach
-} # process_input()
+} # read_input()
 
 
 # Push item onto inferred full-service list only if not already present.
@@ -219,7 +204,7 @@ sub push_main_package {
 } # push_main_package()
 
 
-sub do_line {
+sub interpret_line {
   my $command;			# request or macro name
   my $args;			# request or macro arguments
 
@@ -262,6 +247,15 @@ sub do_line {
     }
   }
 
+  # Handle "chem" as a special case, since its start/end tokens collide
+  # with AT&T troff request names in their first two characters.
+  if ($line =~ /^\.(cstart|cend)\b/) {
+    my $preproc = 'chem';
+    if (!grep(/$preproc/, @inferred_preprocessor)) {
+      push @inferred_preprocessor, $preproc;
+    }
+  }
+
   # Normalize control lines; convert no-break control character to the
   # regular one and remove unnecessary whitespace.
   $line =~ s/^['.]\s*/./;
@@ -291,39 +285,8 @@ sub do_line {
   $command = '' unless ($command);
   $args = '' unless ($args);
 
-  ######################################################################
-  # user-defined macros
-
   # If the line calls a user-defined macro, skip it.
   return if (exists $user_macro{$command});
-
-  # These are all requests supported by groff 1.23.0.
-  my @request = ('ab', 'ad', 'af', 'aln', 'als', 'am', 'am1', 'ami',
-		 'ami1', 'as', 'as1', 'asciify', 'backtrace', 'bd',
-		 'blm', 'box', 'boxa', 'bp', 'br', 'brp', 'break', 'c2',
-		 'cc', 'ce', 'cf', 'cflags', 'ch', 'char', 'chop',
-		 'class', 'close', 'color', 'composite', 'continue',
-		 'cp', 'cs', 'cu', 'da', 'de', 'de1', 'defcolor', 'dei',
-		 'dei1', 'device', 'devicem', 'di', 'do', 'ds', 'ds1',
-		 'dt', 'ec', 'ecr', 'ecs', 'el', 'em', 'eo', 'ev',
-		 'evc', 'ex', 'fam', 'fc', 'fchar', 'fcolor', 'fi',
-		 'fp', 'fschar', 'fspecial', 'ft', 'ftr', 'fzoom',
-		 'gcolor', 'hc', 'hcode', 'hla', 'hlm', 'hpf', 'hpfa',
-		 'hpfcode', 'hw', 'hy', 'hym', 'hys', 'ie', 'if', 'ig',
-		 'in', 'it', 'itc', 'kern', 'lc', 'length', 'linetabs',
-		 'lf', 'lg', 'll', 'lsm', 'ls', 'lt', 'mc', 'mk', 'mso',
-		 'msoquiet', 'na', 'ne', 'nf', 'nh', 'nm', 'nn', 'nop',
-		 'nr', 'nroff', 'ns', 'nx', 'open', 'opena', 'os',
-		 'output', 'pc', 'pev', 'pi', 'pl', 'pm', 'pn', 'pnr',
-		 'po', 'ps', 'psbb', 'pso', 'ptr', 'pvs', 'rchar', 'rd',
-		 'return', 'rfschar', 'rj', 'rm', 'rn', 'rnn', 'rr',
-		 'rs', 'rt', 'schar', 'shc', 'shift', 'sizes', 'so',
-		 'soquiet', 'sp', 'special', 'spreadwarn', 'ss',
-		 'stringdown', 'stringup', 'sty', 'substring', 'sv',
-		 'sy', 'ta', 'tc', 'ti', 'tkf', 'tl', 'tm', 'tm1',
-		 'tmc', 'tr', 'trf', 'trin', 'trnt', 'troff', 'uf',
-		 'ul', 'unformat', 'vpt', 'vs', 'warn', 'warnscale',
-		 'wh', 'while', 'write', 'writec', 'writem');
 
   # Add user-defined macro names to %user_macro.
   #
@@ -350,13 +313,43 @@ sub do_line {
 
   # XXX: Handle .rm as well?
 
+  # These are all requests supported by groff 1.24.0.
+  my @request = ('ab', 'ad', 'af', 'aln', 'als', 'am', 'am1', 'ami',
+		 'ami1', 'as', 'as1', 'asciify', 'backtrace', 'bd',
+		 'blm', 'box', 'boxa', 'bp', 'br', 'brp', 'break', 'c2',
+		 'cc', 'ce', 'cf', 'cflags', 'ch', 'char', 'chop',
+		 'class', 'close', 'color', 'composite', 'continue',
+		 'cp', 'cs', 'cu', 'da', 'de', 'de1', 'defcolor', 'dei',
+		 'dei1', 'device', 'devicem', 'di', 'do', 'ds', 'ds1',
+		 'dt', 'ec', 'ecr', 'ecs', 'el', 'em', 'eo', 'ev',
+		 'evc', 'ex', 'fam', 'fc', 'fchar', 'fcolor', 'fi',
+		 'fp', 'fschar', 'fspecial', 'ft', 'ftr', 'fzoom',
+		 'gcolor', 'hc', 'hcode', 'hla', 'hlm', 'hpf', 'hpfa',
+		 'hpfcode', 'hw', 'hy', 'hydefault', 'hym', 'hys', 'ie',
+		 'if', 'ig', 'in', 'it', 'itc', 'kern', 'lc', 'length',
+		 'linetabs', 'lf', 'lg', 'll', 'lsm', 'ls', 'lt', 'mc',
+		 'mk', 'mso', 'msoquiet', 'na', 'ne', 'nf', 'nh', 'nm',
+		 'nn', 'nop', 'nr', 'nroff', 'ns', 'nx', 'open',
+		 'opena', 'os', 'output', 'pc', 'pchar', 'pcolor',
+		 'pcomposite', 'pev', 'pfp', 'pftr', 'phw', 'pi', 'pl',
+		 'pline', 'pm', 'pn', 'pnr', 'po', 'ps', 'psbb', 'pso',
+		 'ptr', 'pvs', 'rchar', 'rd', 'return', 'rfschar', 'rj',
+		 'rm', 'rn', 'rnn', 'rr', 'rs', 'rt', 'schar', 'shc',
+		 'shift', 'sizes', 'so', 'soquiet', 'sp', 'special',
+		 'spreadwarn', 'ss', 'stringdown', 'stringup', 'sty',
+		 'substring', 'sv', 'sy', 'ta', 'tc', 'ti', 'tkf', 'tl',
+		 'tm', 'tm1', 'tmc', 'tr', 'trf', 'trin', 'trnt',
+		 'troff', 'uf', 'ul', 'unformat', 'vpt', 'vs', 'warn',
+		 'warnscale', 'wh', 'while', 'write', 'writec',
+		 'writem');
+
   # Ignore all other requests.  Again, macro names can contain Perl
   # regex metacharacters, so be careful.
   return if (grep(/^\Q$command\E$/, @request));
+  return if ($command eq '\}'); # *roff closing brace escape sequence
   # What remains must be a macro name.
   my $macro = $command;
 
-  $have_seen_first_macro_call = 1;
   $score{$macro}++;
 
 
@@ -373,63 +366,76 @@ sub do_line {
     $man_score += 100;
   }
 
+  # Set this here because we start returning early from here on.
+  $have_seen_first_macro_call = 1;
+
   ##########
   # mdoc
   if ($macro =~ /^Dd$/) {
-    &push_main_package('doc');
+    push_main_package('doc');
     return;
   }
 
   ##########
   # old mdoc
   if ($macro =~ /^(Tp|Dp|De|Cx|Cl)$/) {
-    &push_main_package('doc-old');
+    push_main_package('doc-old');
     return;
   }
 
   ##########
   # me
-
   if ($macro =~ /^(
 		   [ilnp]p|
 		   n[12]|
 		   sh
 		  )$/x) {
-    &push_main_package('e');
+    push_main_package('e');
     return;
   }
 
-
   #############
   # mm and mmse
-
   if ($macro =~ /^(
-		   H|
-		   MULB|
+		   AL|BL|BVL|DL|ML|RL|VL|
+		   APP|APPSK|
+		   AF|AS|
+		   COVEND|EPIC|
+		   H|HU|
+		   INITI|IND|INDP|
+		   INITR|SETR|GETHN|GETPN|
+		   ISODATE|
+		   LB|LE
+		   MULB|MULN|MULE|
 		   LO|
 		   LT|
 		   NCOL|
 		   PH|
 		   SA
 		  )$/x) {
+    # `LI` is unique to mm among full-service macro packages, but
+    # www.tmac muddies the waters, so omit it.
+    # P and MT are also used by man.
+    # COVER and SP are also used by mom.
+    # 1C, 2C, AE, AU, B1, B2, DE, DS, MC, ND, TL, and RP are also used
+    # by mm.
     if ($macro =~ /^LO$/) {
-      if ( $args =~ /^(DNAMN|MDAT|BIL|KOMP|DBET|BET|SIDOR)/ ) {
-	&push_main_package('mse');
+      if ($args =~ /^(DNAMN|MDAT|BIL|KOMP|DBET|BET|SIDOR)/) {
+	push_main_package('mse');
 	return;
       }
     } elsif ($macro =~ /^LT$/) {
-      if ( $args =~ /^(SVV|SVH)/ ) {
-	&push_main_package('mse');
+      if ($args =~ /^(SVV|SVH)/) {
+	push_main_package('mse');
 	return;
       }
     }
-    &push_main_package('m');
+    push_main_package('m');
     return;
   }
 
   ##########
   # mom
-
   if ($macro =~ /^(
 		   ALD|
 		   AUTHOR|
@@ -460,10 +466,12 @@ sub do_line {
 		   TOC|
 		   T_MARGIN|
 		  )$/x) {
-    &push_main_package('om');
+    # PP is also used by man.
+    # SP is also used by mm.
+    push_main_package('om');
     return;
   }
-} # do_line()
+} # interpret_line()
 
 my @preprocessor = ();
 
@@ -500,27 +508,31 @@ sub infer_preprocessors {
 
 # Return true (1) if either the man or ms package is inferred.
 sub infer_man_or_ms_package {
-  my @macro_ms = ('RP', 'TL', 'AU', 'AI', 'DA', 'ND', 'AB', 'AE',
+  my @macro_ms = ('AI', 'DA', 'AB',
 		  'QP', 'QS', 'QE', 'XP',
 		  'NH',
 		  'R',
 		  'CW',
 		  'BX', 'UL', 'LG', 'NL',
-		  'KS', 'KF', 'KE', 'B1', 'B2',
-		  'DS', 'DE', 'LD', 'ID', 'BD', 'CD', 'RD',
+		  'KS', 'KF', 'KE',
+		  'LD', 'ID', 'BD', 'CD', 'RD',
 		  'FS', 'FE',
 		  'OH', 'OF', 'EH', 'EF', 'P1',
-		  'TA', '1C', '2C', 'MC',
+		  'TA',
 		  'XS', 'XE', 'XA', 'TC', 'PX',
 		  'IX', 'SG');
+  # 1C, 2C, AE, AU, B1, B2, DE, DS, MC, ND, TL, RP are also used by mm.
 
-  my @macro_man = ('BR', 'IB', 'IR', 'RB', 'RI', 'P', 'TH', 'TP', 'SS',
+  my @macro_man = ('BR', 'IB', 'IR', 'RB', 'RI', 'TP', 'SS',
 		   'HP', 'PD',
 		   'AT', 'UC',
 		   'SB',
-		   'EE', 'EX',
+		   'EE',
 		   'OP',
-		   'MT', 'ME', 'SY', 'YS', 'TQ', 'UR', 'UE');
+		   'ME', 'SY', 'YS', 'TQ', 'UR', 'UE', 'MR');
+  # TH can be used by ms, mm, me, mdoc, and mom.
+  # EX, P, and MT are also used by mm.
+  # PP is also used by mom.
 
   my @macro_man_or_ms = ('B', 'I', 'BI',
 			 'DT',
@@ -555,16 +567,16 @@ sub infer_man_or_ms_package {
   } elsif ($ms_score == $man_score) {
     # If there was no TH call, it's not a (valid) man(7) document.
     if (!$score{'TH'}) {
-      &push_main_package('s');
+      push_main_package('s');
     } else {
-      &warn("document ambiguous; disambiguate with -man or -ms option");
+      gripe("document ambiguous; disambiguate with -man or -ms option");
       $had_inference_problem = 1;
     }
     return 0;
   } elsif ($ms_score > $man_score) {
-    &push_main_package('s');
+    push_main_package('s');
   } else {
-    &push_main_package('an');
+    push_main_package('an');
   }
 
   return 1;
@@ -575,6 +587,7 @@ sub construct_command {
   my @main_package = ('an', 'doc', 'doc-old', 'e', 'm', 'om', 's');
   my $file_args_included;	# file args now only at 1st preproc
   unshift @command, 'groff';
+
   if (@preprocessor) {
     my @progs;
     $progs[0] = shift @preprocessor;
@@ -622,7 +635,7 @@ sub construct_command {
     for my $pkg (@main_package) {
       if (grep(/$pkg/, @inferred_main_package)) {
 	$main_package = $pkg;
-	&warn("document ambiguous (choosing '$main_package'"
+	gripe("document ambiguous (choosing '$main_package'"
 	      . " from '@inferred_main_package'); disambiguate with -m"
 	      . " option");
 	$had_inference_problem = 1;
@@ -640,11 +653,11 @@ sub construct_command {
     my $is_auxiliary_package = 1;
     if (grep(/$pkg/, @main_package)) {
       $is_auxiliary_package = 0;
-      if ($pkg ne $main_package) {
-	&warn("overriding inferred package '$main_package'"
+      if ($main_package && ($pkg ne $main_package)) {
+	gripe("overriding inferred package '$main_package'"
 	      . " with requested package '$pkg'");
-	$main_package = $pkg;
       }
+      $main_package = $pkg;
     }
     if ($is_auxiliary_package) {
       push @auxiliary_package_argument, "-m" . $pkg;
@@ -654,16 +667,7 @@ sub construct_command {
   push @command, '-m' . $main_package if ($main_package);
   push @command, @auxiliary_package_argument;
   push @command, @input_file unless ($file_args_included);
-
-  #########
-  # execute the 'groff' command here with option '--run'
-  if ( $do_run ) { # with --run
-    print STDERR "@command\n";
-    my $cmd = join ' ', @command;
-    system($cmd);
-  } else {
-    print "@command\n";
-  }
+  print "@command\n";
 } # construct_command()
 
 
@@ -672,13 +676,12 @@ sub usage {
   my $had_error = shift;
   $stream = *STDERR if $had_error;
   my $grog = $program_name;
-  print $stream "usage: $grog [--ligatures] [--run]" .
-    " [groff-option ...] [--] [file ...]\n" .
+  print $stream "usage: $grog [groff-option ...] [--] [file ...]\n" .
     "usage: $grog {-v | --version}\n" .
     "usage: $grog {-h | --help}\n";
   unless ($had_error) {
     print $stream "\n" .
-"Read each roff(7) input FILE and attempt to infer an appropriate\n" .
+"Read each roff(7) input file and attempt to infer an appropriate\n" .
 "groff(1) command to format it.  See the grog(1) manual page.\n";
   }
   exit $had_error;
@@ -696,18 +699,18 @@ sub version {
 my $in_unbuilt_source_tree = 0;
 {
   my $at = '@';
-  $in_unbuilt_source_tree = 1 if ('1.23.0' eq "${at}VERSION${at}");
+  $in_unbuilt_source_tree = 1 if ('1.24.1' eq "${at}VERSION${at}");
 }
 
-$groff_version = '1.23.0' unless ($in_unbuilt_source_tree);
+$groff_version = '1.24.1' unless ($in_unbuilt_source_tree);
 
-&process_arguments();
-&process_input();
+process_arguments();
+read_input();
 
-if ($have_any_valid_arguments) {
-  &infer_preprocessors();
-  &infer_man_or_ms_package() if (scalar @inferred_main_package != 1);
-  &construct_command();
+if ($have_any_valid_operands) {
+  infer_preprocessors();
+  infer_man_or_ms_package() if (scalar @inferred_main_package != 1);
+  construct_command();
 }
 
 exit 2 if ($had_processing_problem);
