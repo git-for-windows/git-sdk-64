@@ -522,38 +522,38 @@ unregister it first with <a href="git-maintenance.html">git-maintenance(1)</a>.<
 <dd>
 <p>Verify reference database consistency.</p>
 </dd>
-<dt class="hdlist1">list</dt>
+<dt class="hdlist1"><code>list</code></dt>
 <dd>
 <p>List references in the repository with support for filtering,
 formatting, and sorting. This subcommand is an alias for
 <a href="git-for-each-ref.html">git-for-each-ref(1)</a> and offers identical functionality.</p>
 </dd>
-<dt class="hdlist1">exists</dt>
+<dt class="hdlist1"><code>exists</code></dt>
 <dd>
 <p>Check whether the given reference exists. Returns an exit code of 0 if
 it does, 2 if it is missing, and 1 in case looking up the reference
 failed with an error other than the reference being missing. This does
 not verify whether the reference resolves to an actual object.</p>
 </dd>
-<dt class="hdlist1">optimize</dt>
+<dt class="hdlist1"><code>optimize</code></dt>
 <dd>
 <p>Optimizes references to improve repository performance and reduce disk
 usage. This subcommand is an alias for <a href="git-pack-refs.html">git-pack-refs(1)</a> and
 offers identical functionality.</p>
 </dd>
-<dt class="hdlist1">create</dt>
+<dt class="hdlist1"><code>create</code></dt>
 <dd>
 <p>Create the given reference, which must not already exist, pointing at
 <em>&lt;new-value&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">delete</dt>
+<dt class="hdlist1"><code>delete</code></dt>
 <dd>
 <p>Delete the given reference. This subcommand mirrors <code>git</code> <code>update-ref</code> <code>-d</code>
 (see <a href="git-update-ref.html">git-update-ref(1)</a>). When <em>&lt;old-value&gt;</em> is given, the
 reference is only deleted after verifying that it currently contains
 <em>&lt;old-value&gt;</em>.</p>
 </dd>
-<dt class="hdlist1">update</dt>
+<dt class="hdlist1"><code>update</code></dt>
 <dd>
 <p>Update the given reference to point at <em>&lt;new-value&gt;</em>. If <em>&lt;old-value&gt;</em>
 is given, the reference is only updated after verifying that it
@@ -561,7 +561,7 @@ currently contains <em>&lt;old-value&gt;</em>. As a special case, an all-zeroes
 <em>&lt;new-value&gt;</em> deletes the branch, whereas an all-zeroes <em>&lt;old-value&gt;</em>
 ensures that the branch does not yet exist.</p>
 </dd>
-<dt class="hdlist1">rename</dt>
+<dt class="hdlist1"><code>rename</code></dt>
 <dd>
 <p>Rename the reference <em>&lt;oldref&gt;</em> to <em>&lt;newref&gt;</em>. The old reference must
 exist and the new reference must not yet exist, and both must have a
@@ -748,7 +748,7 @@ to limit the refs.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">--all</dt>
+<dt class="hdlist1"><code>--all</code></dt>
 <dd>
 <p>The command by default packs all tags and refs that are already
 packed, and leaves other refs
@@ -758,12 +758,12 @@ This option causes all refs to be packed as well, with the exception
 of hidden refs, broken refs, and symbolic refs. Useful for a repository
 with many branches of historical interests.</p>
 </dd>
-<dt class="hdlist1">--no-prune</dt>
+<dt class="hdlist1"><code>--no-prune</code></dt>
 <dd>
 <p>The command usually removes loose refs under <code>$GIT_DIR/refs</code>
 hierarchy after packing them.  This option tells it not to.</p>
 </dd>
-<dt class="hdlist1">--auto</dt>
+<dt class="hdlist1"><code>--auto</code></dt>
 <dd>
 <p>Pack refs as needed depending on the current state of the ref database. The
 behavior depends on the ref format used by the repository and may change in the
@@ -785,7 +785,7 @@ tables that violate this property are compacted.</p>
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">--include &lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>--include</code> <em>&lt;pattern&gt;</em></dt>
 <dd>
 <p>Pack refs based on a <code>glob</code>(<code>7</code>) pattern. Repetitions of this option
 accumulate inclusion patterns. If a ref is both included in <code>--include</code> and
@@ -794,7 +794,7 @@ tags from being included by default. Symbolic refs and broken refs will never
 be packed. When used with <code>--all</code>, it will be a noop. Use <code>--no-include</code> to clear
 and reset the list of patterns.</p>
 </dd>
-<dt class="hdlist1">--exclude &lt;pattern&gt;</dt>
+<dt class="hdlist1"><code>--exclude</code> <em>&lt;pattern&gt;</em></dt>
 <dd>
 <p>Do not pack refs matching the given <code>glob</code>(<code>7</code>) pattern. Repetitions of this option
 accumulate exclusion patterns. Use <code>--no-exclude</code> to clear and reset the list of
@@ -846,7 +846,7 @@ symbolic ref.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-17 14:34:55 UTC
+Last updated 2026-09-22 20:04:36 UTC
 </div>
 </div>
 </body>
