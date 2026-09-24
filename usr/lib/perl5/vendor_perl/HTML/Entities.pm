@@ -70,6 +70,14 @@ misfeature.
    _decode_entities($string, { nb => "@", nbsp => "\xA0" }, 1);
    print $string;  # will print "foo bar"
 
+An entity whose value is the string being decoded expands to the value
+that string had when the call began.  This routine does not scan
+replacement text again, so any entities inside it are left alone.
+
+Looking up a value can run Perl code, through a tied hash or an
+overloaded object.  If that code modifies the string being decoded,
+this routine dies.
+
 This routine is exported by default.
 
 =item encode_entities( $string )
@@ -136,7 +144,7 @@ modify it under the same terms as Perl itself.
 =cut
 
 use strict;
-our $VERSION = '3.85';
+our $VERSION = '3.86';
 our (%entity2char, %char2entity);
 
 require 5.008;
