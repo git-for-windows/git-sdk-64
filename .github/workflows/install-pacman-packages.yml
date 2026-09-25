@@ -1,0 +1,72 @@
+name: Install Pacman packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Space-separated Pacman package names to install'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  GIT_CONFIG_PARAMETERS: >-
+    'user.name=Git for Windows Build Agent'
+    'user.email=ci@git-for-windows.build'
+    'windows.sdk64.path=${{ github.workspace }}'
+    'windows.sdk32.path='
+    'http.sslbackend=schannel'
+    'core.autocrlf=false'
+    'checkout.workers=56'
+  HOME: "${{ github.workspace }}\\home\\git-ci"
+  MSYSTEM: MSYS
+
+jobs:
+  install:
+    runs-on: >-
+      ${{ github.event.repository.name == 'git-sdk-arm64' &&
+          'windows-11-arm' || 'windows-latest' }}
+    environment: sync
+    steps:
+      - name: Check out SDK
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: true
+      - name: Add SDK Bash to PATH
+        run: "usr\\bin\\bash.exe -lc 'cygpath -aw /usr/bin >>$GITHUB_PATH'"
+      - name: Install requested packages
+        shell: bash
+        env:
+          PACKAGES: ${{ inputs.packages }}
+        run: |
+          set -e
+          case "$PACKAGES" in
+          *$'\n'*|*$'\r'*)
+            echo "::error::Separate package names with spaces, not newlines"
+            exit 1
+            ;;
+          esac
+          read -r -a packages <<<"$PACKAGES"
+          test "${#packages[@]}" -gt 0 || {
+            echo "::error::Specify at least one package"
+            exit 1
+          }
+          for package in "${packages[@]}"
+          do
+            case "$package" in
+            -*|*[!a-zA-Z0-9@._+-]*)
+              echo "::error::Invalid package name: $package"
+              exit 1
+              ;;
+            esac
+          done
+          pacman -S --needed --noconfirm "${packages[@]}"
+      - name: Commit and push SDK
+        shell: bash
+        run: |
+          set -e
+          PATH="/c/Program Files/Git/cmd:/usr/bin:$PATH"
+          sh .github/commit-sdk.sh commit
+          git push origin "$GITHUB_REF"
