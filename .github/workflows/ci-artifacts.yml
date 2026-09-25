@@ -200,6 +200,10 @@ jobs:
           then
             unset NO_RUST
             export DC_SHA1_RS=1
+            # since CARGO_BUILD_TARGET is set, Rust tries to link using
+            # `x86_64-w64-mingw32-gcc`, which does not exist here. Let's
+            # tell it to use `gcc` instead, which does exist here.
+            export CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=gcc
           else
             echo "::warning::Rust is not installed; building Git without Rust"
             export NO_RUST=ForNow
