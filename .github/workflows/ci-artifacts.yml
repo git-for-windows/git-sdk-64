@@ -6,6 +6,11 @@ on:
       - main
       - ucrt64
   pull_request:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number in git-for-windows/git to build'
+        type: string
 
 # For the continuous `ci-artifacts` release
 permissions:
@@ -93,7 +98,11 @@ jobs:
           path: minimal-sdk-extra
 
   build-installers-artifact:
-    if: github.event.repository.fork == false && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.repository.fork == false &&
+       github.event_name == 'push' &&
+       github.ref == 'refs/heads/main')
     runs-on: windows-latest
     steps:
       - name: clone git-sdk-64
@@ -120,6 +129,124 @@ jobs:
         with:
           name: build-installers
           path: build-installers-artifacts
+
+  build-pr-installer:
+    if: github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
+    needs: build-installers-artifact
+    runs-on: windows-latest
+    env:
+      GIT_CONFIG_PARAMETERS: "'checkout.workers=56'"
+      HOME: "${{github.workspace}}\\home"
+      USERPROFILE: "${{github.workspace}}\\home"
+      MSYSTEM: UCRT64
+      MINGW_PREFIX: /ucrt64
+      MINGW_PACKAGE_PREFIX: mingw-w64-ucrt-x86_64
+    steps:
+      - name: download build-installers artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: build-installers
+          path: ${{github.workspace}}
+      - name: configure build-installers SDK
+        shell: bash
+        run: |
+          mkdir build-installers &&
+          /c/Windows/system32/tar.exe --zstd \
+            -xf git-sdk-x86_64-build-installers.tar.zst \
+            -C build-installers &&
+          cygpath -aw "$PWD/build-installers/usr/bin/core_perl" \
+            >>"$GITHUB_PATH" &&
+          cygpath -aw "$PWD/build-installers/usr/bin" >>"$GITHUB_PATH" &&
+          cygpath -aw "$PWD/build-installers/ucrt64/bin" >>"$GITHUB_PATH"
+      - name: check out Git pull request and build-extra
+        shell: bash
+        env:
+          PR_NUMBER: ${{inputs.pr_number}}
+        run: |
+          set -e
+          [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]] || {
+            echo "::error::Expected a positive Git PR number"
+            exit 1
+          }
+          test "$(cygpath -aw /)" = "$(cygpath -aw "$PWD/build-installers")"
+          mkdir -p "$HOME" /usr/src
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email \
+            "$GITHUB_ACTOR@users.noreply.github.com"
+          git clone --depth=1 --single-branch -b main \
+            https://github.com/git-for-windows/build-extra /usr/src/build-extra
+          git -c init.defaultBranch=main init git
+          git -C git remote add -f origin https://github.com/git-for-windows/git
+          git -C git fetch origin "refs/pull/$PR_NUMBER/head"
+          git -C git switch --detach FETCH_HEAD
+          tag_name="$(git -C git describe --match 'v[0-9]*' HEAD)"
+          tag_name="$tag_name-$(date +%Y%m%d%H%M%S)"
+          git -C git tag -m "Snapshot build" "$tag_name" HEAD
+          echo "prerelease-${tag_name#v}" >installer-version
+          snapshot="$(git -C git show -s \
+            --pretty='tformat:%h (%s, %ad)' --date=short HEAD)"
+          (cd /usr/src/build-extra &&
+            node ./add-release-note.js --commit feature "Snapshot of $snapshot")
+      - name: build Git packages from pull request
+        shell: bash
+        run: |
+          set -e
+          printf '#!/bin/sh\n\nexec /ucrt64/bin/git.exe "$@"\n' >/usr/bin/git
+          PATH="/ucrt64/bin:/usr/bin:/usr/bin/core_perl:/C/Windows/system32"
+          test -d /var/lib/pacman/local/$MINGW_PACKAGE_PREFIX-rust-[0-9]* &&
+          rust_installed=yes ||
+          rust_installed=
+          if test -n "$rust_installed"
+          then
+            unset NO_RUST
+            export DC_SHA1_RS=1
+          else
+            echo "::warning::Rust is not installed; building Git without Rust"
+            export NO_RUST=ForNow
+          fi
+          cd git
+          sh -x /usr/src/build-extra/please.sh build-mingw-w64-git \
+            --only-ucrt64 HEAD
+          if test -n "$rust_installed"
+          then
+            rust_src=/usr/src/MINGW-packages/mingw-w64-git/src/git
+            rust_lib_dir="$rust_src/target/x86_64-pc-windows-gnu/release"
+            test -s "$rust_lib_dir/libgitcore.a" || {
+              echo "::error::Git's Rust library was not built"
+              exit 1
+            }
+          fi
+      - name: build Git for Windows installer
+        shell: bash
+        run: |
+          set -e
+          packages=(/usr/src/MINGW-packages/mingw-w64-git/mingw-w64-*.pkg.tar.*)
+          test -f "${packages[0]}" || {
+            echo "::error::No Git package archives were built"
+            exit 1
+          }
+          package_args=()
+          for package in "${packages[@]}"
+          do
+            case "$package" in
+            *.sig|*archimport*|*cvs*|*p4*|*gitweb*|*doc-man*) continue ;;
+            esac
+            package_args+=("--pkg=$package")
+          done
+          test "${#package_args[@]}" -gt 0 || {
+            echo "::error::No installer packages were built"
+            exit 1
+          }
+          sh -x /usr/src/build-extra/please.sh \
+            make_installers_from_mingw_w64_git \
+            --version="$(cat installer-version)" -o installer-artifacts \
+            --installer "${package_args[@]}"
+      - name: upload Git for Windows installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: git-for-windows-pr-installer
+          path: installer-artifacts/*.exe
+          if-no-files-found: error
 
   test-minimal-sdk:
     needs: minimal-sdk-artifact
