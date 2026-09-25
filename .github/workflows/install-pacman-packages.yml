@@ -63,6 +63,37 @@ jobs:
             esac
           done
           pacman -S --needed --noconfirm "${packages[@]}"
+      - name: deal with large DLL files
+        shell: bash
+        run: |
+          set -ex
+          large_dlls=$(find ucrt64/bin -size +100M)
+          test -n "$large_dlls" || exit 0
+
+          # Okay, we have a problem. GitHub does not like to host files >100MB.
+          # But libLLVM-<version>.dll easily blasts through that limit.
+          #
+          # But we're in luck, because upx exists (https://upx.github.io/), a
+          # fast packer for executables. As an example, it can compress
+          # libLLVM-22.dll from 147017728 -> 45706752. So let' use that for
+          # large DLLs and EXEs.
+
+          pacman -S --noconfirm mingw-w64-ucrt-x86_64-upx
+          ret=0
+          for dll in $large_dlls
+          do
+            /ucrt64/bin/upx.exe $dll || ret=1
+          done
+          test 0 = $ret || exit $ret
+
+          large_dlls=$(find ucrt64/bin -size +100M)
+          test -z "$large_dlls" || {
+            echo "::error::large file(s): $large_dlls" >&2
+            exit 1
+          }
+
+          # Clean up; We do *not* want UPX in the Git for Windows SDK...
+          pacman -R --unneeded --noconfirm mingw-w64-ucrt-x86_64-upx
       - name: Commit and push SDK
         shell: bash
         run: |
