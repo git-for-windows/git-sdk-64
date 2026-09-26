@@ -1,0 +1,11 @@
+prefix=/ucrt64
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libgit2
+Description: The git library, take 2
+Version: 1.9.7
+Libs: -L${libdir} -lgit2
+Libs.private: -lhttp_parser -lws2_32 -lsecur32 -L/ucrt64/lib -liconv
+Requires.private: openssl libpcre2-8 libssh2 zlib
+Cflags: -I${includedir} 
