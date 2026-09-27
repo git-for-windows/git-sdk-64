@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2025 Free Software Foundation, Inc.
+# Copyright (C) 2011-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 """Configure GDB using the WRS/Linux environment."""
 
 import os
+
+import gdb
 
 if "ENV_PREFIX" in os.environ:
     gdb.execute("set sysroot %s" % os.environ["ENV_PREFIX"])

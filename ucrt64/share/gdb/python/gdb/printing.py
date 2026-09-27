@@ -1,5 +1,5 @@
 # Pretty-printer utilities.
-# Copyright (C) 2010-2025 Free Software Foundation, Inc.
+# Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -343,7 +343,7 @@ class NoOpArrayPrinter(gdb.ValuePrinter):
 
     def __init__(self, ty, value):
         self.__value = value
-        (low, high) = ty.range()
+        low, high = ty.range()
         # In Ada, an array can have an index type that is a
         # non-contiguous enum.  In this case the indexing must be done
         # by using the indices into the enum type, not the underlying
@@ -422,10 +422,15 @@ def make_visualizer(value):
                 gdb.TYPE_CODE_REF,
                 gdb.TYPE_CODE_RVALUE_REF,
             )
+            # Avoid "void *" here because those pointers can't be
+            # dereferenced without a cast.
             and ty.target().code != gdb.TYPE_CODE_VOID
+            # An optimized-out or unavailable pointer should just be
+            # treated as a scalar, since there's no way to dereference
+            # it.
+            and not value.is_optimized_out
+            and not value.is_unavailable
         ):
-            # Note we avoid "void *" here because those pointers can't
-            # be dereferenced without a cast.
             result = NoOpPointerReferencePrinter(value)
         else:
             result = NoOpScalarPrinter(value)
