@@ -78,15 +78,17 @@
 
 <h1 id="NOTES">NOTES</h1>
 
+<p>SM4 implementations in OpenSSL may use secret-dependent table lookups and are not guaranteed to be constant-time. In particular, the portable C implementation uses S-box and T-table lookups and may be vulnerable to cache-timing side-channel attacks. Which code path is used depends on CPU capabilities; see <a href="../man3/OPENSSL_armcap.html">OPENSSL_armcap(3)</a>, <a href="../man3/OPENSSL_ia32cap.html">OPENSSL_ia32cap(3)</a> and <a href="../man3/OPENSSL_riscvcap.html">OPENSSL_riscvcap(3)</a>.</p>
+
 <p>The SM4-XTS implementation allows streaming to be performed, but each <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call requires each input to be a multiple of the blocksize. Only the final EVP_EncryptUpdate() or EVP_DecryptUpdate() call can optionally have an input that is not a multiple of the blocksize but is larger than one block. In that case ciphertext stealing (CTS) is used to fill the block.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/provider-cipher.html">provider-cipher(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a></p>
+<p><a href="../man3/OPENSSL_armcap.html">OPENSSL_armcap(3)</a>, <a href="../man3/OPENSSL_ia32cap.html">OPENSSL_ia32cap(3)</a>, <a href="../man3/OPENSSL_riscvcap.html">OPENSSL_riscvcap(3)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/provider-cipher.html">provider-cipher(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

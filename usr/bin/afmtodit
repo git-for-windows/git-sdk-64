@@ -1,8 +1,12 @@
 #!/usr/bin/perl
-# Copyright (C) 1989-2020 Free Software Foundation, Inc.
-#      Written by James Clark (jjc@jclark.com)
+# Copyright 1989-2010 Free Software Foundation, Inc.
+#           2022-2024 G. Branden Robinson
 #
-# This file is part of groff.
+# Written by James Clark (jjc@jclark.com)
+# Enhanced by: Werner Lemberg <wl@gnu.org>
+#              G. Branden Robinson <g.branden.robinson@gmail.com>
+#
+# This file is part of groff, the GNU roff typesetting system.
 #
 # groff is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free
@@ -21,8 +25,8 @@ use warnings;
 use strict;
 
 # This table was algorithmically derived from the file 'UnicodeData.txt'
-# for Unicode 15.0.0, available from unicode.org,
-# on 2022-10-09.
+# for Unicode 17.0.0, available from unicode.org,
+# on 2025-10-09.
 my %unicode_decomposed = (
   "00C0", "0041_0300",
   "00C1", "0041_0301",
@@ -1517,6 +1521,8 @@ my %unicode_decomposed = (
   "FB4C", "05D1_05BF",
   "FB4D", "05DB_05BF",
   "FB4E", "05E4_05BF",
+  "105C9", "105D2_0307",
+  "105E4", "105DA_0307",
   "1109A", "11099_110BA",
   "1109C", "1109B_110BA",
   "110AB", "110A5_110BA",
@@ -1524,12 +1530,30 @@ my %unicode_decomposed = (
   "1112F", "11132_11127",
   "1134B", "11347_1133E",
   "1134C", "11347_11357",
+  "11383", "11382_113C9",
+  "11385", "11384_113BB",
+  "1138E", "1138B_113C2",
+  "11391", "11390_113C9",
+  "113C5", "113C2_113C2",
+  "113C7", "113C2_113B8",
+  "113C8", "113C2_113C9",
   "114BB", "114B9_114BA",
   "114BC", "114B9_114B0",
   "114BE", "114B9_114BD",
   "115BA", "115B8_115AF",
   "115BB", "115B9_115AF",
   "11938", "11935_11930",
+  "16121", "1611E_1611E",
+  "16122", "1611E_16129",
+  "16123", "1611E_1611F",
+  "16124", "16129_1611F",
+  "16125", "1611E_16120",
+  "16126", "1611E_1611E_1611F",
+  "16127", "1611E_16129_1611F",
+  "16128", "1611E_1611E_16120",
+  "16D68", "16D67_16D67",
+  "16D69", "16D63_16D67",
+  "16D6A", "16D63_16D67_16D67",
   "1D15E", "1D157_1D165",
   "1D15F", "1D158_1D165",
   "1D160", "1D158_1D165_1D16E",
@@ -2089,7 +2113,7 @@ my %unicode_decomposed = (
 
 # This table was algorithmically derived from the Adobe Glyph List (AGL)
 # file 'glyphlist.txt' from the GitHub Adobe Type Tools agl-aglfn
-# project, on 2022-10-09.
+# project, on 2025-10-09.
 #
 # See "groff:" comments for altered mappings.
 my %AGL_to_unicode = (
@@ -2097,7 +2121,9 @@ my %AGL_to_unicode = (
   "AE", "00C6",
   "AEacute", "01FC",
   "AEmacron", "01E2",
+  "AEsmall", "F7E6",
   "Aacute", "00C1",
+  "Aacutesmall", "F7E1",
   "Abreve", "0102",
   "Abreveacute", "1EAE",
   "Abrevecyrillic", "04D0",
@@ -2112,15 +2138,20 @@ my %AGL_to_unicode = (
   "Acircumflexdotbelow", "1EAC",
   "Acircumflexgrave", "1EA6",
   "Acircumflexhookabove", "1EA8",
+  "Acircumflexsmall", "F7E2",
   "Acircumflextilde", "1EAA",
+  "Acute", "F6C9",
+  "Acutesmall", "F7B4",
   "Acyrillic", "0410",
   "Adblgrave", "0200",
   "Adieresis", "00C4",
   "Adieresiscyrillic", "04D2",
   "Adieresismacron", "01DE",
+  "Adieresissmall", "F7E4",
   "Adotbelow", "1EA0",
   "Adotmacron", "01E0",
   "Agrave", "00C0",
+  "Agravesmall", "F7E0",
   "Ahookabove", "1EA2",
   "Aiecyrillic", "04D4",
   "Ainvertedbreve", "0202",
@@ -2132,7 +2163,10 @@ my %AGL_to_unicode = (
   "Aring", "00C5",
   "Aringacute", "01FA",
   "Aringbelow", "1E00",
+  "Aringsmall", "F7E5",
+  "Asmall", "F761",
   "Atilde", "00C3",
+  "Atildesmall", "F7E3",
   "Aybarmenian", "0531",
   "B", "0042",
   "Bcircle", "24B7",
@@ -2144,17 +2178,23 @@ my %AGL_to_unicode = (
   "Bhook", "0181",
   "Blinebelow", "1E06",
   "Bmonospace", "FF22",
+  "Brevesmall", "F6F4",
+  "Bsmall", "F762",
   "Btopbar", "0182",
   "C", "0043",
   "Caarmenian", "053E",
   "Cacute", "0106",
+  "Caron", "F6CA",
+  "Caronsmall", "F6F5",
   "Ccaron", "010C",
   "Ccedilla", "00C7",
   "Ccedillaacute", "1E08",
+  "Ccedillasmall", "F7E7",
   "Ccircle", "24B8",
   "Ccircumflex", "0108",
   "Cdot", "010A",
   "Cdotaccent", "010A",
+  "Cedillasmall", "F7B8",
   "Chaarmenian", "0549",
   "Cheabkhasiancyrillic", "04BC",
   "Checyrillic", "0427",
@@ -2166,8 +2206,10 @@ my %AGL_to_unicode = (
   "Cheverticalstrokecyrillic", "04B8",
   "Chi", "03A7",
   "Chook", "0187",
+  "Circumflexsmall", "F6F6",
   "Cmonospace", "FF23",
   "Coarmenian", "0551",
+  "Csmall", "F763",
   "D", "0044",
   "DZ", "01F1",
   "DZcaron", "01C4",
@@ -2185,11 +2227,17 @@ my %AGL_to_unicode = (
   "Delta", "0394", # groff: not U+2206
   "Deltagreek", "0394",
   "Dhook", "018A",
+  "Dieresis", "F6CB",
+  "DieresisAcute", "F6CC",
+  "DieresisGrave", "F6CD",
+  "Dieresissmall", "F7A8",
   "Digammagreek", "03DC",
   "Djecyrillic", "0402",
   "Dlinebelow", "1E0E",
   "Dmonospace", "FF24",
+  "Dotaccentsmall", "F6F7",
   "Dslash", "0110",
+  "Dsmall", "F764",
   "Dtopbar", "018B",
   "Dz", "01F2",
   "Dzcaron", "01C5",
@@ -2198,6 +2246,7 @@ my %AGL_to_unicode = (
   "Dzhecyrillic", "040F",
   "E", "0045",
   "Eacute", "00C9",
+  "Eacutesmall", "F7E9",
   "Ebreve", "0114",
   "Ecaron", "011A",
   "Ecedillabreve", "1E1C",
@@ -2209,15 +2258,18 @@ my %AGL_to_unicode = (
   "Ecircumflexdotbelow", "1EC6",
   "Ecircumflexgrave", "1EC0",
   "Ecircumflexhookabove", "1EC2",
+  "Ecircumflexsmall", "F7EA",
   "Ecircumflextilde", "1EC4",
   "Ecyrillic", "0404",
   "Edblgrave", "0204",
   "Edieresis", "00CB",
+  "Edieresissmall", "F7EB",
   "Edot", "0116",
   "Edotaccent", "0116",
   "Edotbelow", "1EB8",
   "Efcyrillic", "0424",
   "Egrave", "00C8",
+  "Egravesmall", "F7E8",
   "Eharmenian", "0537",
   "Ehookabove", "1EBA",
   "Eightroman", "2167",
@@ -2245,10 +2297,12 @@ my %AGL_to_unicode = (
   "Escyrillic", "0421",
   "Esdescendercyrillic", "04AA",
   "Esh", "01A9",
+  "Esmall", "F765",
   "Eta", "0397",
   "Etarmenian", "0538",
   "Etatonos", "0389",
   "Eth", "00D0",
+  "Ethsmall", "F7F0",
   "Etilde", "1EBC",
   "Etildebelow", "1E1A",
   "Euro", "20AC",
@@ -2265,6 +2319,7 @@ my %AGL_to_unicode = (
   "Fiveroman", "2164",
   "Fmonospace", "FF26",
   "Fourroman", "2163",
+  "Fsmall", "F766",
   "G", "0047",
   "GBsquare", "3387",
   "Gacute", "01F4",
@@ -2289,6 +2344,9 @@ my %AGL_to_unicode = (
   "Gjecyrillic", "0403",
   "Gmacron", "1E20",
   "Gmonospace", "FF27",
+  "Grave", "F6CE",
+  "Gravesmall", "F760",
+  "Gsmall", "F767",
   "Gsmallhook", "029B",
   "Gstroke", "01E4",
   "H", "0048",
@@ -2311,21 +2369,27 @@ my %AGL_to_unicode = (
   "Hmonospace", "FF28",
   "Hoarmenian", "0540",
   "Horicoptic", "03E8",
+  "Hsmall", "F768",
+  "Hungarumlaut", "F6CF",
+  "Hungarumlautsmall", "F6F8",
   "Hzsquare", "3390",
   "I", "0049",
   "IAcyrillic", "042F",
   "IJ", "0132",
   "IUcyrillic", "042E",
   "Iacute", "00CD",
+  "Iacutesmall", "F7ED",
   "Ibreve", "012C",
   "Icaron", "01CF",
   "Icircle", "24BE",
   "Icircumflex", "00CE",
+  "Icircumflexsmall", "F7EE",
   "Icyrillic", "0406",
   "Idblgrave", "0208",
   "Idieresis", "00CF",
   "Idieresisacute", "1E2E",
   "Idieresiscyrillic", "04E4",
+  "Idieresissmall", "F7EF",
   "Idot", "0130",
   "Idotaccent", "0130",
   "Idotbelow", "1ECA",
@@ -2333,6 +2397,7 @@ my %AGL_to_unicode = (
   "Iecyrillic", "0415",
   "Ifraktur", "2111",
   "Igrave", "00CC",
+  "Igravesmall", "F7EC",
   "Ihookabove", "1EC8",
   "Iicyrillic", "0418",
   "Iinvertedbreve", "020A",
@@ -2347,6 +2412,7 @@ my %AGL_to_unicode = (
   "Iotaafrican", "0196",
   "Iotadieresis", "03AA",
   "Iotatonos", "038A",
+  "Ismall", "F769",
   "Istroke", "0197",
   "Itilde", "0128",
   "Itildebelow", "1E2C",
@@ -2359,6 +2425,7 @@ my %AGL_to_unicode = (
   "Jecyrillic", "0408",
   "Jheharmenian", "054B",
   "Jmonospace", "FF2A",
+  "Jsmall", "F76A",
   "K", "004B",
   "KBsquare", "3385",
   "KKsquare", "33CD",
@@ -2386,8 +2453,10 @@ my %AGL_to_unicode = (
   "Koppacyrillic", "0480",
   "Koppagreek", "03DE",
   "Ksicyrillic", "046E",
+  "Ksmall", "F76B",
   "L", "004C",
   "LJ", "01C7",
+  "LL", "F6BF",
   "Lacute", "0139",
   "Lambda", "039B",
   "Lcaron", "013D",
@@ -2405,14 +2474,19 @@ my %AGL_to_unicode = (
   "Llinebelow", "1E3A",
   "Lmonospace", "FF2C",
   "Lslash", "0141",
+  "Lslashsmall", "F6F9",
+  "Lsmall", "F76C",
   "M", "004D",
   "MBsquare", "3386",
+  "Macron", "F6D0",
+  "Macronsmall", "F7AF",
   "Macute", "1E3E",
   "Mcircle", "24C2",
   "Mdotaccent", "1E40",
   "Mdotbelow", "1E42",
   "Menarmenian", "0544",
   "Mmonospace", "FF2D",
+  "Msmall", "F76D",
   "Mturned", "019C",
   "Mu", "039C",
   "N", "004E",
@@ -2432,11 +2506,15 @@ my %AGL_to_unicode = (
   "Nlinebelow", "1E48",
   "Nmonospace", "FF2E",
   "Nowarmenian", "0546",
+  "Nsmall", "F76E",
   "Ntilde", "00D1",
+  "Ntildesmall", "F7F1",
   "Nu", "039D",
   "O", "004F",
   "OE", "0152",
+  "OEsmall", "F6FA",
   "Oacute", "00D3",
+  "Oacutesmall", "F7F3",
   "Obarredcyrillic", "04E8",
   "Obarreddieresiscyrillic", "04EA",
   "Obreve", "014E",
@@ -2448,14 +2526,18 @@ my %AGL_to_unicode = (
   "Ocircumflexdotbelow", "1ED8",
   "Ocircumflexgrave", "1ED2",
   "Ocircumflexhookabove", "1ED4",
+  "Ocircumflexsmall", "F7F4",
   "Ocircumflextilde", "1ED6",
   "Ocyrillic", "041E",
   "Odblacute", "0150",
   "Odblgrave", "020C",
   "Odieresis", "00D6",
   "Odieresiscyrillic", "04E6",
+  "Odieresissmall", "F7F6",
   "Odotbelow", "1ECC",
+  "Ogoneksmall", "F6FB",
   "Ograve", "00D2",
+  "Ogravesmall", "F7F2",
   "Oharmenian", "0555",
   "Ohm", "2126",
   "Ohookabove", "1ECE",
@@ -2486,11 +2568,14 @@ my %AGL_to_unicode = (
   "Oopen", "0186",
   "Oslash", "00D8",
   "Oslashacute", "01FE",
+  "Oslashsmall", "F7F8",
+  "Osmall", "F76F",
   "Ostrokeacute", "01FE",
   "Otcyrillic", "047E",
   "Otilde", "00D5",
   "Otildeacute", "1E4C",
   "Otildedieresis", "1E4E",
+  "Otildesmall", "F7F5",
   "P", "0050",
   "Pacute", "1E54",
   "Pcircle", "24C5",
@@ -2505,9 +2590,11 @@ my %AGL_to_unicode = (
   "Pmonospace", "FF30",
   "Psi", "03A8",
   "Psicyrillic", "0470",
+  "Psmall", "F770",
   "Q", "0051",
   "Qcircle", "24C6",
   "Qmonospace", "FF31",
+  "Qsmall", "F771",
   "R", "0052",
   "Raarmenian", "054C",
   "Racute", "0154",
@@ -2522,9 +2609,11 @@ my %AGL_to_unicode = (
   "Reharmenian", "0550",
   "Rfraktur", "211C",
   "Rho", "03A1",
+  "Ringsmall", "F6FC",
   "Rinvertedbreve", "0212",
   "Rlinebelow", "1E5E",
   "Rmonospace", "FF32",
+  "Rsmall", "F772",
   "Rsmallinverted", "0281",
   "Rsmallinvertedsuperior", "02B6",
   "S", "0053",
@@ -2573,6 +2662,7 @@ my %AGL_to_unicode = (
   "Sampigreek", "03E0",
   "Scaron", "0160",
   "Scarondotaccent", "1E66",
+  "Scaronsmall", "F6FD",
   "Scedilla", "015E",
   "Schwa", "018F",
   "Schwacyrillic", "04D8",
@@ -2595,6 +2685,7 @@ my %AGL_to_unicode = (
   "Sixroman", "2165",
   "Smonospace", "FF33",
   "Softsigncyrillic", "042C",
+  "Ssmall", "F773",
   "Stigmagreek", "03DA",
   "T", "0054",
   "Tau", "03A4",
@@ -2613,7 +2704,9 @@ my %AGL_to_unicode = (
   "Theta", "0398",
   "Thook", "01AC",
   "Thorn", "00DE",
+  "Thornsmall", "F7FE",
   "Threeroman", "2162",
+  "Tildesmall", "F6FE",
   "Tiwnarmenian", "054F",
   "Tlinebelow", "1E6E",
   "Tmonospace", "FF34",
@@ -2624,15 +2717,18 @@ my %AGL_to_unicode = (
   "Tretroflexhook", "01AE",
   "Tsecyrillic", "0426",
   "Tshecyrillic", "040B",
+  "Tsmall", "F774",
   "Twelveroman", "216B",
   "Tworoman", "2161",
   "U", "0055",
   "Uacute", "00DA",
+  "Uacutesmall", "F7FA",
   "Ubreve", "016C",
   "Ucaron", "01D3",
   "Ucircle", "24CA",
   "Ucircumflex", "00DB",
   "Ucircumflexbelow", "1E76",
+  "Ucircumflexsmall", "F7FB",
   "Ucyrillic", "0423",
   "Udblacute", "0170",
   "Udblgrave", "0214",
@@ -2643,8 +2739,10 @@ my %AGL_to_unicode = (
   "Udieresiscyrillic", "04F0",
   "Udieresisgrave", "01DB",
   "Udieresismacron", "01D5",
+  "Udieresissmall", "F7FC",
   "Udotbelow", "1EE4",
   "Ugrave", "00D9",
+  "Ugravesmall", "F7F9",
   "Uhookabove", "1EE6",
   "Uhorn", "01AF",
   "Uhornacute", "1EE8",
@@ -2671,6 +2769,7 @@ my %AGL_to_unicode = (
   "Upsilontonos", "038E",
   "Uring", "016E",
   "Ushortcyrillic", "040E",
+  "Usmall", "F775",
   "Ustraightcyrillic", "04AE",
   "Ustraightstrokecyrillic", "04B0",
   "Utilde", "0168",
@@ -2684,6 +2783,7 @@ my %AGL_to_unicode = (
   "Vhook", "01B2",
   "Vmonospace", "FF36",
   "Voarmenian", "0548",
+  "Vsmall", "F776",
   "Vtilde", "1E7C",
   "W", "0057",
   "Wacute", "1E82",
@@ -2694,6 +2794,7 @@ my %AGL_to_unicode = (
   "Wdotbelow", "1E88",
   "Wgrave", "1E80",
   "Wmonospace", "FF37",
+  "Wsmall", "F777",
   "X", "0058",
   "Xcircle", "24CD",
   "Xdieresis", "1E8C",
@@ -2701,12 +2802,15 @@ my %AGL_to_unicode = (
   "Xeharmenian", "053D",
   "Xi", "039E",
   "Xmonospace", "FF38",
+  "Xsmall", "F778",
   "Y", "0059",
   "Yacute", "00DD",
+  "Yacutesmall", "F7FD",
   "Yatcyrillic", "0462",
   "Ycircle", "24CE",
   "Ycircumflex", "0176",
   "Ydieresis", "0178",
+  "Ydieresissmall", "F7FF",
   "Ydotaccent", "1E8E",
   "Ydotbelow", "1EF4",
   "Yericyrillic", "042B",
@@ -2718,6 +2822,7 @@ my %AGL_to_unicode = (
   "Yicyrillic", "0407",
   "Yiwnarmenian", "0552",
   "Ymonospace", "FF39",
+  "Ysmall", "F779",
   "Ytilde", "1EF8",
   "Yusbigcyrillic", "046A",
   "Yusbigiotifiedcyrillic", "046C",
@@ -2727,6 +2832,7 @@ my %AGL_to_unicode = (
   "Zaarmenian", "0536",
   "Zacute", "0179",
   "Zcaron", "017D",
+  "Zcaronsmall", "F6FF",
   "Zcircle", "24CF",
   "Zcircumflex", "1E90",
   "Zdot", "017B",
@@ -2743,6 +2849,7 @@ my %AGL_to_unicode = (
   "Zhedieresiscyrillic", "04DC",
   "Zlinebelow", "1E94",
   "Zmonospace", "FF3A",
+  "Zsmall", "F77A",
   "Zstroke", "01B5",
   "a", "0061",
   "aabengali", "0986",
@@ -2842,6 +2949,8 @@ my %AGL_to_unicode = (
   "afii10060", "040B",
   "afii10061", "040C",
   "afii10062", "040E",
+  "afii10063", "F6C4",
+  "afii10064", "F6C5",
   "afii10065", "0430",
   "afii10066", "0431",
   "afii10067", "0432",
@@ -2892,10 +3001,13 @@ my %AGL_to_unicode = (
   "afii10146", "0462",
   "afii10147", "0472",
   "afii10148", "0474",
+  "afii10192", "F6C6",
   "afii10193", "045F",
   "afii10194", "0463",
   "afii10195", "0473",
   "afii10196", "0475",
+  "afii10831", "F6C7",
+  "afii10832", "F6C8",
   "afii10846", "04D9",
   "afii299", "200E",
   "afii300", "200F",
@@ -3084,6 +3196,7 @@ my %AGL_to_unicode = (
   "amonospace", "FF41",
   "ampersand", "0026",
   "ampersandmonospace", "FF06",
+  "ampersandsmall", "F726",
   "amsquare", "33C2",
   "anbopomofo", "3122",
   "angbopomofo", "3124",
@@ -3106,6 +3219,7 @@ my %AGL_to_unicode = (
   "aparen", "249C",
   "apostrophearmenian", "055A",
   "apostrophemod", "02BC",
+  "apple", "F8FF",
   "approaches", "2250",
   "approxequal", "2248",
   "approxequalorimage", "2252",
@@ -3135,6 +3249,7 @@ my %AGL_to_unicode = (
   "arrowheadleftmod", "02C2",
   "arrowheadrightmod", "02C3",
   "arrowheadupmod", "02C4",
+  "arrowhorizex", "F8E7",
   "arrowleft", "2190",
   "arrowleftdbl", "21D0",
   "arrowleftdblstroke", "21CD",
@@ -3155,6 +3270,7 @@ my %AGL_to_unicode = (
   "arrowupleftofdown", "21C5",
   "arrowupright", "2197",
   "arrowupwhite", "21E7",
+  "arrowvertex", "F8E6",
   "asciicircum", "005E",
   "asciicircummonospace", "FF3E",
   "asciitilde", "007E",
@@ -3171,6 +3287,7 @@ my %AGL_to_unicode = (
   "asteriskmonospace", "FF0A",
   "asterisksmall", "FE61",
   "asterism", "2042",
+  "asuperior", "F6E9",
   "asymptoticallyequal", "2243",
   "at", "0040",
   "atilde", "00E3",
@@ -3269,18 +3386,31 @@ my %AGL_to_unicode = (
   "bokatakana", "30DC",
   "bparen", "249D",
   "bqsquare", "33C3",
+  "braceex", "F8F4",
   "braceleft", "007B",
+  "braceleftbt", "F8F3",
+  "braceleftmid", "F8F2",
   "braceleftmonospace", "FF5B",
   "braceleftsmall", "FE5B",
+  "bracelefttp", "F8F1",
   "braceleftvertical", "FE37",
   "braceright", "007D",
+  "bracerightbt", "F8FE",
+  "bracerightmid", "F8FD",
   "bracerightmonospace", "FF5D",
   "bracerightsmall", "FE5C",
+  "bracerighttp", "F8FC",
   "bracerightvertical", "FE38",
   "bracketleft", "005B",
+  "bracketleftbt", "F8F0",
+  "bracketleftex", "F8EF",
   "bracketleftmonospace", "FF3B",
+  "bracketlefttp", "F8EE",
   "bracketright", "005D",
+  "bracketrightbt", "F8FB",
+  "bracketrightex", "F8FA",
   "bracketrightmonospace", "FF3D",
+  "bracketrighttp", "F8F9",
   "breve", "02D8",
   "brevebelowcmb", "032E",
   "brevecmb", "0306",
@@ -3291,6 +3421,7 @@ my %AGL_to_unicode = (
   "bridgeinvertedbelowcmb", "033A",
   "brokenbar", "00A6",
   "bstroke", "0180",
+  "bsuperior", "F6EA",
   "btopbar", "0183",
   "buhiragana", "3076",
   "bukatakana", "30D6",
@@ -3330,7 +3461,10 @@ my %AGL_to_unicode = (
   "cedillacmb", "0327",
   "cent", "00A2",
   "centigrade", "2103",
+  "centinferior", "F6DF",
   "centmonospace", "FFE0",
+  "centoldstyle", "F7A2",
+  "centsuperior", "F6E0",
   "chaarmenian", "0579",
   "chabengali", "099B",
   "chadeva", "091B",
@@ -3395,12 +3529,15 @@ my %AGL_to_unicode = (
   "comma", "002C",
   "commaabovecmb", "0313",
   "commaaboverightcmb", "0315",
+  "commaaccent", "F6C3",
   "commaarabic", "060C",
   "commaarmenian", "055D",
+  "commainferior", "F6E1",
   "commamonospace", "FF0C",
   "commareversedabovecmb", "0314",
   "commareversedmod", "02BD",
   "commasmall", "FE50",
+  "commasuperior", "F6E2",
   "commaturnedabovecmb", "0312",
   "commaturnedmod", "02BB",
   "compass", "263C",
@@ -3440,6 +3577,8 @@ my %AGL_to_unicode = (
   "controlUS", "001F",
   "controlVT", "000B",
   "copyright", "00A9",
+  "copyrightsans", "F8E9",
+  "copyrightserif", "F6D9",
   "cornerbracketleft", "300C",
   "cornerbracketlefthalfwidth", "FF62",
   "cornerbracketleftvertical", "FE41",
@@ -3455,6 +3594,10 @@ my %AGL_to_unicode = (
   "curlyand", "22CF",
   "curlyor", "22CE",
   "currency", "00A4",
+  "cyrBreve", "F6D1",
+  "cyrFlex", "F6D2",
+  "cyrbreve", "F6D4",
+  "cyrflex", "F6D5",
   "d", "0064",
   "daarmenian", "0564",
   "dabengali", "09A6",
@@ -3505,6 +3648,7 @@ my %AGL_to_unicode = (
   "dargahebrew", "05A7",
   "dargalefthebrew", "05A7",
   "dasiapneumatacyrilliccmb", "0485",
+  "dblGrave", "F6D3",
   "dblanglebracketleft", "300A",
   "dblanglebracketleftvertical", "FE3D",
   "dblanglebracketright", "300B",
@@ -3513,6 +3657,7 @@ my %AGL_to_unicode = (
   "dblarrowleft", "21D4",
   "dblarrowright", "21D2",
   "dbldanda", "0965",
+  "dblgrave", "F6D6",
   "dblgravecmb", "030F",
   "dblintegral", "222C",
   "dbllowline", "2017",
@@ -3565,8 +3710,10 @@ my %AGL_to_unicode = (
   "diamond", "2666",
   "diamondsuitwhite", "2662",
   "dieresis", "00A8",
+  "dieresisacute", "F6D7",
   "dieresisbelowcmb", "0324",
   "dieresiscmb", "0308",
+  "dieresisgrave", "F6D8",
   "dieresistonos", "0385",
   "dihiragana", "3062",
   "dikatakana", "30C2",
@@ -3586,8 +3733,11 @@ my %AGL_to_unicode = (
   "dohiragana", "3069",
   "dokatakana", "30C9",
   "dollar", "0024",
+  "dollarinferior", "F6E3",
   "dollarmonospace", "FF04",
+  "dollaroldstyle", "F724",
   "dollarsmall", "FE69",
+  "dollarsuperior", "F6E4",
   "dong", "20AB",
   "dorusquare", "3326",
   "dotaccent", "02D9",
@@ -3596,6 +3746,7 @@ my %AGL_to_unicode = (
   "dotbelowcomb", "0323",
   "dotkatakana", "30FB",
   "dotlessi", "0131",
+  "dotlessj", "F6BE",
   "dotlessjstrokehook", "0284",
   "dotmath", "22C5",
   "dottedcircle", "25CC",
@@ -3604,6 +3755,7 @@ my %AGL_to_unicode = (
   "downtackbelowcmb", "031E",
   "downtackmod", "02D5",
   "dparen", "249F",
+  "dsuperior", "F6EB",
   "dtail", "0256",
   "dtopbar", "018C",
   "duhiragana", "3065",
@@ -3671,6 +3823,7 @@ my %AGL_to_unicode = (
   "eightideographicparen", "3227",
   "eightinferior", "2088",
   "eightmonospace", "FF18",
+  "eightoldstyle", "F738",
   "eightparen", "247B",
   "eightperiod", "248F",
   "eightpersian", "06F8",
@@ -3741,6 +3894,7 @@ my %AGL_to_unicode = (
   "esmallkatakana", "30A7",
   "esmallkatakanahalfwidth", "FF6A",
   "estimated", "212E",
+  "esuperior", "F6EC",
   "eta", "03B7",
   "etarmenian", "0568",
   "etatonos", "03AE",
@@ -3761,7 +3915,9 @@ my %AGL_to_unicode = (
   "exclamarmenian", "055C",
   "exclamdbl", "203C",
   "exclamdown", "00A1",
+  "exclamdownsmall", "F7A1",
   "exclammonospace", "FF01",
+  "exclamsmall", "F721",
   "existential", "2203",
   "ezh", "0292",
   "ezhcaron", "01EF",
@@ -3828,6 +3984,7 @@ my %AGL_to_unicode = (
   "fiveideographicparen", "3224",
   "fiveinferior", "2085",
   "fivemonospace", "FF15",
+  "fiveoldstyle", "F735",
   "fiveparen", "2478",
   "fiveperiod", "248C",
   "fivepersian", "06F5",
@@ -3856,6 +4013,7 @@ my %AGL_to_unicode = (
   "fourinferior", "2084",
   "fourmonospace", "FF14",
   "fournumeratorbengali", "09F7",
+  "fouroldstyle", "F734",
   "fourparen", "2477",
   "fourperiod", "248B",
   "fourpersian", "06F4",
@@ -4117,8 +4275,10 @@ my %AGL_to_unicode = (
   "hungarumlautcmb", "030B",
   "hv", "0195",
   "hyphen", "002D",
+  "hypheninferior", "F6E5",
   "hyphenmonospace", "FF0D",
   "hyphensmall", "FE63",
+  "hyphensuperior", "F6E6",
   "hyphentwo", "2010",
   "i", "0069",
   "iacute", "00ED",
@@ -4228,6 +4388,7 @@ my %AGL_to_unicode = (
   "integral", "222B",
   "integralbottom", "2321",
   "integralbt", "2321",
+  "integralex", "F8F5",
   "integraltop", "2320",
   "integraltp", "2320",
   "intersection", "2229",
@@ -4249,6 +4410,7 @@ my %AGL_to_unicode = (
   "ismallkatakanahalfwidth", "FF68",
   "issharbengali", "09FA",
   "istroke", "0268",
+  "isuperior", "F6ED",
   "iterationhiragana", "309D",
   "iterationkatakana", "30FD",
   "itilde", "0129",
@@ -4469,6 +4631,7 @@ my %AGL_to_unicode = (
   "liwnarmenian", "056C",
   "lj", "01C9",
   "ljecyrillic", "0459",
+  "ll", "F6C0",
   "lladeva", "0933",
   "llagujarati", "0AB3",
   "llinebelow", "1E3B",
@@ -4494,6 +4657,7 @@ my %AGL_to_unicode = (
   "lparen", "24A7",
   "lslash", "0142",
   "lsquare", "2113",
+  "lsuperior", "F6EE",
   "ltshade", "2591",
   "luthai", "0E26",
   "lvocalicbengali", "098C",
@@ -4515,12 +4679,26 @@ my %AGL_to_unicode = (
   "mahapakhhebrew", "05A4",
   "mahapakhlefthebrew", "05A4",
   "mahiragana", "307E",
+  "maichattawalowleftthai", "F895",
+  "maichattawalowrightthai", "F894",
   "maichattawathai", "0E4B",
+  "maichattawaupperleftthai", "F893",
+  "maieklowleftthai", "F88C",
+  "maieklowrightthai", "F88B",
   "maiekthai", "0E48",
+  "maiekupperleftthai", "F88A",
+  "maihanakatleftthai", "F884",
   "maihanakatthai", "0E31",
+  "maitaikhuleftthai", "F889",
   "maitaikhuthai", "0E47",
+  "maitholowleftthai", "F88F",
+  "maitholowrightthai", "F88E",
   "maithothai", "0E49",
+  "maithoupperleftthai", "F88D",
+  "maitrilowleftthai", "F892",
+  "maitrilowrightthai", "F891",
   "maitrithai", "0E4A",
+  "maitriupperleftthai", "F890",
   "maiyamokthai", "0E46",
   "makatakana", "30DE",
   "makatakanahalfwidth", "FF8F",
@@ -4595,6 +4773,7 @@ my %AGL_to_unicode = (
   "mparen", "24A8",
   "mpasquare", "33AB",
   "mssquare", "33B3",
+  "msuperior", "F6EF",
   "mturned", "026F",
   "mu", "03BC", # groff: not U+00B5
   "mu1", "00B5",
@@ -4670,6 +4849,7 @@ my %AGL_to_unicode = (
   "nihiragana", "306B",
   "nikatakana", "30CB",
   "nikatakanahalfwidth", "FF86",
+  "nikhahitleftthai", "F899",
   "nikhahitthai", "0E4D",
   "nine", "0039",
   "ninearabic", "0669",
@@ -4684,6 +4864,7 @@ my %AGL_to_unicode = (
   "nineideographicparen", "3228",
   "nineinferior", "2089",
   "ninemonospace", "FF19",
+  "nineoldstyle", "F739",
   "nineparen", "247C",
   "nineperiod", "2490",
   "ninepersian", "06F9",
@@ -4841,6 +5022,7 @@ my %AGL_to_unicode = (
   "onedeva", "0967",
   "onedotenleader", "2024",
   "oneeighth", "215B",
+  "onefitted", "F6DC",
   "onegujarati", "0AE7",
   "onegurmukhi", "0A67",
   "onehackarabic", "0661",
@@ -4850,6 +5032,7 @@ my %AGL_to_unicode = (
   "oneinferior", "2081",
   "onemonospace", "FF11",
   "onenumeratorbengali", "09F4",
+  "oneoldstyle", "F731",
   "oneparen", "2474",
   "oneperiod", "2488",
   "onepersian", "06F1",
@@ -4877,6 +5060,7 @@ my %AGL_to_unicode = (
   "osmallkatakana", "30A9",
   "osmallkatakanahalfwidth", "FF6B",
   "ostrokeacute", "01FF",
+  "osuperior", "F6F0",
   "otcyrillic", "047F",
   "otilde", "00F5",
   "otildeacute", "1E4D",
@@ -4912,17 +5096,23 @@ my %AGL_to_unicode = (
   "parallel", "2225",
   "parenleft", "0028",
   "parenleftaltonearabic", "FD3E",
+  "parenleftbt", "F8ED",
+  "parenleftex", "F8EC",
   "parenleftinferior", "208D",
   "parenleftmonospace", "FF08",
   "parenleftsmall", "FE59",
   "parenleftsuperior", "207D",
+  "parenlefttp", "F8EB",
   "parenleftvertical", "FE35",
   "parenright", "0029",
   "parenrightaltonearabic", "FD3F",
+  "parenrightbt", "F8F8",
+  "parenrightex", "F8F7",
   "parenrightinferior", "208E",
   "parenrightmonospace", "FF09",
   "parenrightsmall", "FE5A",
   "parenrightsuperior", "207E",
+  "parenrighttp", "F8F6",
   "parenrightvertical", "FE36",
   "partialdiff", "2202",
   "paseqhebrew", "05C0",
@@ -4964,8 +5154,10 @@ my %AGL_to_unicode = (
   "periodarmenian", "0589",
   "periodcentered", "00B7",
   "periodhalfwidth", "FF61",
+  "periodinferior", "F6E7",
   "periodmonospace", "FF0E",
   "periodsmall", "FE52",
+  "periodsuperior", "F6E8",
   "perispomenigreekcmb", "0342",
   "perpendicular", "22A5",
   "perthousand", "2030",
@@ -5112,8 +5304,10 @@ my %AGL_to_unicode = (
   "questionarabic", "061F",
   "questionarmenian", "055E",
   "questiondown", "00BF",
+  "questiondownsmall", "F7BF",
   "questiongreek", "037E",
   "questionmonospace", "FF1F",
+  "questionsmall", "F73F",
   "quotedbl", "0022",
   "quotedblbase", "201E",
   "quotedblleft", "201C",
@@ -5135,6 +5329,7 @@ my %AGL_to_unicode = (
   "racute", "0155",
   "radeva", "0930",
   "radical", "221A",
+  "radicalex", "F8E5",
   "radoverssquare", "33AE",
   "radoverssquaredsquare", "33AF",
   "radsquare", "33AD",
@@ -5162,6 +5357,8 @@ my %AGL_to_unicode = (
   "reflexsubset", "2286",
   "reflexsuperset", "2287",
   "registered", "00AE",
+  "registersans", "F8E8",
+  "registerserif", "F6DA",
   "reharabic", "0631",
   "reharmenian", "0580",
   "rehfinalarabic", "FEAE",
@@ -5261,6 +5458,7 @@ my %AGL_to_unicode = (
   "rrvocalicvowelsignbengali", "09C4",
   "rrvocalicvowelsigndeva", "0944",
   "rrvocalicvowelsigngujarati", "0AC4",
+  "rsuperior", "F6F1",
   "rtblock", "2590",
   "rturned", "0279",
   "rturnedsuperior", "02B4",
@@ -5269,6 +5467,7 @@ my %AGL_to_unicode = (
   "rukatakanahalfwidth", "FF99",
   "rupeemarkbengali", "09F2",
   "rupeesignbengali", "09F3",
+  "rupiah", "F6DD",
   "ruthai", "0E24",
   "rvocalicbengali", "098B",
   "rvocalicdeva", "090B",
@@ -5302,10 +5501,14 @@ my %AGL_to_unicode = (
   "saraamthai", "0E33",
   "saraathai", "0E30",
   "saraethai", "0E40",
+  "saraiileftthai", "F886",
   "saraiithai", "0E35",
+  "saraileftthai", "F885",
   "saraithai", "0E34",
   "saraothai", "0E42",
+  "saraueeleftthai", "F888",
   "saraueethai", "0E37",
+  "saraueleftthai", "F887",
   "sarauethai", "0E36",
   "sarauthai", "0E38",
   "sarauuthai", "0E39",
@@ -5366,6 +5569,7 @@ my %AGL_to_unicode = (
   "sevenideographicparen", "3226",
   "seveninferior", "2087",
   "sevenmonospace", "FF17",
+  "sevenoldstyle", "F737",
   "sevenparen", "247A",
   "sevenperiod", "248E",
   "sevenpersian", "06F7",
@@ -5462,6 +5666,7 @@ my %AGL_to_unicode = (
   "sixideographicparen", "3225",
   "sixinferior", "2086",
   "sixmonospace", "FF16",
+  "sixoldstyle", "F736",
   "sixparen", "2479",
   "sixperiod", "248D",
   "sixpersian", "06F6",
@@ -5527,6 +5732,7 @@ my %AGL_to_unicode = (
   "ssangpieupkorean", "3143",
   "ssangsioskorean", "3146",
   "ssangtikeutkorean", "3138",
+  "ssuperior", "F6F2",
   "sterling", "00A3",
   "sterlingmonospace", "FFE1",
   "strokelongoverlaycmb", "0336",
@@ -5626,7 +5832,10 @@ my %AGL_to_unicode = (
   "thagurmukhi", "0A25",
   "thalarabic", "0630",
   "thalfinalarabic", "FEAC",
+  "thanthakhatlowleftthai", "F898",
+  "thanthakhatlowrightthai", "F897",
   "thanthakhatthai", "0E4C",
+  "thanthakhatupperleftthai", "F896",
   "theharabic", "062B",
   "thehfinalarabic", "FE9A",
   "thehinitialarabic", "FE9B",
@@ -5670,10 +5879,12 @@ my %AGL_to_unicode = (
   "threeinferior", "2083",
   "threemonospace", "FF13",
   "threenumeratorbengali", "09F6",
+  "threeoldstyle", "F733",
   "threeparen", "2476",
   "threeperiod", "248A",
   "threepersian", "06F3",
   "threequarters", "00BE",
+  "threequartersemdash", "F6DE",
   "threeroman", "2172",
   "threesuperior", "00B3",
   "threethai", "0E53",
@@ -5727,6 +5938,8 @@ my %AGL_to_unicode = (
   "tpalatalhook", "01AB",
   "tparen", "24AF",
   "trademark", "2122",
+  "trademarksans", "F8EA",
+  "trademarkserif", "F6DB",
   "tretroflexhook", "0288",
   "triagdn", "25BC",
   "triaglf", "25C4",
@@ -5747,6 +5960,7 @@ my %AGL_to_unicode = (
   "tserequarterhebrew", "05B5",
   "tserewidehebrew", "05B5",
   "tshecyrillic", "045B",
+  "tsuperior", "F6F3",
   "ttabengali", "099F",
   "ttadeva", "091F",
   "ttagujarati", "0A9F",
@@ -5791,6 +6005,7 @@ my %AGL_to_unicode = (
   "twoinferior", "2082",
   "twomonospace", "FF12",
   "twonumeratorbengali", "09F5",
+  "twooldstyle", "F732",
   "twoparen", "2475",
   "twoperiod", "2489",
   "twopersian", "06F2",
@@ -6157,6 +6372,7 @@ my %AGL_to_unicode = (
   "zerohackarabic", "0660",
   "zeroinferior", "2080",
   "zeromonospace", "FF10",
+  "zerooldstyle", "F730",
   "zeropersian", "06F0",
   "zerosuperior", "2070",
   "zerothai", "0E50",
@@ -6184,21 +6400,38 @@ my %AGL_to_unicode = (
   "zukatakana", "30BA",
 );
 
-my $prog = $0;
-my $groff_sys_fontdir = "/usr/share/groff/1.23.0/font";
+use File::Spec;
+(undef,undef,my $program_name)=File::Spec->splitpath($0);
+
+my $groff_sys_fontdir = "/usr/share/groff/1.24.1/font";
 my $want_help;
 my $space_width = 0;
 
 our ($opt_a, $opt_c, $opt_d, $opt_e, $opt_f, $opt_i, $opt_k,
-     $opt_m, $opt_n, $opt_o, $opt_s, $opt_v, $opt_x);
+     $opt_m, $opt_n, $opt_o, $opt_q, $opt_s, $opt_v, $opt_w, $opt_x);
 
 use Getopt::Long qw(:config gnu_getopt);
 GetOptions( "a=s", "c", "d=s", "e=s", "f=s", "i=s", "k", "m", "n",
-  "o=s", "s", "v", "w=i" => \$space_width, "x", "version" => \$opt_v,
+  "o=s", "q", "s", "v", "w=i", "x", "version" => \$opt_v,
   "help" => \$want_help
 );
 
-my $afmtodit_version = "GNU afmtodit (groff) version 1.23.0";
+# for diagnostics
+our $filename;
+our $lineno = 0;
+
+# We keep these two scalars separate so we can report out the option.
+$space_width = $opt_w if defined $opt_w;
+
+# Preserve the Git revision and partial hash from development builds in
+# `--version` output, but scrub it from comments written to files.
+my $groff_version = "1.24.1";
+my $short_version = $groff_version;
+$short_version =~ s/(\d+\.\d+.\d+).*/$1/;
+
+my $version_stub = "GNU afmtodit (groff) version";
+my $afmtodit_version = "$version_stub $groff_version";
+my $output_version = "$version_stub $short_version";
 
 if ($opt_v) {
     print "$afmtodit_version\n";
@@ -6206,38 +6439,49 @@ if ($opt_v) {
 }
 
 sub croak {
-  my $msg = shift;
-  print STDERR "$prog: error: $msg";
-  exit(1);
+    my $msg = shift;
+    my $pos = "";
+    $pos .= "$filename:" if $filename;
+    $pos .= "$lineno:" if $lineno;
+    print STDERR "$program_name:$pos error: $msg\n";
+    exit(1);
+}
+
+sub whine {
+    my $msg = shift;
+    my $pos = "";
+    $pos .= "$filename:" if $filename;
+    $pos .= "$lineno:" if $lineno;
+    print STDERR "$program_name:$pos warning: $msg\n";
 }
 
 sub usage {
     my $stream = *STDOUT;
     my $had_error = shift;
     $stream = *STDERR if $had_error;
-    print $stream "usage: $prog [-ckmnsx] [-a slant]" .
+    print $stream "usage: $program_name [-ckmnsx] [-a slant]" .
 	" [-d device-description-file] [-e encoding-file]" .
 	" [-f internal-name] [-i italic-correction-factor]" .
 	" [-o output-file] [-w space-width] afm-file map-file" .
 	" font-description-file\n" .
-	"usage: $prog {-v | --version}\n" .
-	"usage: $prog --help\n";
+	"usage: $program_name {-v | --version}\n" .
+	"usage: $program_name --help\n";
     unless ($had_error) {
 	print $stream "\n" .
-"Adapt an Adobe Font Metric file, afm-file, for use with the 'ps'\n" .
-"and 'pdf' output devices of groff(1).  See the afmtodit(1) manual " .
-"page.\n";
+"Generate a font description file for use with groff(1)'s 'ps' and\n" .
+"'pdf' output devices from an Adobe Font Metric file, afm-file.\n" .
+"See the afmtodit(1) manual page.\n";
     }
     my $status = 0;
     $status = 2 if ($had_error);
     exit($status);
 }
 
-&usage(0) if ($want_help);
+usage(0) if ($want_help);
 
 if ($#ARGV != 2) {
-    print STDERR "$prog: usage error: insufficient arguments\n";
-    &usage(1);
+    print STDERR "$program_name: usage error: insufficient arguments\n";
+    usage(1);
 }
 
 my $afm = $ARGV[0];
@@ -6251,7 +6495,7 @@ my $sys_desc = $groff_sys_fontdir . "/devps/" . $desc;
 # read the afm file
 
 my $psname;
-my ($notice, $version, $fullname, $familyname, @comments); 
+my ($notice, $version, $fullname, $familyname, @comments);
 my $italic_angle = 0;
 my (@kern1, @kern2, @kernx);
 my (%italic_correction, %left_italic_correction);
@@ -6262,9 +6506,15 @@ my (@encoding, %in_encoding);
 my (%width, %height, %depth);
 my (%left_side_bearing, %right_side_bearing);
 
-open(AFM, $afm) || croak("unable to open '$ARGV[0]': $!\n");
+if (open(AFM, $afm)) {
+    $filename = $afm;
+}
+else {
+    croak("cannot open '$ARGV[0]': $!");
+}
 
 while (<AFM>) {
+    $lineno++;
     chomp;
     s/\x0D$//;
     my @field = split(' ');
@@ -6369,15 +6619,29 @@ while (<AFM>) {
     }
 }
 close(AFM);
+$filename = "";
+$lineno = 0;
 
 # read the DESC file
 
 my ($sizescale, $resolution, $unitwidth);
 $sizescale = 1;
 
-open(DESC, $desc) || open(DESC, $sys_desc) ||
-    croak("unable to open '$desc' or '$sys_desc': $!\n");
+if (open(DESC, $desc)) {
+    $filename = $desc;
+}
+else {
+    whine("cannot open '$desc': $!");
+    if (open(DESC, $sys_desc)) {
+	$filename = $sys_desc;
+    }
+    else {
+	croak("cannot open '$sys_desc': $!");
+    }
+}
+
 while (<DESC>) {
+    $lineno++;
     next if /^#/;
     chop;
     my @field = split(' ');
@@ -6394,13 +6658,15 @@ while (<DESC>) {
     }
 }
 close(DESC);
+$filename = "";
+$lineno = 0;
 
 if ($opt_e) {
     # read the encoding file
 
     my $sys_opt_e = $groff_sys_fontdir . "/devps/" . $opt_e;
     open(ENCODING, $opt_e) || open(ENCODING, $sys_opt_e) ||
-	croak("unable to open '$opt_e' or '$sys_opt_e': $!\n");
+	croak("cannot open '$opt_e' nor '$sys_opt_e': $!");
     while (<ENCODING>) {
 	next if /^#/;
 	chop;
@@ -6420,9 +6686,18 @@ if ($opt_e) {
 
 my (%nmap, %map);
 
-open(MAP, $map) || open(MAP, $sys_map) ||
-    croak("unable to open '$map' or '$sys_map': $!\n");
+if (open(MAP, $map)) {
+    $filename = $map;
+}
+elsif (open(MAP, $sys_map)) {
+    $filename = $sys_map;
+}
+else {
+    croak("cannot open '$map' nor '$sys_map': $!");
+}
+
 while (<MAP>) {
+    $lineno++;
     next if /^#/;
     chop;
     my @field = split(' ');
@@ -6431,12 +6706,12 @@ while (<MAP>) {
 	if ($field[1] eq "space") {
 	    # The PostScript character "space" is automatically mapped
 	    # to the groff character "space"; this is for grops.
-	    warn "$prog: you are not allowed to map to " .
-		 "the groff character 'space'";
+	    whine("you are not allowed to map to the groff character"
+		  . " 'space'");
 	}
 	elsif ($field[0] eq "space") {
-	    warn "$prog: you are not allowed to map " .
-		 "the PostScript character 'space'";
+	    whine("you are not allowed to map the PostScript character"
+		  . " 'space'");
 	}
 	else {
 	    $nmap{$field[0]} += 0;
@@ -6457,9 +6732,11 @@ while (<MAP>) {
     }
 }
 close(MAP);
+$filename = "";
+$lineno = 0;
 
 $italic_angle = $opt_a if $opt_a;
-
+my $duplicate_mappings_count = 0; # used only if $opt_q
 
 if (!$opt_x) {
     my %mapped;
@@ -6473,10 +6750,15 @@ if (!$opt_x) {
 	if ($nmap{$ch}) {
 	    for (my $j = 0; $j < $nmap{$ch}; $j++) {
 		if (defined $mapped{$map{$ch, $j}}) {
-		    print STDERR "$prog: AGL name"
-			 . " '$mapped{$map{$ch, $j}}' already mapped to"
-			 . " groff name '$map{$ch, $j}'; ignoring AGL"
-			 . " name '$ch'\n";
+		    if ($opt_q) {
+			$duplicate_mappings_count++;
+		    }
+		    else {
+			print STDERR "$program_name: AGL name"
+			  . " '$mapped{$map{$ch, $j}}' already mapped"
+			  . " to groff name '$map{$ch, $j}'; ignoring"
+			  . " AGL name '$ch'\n";
+		    }
 		}
 		else {
 		    $mapped{$map{$ch, $j}} = $ch;
@@ -6583,7 +6865,14 @@ if (!$opt_x) {
 	    $u =~ s/^_/u/;
 	    if ($u) {
 		if (defined $mapped{$u}) {
-		    warn "$prog: both $mapped{$u} and $ch map to $u";
+		    # Don't whine about duplicates that exist to
+		    # preserve round-trip conversions; thanks to James
+		    # Cloos for pointing this out.
+		    if (!(($mapped{$u} eq 'Delta' and ($ch eq 'uni0394'))
+			 or ($mapped{$u} eq 'mu' and ($ch eq 'uni03BC'))
+			 or ($mapped{$u} eq 'uni03A9' and ($ch eq 'uni2126')))) {
+			whine("both $mapped{$u} and $ch map to $u");
+		    }
 		}
 		else {
 		    $mapped{$u} = $ch;
@@ -6615,10 +6904,32 @@ foreach my $lig (sort keys %default_ligatures) {
 # print it all out
 
 open(FONT, ">$outfile") ||
-  croak("unable to open '$outfile' for writing: $!\n");
+  croak("cannot open '$outfile' for writing: $!");
 select(FONT);
 
-print("# This file was generated with $afmtodit_version.\n");
+my @options;
+
+push @options, "-a $opt_a" if defined $opt_a;
+push @options, "-c"        if defined $opt_c;
+push @options, "-d $opt_d" if defined $opt_d;
+push @options, "-e $opt_e" if defined $opt_e;
+push @options, "-f $opt_f" if defined $opt_f;
+push @options, "-i $opt_i" if defined $opt_i;
+push @options, "-k"        if defined $opt_k;
+push @options, "-m"        if defined $opt_m;
+push @options, "-n"        if defined $opt_n;
+push @options, "-o $opt_o" if defined $opt_o;
+# Don't add $opt_q here; it is irrelevant to the generated file.
+push @options, "-s"        if defined $opt_s;
+push @options, "-v"        if defined $opt_v;
+push @options, "-w $opt_w" if defined $opt_w;
+
+my $opts = join ' ', @options;
+
+print("# generated by $output_version\n");
+print("#   AFM file: $afm\n");
+print("#   map file: $map\n");
+print("#   with options \"$opts\"\n") if @options;
 print("#\n");
 print("#   $fullname\n") if defined $fullname;
 print("#   $version\n") if defined $version;
@@ -6627,7 +6938,7 @@ print("#   $familyname\n") if defined $familyname;
 if ($opt_c) {
     print("#\n");
     if (defined $notice || @comments) {
-	print("# The original AFM file contains the following comments:\n");
+	print("# The AFM file contained the following comments.\n");
 	print("#\n");
 	print("#   $notice\n") if defined $notice;
 	foreach my $comment (@comments) {
@@ -6635,7 +6946,7 @@ if ($opt_c) {
 	}
     }
     else {
-	print("# The original AFM file contains no comments.\n");
+	print("# The AFM file contained no comments.\n");
     }
 }
 
@@ -6783,7 +7094,9 @@ for (my $i = 0; $i <= $#encoding; $i++) {
 	    printf(",%d", conv($h));
 	}
 	printf("\t%d", $type);
-	printf("\t%d\t%s\n", $i, $ch);
+	my $comment = '';
+	$comment .= "\t-- " . $AGL_to_unicode{$ch} if ($AGL_to_unicode{$ch});
+	printf("\t%d\t%s%s\n", $i, $ch, $comment);
 	if (defined $nmap{$ch}) {
 	    for (my $j = 1; $j < $nmap{$ch}; $j++) {
 		printf("%s\t\"\n", $map{$ch, $j});
@@ -6795,13 +7108,19 @@ for (my $i = 0; $i <= $#encoding; $i++) {
     }
 }
 
+if ($opt_q && $duplicate_mappings_count) {
+    print STDERR "$program_name: $duplicate_mappings_count duplicate"
+      . " mapping" . (($duplicate_mappings_count > 1) ? "s" : "" )
+      . " encountered\n";
+}
+
 sub conv {
-    $_[0]*$unitwidth*$resolution/(72*1000*$sizescale) +
-      ($_[0] < 0 ? -.5 : .5);
+    $_[0]*$unitwidth*$resolution/(72*1000*$sizescale)
+      + ($_[0] < 0 ? -.5 : .5);
 }
 
 # Local Variables:
 # fill-column: 72
 # mode: CPerl
 # End:
-# vim: set cindent noexpandtab shiftwidth=2 softtabstop=2 textwidth=72:
+# vim: set cindent noexpandtab shiftwidth=4 softtabstop=4 textwidth=72:

@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Free Software Foundation, Inc.
+# Copyright 2022-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ def run():
 
     # Make the new stdout be a pipe.  This way the DAP code can easily
     # read from the inferior and send OutputEvent to the client.
-    (rfd, wfd) = os.pipe()
+    rfd, wfd = os.pipe()
     os.set_inheritable(rfd, False)
     os.dup2(wfd, 1, True)
     # Also send stderr this way.

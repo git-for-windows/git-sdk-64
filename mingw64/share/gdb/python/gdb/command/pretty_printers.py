@@ -1,5 +1,5 @@
 # Pretty-printer commands.
-# Copyright (C) 2010-2025 Free Software Foundation, Inc.
+# Copyright (C) 2010-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ class InfoPrettyPrinter(gdb.Command):
 
     def invoke(self, arg, from_tty):
         """GDB calls this to perform the command."""
-        (object_re, name_re, subname_re) = parse_printer_regexps(arg)
+        object_re, name_re, subname_re = parse_printer_regexps(arg)
         self.invoke1(
             "global pretty-printers:",
             gdb.pretty_printers,
@@ -161,9 +161,15 @@ class InfoPrettyPrinter(gdb.Command):
             name_re,
             subname_re,
         )
+        file_style = gdb.Style("filename")
         cp = gdb.current_progspace()
+        cp_filename = cp.filename
+        if cp_filename is None:
+            cp_filename = "<no-file>"
+        else:
+            cp_filename = file_style.apply(cp_filename)
         self.invoke1(
-            "progspace %s pretty-printers:" % cp.filename,
+            "progspace %s pretty-printers:" % cp_filename,
             cp.pretty_printers,
             "progspace",
             object_re,
@@ -172,7 +178,7 @@ class InfoPrettyPrinter(gdb.Command):
         )
         for objfile in gdb.objfiles():
             self.invoke1(
-                "objfile %s pretty-printers:" % objfile.filename,
+                "objfile %s pretty-printers:" % file_style.apply(objfile.filename),
                 objfile.pretty_printers,
                 objfile.filename,
                 object_re,
@@ -205,16 +211,14 @@ def count_all_enabled_printers():
     """
     enabled_count = 0
     total_count = 0
-    (t_enabled, t_total) = count_enabled_printers(gdb.pretty_printers)
+    t_enabled, t_total = count_enabled_printers(gdb.pretty_printers)
     enabled_count += t_enabled
     total_count += t_total
-    (t_enabled, t_total) = count_enabled_printers(
-        gdb.current_progspace().pretty_printers
-    )
+    t_enabled, t_total = count_enabled_printers(gdb.current_progspace().pretty_printers)
     enabled_count += t_enabled
     total_count += t_total
     for objfile in gdb.objfiles():
-        (t_enabled, t_total) = count_enabled_printers(objfile.pretty_printers)
+        t_enabled, t_total = count_enabled_printers(objfile.pretty_printers)
         enabled_count += t_enabled
         total_count += t_total
     return (enabled_count, total_count)
@@ -232,7 +236,7 @@ def show_pretty_printer_enabled_summary():
     """Print the number of printers enabled/disabled.
     We count subprinters individually.
     """
-    (enabled_count, total_count) = count_all_enabled_printers()
+    enabled_count, total_count = count_all_enabled_printers()
     print("%d of %d printers enabled" % (enabled_count, total_count))
 
 
@@ -301,7 +305,7 @@ def do_enable_pretty_printer_1(pretty_printers, name_re, subname_re, flag):
 
 def do_enable_pretty_printer(arg, flag):
     """Internal worker for enabling/disabling pretty-printers."""
-    (object_re, name_re, subname_re) = parse_printer_regexps(arg)
+    object_re, name_re, subname_re = parse_printer_regexps(arg)
 
     total = 0
     if object_re.match("global"):

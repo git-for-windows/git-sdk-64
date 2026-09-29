@@ -3,7 +3,7 @@ vim9script
 # Vim functions for file type detection
 #
 # Maintainer:		The Vim Project <https://github.com/vim/vim>
-# Last Change:		2026 Jul 24
+# Last Change:		2026 Sep 02
 # Former Maintainer:	Bram Moolenaar <Bram@vim.org>
 
 # These functions are moved here from runtime/filetype.vim to make startup
@@ -39,6 +39,34 @@ export def Check_inp()
       n += 1
     endwhile
   endif
+enddef
+
+# AL (Microsoft Dynamics 365 Business Central) or Perl AutoLoader
+export def FTal()
+  if exists("g:filetype_al")
+    exe "setf " .. g:filetype_al
+    return
+  endif
+
+  # AL sources declare an object as "<kind> <id> <name>" at the start of a
+  # line, optionally preceded by namespace and using declarations.  Perl
+  # AutoLoader chunks match neither.  Matching a bare keyword anywhere would
+  # be wrong: table, page and report are ordinary English words, so the object
+  # name must follow.  The match is case sensitive because AL tooling emits
+  # lowercase keywords, while prose in Perl comments is usually capitalised.
+  for lnum in range(1, min([line("$"), 200]))
+    var line = getline(lnum)
+    if line =~# '^\s*\%(codeunit\|page\|pageextension\|pagecustomization\|table\|tableextension\|' ..
+      'report\|reportextension\|xmlport\|query\|enum\|enumextension\|profile\|profileextension\|' ..
+      'controladdin\|interface\|permissionset\|permissionsetextension\|entitlement\)\>\s\+\%(\d\|"\|\u\)'
+      || line =~# '^\s*dotnet\s*$'
+      || line =~# '^\s*\%(namespace\|using\)\s\+[[:alnum:]._]\+\s*;'
+      setf al
+      return
+    endif
+  endfor
+
+  setf perl
 enddef
 
 # Erlang Application Resource Files (*.app.src is matched by extension)
@@ -1823,6 +1851,8 @@ const ft_from_ext = {
   "ibi": "ibasic",
   # FreeBasic file (similar to QBasic)
   "fb": "freebasic",
+  # Bazel rc file
+  "bazelrc": "bazelrc",
   # Batch file for MSDOS. See dist#ft#FTsys for *.sys
   "bat": "dosbatch",
   # BC calculator
@@ -1949,6 +1979,8 @@ const ft_from_ext = {
   "cob": "cobol",
   # Coco/R
   "atg": "coco",
+  # Citation files
+  "cff": "yaml",
   # Cold Fusion
   "cfm": "cf",
   "cfi": "cf",
@@ -2053,6 +2085,8 @@ const ft_from_ext = {
   "overlay": "dts",
   # Embedix Component Description
   "ecd": "ecd",
+  # ed(1)
+  "ed": "ed",
   # ERicsson LANGuage; Yaws is erlang too
   "erl": "erlang",
   "hrl": "erlang",
@@ -2178,6 +2212,8 @@ const ft_from_ext = {
   "hbs": "handlebars",
   # Hare
   "ha": "hare",
+  # HLSL
+  "hlsl": "hlsl",
   # Haskell
   "hs": "haskell",
   "hsc": "haskell",
@@ -2324,6 +2360,8 @@ const ft_from_ext = {
   "webmanifest": "json",
   # JSON Lines
   "jsonl": "jsonl",
+  # JSON-LD
+  "jsonld": "jsonld",
   # Jsonnet
   "jsonnet": "jsonnet",
   "libsonnet": "jsonnet",
@@ -2416,6 +2454,8 @@ const ft_from_ext = {
   "page": "mallard",
   # Manpage
   "man": "man",
+  # Marko
+  "marko": "marko",
   # Maple V
   "mv": "maple",
   "mpl": "maple",
@@ -3166,6 +3206,8 @@ const ft_from_ext = {
   "tiltfile": "tiltfile",
   # Ghostty
   "ghostty": "ghostty",
+  # Xilinx Design Constraint file
+  "xdc": "tcl",
 }
 # Key: file name (the final path component, excluding the drive and root)
 # Value: filetype
@@ -3404,6 +3446,8 @@ const ft_from_name = {
   "MANIFEST.in": "pymanifest",
   # QMLdir
   "qmldir": "qmldir",
+  # radvd(8) configuration
+  "radvd.conf": "radvd",
   # Ratpoison config/command files
   ".ratpoisonrc": "ratpoison",
   "ratpoisonrc": "ratpoison",

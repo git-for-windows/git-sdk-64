@@ -202,13 +202,15 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 
 <p>On Linux/Unix where OpenSSL has been loaded via dlopen() and the application is multi-threaded and if dlclose() is subsequently called prior to the threads being destroyed then OpenSSL will not be able to deallocate resources associated with those threads. The application should either call OPENSSL_thread_stop() on each thread prior to the dlclose() call, or alternatively the original dlopen() call should use the RTLD_NODELETE flag (where available on the platform).</p>
 
+<p>Thread cleanup does not unwind an OpenSSL function interrupted by cancellation or thread exit; see <a href="../man7/openssl-threads.html">openssl-threads(7)</a>.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>The functions OPENSSL_init_crypto, OPENSSL_atexit() and OPENSSL_INIT_set_config_appname() return 1 on success or 0 on error.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a></p>
+<p><a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>, <a href="../man7/openssl-threads.html">openssl-threads(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -216,7 +218,7 @@ void OPENSSL_INIT_free(OPENSSL_INIT_SETTINGS *init);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

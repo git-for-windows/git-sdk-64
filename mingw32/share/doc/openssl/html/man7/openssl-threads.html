@@ -14,6 +14,7 @@
 <ul id="index">
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#THREAD-CANCELLATION">THREAD CANCELLATION</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -47,9 +48,19 @@
 
 <p>A separate, although related, issue is modifying &quot;factory&quot; objects when other objects have been created from that. For example, an <b>SSL_CTX</b> object created by <a href="../man3/SSL_CTX_new.html">SSL_CTX_new(3)</a> is used to create per-connection <b>SSL</b> objects by calling <a href="../man3/SSL_new.html">SSL_new(3)</a>. In this specific case, and probably for factory methods in general, it is not safe to modify the factory object after it has been used to create other objects.</p>
 
+<h1 id="THREAD-CANCELLATION">THREAD CANCELLATION</h1>
+
+<p>Thread safety does not imply cancellation safety. Unless a specific function documents otherwise, OpenSSL does not guarantee that an in-progress call can be abandoned safely by thread cancellation or forced termination. An interruption can leave locks held, resources unreleased, or shared state inconsistent, making later use or cleanup unsafe.</p>
+
+<p>Deferred cancellation can take effect at a cancellation point reached directly or through a callback, BIO, provider, or other pluggable implementation. Automatic thread-local cleanup and <a href="../man3/OPENSSL_thread_stop.html">OPENSSL_thread_stop(3)</a>, when they run, do not unwind the interrupted call.</p>
+
+<p>Applications should act on cancellation only between OpenSSL calls. On POSIX systems, applications using pthread cancellation should disable cancellation with <b>pthread_setcancelstate</b>() before entering OpenSSL and restore it only after OpenSSL returns at a point safe for cancellation. Callbacks invoked by OpenSSL must not re-enable it. Disabling cancellation does not make a blocking call return on a cancellation request; applications requiring prompt cancellation should use nonblocking operation where available.</p>
+
+<p>The same restriction applies to other non-local exits which abandon an OpenSSL call in progress, including direct thread exit, long jumps, and language exceptions.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p>CRYPTO_THREAD_run_once(3), local system threads documentation.</p>
+<p><a href="../man3/CRYPTO_THREAD_run_once.html">CRYPTO_THREAD_run_once(3)</a>, <a href="../man3/OPENSSL_thread_stop.html">OPENSSL_thread_stop(3)</a>, <a href="../man7/openssl-quic-concurrency.html">openssl-quic-concurrency(7)</a>, local system threads documentation.</p>
 
 <h1 id="BUGS">BUGS</h1>
 
@@ -57,7 +68,7 @@
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

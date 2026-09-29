@@ -1,30 +1,29 @@
-#! /usr/bin/env perl
+#!/usr/bin/env perl
 
-# gpinyin - European-like Chinese writing 'pinyin' into 'groff'
-
-# Copyright (C) 2014-2020 Free Software Foundation, Inc.
-
+# gpinyin - use Hanyu Pinyin romanization of Chinese in groff(1) input
+#
+# Copyright 2014-2020 Free Software Foundation, Inc.
+#           2022-2025 G. Branden Robinson
+#
 # Written by Bernd Warken <groff-bernd.warken-72@web.de>.
-
-my $version = '1.0.5';
-my $groff_version = '(groff 1.23.0) '; # with trailing space
-
-# This file is part of 'gpinyin', which is part of 'groff'.
-
-# 'groff' is free software; you can redistribute it and/or modify it
-# under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-
-# 'groff' is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-
-# You can find a copy of the GNU General Public License in the internet
-# at <http://www.gnu.org/licenses/gpl-2.0.html>.
-
-########################################################################
+# Enhanced by: G. Branden Robinson <g.branden.robinson@gmail.com>
+#
+# This file is part of gpinyin.
+#
+# gpinyin is distributed with groff, the GNU roff typesetting system.
+#
+# groff is free software; you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your
+# option) any later version.
+#
+# groff is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+# for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 use strict;
 use warnings;
@@ -48,17 +47,24 @@ use Cwd;
 # $Bin is the directory where this script is located
 use FindBin;
 
+my $gpinyin_version = '1.1.0';
+my $groff_version = '(groff 1.24.1) '; # with trailing space
+
+my $is_in_source_tree;
+{
+  $is_in_source_tree = 1 if '1.24.1' eq '@' . 'VERSION' . '@';
+}
+
+if (!$is_in_source_tree) {
+  $groff_version = '1.24.1';
+}
+
 
 ########################################################################
 # system variables and exported variables
 ########################################################################
 
 $\ = "\n";	# final part for print command
-
-{
-  my $at = '@';
-  $groff_version = '' if '1.23.0' eq "${at}VERSION${at}";
-}
 
 ########################################################################
 # All Pinyin syllables from wikipedia
@@ -279,6 +285,32 @@ my %tones4_glyphs =
 ########################################################################
 # subs
 ########################################################################
+
+(undef, undef, my $program_name) = File::Spec->splitpath($0);
+
+sub usage {
+  my $stream = *STDOUT;
+  my $had_error = shift;
+  $stream = *STDERR if $had_error;
+  my $gpinyin = $program_name;
+  print $stream "usage: $gpinyin [file ...]\n" .
+    "usage: $gpinyin {-v | --version}\n" .
+    "usage: $gpinyin {-h | --help}\n";
+  unless ($had_error) {
+    # Omit some newlines due to `$\` voodoo.
+    print $stream "" .
+"Filter GNU troff(1) input, facilitating use of Hanyu Pinyin on\n" .
+"lines between '.pinyin start' and '.pinyin stop'.  See the\n" .
+"gpinyin(1) manual page.";
+  }
+  exit $had_error;
+}
+
+sub version {
+  # Omit newline due to `$\` voodoo.
+  print "$program_name (groff $groff_version) $gpinyin_version";
+  exit 0;
+}
 
 # Pinyin consists of syllables with a final number to be translated
 # into an accent.  Such numbered syllables are combined into words.
@@ -617,19 +649,9 @@ sub finish_pinyin_mode {
 # options
 ########################################################################
 
-foreach (@ARGV) {
-  if ( /^(-h|--h|--he|--hel|--help)$/ ) {
-    print q(Usage for the 'gpinyin' program:);
-    print 'gpinyin [-] [--] [filespec...] normal file name arguments';
-    print 'gpinyin [-h|--help]            gives usage information';
-    print 'gpinyin [-v|--version]         displays the version number';
-    print q(This program is a 'groff' preprocessor that handles ) .
-      q(pinyin parts in 'roff' files.);
-    exit;
-  } elsif (/^(-v|--v|--ve|--ver|--vers|--versi|--versio|--version)$/) {
-    print "gpinyin ${groff_version}version $version";
-    exit;
-  }
+foreach my $arg (@ARGV) {
+  usage(0) if ($arg eq '-h' || $arg eq '--help');
+  version() if ($arg eq '-v' || $arg eq '--version');
 }
 
 

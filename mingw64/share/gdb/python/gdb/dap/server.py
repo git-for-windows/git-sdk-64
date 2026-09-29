@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Free Software Foundation, Inc.
+# Copyright 2022-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ import inspect
 import json
 import threading
 from contextlib import contextmanager
+from typing import Optional
 
 import gdb
 
@@ -212,7 +213,7 @@ class CancellationHandler:
                 heapq.heappush(self._reqs, req)
 
     @contextmanager
-    def interruptable_region(self, req):
+    def interruptible_region(self, req):
         """Return a new context manager that sets in_flight_gdb_thread to
         REQ."""
         if req is None:
@@ -312,7 +313,15 @@ class Server:
         }
 
         if "arguments" in params:
-            args = params["arguments"]
+            # Since the "arguments" field is optional, setting it to
+            # null is an odd thing to do when one could simply omit it
+            # entirely. But some clients do just that for some
+            # requests (e.g. Helix for ConfigurationDone), so we
+            # accommodate this case.
+            if params["arguments"] is None:
+                args = {}
+            else:
+                args = params["arguments"]
         else:
             args = {}
 
@@ -398,7 +407,7 @@ class Server:
         # responses are flushed to the client before exiting.
         self._write_queue.put(None)
         json_writer.join()
-        send_gdb("quit")
+        send_gdb(lambda: exec_and_log("quit"))
 
     @in_dap_thread
     def set_defer_events(self):
@@ -610,11 +619,29 @@ def terminate(**args):
     exec_and_log("kill")
 
 
+@in_gdb_thread
+def _disconnect_or_kill(terminate: Optional[bool]):
+    inf = gdb.selected_inferior()
+    if inf.connection is None:
+        # Nothing to do here.
+        return
+    if terminate is None:
+        # The default depends on whether the inferior was attached or
+        # launched.
+        terminate = not inf.was_attached
+
+    if inf.corefile is not None:
+        exec_and_log("core-file")
+    elif terminate:
+        exec_and_log("kill")
+    elif inf.was_attached:
+        exec_and_log("detach")
+
+
 @request("disconnect", on_dap_thread=True, expect_stopped=False)
 @capability("supportTerminateDebuggee")
-def disconnect(*, terminateDebuggee: bool = False, **args):
-    if terminateDebuggee:
-        send_gdb_with_response("kill")
+def disconnect(*, terminateDebuggee: Optional[bool] = None, **args):
+    send_gdb_with_response(lambda: _disconnect_or_kill(terminateDebuggee))
     _server.shutdown()
 
 
@@ -633,18 +660,6 @@ def cancel(**args):
     return None
 
 
-class Invoker(object):
-    """A simple class that can invoke a gdb command."""
-
-    def __init__(self, cmd):
-        self._cmd = cmd
-
-    # This is invoked in the gdb thread to run the command.
-    @in_gdb_thread
-    def __call__(self):
-        exec_and_log(self._cmd)
-
-
 class Cancellable(object):
 
     def __init__(self, fn, result_q=None):
@@ -657,7 +672,7 @@ class Cancellable(object):
     @in_gdb_thread
     def __call__(self):
         try:
-            with _server.canceller.interruptable_region(self.req):
+            with _server.canceller.interruptible_region(self.req):
                 val = self._fn()
                 if self._result_q is not None:
                     self._result_q.put(val)
@@ -677,25 +692,16 @@ class Cancellable(object):
 
 def send_gdb(cmd):
     """Send CMD to the gdb thread.
-    CMD can be either a function or a string.
-    If it is a string, it is passed to gdb.execute."""
-    if isinstance(cmd, str):
-        cmd = Invoker(cmd)
-
+    CMD is a function."""
     # Post the event and don't wait for the result.
     gdb.post_event(Cancellable(cmd))
 
 
 def send_gdb_with_response(fn):
     """Send FN to the gdb thread and return its result.
-    If FN is a string, it is passed to gdb.execute and None is
-    returned as the result.
     If FN throws an exception, this function will throw the
     same exception in the calling thread.
     """
-    if isinstance(fn, str):
-        fn = Invoker(fn)
-
     # Post the event and wait for the result in result_q.
     result_q = DAPQueue()
     gdb.post_event(Cancellable(fn, result_q))

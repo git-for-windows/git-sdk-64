@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#EVENT-TYPES">EVENT TYPES</a></li>
   <li><a href="#LIMITATIONS">LIMITATIONS</a></li>
+  <li><a href="#THREAD-CANCELLATION">THREAD CANCELLATION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -272,6 +273,14 @@ int SSL_poll(SSL_POLL_ITEM         *items,
 
 <p>This limitation may be revised in a future release of OpenSSL.</p>
 
+<h1 id="THREAD-CANCELLATION">THREAD CANCELLATION</h1>
+
+<p>A finite <i>timeout</i> limits ordinary waiting by SSL_poll(), but does not make the call safe against thread cancellation; see <a href="../man7/openssl-threads.html">openssl-threads(7)</a>.</p>
+
+<p>Cancellation can prevent SSL_poll() from removing internal wait state. Because an <i>items</i> array can span multiple QUIC domains, one interrupted call can leave stale state in several domains and cause later calls on those domains, including SSL_poll() with a finite timeout, to block indefinitely.</p>
+
+<p>For cooperative cancellation, use a finite timeout and check a cancellation condition between calls; see <a href="../man7/openssl-quic-concurrency.html">&quot;THREAD CANCELLATION&quot; in openssl-quic-concurrency(7)</a> for the nonblocking alternative.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_poll() returns 1 on success and 0 on failure.</p>
@@ -308,7 +317,7 @@ int SSL_poll(SSL_POLL_ITEM         *items,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/BIO_get_rpoll_descriptor.html">BIO_get_rpoll_descriptor(3)</a>, <a href="../man3/BIO_get_wpoll_descriptor.html">BIO_get_wpoll_descriptor(3)</a>, <a href="../man3/SSL_get_rpoll_descriptor.html">SSL_get_rpoll_descriptor(3)</a>, <a href="../man3/SSL_get_wpoll_descriptor.html">SSL_get_wpoll_descriptor(3)</a></p>
+<p><a href="../man3/BIO_get_rpoll_descriptor.html">BIO_get_rpoll_descriptor(3)</a>, <a href="../man3/BIO_get_wpoll_descriptor.html">BIO_get_wpoll_descriptor(3)</a>, <a href="../man3/SSL_get_rpoll_descriptor.html">SSL_get_rpoll_descriptor(3)</a>, <a href="../man3/SSL_get_wpoll_descriptor.html">SSL_get_wpoll_descriptor(3)</a>, <a href="../man7/openssl-threads.html">openssl-threads(7)</a>, <a href="../man7/openssl-quic.html">openssl-quic(7)</a>, <a href="../man7/openssl-quic-concurrency.html">openssl-quic-concurrency(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -320,7 +329,7 @@ int SSL_poll(SSL_POLL_ITEM         *items,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

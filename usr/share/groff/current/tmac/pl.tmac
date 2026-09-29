@@ -1,0 +1,184 @@
+.\" Polish localization for groff
+.
+.\" Copyright 2026 Free Software Foundation, Inc.
+.\"
+.\" Written by Dariusz Chilimoniuk <darek@stack.pl>
+.\"
+.\" This file is part of groff, the GNU roff typesetting system.
+.\"
+.\" groff is free software; you can redistribute it and/or modify it
+.\" under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation, either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" groff is distributed in the hope that it will be useful, but WITHOUT
+.\" ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+.\" or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+.\" License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see
+.\" <http://www.gnu.org/licenses/>.
+.\"
+.\" Please send comments to darek@stack.pl.
+.
+.do nr *groff_pl_tmac_C \n[.cp]
+.cp 0
+.
+.
+.\" If changing from an existing locale, we need to preserve the state
+.\" of the "suppress hyphenation before a page location trap" bit.
+.nr locale*use-trap-hyphenation-mode 0
+.if d locale \
+.  if \n[.hy]=\n[\*[locale]*hyphenation-mode-trap] \
+.    nr locale*use-trap-hyphenation-mode 1
+.
+.
+.ds locale polish\"
+.
+.
+.\" Predefined text translations
+.
+.ds \*[locale]-abstract \f[I]STRESZCZENIE\f[]\"
+.ds \*[locale]-app DODATEK\"
+.ds \*[locale]-appendix_string Dodatek\"
+.ds \*[locale]-april kwietnia\"
+.ds \*[locale]-attribute_string \"   empty!
+.ds \*[locale]-august sierpnia\"
+.ds \*[locale]-capec Cytat\"
+.ds \*[locale]-capex Dokument\"
+.ds \*[locale]-capfg Rysunek\"
+.ds \*[locale]-captb Tabela\"
+.ds \*[locale]-captc SPIS TRE\[S ']CI\"
+.ds \*[locale]-chapter_string Rozdzia\[/l]\"
+.ds \*[locale]-december grudnia\"
+.ds \*[locale]-draft_string Brudnopis\"
+.ds \*[locale]-endnote_string PRZYPISY\"
+.ds \*[locale]-february lutego\"
+.ds \*[locale]-finis_string KONIEC\"
+.ds \*[locale]-friday pi\[a ho]tek\"
+.ds \*[locale]-january stycznia\"
+.ds \*[locale]-july lipca\"
+.ds \*[locale]-june czerwca\"
+.ds \*[locale]-le SPIS R\[O ']WNA\[N ']\"
+.ds \*[locale]-letapp ZAAKCEPTOWANO:\"
+.ds \*[locale]-letat UWAGA:\"
+.ds \*[locale]-letcn POUFNE\"
+.ds \*[locale]-letdate Data\"
+.ds \*[locale]-letfc Z wyrazami szacunku,\"
+.ds \*[locale]-letns!0 Kopia dla\"
+.ds \*[locale]-letns!1 Kopia (oraz za\[/l]\[a ho]cznik) dla\"
+.ds \*[locale]-letns!10 Kopia (oraz za\[/l]\[a ho]czniki) dla\"
+.ds \*[locale]-letns!11 Kopia (bez za\[/l]\[a ho]cznik\[o ']w) dla\"
+.ds \*[locale]-letns!12 Tylko streszczenie dla\"
+.ds \*[locale]-letns!13 Kompletna tre\[s ']\[c '] dla\"
+.ds \*[locale]-letns!14 DW:\"
+.ds \*[locale]-letns!2 Kopia (bez za\[/l]\[a ho]cznika) dla\"
+.ds \*[locale]-letns!3 Za\[/l]\[a ho]cznik\"
+.ds \*[locale]-letns!4 Za\[/l]\[a ho]czniki\"
+.ds \*[locale]-letns!5 Przesy\[/l]ka\"
+.ds \*[locale]-letns!6 Przesy\[/l]ki\"
+.ds \*[locale]-letns!7 W oddzielnej przesy\[/l]ce\"
+.ds \*[locale]-letns!8 Adresat\"
+.ds \*[locale]-letns!9 Nota dla\"
+.ds \*[locale]-letns!copy Kopia \"   space!
+.ds \*[locale]-letns!to " do\"   space!
+.ds \*[locale]-letrn W nawi\[a ho]zaniu do:\"
+.ds \*[locale]-letsa Dla zainteresowanych:\"
+.ds \*[locale]-letsj TEMAT:\"
+.ds \*[locale]-lf SPIS ILUSTRACJI\"
+.ds \*[locale]-lt SPIS TABEL\"
+.ds \*[locale]-lx SPIS ZA\[/L]\[A ho]CZNIK\[O ']W\"
+.ds \*[locale]-man-section1 Polecenia i aplikacje u\[z .]ytkownika\"
+.ds \*[locale]-man-section2 Wywo\[/l]ania systemowe\"
+.ds \*[locale]-man-section3 Funkcje biblioteczne\"
+.ds \*[locale]-man-section4 Urz\[a ho]dzenia, sterowniki i interfejsy\"
+.ds \*[locale]-man-section5 Formaty plik\[o ']w\"
+.ds \*[locale]-man-section6 Gry i rozrywka\"
+.ds \*[locale]-man-section7 Dodatkowe narz\[e ho]dzia i dokumentacja\"
+.ds \*[locale]-man-section8 Administracja systemem\"
+.ds \*[locale]-man-section9 Podr\[e ho]cznik programisty j\[a ho]dra\"
+.ds \*[locale]-march marca\"
+.ds \*[locale]-may maja\"
+.ds \*[locale]-monday poniedzia\[/l]ek\"
+.ds \*[locale]-november listopada\"
+.ds \*[locale]-october pa\[z ']dziernika\"
+.ds \*[locale]-paper A4\"
+.ds \*[locale]-qrf Patrz rozdz. \E*[Qrfh], s. \E*[Qrfp].\"
+.ds \*[locale]-references Literatura\"
+.ds \*[locale]-revision_string Rewizja\"
+.ds \*[locale]-rp LITERATURA\"
+.ds \*[locale]-saturday sobota\"
+.ds \*[locale]-september wrze\[s ']nia\"
+.ds \*[locale]-sunday niedziela\"
+.ds \*[locale]-thursday czwartek\"
+.ds \*[locale]-toc Spis tre\[s ']ci\"
+.ds \*[locale]-toc_header_string Spis tre\[s ']ci\"
+.ds \*[locale]-tuesday wtorek\"
+.ds \*[locale]-wednesday \[s ']roda\"
+.
+.
+.\" Activate the translations
+.
+.mso trans.tmac
+.
+.
+.\" ms package
+.if r GS \{\
+.	\" update the date
+.	ds DY \n[dy] \*[MO] \n[year]
+.	\" set hyphenation mode
+.	nr HY 2
+.\}
+.
+.
+.\" mm package
+.if d PH \
+.	ds cov*local-date-format \En[dy] \E*[MO\En[mo]] \En[year]
+.
+.
+.\" Default encoding
+.mso latin2.tmac
+.
+.ss 12 0
+.
+.\" Set up hyphenation.
+.
+.\" Polish hyphenation (\lefthyphenmin=2, \righthyphenmin=2)
+.nr \*[locale]*hyphenation-mode-base 1
+.nr \*[locale]*hyphenation-mode-trap 2
+.
+.ie \n[locale*use-trap-hyphenation-mode] \
+.  hydefault \n[\*[locale]*hyphenation-mode-trap]
+.el \
+.  hydefault \n[\*[locale]*hyphenation-mode-base]
+.
+.hy
+.
+.rr locale*use-trap-hyphenation-mode
+.
+.
+.hla pl
+.hpf hyphen.pl
+.
+.
+.\" man package
+.if d an \
+.	an*reset-hyphenation-mode
+.
+.
+.\" me package
+.if d @R \{\
+.	ds _td_format \En(dy \E*(mo \En(y4
+.	ld
+.\}
+.
+.
+.cp \n[*groff_pl_tmac_C]
+.do rr *groff_pl_tmac_C
+.
+.\" Local Variables:
+.\" mode: nroff
+.\" fill-column: 72
+.\" End:
+.\" vim: set filetype=groff textwidth=72:

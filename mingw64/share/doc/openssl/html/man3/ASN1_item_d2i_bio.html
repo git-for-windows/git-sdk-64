@@ -59,6 +59,8 @@ void *ASN1_item_unpack_ex(const ASN1_STRING *oct, const ASN1_ITEM *it,
 
 <p>ASN1_item_d2i_bio_ex() decodes the contents of its input BIO <i>in</i>, which must be a DER-encoded ASN.1 structure, using the ASN.1 template <i>it</i> and places the result in <i>*pval</i> unless <i>pval</i> is NULL. If <i>in</i> is NULL it returns NULL, else a pointer to the parsed structure. If any algorithm fetches are required during the process then they will use the <b>OSSL_LIB_CTX</b> provided in the <i>libctx</i> parameter and the property query string in <i>propq</i>. See <a href="../man7/crypto.html">&quot;ALGORITHM FETCHING&quot; in crypto(7)</a> for more information about algorithm fetching.</p>
 
+<p>When reading from <i>in</i>, decoding consumes one complete DER-encoded structure and leaves any following bytes in the BIO, so concatenated structures can be read with successive calls. Reaching the end of the input cleanly, at a structure boundary, is not treated as an error: the function returns NULL without adding to the error queue. If the end of the input is reached in the middle of a structure, or an indefinite-length value is missing its end-of-contents octets (that is, the input is truncated), an error is queued with reason code <b>ASN1_R_NOT_ENOUGH_DATA</b>. The same applies to ASN1_item_d2i_fp_ex().</p>
+
 <p>ASN1_item_d2i_bio() is the same as ASN1_item_d2i_bio_ex() except that the default <b>OSSL_LIB_CTX</b> is used (i.e. NULL) and with a NULL property query string.</p>
 
 <p>ASN1_item_d2i_fp_ex() is the same as ASN1_item_d2i_bio_ex() except that a FILE pointer is provided instead of a BIO.</p>
@@ -77,6 +79,8 @@ void *ASN1_item_unpack_ex(const ASN1_STRING *oct, const ASN1_ITEM *it,
 
 <p>ASN1_item_d2i_bio(), ASN1_item_unpack_ex() and ASN1_item_unpack() return a pointer to an <b>ASN1_VALUE</b> or NULL on error.</p>
 
+<p>The ASN1_item_d2i_bio() and ASN1_item_d2i_fp() functions, including their <b>_ex</b> variants, also return NULL at a clean end of input. In that case the error queue is left unchanged, so a caller reading concatenated structures in a loop can distinguish a clean end of input from a decoding error by inspecting the error queue, for example with <a href="../man3/ERR_peek_error.html">ERR_peek_error(3)</a>.</p>
+
 <p>ASN1_item_i2d_mem_bio() returns a pointer to a memory BIO or NULL on error.</p>
 
 <p>ASN1_item_pack() returns a pointer to an <b>ASN1_STRING</b> or NULL on error.</p>
@@ -89,7 +93,7 @@ void *ASN1_item_unpack_ex(const ASN1_STRING *oct, const ASN1_ITEM *it,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

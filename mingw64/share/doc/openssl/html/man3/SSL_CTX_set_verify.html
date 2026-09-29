@@ -59,7 +59,7 @@ void SSL_set_post_handshake_auth(SSL *ssl, int val);</code></pre>
 
 <p>SSL_CTX_set_post_handshake_auth() and SSL_set_post_handshake_auth() enable the Post-Handshake Authentication extension to be added to the ClientHello such that post-handshake authentication can be requested by the server. If <b>val</b> is 0 then the extension is not sent, otherwise it is. By default the extension is not sent. A certificate callback will need to be set via SSL_CTX_set_client_cert_cb() if no certificate is provided at initialization.</p>
 
-<p>SSL_verify_client_post_handshake() causes a CertificateRequest message to be sent by a server on the given <b>ssl</b> connection. The SSL_VERIFY_PEER flag must be set; the SSL_VERIFY_POST_HANDSHAKE flag is optional.</p>
+<p>SSL_verify_client_post_handshake() causes a CertificateRequest message to be sent by a server on the given <b>ssl</b> connection. The SSL_VERIFY_PEER flag must be set; the SSL_VERIFY_POST_HANDSHAKE flag is optional. The SSL_VERIFY_FAIL_IF_NO_PEER_CERT flag is also applicable and has the same effect as with the client authentication during the handshake.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -258,7 +258,7 @@ if (peer = SSL_get_peer_certificate(ssl)) {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

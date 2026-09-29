@@ -98,7 +98,7 @@ tie %Config, 'Config', {
     ldlibpthname => 'PATH',
     libpth => '/usr/lib',
     osname => 'cygwin',
-    osvers => '3.6.10-8fbd9808.x86_64',
+    osvers => '3.6.10-da84778c.x86_64',
     path_sep => ':',
     privlibexp => '/usr/share/perl5/core_perl',
     scriptdir => '/usr/bin/core_perl',

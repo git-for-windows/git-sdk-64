@@ -77,7 +77,7 @@ $ openssl list -tls1_3 -tls-groups</code></pre>
 
 <p>Each group can be either the <b>NIST</b> name (e.g. <b>P-256</b>), some other commonly used name where applicable (e.g. <b>X25519</b>, <b>ffdhe2048</b>) or an OpenSSL OID name (e.g. <b>prime256v1</b>). Group names are case-insensitive in OpenSSL 3.5 and later. The preferred group names are those defined by <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8">IANA</a>.</p>
 
-<p>The <i>list</i> can be used to define several group tuples of comparable security levels, and can specify which predicted key shares should be sent by a client. Group tuples are used by OpenSSL TLS servers to decide whether to request a stronger keyshare than those predicted by sending a Hello Retry Request (<b>HRR</b>) even if some of the predicted groups are supported. OpenSSL clients ignore tuple boundaries, and pay attenion only to the overall order of <i>list</i> elements and which groups are selected as predicted keyshares as described below.</p>
+<p>The <i>list</i> can be used to define several group tuples of comparable security levels, and can specify which predicted key shares should be sent by a client. Group tuples are used by OpenSSL TLS servers to decide whether to request a stronger keyshare than those predicted by sending a Hello Retry Request (<b>HRR</b>) even if some of the predicted groups are supported. OpenSSL clients ignore tuple boundaries, and pay attention only to the overall order of <i>list</i> elements and which groups are selected as predicted keyshares as described below.</p>
 
 <p>The specified list elements can optionally be ignored if not implemented (listing unknown groups otherwise results in error). It is also possible to specify the built-in default set of groups, and to explicitly remove a group from that list.</p>
 
@@ -198,6 +198,8 @@ with : SH:  Server hello with current group
 <p>Support for ignoring unknown groups in SSL_CTX_set1_groups_list() and SSL_set1_groups_list() was added in OpenSSL 3.3.</p>
 
 <p>Support for <b>ML-KEM</b> was added in OpenSSL 3.5.</p>
+
+<p>OpenSSL 3.5 also introduced support for group tuples, the <code>*</code> keyshare prediction prefix, the <code>/</code> tuple separator, the <code>DEFAULT</code> pseudo-group, and the <code>-</code> prefix.</p>
 
 <p>OpenSSL 3.5 also introduces support for three <i>hybrid</i> ECDH PQ key exchange TLS groups: <b>X25519MLKEM768</b>, <b>SecP256r1MLKEM768</b> and <b>SecP384r1MLKEM1024</b>. They offer CPU performance comparable to the associated ECDH group, though at the cost of significantly larger key exchange messages. The third group, <b>SecP384r1MLKEM1024</b> is substantially more CPU-intensive, largely as a result of the high CPU cost of ECDH for the underlying <b>P-384</b> group. Also its key exchange messages at close to 1700 bytes are larger than the roughly 1200 bytes for the first two groups.</p>
 

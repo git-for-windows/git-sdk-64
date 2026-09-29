@@ -6,7 +6,7 @@
 # 12345678901234 is renamed to 12345678901.gz
 
 
-# Copyright (C) 2002, 2007, 2010-2025 Free Software Foundation, Inc.
+# Copyright (C) 2002, 2007, 2010-2026 Free Software Foundation, Inc.
 # Copyright (C) 1993 Jean-loup Gailly
 
 # This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-version="zforce (gzip) 1.14
-Copyright (C) 2025 Free Software Foundation, Inc.
+version="zforce (gzip) 1.15
+Copyright (C) 2026 Free Software Foundation, Inc.
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <https://www.gnu.org/licenses/gpl.html>.
 There is NO WARRANTY, to the extent permitted by law.
@@ -50,7 +50,7 @@ for i do
   esac
 
   if test ! -f "$i" ; then
-    printf '%s\n' "zforce: $i not a file"
+    printf '%s\n' "zforce: operand is not a file"
     res=1
     continue
   fi
@@ -58,7 +58,7 @@ for i do
   if gzip -lv < "$i" 2>/dev/null | grep '^defl' > /dev/null; then
 
     new="$i.gz"
-    mv "$i" "$new" && printf '%s\n' "$i -- replaced with $new" || res=1
+    mv "$i" "$new" && printf '%s\n' "file replaced" || res=1
   fi
 done
 exit $res

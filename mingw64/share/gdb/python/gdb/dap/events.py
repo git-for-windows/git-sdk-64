@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Free Software Foundation, Inc.
+# Copyright 2022-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ _expected_pause = False
 
 
 @in_gdb_thread
-def exec_and_expect_stop(cmd, expected_pause=False, propagate_exception=False):
+def exec_and_expect_stop(cmd, expected_pause=False):
     """A wrapper for exec_and_log that sets the continue-suppression flag.
 
     When EXPECTED_PAUSE is True, a stop that looks like a pause (e.g.,
@@ -174,7 +174,7 @@ def exec_and_expect_stop(cmd, expected_pause=False, propagate_exception=False):
     # continuing.
     _suppress_cont = not expected_pause
     # FIXME if the call fails should we clear _suppress_cont?
-    exec_and_log(cmd, propagate_exception)
+    exec_and_log(cmd)
 
 
 # Map from gdb stop reasons to DAP stop reasons.  Some of these can't
@@ -276,6 +276,31 @@ def _on_inferior_call(event):
             send_event("stopped", obj)
 
 
+@in_gdb_thread
+def _on_corefile_changed(event):
+    # Ignore events relating to corefile being unloaded.
+    if event.inferior.corefile is None:
+        return
+
+    # Corefiles are usually attached via the 'attach' request, which
+    # sets the global _expected_stop_reason to 'attach'.  It is
+    # because of this that it is safe to forward to _on_stop, as when
+    # _expected_stop_reason is set _on_stop doesn't read the
+    # event.details, which EVENT doesn't have.
+    #
+    # However, if the user loads a core file via some mechanism other
+    # than the 'attach' request, e.g. they use the repl to issue a GDB
+    # 'core-file' command, then when we get here _expected_stop_reason
+    # will not be set.
+    #
+    # So, in either case, set _expected_stop_reason now.
+    global _expected_stop_reason
+    _expected_stop_reason = "attach"
+
+    # A corefile was loaded, announce that the inferior has stopped.
+    _on_stop(event)
+
+
 gdb.events.stop.connect(_on_stop)
 gdb.events.exited.connect(_on_exit)
 gdb.events.new_thread.connect(_new_thread)
@@ -284,3 +309,4 @@ gdb.events.cont.connect(_cont)
 gdb.events.new_objfile.connect(_new_objfile)
 gdb.events.free_objfile.connect(_objfile_removed)
 gdb.events.inferior_call.connect(_on_inferior_call)
+gdb.events.corefile_changed.connect(_on_corefile_changed)

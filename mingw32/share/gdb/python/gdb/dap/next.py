@@ -1,4 +1,4 @@
-# Copyright 2022-2025 Free Software Foundation, Inc.
+# Copyright 2022-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ import gdb
 
 from .events import exec_and_expect_stop
 from .server import capability, request
-from .startup import in_gdb_thread
+from .startup import DAPException, exec_and_log, in_gdb_thread
 from .state import set_thread
 
 
@@ -36,11 +36,9 @@ def _handle_thread_step(thread_id, single_thread, select=False):
         result = False
         arg = "off"
     try:
-        # This can fail, depending on the target, so catch the error
-        # and report to our caller.  We can't use exec_and_log because
-        # that does not propagate exceptions.
-        gdb.execute("set scheduler-locking " + arg, from_tty=True, to_string=True)
-    except gdb.error:
+        # This can fail, depending on the target, so catch any error.
+        exec_and_log("set scheduler-locking " + arg)
+    except DAPException:
         result = False
     # Other DAP code may select a frame, and the "finish" command uses
     # the selected frame.
@@ -76,7 +74,7 @@ def step_in(
 @request("stepOut")
 def step_out(*, threadId: int, singleThread: bool = False, **args):
     _handle_thread_step(threadId, singleThread, True)
-    exec_and_expect_stop("finish &", propagate_exception=True)
+    exec_and_expect_stop("finish &")
 
 
 @request("continue")
