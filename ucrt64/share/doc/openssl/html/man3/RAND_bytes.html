@@ -52,7 +52,7 @@ int RAND_set1_random_provider(OSSL_LIB_CTX *ctx, OSSL_PROVIDER *p);</code></pre>
 
 <p>RAND_bytes_ex() and RAND_priv_bytes_ex() are the same as RAND_bytes() and RAND_priv_bytes() except that they both take additional <i>strength</i> and <i>ctx</i> parameters. The bytes generated will have a security strength of at least <i>strength</i> bits. The DRBG used for the operation is the public or private DRBG associated with the specified <i>ctx</i>. The parameter can be NULL, in which case the default library context is used (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>. If the default RAND_METHOD has been changed then for compatibility reasons the RAND_METHOD will be used in preference and the DRBG of the library context ignored.</p>
 
-<p>RAND_set1_random_provider() specifies a provider, <i>prov</i>, which will be used by the library context <i>ctx</i> for all of the generate calls above instead of the built-in in DRBGs and entropy source. Pass NULL for the provider to disable the random provider functionality. In this case, the built-in DRBGs and entropy source will be used. This call should not be considered thread safe.</p>
+<p>RAND_set1_random_provider() specifies a provider, <i>prov</i>, which will be used by the library context <i>ctx</i> for all of the generate calls above instead of the built-in DRBGs and entropy source. Pass NULL for the provider to disable the random provider functionality. In this case, the built-in DRBGs and entropy source will be used. This call should not be considered thread safe.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -92,7 +92,7 @@ int RAND_set1_random_provider(OSSL_LIB_CTX *ctx, OSSL_PROVIDER *p);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

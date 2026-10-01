@@ -359,7 +359,11 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 
 <p>FIPS indicators have been added to the FIPS provider in OpenSSL 3.4. FIPS 140-3 requires indicators to be used if the FIPS provider allows non approved algorithms. An algorithm is approved if it passes all required checks such as minimum key size. By default an error will occur if any check fails. For backwards compatibility individual algorithms may override the checks by using either an option in the FIPS configuration (See <a href="../man5/fips_config.html">&quot;FIPS indicator options&quot; in fips_config(5)</a>) OR in code using an algorithm context setter. Overriding the check means that the algorithm is not FIPS compliant. <a href="../man3/OSSL_INDICATOR_set_callback.html">OSSL_INDICATOR_set_callback(3)</a> can be called to register a callback to log unapproved algorithms. At the end of any algorithm operation the approved status can be queried using an algorithm context getter to retrieve the indicator (e.g. &quot;fips-indicator&quot;). An example of an algorithm context setter is &quot;key-check&quot; in <a href="../man7/EVP_KDF-HKDF.html">&quot;Supported parameters&quot; in EVP_KDF-HKDF(7)</a>.</p>
 
-<p>The following algorithms use &quot;fips-indicator&quot; to query if the algorithm is approved:</p>
+<p>Every algorithm implementation advertised with the property <code>fips=yes</code> by the OpenSSL FIPS provider exposes &quot;fips-indicator&quot; as a gettable context parameter. The getter returns 1 when the operation is approved. An absent indicator must not be interpreted as approval.</p>
+
+<p>Algorithms advertised with <code>fips=no</code> are unapproved. When such an implementation exposes &quot;fips-indicator&quot;, its getter returns 0. Providers other than the OpenSSL FIPS provider are not required to expose this parameter; an absent indicator, or an indicator value of 0, does not assert FIPS approval.</p>
+
+<p>Some algorithms can change from approved to unapproved as a result of their parameters or the operation performed. The following algorithms perform such additional checks:</p>
 
 <dl>
 
@@ -385,6 +389,24 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 <dd>
 
 <p>See <a href="../man7/EVP_PKEY-EC.html">&quot;Common EC parameters&quot; in EVP_PKEY-EC(7)</a></p>
+
+</dd>
+<dt id="ML-KEM-Key-Encapsulation">ML-KEM Key Encapsulation</dt>
+<dd>
+
+<p>Supplying the test-only &quot;ikme&quot; parameter makes the operation unapproved. See <a href="../man7/EVP_KEM-ML-KEM.html">&quot;ML-KEM KEM parameters&quot; in EVP_KEM-ML-KEM(7)</a>.</p>
+
+</dd>
+<dt id="ML-DSA-and-SLH-DSA-Signatures">ML-DSA and SLH-DSA Signatures</dt>
+<dd>
+
+<p>Supplying test entropy makes the operation unapproved. ML-DSA operations that disable the standard message encoding are also unapproved. See <a href="../man7/EVP_SIGNATURE-ML-DSA.html">&quot;FIPS indicator&quot; in EVP_SIGNATURE-ML-DSA(7)</a> and <a href="../man7/EVP_SIGNATURE-SLH-DSA.html">&quot;FIPS indicator&quot; in EVP_SIGNATURE-SLH-DSA(7)</a>.</p>
+
+</dd>
+<dt id="RSA-Key-Generation">RSA Key Generation</dt>
+<dd>
+
+<p>Supplying the parameters reserved for FIPS module testing makes the operation unapproved. See <a href="../man7/EVP_PKEY-RSA.html">&quot;RSA key generation FIPS indicator&quot; in EVP_PKEY-RSA(7)</a>.</p>
 
 </dd>
 <dt id="RSA-Encryption">RSA Encryption</dt>
@@ -453,6 +475,12 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 <dd>
 
 </dd>
+<dt id="X448MLKEM1024-Key-Generation-and-Key-Encapsulation">X448MLKEM1024 Key Generation and Key Encapsulation</dt>
+<dd>
+
+<p>The other hybrid ML-KEM algorithms supplied by the FIPS provider are approved, including X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024.</p>
+
+</dd>
 </dl>
 
 <p>The unapproved (non FIPS validated) algorithms have a property query value of &quot;fips=no&quot;.</p>
@@ -464,13 +492,13 @@ SSL_CTX *non_fips_ssl_ctx = SSL_CTX_new_ex(NULL, &quot;provider!=fips&quot;,
 <dt id="AES-GCM-ciphers-support-the-indicator-iv-generated">AES-GCM ciphers support the indicator &quot;iv-generated&quot;</dt>
 <dd>
 
-<p>See <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a> for further information.</p>
+<p>See <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a> for further information. The AES-GCM &quot;fips-indicator&quot; also accounts for the IV source and returns 0 after encryption with an externally supplied IV. It also returns 0 for GCM tag lengths other than 4, 8, or 12 through 16 bytes.</p>
 
 </dd>
 <dt id="ECDSA-and-RSA-Signatures-support-the-indicator-verify-message">ECDSA and RSA Signatures support the indicator &quot;verify-message&quot;.</dt>
 <dd>
 
-<p>See <a href="../man7/EVP_SIGNATURE-ECDSA.html">&quot;ECDSA Signature Parameters&quot; in EVP_SIGNATURE-ECDSA(7)</a> and <a href="../man7/EVP_SIGNATURE-RSA.html">&quot;Signature Parameters&quot; in EVP_SIGNATURE-RSA(7)</a> /for further information.</p>
+<p>See <a href="../man7/EVP_SIGNATURE-ECDSA.html">&quot;ECDSA Signature Parameters&quot; in EVP_SIGNATURE-ECDSA(7)</a> and <a href="../man7/EVP_SIGNATURE-RSA.html">&quot;Signature Parameters&quot; in EVP_SIGNATURE-RSA(7)</a> for further information. The signature &quot;fips-indicator&quot; also accounts for this value and returns 0 when verification is performed directly on a caller-supplied digest.</p>
 
 </dd>
 </dl>

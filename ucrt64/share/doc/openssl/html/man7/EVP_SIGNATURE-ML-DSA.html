@@ -16,6 +16,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
       <li><a href="#ML-DSA-Signature-Parameters">ML-DSA Signature Parameters</a></li>
+      <li><a href="#FIPS-indicator">FIPS indicator</a></li>
     </ul>
   </li>
   <li><a href="#NOTES">NOTES</a></li>
@@ -86,6 +87,20 @@
 </dl>
 
 <p>See <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a> for information related to <b>ML-DSA</b> keys.</p>
+
+<h2 id="FIPS-indicator">FIPS indicator</h2>
+
+<p>The following parameter can be retrieved using <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a>:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_SIGNATURE_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_SIGNATURE_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The OpenSSL FIPS provider returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information. Supplying &quot;test-entropy&quot;, or setting the test-only &quot;message-encoding&quot; parameter to 0, causes this indicator to return 0.</p>
+
+</dd>
+</dl>
 
 <h1 id="NOTES">NOTES</h1>
 

@@ -77,7 +77,7 @@ int SSL_poll(SSL_POLL_ITEM         *items,
 
 <p>SSL_poll() allows the readiness conditions of the resources represented by one or more BIO_POLL_DESCRIPTOR structures to be determined. In particular, it can be used to query for readiness conditions on QUIC connection SSL objects and QUIC stream SSL objects in a single call. It can also be used to block until at least one of the given resources is ready.</p>
 
-<p>A call to SSL_poll() specifies an array of <b>SSL_POLL_ITEM</b> structures, each of which designates a resource which is being polled for readiness, and a set of event flags which indicate the specific readiness events which the caller is interested in in relation to the specified resource.</p>
+<p>A call to SSL_poll() specifies an array of <b>SSL_POLL_ITEM</b> structures, each of which designates a resource which is being polled for readiness, and a set of event flags which indicate the specific readiness events which the caller is interested in relation to the specified resource.</p>
 
 <p>The fields of <b>SSL_POLL_ITEM</b> are as follows:</p>
 
@@ -310,7 +310,7 @@ int SSL_poll(SSL_POLL_ITEM         *items,
 <li><p>If SSL_poll() returns 0 and <i>result_count</i> is zero, the caller has made a basic usage error; check the ERR stack for details.</p>
 
 </li>
-<li><p>If SSL_poll() returns 0 and <i>result_count</i> is nonzero, inspect the <i>items</i> array for <b>SSL_POLL_ITEM</b> structures with the <b>SSL_POLL_EVENT_F</b> event type raised in <i>revents</i>. The entries added to the ERR stack (of which there is guaranteed to be at least one) reflect the cause of the failure of the first item in <i>items</i> with <b>SSL_POLL_EVENT_F</b> raised. Note that there may be events other than <i>SSL_POLL_EVENT_F</i> output for items which come before the first item with <b>SSL_POLL_EVENT_F</b> raised, and additional <b>SSL_POLL_EVENT_F</b> events may or may not have been output, both of which which will be reflected in <i>result_count</i>.</p>
+<li><p>If SSL_poll() returns 0 and <i>result_count</i> is nonzero, inspect the <i>items</i> array for <b>SSL_POLL_ITEM</b> structures with the <b>SSL_POLL_EVENT_F</b> event type raised in <i>revents</i>. The entries added to the ERR stack (of which there is guaranteed to be at least one) reflect the cause of the failure of the first item in <i>items</i> with <b>SSL_POLL_EVENT_F</b> raised. Note that there may be events other than <i>SSL_POLL_EVENT_F</i> output for items which come before the first item with <b>SSL_POLL_EVENT_F</b> raised, and additional <b>SSL_POLL_EVENT_F</b> events may or may not have been output, both of which will be reflected in <i>result_count</i>.</p>
 
 </li>
 </ul>

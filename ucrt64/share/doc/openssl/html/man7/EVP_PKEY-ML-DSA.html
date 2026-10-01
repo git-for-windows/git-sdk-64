@@ -61,6 +61,18 @@
 
 <p>Use <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a> after calling <a href="../man3/EVP_PKEY_keygen_init.html">EVP_PKEY_keygen_init(3)</a>.</p>
 
+<p>The following key generation parameter can be retrieved with <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a> from the OpenSSL FIPS provider:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
 <h2 id="Common-ML-DSA-parameters">Common ML-DSA parameters</h2>
 
 <p>In addition to the common parameters that all keytypes should support (see <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a>, the implementation of these key types support the parameters listed below. These are gettable using <a href="../man3/EVP_PKEY_get_octet_string_param.html">EVP_PKEY_get_octet_string_param(3)</a> or <a href="../man3/EVP_PKEY_get_params.html">EVP_PKEY_get_params(3)</a>. They can be initialised via <a href="../man3/EVP_PKEY_fromdata.html">EVP_PKEY_fromdata(3)</a>, and are returned by <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a> given a suitable <i>selection</i>. Once a public or private key is configured, it can no longer be modified, nor can another key component be added.</p>
@@ -252,7 +264,7 @@ ml-dsa = ml_dsa_sect</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

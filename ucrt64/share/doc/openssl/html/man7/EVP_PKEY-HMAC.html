@@ -19,6 +19,7 @@
       <li><a href="#CMAC-parameters">CMAC parameters</a></li>
       <li><a href="#Common-MAC-key-generation-parameters">Common MAC key generation parameters</a></li>
       <li><a href="#CMAC-key-generation-parameters">CMAC key generation parameters</a></li>
+      <li><a href="#MAC-key-generation-FIPS-indicator">MAC key generation FIPS indicator</a></li>
     </ul>
   </li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
@@ -103,13 +104,27 @@
 </dd>
 </dl>
 
+<h2 id="MAC-key-generation-FIPS-indicator">MAC key generation FIPS indicator</h2>
+
+<p>The following key generation parameter can be retrieved with <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a> for HMAC and CMAC in the OpenSSL FIPS provider:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
