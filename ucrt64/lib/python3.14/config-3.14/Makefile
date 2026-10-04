@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.14
-srcdir=		../Python-3.14.7
-VPATH=		../Python-3.14.7
-abs_srcdir=	/d/W/B/src/build-UCRT64/../Python-3.14.7
+srcdir=		../Python-3.14.8
+VPATH=		../Python-3.14.8
+abs_srcdir=	/d/W/B/src/build-UCRT64/../Python-3.14.8
 abs_builddir=	/d/W/B/src/build-UCRT64
 
 
@@ -133,7 +133,7 @@ PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 CFLAGS_ALIASING=-fno-strict-aliasing
 # Compilation flags only for ceval.c.
 CFLAGS_CEVAL=
-RCFLAGS= -DFIELD3=7150 -O COFF --target=pe-x86-64
+RCFLAGS= -DFIELD3=8150 -O COFF --target=pe-x86-64
 
 
 # Machine-dependent subdirectories
@@ -160,8 +160,8 @@ host_exec_prefix= 	${exec_prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		D:/W/B/src/Python-3.14.7
-abs_srcdir_b2h=		D:/W/B/src/Python-3.14.7
+srcdir_b2h=		D:/W/B/src/Python-3.14.8
+abs_srcdir_b2h=		D:/W/B/src/Python-3.14.8
 abs_builddir_b2h=	D:/W/B/src/build-UCRT64
 prefix_b2h=		D:/M/msys64/ucrt64
 
@@ -829,6 +829,7 @@ LIBEXPAT_HEADERS= \
 		Modules/expat/expat_config.h \
 		Modules/expat/expat_external.h \
 		Modules/expat/fallthrough.h \
+		Modules/expat/hash_table.h \
 		Modules/expat/iasciitab.h \
 		Modules/expat/internal.h \
 		Modules/expat/latin1tab.h \
@@ -3862,6 +3863,7 @@ Modules/_testlimitedcapi/long.o: $(srcdir)/Modules/_testlimitedcapi/long.c $(MOD
 Modules/_testlimitedcapi/object.o: $(srcdir)/Modules/_testlimitedcapi/object.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/object.c -o Modules/_testlimitedcapi/object.o
 Modules/_testlimitedcapi/pyos.o: $(srcdir)/Modules/_testlimitedcapi/pyos.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/pyos.c -o Modules/_testlimitedcapi/pyos.o
 Modules/_testlimitedcapi/set.o: $(srcdir)/Modules/_testlimitedcapi/set.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/set.c -o Modules/_testlimitedcapi/set.o
+Modules/_testlimitedcapi/slice.o: $(srcdir)/Modules/_testlimitedcapi/slice.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/slice.c -o Modules/_testlimitedcapi/slice.o
 Modules/_testlimitedcapi/sys.o: $(srcdir)/Modules/_testlimitedcapi/sys.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/sys.c -o Modules/_testlimitedcapi/sys.o
 Modules/_testlimitedcapi/tuple.o: $(srcdir)/Modules/_testlimitedcapi/tuple.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/tuple.c -o Modules/_testlimitedcapi/tuple.o
 Modules/_testlimitedcapi/unicode.o: $(srcdir)/Modules/_testlimitedcapi/unicode.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/unicode.c -o Modules/_testlimitedcapi/unicode.o
@@ -3870,7 +3872,7 @@ Modules/_testlimitedcapi/version.o: $(srcdir)/Modules/_testlimitedcapi/version.c
 Modules/_testlimitedcapi/file.o: $(srcdir)/Modules/_testlimitedcapi/file.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/file.c -o Modules/_testlimitedcapi/file.o
 Modules/_testlimitedcapi/weakref.o: $(srcdir)/Modules/_testlimitedcapi/weakref.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/weakref.c -o Modules/_testlimitedcapi/weakref.o
 Modules/_testlimitedcapi/run.o: $(srcdir)/Modules/_testlimitedcapi/run.c $(MODULE__TESTLIMITEDCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTLIMITEDCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testlimitedcapi/run.c -o Modules/_testlimitedcapi/run.o
-Modules/_testlimitedcapi$(EXT_SUFFIX):  Modules/_testlimitedcapi.o Modules/_testlimitedcapi/abstract.o Modules/_testlimitedcapi/bytearray.o Modules/_testlimitedcapi/bytes.o Modules/_testlimitedcapi/capsule.o Modules/_testlimitedcapi/codec.o Modules/_testlimitedcapi/complex.o Modules/_testlimitedcapi/dict.o Modules/_testlimitedcapi/eval.o Modules/_testlimitedcapi/float.o Modules/_testlimitedcapi/heaptype_relative.o Modules/_testlimitedcapi/import.o Modules/_testlimitedcapi/list.o Modules/_testlimitedcapi/long.o Modules/_testlimitedcapi/object.o Modules/_testlimitedcapi/pyos.o Modules/_testlimitedcapi/set.o Modules/_testlimitedcapi/sys.o Modules/_testlimitedcapi/tuple.o Modules/_testlimitedcapi/unicode.o Modules/_testlimitedcapi/vectorcall_limited.o Modules/_testlimitedcapi/version.o Modules/_testlimitedcapi/file.o Modules/_testlimitedcapi/weakref.o Modules/_testlimitedcapi/run.o $(MODULE__TESTLIMITEDCAPI_LDEPS); $(BLDSHARED)  Modules/_testlimitedcapi.o Modules/_testlimitedcapi/abstract.o Modules/_testlimitedcapi/bytearray.o Modules/_testlimitedcapi/bytes.o Modules/_testlimitedcapi/capsule.o Modules/_testlimitedcapi/codec.o Modules/_testlimitedcapi/complex.o Modules/_testlimitedcapi/dict.o Modules/_testlimitedcapi/eval.o Modules/_testlimitedcapi/float.o Modules/_testlimitedcapi/heaptype_relative.o Modules/_testlimitedcapi/import.o Modules/_testlimitedcapi/list.o Modules/_testlimitedcapi/long.o Modules/_testlimitedcapi/object.o Modules/_testlimitedcapi/pyos.o Modules/_testlimitedcapi/set.o Modules/_testlimitedcapi/sys.o Modules/_testlimitedcapi/tuple.o Modules/_testlimitedcapi/unicode.o Modules/_testlimitedcapi/vectorcall_limited.o Modules/_testlimitedcapi/version.o Modules/_testlimitedcapi/file.o Modules/_testlimitedcapi/weakref.o Modules/_testlimitedcapi/run.o $(MODULE_LDFLAGS_SHARED) $(MODULE__TESTLIMITEDCAPI_LDFLAGS) -o Modules/_testlimitedcapi$(EXT_SUFFIX)
+Modules/_testlimitedcapi$(EXT_SUFFIX):  Modules/_testlimitedcapi.o Modules/_testlimitedcapi/abstract.o Modules/_testlimitedcapi/bytearray.o Modules/_testlimitedcapi/bytes.o Modules/_testlimitedcapi/capsule.o Modules/_testlimitedcapi/codec.o Modules/_testlimitedcapi/complex.o Modules/_testlimitedcapi/dict.o Modules/_testlimitedcapi/eval.o Modules/_testlimitedcapi/float.o Modules/_testlimitedcapi/heaptype_relative.o Modules/_testlimitedcapi/import.o Modules/_testlimitedcapi/list.o Modules/_testlimitedcapi/long.o Modules/_testlimitedcapi/object.o Modules/_testlimitedcapi/pyos.o Modules/_testlimitedcapi/set.o Modules/_testlimitedcapi/slice.o Modules/_testlimitedcapi/sys.o Modules/_testlimitedcapi/tuple.o Modules/_testlimitedcapi/unicode.o Modules/_testlimitedcapi/vectorcall_limited.o Modules/_testlimitedcapi/version.o Modules/_testlimitedcapi/file.o Modules/_testlimitedcapi/weakref.o Modules/_testlimitedcapi/run.o $(MODULE__TESTLIMITEDCAPI_LDEPS); $(BLDSHARED)  Modules/_testlimitedcapi.o Modules/_testlimitedcapi/abstract.o Modules/_testlimitedcapi/bytearray.o Modules/_testlimitedcapi/bytes.o Modules/_testlimitedcapi/capsule.o Modules/_testlimitedcapi/codec.o Modules/_testlimitedcapi/complex.o Modules/_testlimitedcapi/dict.o Modules/_testlimitedcapi/eval.o Modules/_testlimitedcapi/float.o Modules/_testlimitedcapi/heaptype_relative.o Modules/_testlimitedcapi/import.o Modules/_testlimitedcapi/list.o Modules/_testlimitedcapi/long.o Modules/_testlimitedcapi/object.o Modules/_testlimitedcapi/pyos.o Modules/_testlimitedcapi/set.o Modules/_testlimitedcapi/slice.o Modules/_testlimitedcapi/sys.o Modules/_testlimitedcapi/tuple.o Modules/_testlimitedcapi/unicode.o Modules/_testlimitedcapi/vectorcall_limited.o Modules/_testlimitedcapi/version.o Modules/_testlimitedcapi/file.o Modules/_testlimitedcapi/weakref.o Modules/_testlimitedcapi/run.o $(MODULE_LDFLAGS_SHARED) $(MODULE__TESTLIMITEDCAPI_LDFLAGS) -o Modules/_testlimitedcapi$(EXT_SUFFIX)
 Modules/_testclinic.o: $(srcdir)/Modules/_testclinic.c $(MODULE__TESTCLINIC_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCLINIC_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testclinic.c -o Modules/_testclinic.o
 Modules/_testclinic$(EXT_SUFFIX):  Modules/_testclinic.o $(MODULE__TESTCLINIC_LDEPS); $(BLDSHARED)  Modules/_testclinic.o $(MODULE_LDFLAGS_SHARED) $(MODULE__TESTCLINIC_LDFLAGS) -o Modules/_testclinic$(EXT_SUFFIX)
 Modules/_testclinic_limited.o: $(srcdir)/Modules/_testclinic_limited.c $(MODULE__TESTCLINIC_LIMITED_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCLINIC_LIMITED_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testclinic_limited.c -o Modules/_testclinic_limited.o
