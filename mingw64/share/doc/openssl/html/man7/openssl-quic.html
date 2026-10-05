@@ -260,7 +260,7 @@
 <p>Client applications which use thread assisted mode do not need to be concerned with this requirement, as the QUIC implementation ensures timeout events are handled in a timely manner. See <b>THREAD ASSISTED MODE</b> for details.</p>
 
 </li>
-<li><p>Ensure that your usage of <a href="../man3/SSL_want.html">SSL_want(3)</a>, <a href="../man3/SSL_want_read.html">SSL_want_read(3)</a> and <a href="../man3/SSL_want_write.html">SSL_want_write(3)</a> reflects the API changes described in <b>CHANGES TO EXISTING APIS</b>. In particular, you should use these APIs to determine the ability of a QUIC stream to receive or provide application data, not to to determine if network I/O is required.</p>
+<li><p>Ensure that your usage of <a href="../man3/SSL_want.html">SSL_want(3)</a>, <a href="../man3/SSL_want_read.html">SSL_want_read(3)</a> and <a href="../man3/SSL_want_write.html">SSL_want_write(3)</a> reflects the API changes described in <b>CHANGES TO EXISTING APIS</b>. In particular, you should use these APIs to determine the ability of a QUIC stream to receive or provide application data, not to determine if network I/O is required.</p>
 
 </li>
 <li><p>Evaluate your application&#39;s use of <a href="../man3/SSL_shutdown.html">SSL_shutdown(3)</a> in light of the changes discussed in <b>CHANGES TO EXISTING APIS</b>. Depending on whether your application wishes to prioritise RFC conformance or rapid shutdown, consider using the new <a href="../man3/SSL_shutdown_ex.html">SSL_shutdown_ex(3)</a> API instead. See <b>QUIC-SPECIFIC APIS</b> for details.</p>

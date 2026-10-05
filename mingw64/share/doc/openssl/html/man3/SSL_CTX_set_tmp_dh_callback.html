@@ -59,7 +59,7 @@ long SSL_set_tmp_dh(SSL *ssl, DH *dh);</code></pre>
 
 <p>Typically applications should use well known DH parameters that have built-in support in OpenSSL. The macros SSL_CTX_set_dh_auto() and SSL_set_dh_auto() configure OpenSSL to use the default built-in DH parameters for the <b>SSL_CTX</b> and <b>SSL</b> objects respectively. Passing a value of 2 or 1 in the <i>onoff</i> parameter switches it on. If the <i>onoff</i> parameter is set to 2, it will force the DH key size to 1024 if the <b>SSL_CTX</b> or <b>SSL</b> security level <a href="../man3/SSL_CTX_set_security_level.html">SSL_CTX_set_security_level(3)</a> is 0 or 1. Passing a value of 0 switches it off. The default setting is off.</p>
 
-<p>If &quot;auto&quot; DH parameters are switched on then the parameters will be selected to be consistent with the size of the key associated with the server&#39;s certificate. If there is no certificate (e.g. for PSK ciphersuites), then it it will be consistent with the size of the negotiated symmetric cipher key.</p>
+<p>If &quot;auto&quot; DH parameters are switched on then the parameters will be selected to be consistent with the size of the key associated with the server&#39;s certificate. If there is no certificate (e.g. for PSK ciphersuites), then it will be consistent with the size of the negotiated symmetric cipher key.</p>
 
 <p>Applications may supply their own DH parameters instead of using the built-in values. This approach is discouraged and applications should in preference use the built-in parameter support described above. Applications wishing to supply their own DH parameters should call SSL_CTX_set0_tmp_dh_pkey() or SSL_set0_tmp_dh_pkey() to supply the parameters for the <b>SSL_CTX</b> or <b>SSL</b> respectively. The parameters should be supplied in the <i>dhpkey</i> argument as an <b>EVP_PKEY</b> containing DH parameters. Ownership of the <i>dhpkey</i> value is passed to the <b>SSL_CTX</b> or <b>SSL</b> object as a result of this call, and so the caller should not free it if the function call is successful.</p>
 
@@ -79,7 +79,7 @@ long SSL_set_tmp_dh(SSL *ssl, DH *dh);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

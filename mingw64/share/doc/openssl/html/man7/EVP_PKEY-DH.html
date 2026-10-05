@@ -19,6 +19,7 @@
       <li><a href="#DH-and-DHX-additional-parameters">DH and DHX additional parameters</a></li>
       <li><a href="#DH-additional-domain-parameters">DH additional domain parameters</a></li>
       <li><a href="#DH-and-DHX-domain-parameter-key-generation-parameters">DH and DHX domain parameter / key generation parameters</a></li>
+      <li><a href="#DH-and-DHX-key-generation-FIPS-indicator">DH and DHX key generation FIPS indicator</a></li>
       <li><a href="#DH-and-DHX-key-validation">DH and DHX key validation</a></li>
     </ul>
   </li>
@@ -140,6 +141,20 @@
 <dd>
 
 <p>An optional value to set the maximum length of the generated private key. The default value used if this is not set is the maximum value of BN_num_bits(<i>q</i>)). The minimum value that this can be set to is 2 * s. Where s is the security strength of the key which has values of 112, 128, 152, 176 and 200 for key sizes of 2048, 3072, 4096, 6144 and 8192.</p>
+
+</dd>
+</dl>
+
+<h2 id="DH-and-DHX-key-generation-FIPS-indicator">DH and DHX key generation FIPS indicator</h2>
+
+<p>The following key generation parameter can be retrieved with <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a> from the OpenSSL FIPS provider:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
 
 </dd>
 </dl>
@@ -325,7 +340,7 @@ EVP_PKEY_free(complete_domp);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

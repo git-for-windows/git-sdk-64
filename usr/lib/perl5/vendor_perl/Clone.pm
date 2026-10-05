@@ -9,7 +9,8 @@ our @ISA       = qw(Exporter);
 our @EXPORT;
 our @EXPORT_OK = qw( clone );
 
-our $VERSION = '0.50';
+our $VERSION = '0.51';
+our $WARN    = 1;
 
 XSLoader::load('Clone', $VERSION);
 
@@ -131,9 +132,20 @@ Windows/Cygwin. Each nesting level consumes approximately 2 rdepth
 units, so the effective limits are roughly 2000 nesting levels on
 Linux/macOS and 1000 on Windows/Cygwin.
 
-For arrays, exceeding the limit triggers an iterative fallback that
-avoids stack overflow. For other reference types (hashes, scalars),
-exceeding the limit produces a warning and a shallow copy.
+When the limit is exceeded, Clone switches to an iterative fallback
+that preserves deep-copy semantics without stack overflow. This
+covers arrays, hashes, and all reference types (including deeply
+nested scalar references). The fallback drives nested containers
+through a heap-allocated work queue, so its C stack usage does not
+grow with nesting depth whatever the shape of the data.
+
+Non-clonable types (globs, code references, formats, IO handles)
+are always shared regardless of depth. Encountering one directly as
+a container element past the depth limit also emits a warning (one
+reached through a reference is shared silently, as at any depth).
+To silence it:
+
+    $Clone::WARN = 0;
 
 You can override the depth limit by passing it as the second argument
 to C<clone()>:
@@ -142,10 +154,11 @@ to C<clone()>:
 
 =item * Filehandles and IO Objects
 
-Filehandles and IO objects are cloned, but the underlying file descriptor
-is shared. Both the original and cloned filehandle will refer to the same
-file position. For DBI database handles and similar objects, Clone attempts
-to handle them safely, but behavior may vary depending on the object type.
+Filehandles and IO objects are not deep-copied. The clone shares the
+same underlying filehandle object as the original (reference count is
+incremented). For DBI database handles, Clone skips opaque XS magic
+to avoid dangling pointers, but the resulting clone should not be used
+as a database handle.
 
 =item * Code References
 

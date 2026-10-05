@@ -105,7 +105,7 @@
 
 <h2 id="Parameters">Parameters</h2>
 
-<p>This implementation supports the parameters described in <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a>.</p>
+<p>This implementation supports the parameters described in <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a>. For implementations in the OpenSSL FIPS provider, these include the gettable &quot;fips-indicator&quot; (<b>OSSL_CIPHER_PARAM_FIPS_APPROVED_INDICATOR</b>), which returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information. For AES-GCM encryption, an externally supplied IV makes the operation non-approved, so this indicator returns 0. See <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a> for the related &quot;iv-generated&quot; parameter. AES-GCM tag lengths are approved only when they are 4, 8, or 12 through 16 bytes.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
