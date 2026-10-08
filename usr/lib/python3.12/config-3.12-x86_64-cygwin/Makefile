@@ -31,8 +31,8 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 VERSION=	3.12
 srcdir=		.
 
-abs_srcdir=	/d/S/B/src/Python-3.12.14
-abs_builddir=	/d/S/B/src/Python-3.12.14
+abs_srcdir=	/d/S/B/src/Python-3.12.15
+abs_builddir=	/d/S/B/src/Python-3.12.15
 
 
 CC=		gcc
@@ -718,6 +718,7 @@ LIBEXPAT_HEADERS= \
 		Modules/expat/expat_config.h \
 		Modules/expat/expat_external.h \
 		Modules/expat/fallthrough.h \
+		Modules/expat/hash_table.h \
 		Modules/expat/iasciitab.h \
 		Modules/expat/internal.h \
 		Modules/expat/latin1tab.h \

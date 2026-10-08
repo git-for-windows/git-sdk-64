@@ -52,7 +52,7 @@ my $File_chem_pic;
 
 my $is_in_source_tree;
 {
-  $is_in_source_tree = 1 if '1.24.1' eq '@' . 'VERSION' . '@';
+  $is_in_source_tree = 1 if '1.24.2' eq '@' . 'VERSION' . '@';
 }
 
 my %makevar;
@@ -62,9 +62,9 @@ if ($is_in_source_tree) {
   $makevar{'G'} = '';
   $File_chem_pic = File::Spec->catfile($chem_dir, 'chem.pic');
 } else {
-  $groff_version = '1.24.1';
+  $groff_version = '1.24.2';
   $makevar{'G'} = '';
-  $makevar{'MACRODIR'} = '/usr/share/groff/1.24.1/tmac';
+  $makevar{'MACRODIR'} = '/usr/share/groff/1.24.2/tmac';
   $File_chem_pic = File::Spec->catfile($makevar{'MACRODIR'}, 'chem.pic');
 }
 
