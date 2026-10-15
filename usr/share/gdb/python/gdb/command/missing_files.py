@@ -1,6 +1,6 @@
 # Missing debug and objfile related commands.
 #
-# Copyright 2023-2025 Free Software Foundation, Inc.
+# Copyright 2023-2026 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -118,10 +118,16 @@ class InfoMissingFileHandlers(gdb.Command):
     def invoke(self, arg, from_tty):
         locus_re, name_re = parse_missing_file_command_args(arg)
 
+        file_style = gdb.Style("filename")
         if locus_re.match("progspace") and locus_re.pattern != "":
             cp = gdb.current_progspace()
+            cp_filename = cp.filename
+            if cp.filename is None:
+                cp_filename = "<no-file>"
+            else:
+                cp_filename = file_style.apply(cp_filename)
             self.list_handlers(
-                "Progspace %s:" % cp.filename, cp.missing_file_handlers, name_re
+                "Progspace %s:" % cp_filename, cp.missing_file_handlers, name_re
             )
 
         for progspace in gdb.progspaces():
@@ -133,7 +139,7 @@ class InfoMissingFileHandlers(gdb.Command):
                     else:
                         msg = "Progspace <no-file>:"
                 else:
-                    msg = "Progspace %s:" % filename
+                    msg = "Progspace %s:" % file_style.apply(filename)
                 self.list_handlers(
                     msg,
                     progspace.missing_file_handlers,
@@ -170,7 +176,7 @@ def do_enable_handler1(handlers, name_re, flag, handler_type):
 def do_enable_handler(arg, flag, handler_type):
     """Enable or disable missing file handlers."""
 
-    (locus_re, name_re) = parse_missing_file_command_args(arg)
+    locus_re, name_re = parse_missing_file_command_args(arg)
     total = 0
     if locus_re.match("global"):
         total += do_enable_handler1(

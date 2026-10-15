@@ -1,4 +1,4 @@
-# Copyright 2023-2025 Free Software Foundation, Inc.
+# Copyright 2023-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import gdb
 import gdb.printing
 
 from .server import client_bool_capability
-from .startup import DAPException, in_gdb_thread
+from .startup import DAPException, in_gdb_thread, log
 
 # A list of all the variable references created during this pause.
 all_variables = []
@@ -146,12 +146,14 @@ class BaseReference(ABC):
         if self._children is None:
             self._children = [None] * self.child_count()
         for idx in range(start, start + count):
+            # DAP was clarified to say that if too many children are
+            # requested, this is not an error, but instead the result
+            # is just truncated.
+            # https://github.com/microsoft/debug-adapter-protocol/issues/571
             if idx >= len(self._children):
-                raise DAPException(
-                    f"requested child {idx} outside range of variable {self._ref}"
-                )
+                break
             if self._children[idx] is None:
-                (name, value) = self.fetch_one_child(idx)
+                name, value = self.fetch_one_child(idx)
                 name = self._compute_name(name)
                 var = VariableReference(name, value)
                 self._children[idx] = var
@@ -226,6 +228,11 @@ class VariableReference(BaseReference):
                 num_children = self._printer.num_children()
             if num_children is None:
                 num_children = len(self.cache_children())
+            elif num_children < 0:
+                # It doesn't make sense to have a negative number of
+                # children.
+                log("pretty printer returned negative children")
+                num_children = 0
             self.count = num_children
         return self.count
 
@@ -261,9 +268,9 @@ class VariableReference(BaseReference):
         if isinstance(self._printer, gdb.ValuePrinter) and hasattr(
             self._printer, "child"
         ):
-            (name, val) = self._printer.child(idx)
+            name, val = self._printer.child(idx)
         else:
-            (name, val) = self.cache_children()[idx]
+            name, val = self.cache_children()[idx]
         # A pretty-printer can return something other than a
         # gdb.Value, but it must be convertible.
         if not isinstance(val, gdb.Value):

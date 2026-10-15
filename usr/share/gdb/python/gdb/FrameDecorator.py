@@ -1,4 +1,4 @@
-# Copyright (C) 2013-2025 Free Software Foundation, Inc.
+# Copyright (C) 2013-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -280,10 +280,11 @@ class FrameVars(object):
                 if sym.is_argument:
                     if not traversed_link:
                         continue
-                elif not sym.is_variable:
+                elif not sym.is_variable and not sym.is_constant:
                     # We use an 'elif' here because is_variable
                     # returns False for arguments as well.  Anyway,
-                    # don't include non-variables here.
+                    # don't include non-variables here, but remember
+                    # to treat local constants the same as variables.
                     continue
                 elif sym.is_artificial:
                     # Skip artificial symbols.
