@@ -1,5 +1,5 @@
 # Frame-filter commands.
-# Copyright (C) 2013-2025 Free Software Foundation, Inc.
+# Copyright (C) 2013-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -186,18 +186,7 @@ def _frame_iterator(frame, frame_low, frame_high, dap_semantics):
 
     # Is this a slice from the end of the backtrace, ie bt -2?
     if frame_low < 0:
-        count = 0
-        slice_length = abs(frame_low)
-        # We cannot use MAXLEN argument for deque as it is 2.6 onwards
-        # and some GDB versions might be < 2.6.
-        sliced = collections.deque()
-
-        for frame_item in frame_iterator:
-            if count >= slice_length:
-                sliced.popleft()
-            count = count + 1
-            sliced.append(frame_item)
-
+        sliced = collections.deque(iterable=frame_iterator, maxlen=abs(frame_low))
         return iter(sliced)
 
     # -1 for frame_high means until the end of the backtrace.  Set to

@@ -1,6 +1,6 @@
 ;; Scheme side of the gdb module.
 ;;
-;; Copyright (C) 2014-2025 Free Software Foundation, Inc.
+;; Copyright (C) 2014-2026 Free Software Foundation, Inc.
 ;;
 ;; This file is part of GDB.
 ;;
@@ -307,10 +307,6 @@
  open-memory
  memory-port?
  memory-port-range
- memory-port-read-buffer-size
- set-memory-port-read-buffer-size!
- memory-port-write-buffer-size
- set-memory-port-write-buffer-size!
  ;; with-gdb-output-to-port, with-gdb-error-to-port are in experimental.scm.
 
  ;; scm-pretty-print.c

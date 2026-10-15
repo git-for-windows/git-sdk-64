@@ -54,7 +54,7 @@ EOF
 }
 
 if (grep(/^--version$/, @ARGV)) {
-	print "mmroff (groff) 1.24.1\n";
+	print "mmroff (groff) 1.24.2\n";
 	exit;
 }
 
@@ -127,7 +127,7 @@ while(<MACRO>) {
 		next;
 	}
 	if (m#^\.\\" PIC (\w+)\s+(\S+)#) {
-		eval "\$cur{'$1'} = '$2'";
+		$cur{"$1"} = '$2';
 		next;
 	}
 	s#\\ \\ $##;

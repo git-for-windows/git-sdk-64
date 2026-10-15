@@ -1,5 +1,5 @@
 # Frame-filter commands.
-# Copyright (C) 2013-2025 Free Software Foundation, Inc.
+# Copyright (C) 2013-2026 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """GDB commands for working with frame-filters."""
-
-import sys
 
 import gdb
 import gdb.frames
@@ -68,7 +66,11 @@ class InfoFrameFilter(gdb.Command):
             return 0
 
         print(title)
-        print("  Priority  Enabled  Name")
+        style = gdb.Style("title")
+        print(
+            "  %s  %s  %s"
+            % (style.apply("Priority"), style.apply("Enabled"), style.apply("Name"))
+        )
         for frame_filter in sorted_frame_filters:
             name = frame_filter[0]
             try:
@@ -77,9 +79,8 @@ class InfoFrameFilter(gdb.Command):
                     self.enabled_string(gdb.frames.get_enabled(frame_filter[1]))
                 )
                 print("  %s  %s  %s" % (priority, enabled, name))
-            except Exception:
-                e = sys.exc_info()[1]
-                print("  Error printing filter '" + name + "': " + str(e))
+            except Exception as e:
+                gdb.warning("Error printing filter '" + name + "': " + str(e))
         if blank_line:
             print("")
         return 1
@@ -87,14 +88,20 @@ class InfoFrameFilter(gdb.Command):
     def invoke(self, arg, from_tty):
         any_printed = self.print_list("global frame-filters:", gdb.frame_filters, True)
 
+        file_style = gdb.Style("filename")
         cp = gdb.current_progspace()
+        cp_filename = cp.filename
+        if cp_filename is None:
+            cp_filename = "<no-file>"
+        else:
+            cp_filename = file_style.apply(cp_filename)
         any_printed += self.print_list(
-            "progspace %s frame-filters:" % cp.filename, cp.frame_filters, True
+            "progspace %s frame-filters:" % cp_filename, cp.frame_filters, True
         )
 
         for objfile in gdb.objfiles():
             any_printed += self.print_list(
-                "objfile %s frame-filters:" % objfile.filename,
+                "objfile %s frame-filters:" % file_style.apply(objfile.filename),
                 objfile.frame_filters,
                 False,
             )
