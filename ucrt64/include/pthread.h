@@ -231,6 +231,9 @@ WINPTHREAD_API int pthread_attr_getschedpolicy (const pthread_attr_t *attr, int 
 #define PTHREAD_MUTEX_PRIVATE 0
 #define PTHREAD_MUTEX_SHARED  1
 
+#define PTHREAD_MUTEX_STALLED 0
+#define PTHREAD_MUTEX_ROBUST  1
+
 typedef unsigned pthread_mutexattr_t;
 
 WINPTHREAD_API int pthread_mutexattr_init(pthread_mutexattr_t *);
@@ -243,6 +246,8 @@ WINPTHREAD_API int pthread_mutexattr_setprotocol(pthread_mutexattr_t *, int);
 WINPTHREAD_API int pthread_mutexattr_getprotocol(const pthread_mutexattr_t *, int *);
 WINPTHREAD_API int pthread_mutexattr_setprioceiling(pthread_mutexattr_t *, int);
 WINPTHREAD_API int pthread_mutexattr_getprioceiling(const pthread_mutexattr_t *, int *);
+WINPTHREAD_API int pthread_mutexattr_setrobust(pthread_mutexattr_t *, int);
+WINPTHREAD_API int pthread_mutexattr_getrobust(const pthread_mutexattr_t *, int *);
 
 typedef intptr_t pthread_mutex_t;
 
@@ -257,6 +262,7 @@ WINPTHREAD_API int pthread_mutex_destroy(pthread_mutex_t *);
 WINPTHREAD_API int pthread_mutex_lock(pthread_mutex_t *);
 WINPTHREAD_API int pthread_mutex_trylock(pthread_mutex_t *);
 WINPTHREAD_API int pthread_mutex_unlock(pthread_mutex_t *);
+WINPTHREAD_API int pthread_mutex_consistent(pthread_mutex_t *);
 WINPTHREAD_API int pthread_mutex_timedlock32(pthread_mutex_t *, const struct _timespec32 *);
 WINPTHREAD_API int pthread_mutex_timedlock64(pthread_mutex_t *, const struct _timespec64 *);
 WINPTHREAD_MUTEX_DECL int pthread_mutex_timedlock(pthread_mutex_t *_M, const struct timespec *_T)
@@ -462,7 +468,6 @@ WINPTHREAD_API int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *a, int s)
     || defined(__WINPTRHEAD_ENABLE_WRAP_API) /* historical typo */
 #define accept(...) (pthread_testcancel(), accept(__VA_ARGS__))
 #define aio_suspend(...) (pthread_testcancel(), aio_suspend(__VA_ARGS__))
-#define clock_nanosleep(...) (pthread_testcancel(), clock_nanosleep(__VA_ARGS__))
 #define close(...) (pthread_testcancel(), close(__VA_ARGS__))
 #define connect(...) (pthread_testcancel(), connect(__VA_ARGS__))
 #define creat(...) (pthread_testcancel(), creat(__VA_ARGS__))
