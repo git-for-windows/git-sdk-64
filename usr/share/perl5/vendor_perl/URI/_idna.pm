@@ -10,7 +10,7 @@ use URI::_punycode     qw(decode_punycode encode_punycode);
 use Unicode::Normalize qw(NFC);
 use Carp               qw(croak);
 
-our $VERSION = '5.37';
+our $VERSION = '5.40';
 
 BEGIN {
     *URI::_idna::_ENV_::JOIN_LEAKS_UTF8_FLAGS
@@ -77,6 +77,10 @@ sub ToASCII {
         croak "Label starts with ACE prefix";
     }
 
+    # Punycode output is never shorter than its input, so reject over-long
+    # labels now rather than after a quadratic encode (GH#207).
+    check_size($label);
+
     # Step 6: Encode with PUNYCODE
     $label = encode_punycode($label);
 
@@ -91,6 +95,9 @@ sub ToUnicode {
     my $label = shift;
     $label = nameprep($label) unless $label =~ $ASCII;
     return $label unless $label =~ /^xn--/;
+
+    # Too long to round-trip, so don't spend time decoding it (GH#207).
+    check_size($label);
     my $result = decode_punycode(substr($label, 4));
     my $label2 = ToASCII($result);
     if (lc($label) ne $label2) {
