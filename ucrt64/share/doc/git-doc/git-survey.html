@@ -510,8 +510,8 @@ reachable commits, trees, and blobs and generate various statistics.</p>
 <div class="paragraph">
 <p>The following options control the set of refs that <code>git</code> <code>survey</code> will examine.
 By default, <code>git</code> <code>survey</code> will look at tags, local branches, and remote refs.
-If any of the following options are given, the default set is cleared and
-only refs for the given options are added.</p>
+If any ref-selection option other than <code>--detached</code> is given, the default
+set is cleared and only refs for the given options are added.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -534,7 +534,7 @@ notes, and stashes.  This option overrides all of the following.</p>
 </dd>
 <dt class="hdlist1">--detached</dt>
 <dd>
-<p>Add HEAD to the set.</p>
+<p>Ignored with a warning. This option does not affect ref selection.</p>
 </dd>
 <dt class="hdlist1">--other</dt>
 <dd>
@@ -542,6 +542,36 @@ notes, and stashes.  This option overrides all of the following.</p>
 </dd>
 </dl>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_migration">MIGRATION</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>git</code> <code>repo</code> <code>structure</code> selects all refs by default. To retain the survey
+default scope, pass <code>--ref-filter=</code>'refs/heads/*',
+<code>--ref-filter=</code>'refs/tags/*', and <code>--ref-filter=</code>'refs/remotes/*'.</p>
+</div>
+<div class="paragraph">
+<p>Neither command separately enumerates detached <code>HEAD</code>, even with
+<code>git</code> <code>survey</code> <code>--all-refs</code>. To include history reachable only from <code>HEAD</code>,
+first create a branch or tag pointing to <code>HEAD</code> and include that ref in
+the selection. The new ref is also counted.</p>
+</div>
+<div class="paragraph">
+<p>For path detail tables, <code>git</code> <code>repo</code> <code>structure</code> defaults to <code>--top=0</code>; use
+<code>--top=10</code> or <code>repo.structure.top=10</code> for the survey default. The shim
+always supplies <code>--top</code> (10 unless overridden on its command line), so
+<code>repo.structure.top</code> does not change <code>git</code> <code>survey</code>'s limit.</p>
+</div>
+<div class="paragraph">
+<p>The <code>git</code> <code>survey</code> shim ignores all <code>survey.*</code> configuration settings.
+When invoking <code>git</code> <code>repo</code> <code>structure</code> directly, use <code>repo.structure.top</code>
+in place of <code>survey.top</code>; this setting does not affect <code>git</code> <code>survey</code>.
+Use <code>--progress</code> or <code>--no-progress</code> instead of <code>survey.progress</code>;
+there is no <code>repo.structure.progress</code> setting. <code>survey.verbose</code> has
+no replacement, and the shim ignores <code>--verbose</code> with a warning.</p>
 </div>
 </div>
 </div>
@@ -580,7 +610,7 @@ object, including tags, commits, trees, and blobs.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-05 19:11:38 UTC
+Last updated 2026-10-22 15:11:04 UTC
 </div>
 </div>
 </body>
