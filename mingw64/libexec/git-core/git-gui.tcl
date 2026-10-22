@@ -3,13 +3,13 @@
  if test "z$*" = zversion \
  || test "z$*" = z--version; \
  then \
-	echo 'git-gui version 0.21.GITGUI'; \
+	echo 'git-gui version 0.21.GITGUI-dirty'; \
 	exit; \
  fi; \
  argv0=$0; \
  exec 'wish' "$argv0" -- "$@"
 
-set appvers {0.21.GITGUI}
+set appvers {0.21.GITGUI-dirty}
 set copyright [string map [list (c) \u00a9] {
 Copyright (c) 2006-2010 Shawn Pearce, et. al.
 
