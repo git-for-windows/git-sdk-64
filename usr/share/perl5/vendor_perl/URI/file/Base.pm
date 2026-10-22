@@ -5,7 +5,7 @@ use warnings;
 
 use URI::Escape ();
 
-our $VERSION = '5.37';
+our $VERSION = '5.40';
 
 sub new {
     my $class = shift;

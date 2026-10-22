@@ -7,7 +7,7 @@ use parent 'URI::_generic';
 
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '5.37';
+our $VERSION = '5.40';
 
 sub _uric_escape {
     my ($class, $str) = @_;
@@ -92,7 +92,7 @@ sub host {
     }
     return undef unless defined $old;
     $old =~ s/.*@//;
-    $old =~ s/:\d+$//;            # remove the port
+    $old =~ s/:\d*$//;            # remove the port
     $old =~ s{^\[(.*)\]$}{$1};    # remove brackets around IPv6 (RFC 3986 3.2.2)
     return uri_unescape($old);
 }

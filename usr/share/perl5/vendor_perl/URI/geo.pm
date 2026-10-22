@@ -8,7 +8,7 @@ use URI::Split qw( uri_split uri_join );
 
 use base qw( URI );
 
-our $VERSION = '5.37';
+our $VERSION = '5.40';
 
 sub _MINIMUM_LATITUDE      { return -90 }
 sub _MAXIMUM_LATITUDE      { return 90 }
@@ -109,9 +109,14 @@ sub _init {
 
     my $self = $class->SUPER::_init($uri, $scheme);
 
-    # Normalise at poles.
-    my $lat = $self->latitude;
-    if ($lat == _MAXIMUM_LATITUDE() || $lat == _MINIMUM_LATITUDE()) {
+    # Normalise at poles; malformed paths are left for the accessors to reject.
+    my $lat = do {
+        local $@;
+        eval { $self->latitude }
+    };
+    if (defined $lat
+        && ($lat == _MAXIMUM_LATITUDE() || $lat == _MINIMUM_LATITUDE()))
+    {
         $self->longitude(0);
     }
     return $self;
@@ -382,11 +387,9 @@ This field is not a known field for the L<URI::geo|URI::geo> object.
 
 =item C<< Badly formed geo uri >>
 
-The L<URI|URI> cannot be parsed as a URI
-
-=item C<< Badly formed geo uri >>
-
-The L<URI|URI> cannot be parsed as a URI
+Raised by the accessors (C<latitude>, C<longitude>, C<location>, C<field>,
+etc.) when the URI cannot be parsed. Since 5.38, C<< URI->new >> does not
+raise it; up to and including 5.37 it died on such input.
 
 =item C<< Latitude out of range >>
 
