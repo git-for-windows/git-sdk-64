@@ -2057,6 +2057,9 @@
 /* HACL* library can compile SIMD256 implementations */
 #define _Py_HACL_CAN_COMPILE_VEC256 1
 
+/* Define if you have the 'strerror_r' function. */
+/* #undef _Py_HAVE_STRERROR_R */
+
 /* Thread stack size set by the linker (in bytes). */
 /* #undef _Py_LINKER_THREAD_STACK_SIZE */
 
