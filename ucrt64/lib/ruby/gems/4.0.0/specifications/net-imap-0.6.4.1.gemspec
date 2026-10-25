@@ -10,16 +10,16 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Shugo Maeda".freeze, "nicholas a. evans".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-07-14"
+  s.date = "2026-10-23"
   s.description = "Ruby client api for Internet Message Access Protocol".freeze
   s.email = ["shugo@ruby-lang.org".freeze, "nick@rubinick.dev".freeze]
   s.homepage = "https://github.com/ruby/net-imap".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 3.2.0".freeze)
-  s.rubygems_version = "4.0.16".freeze
+  s.rubygems_version = "4.0.20".freeze
   s.summary = "Ruby client api for Internet Message Access Protocol".freeze
 
-  s.installed_by_version = "4.0.16".freeze
+  s.installed_by_version = "4.0.20".freeze
 
   s.specification_version = 4
 

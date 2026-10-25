@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Eric Hodel".freeze, "Dave Thomas".freeze, "Phil Hagelberg".freeze, "Tony Strauss".freeze, "Zachary Scott".freeze, "Hiroshi SHIBATA".freeze, "ITOYANAGI Sakura".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-07-14"
+  s.date = "2026-10-23"
   s.description = "RDoc produces HTML and command-line documentation for Ruby projects.\nRDoc includes the +rdoc+ and +ri+ tools for generating and displaying documentation from the command-line.\n".freeze
   s.email = ["drbrain@segment7.net".freeze, "".freeze, "".freeze, "".freeze, "mail@zzak.io".freeze, "hsbt@ruby-lang.org".freeze, "aycabta@gmail.com".freeze]
   s.executables = ["rdoc".freeze, "ri".freeze]
@@ -20,10 +20,10 @@ Gem::Specification.new do |s|
   s.licenses = ["Ruby".freeze]
   s.rdoc_options = ["--main".freeze, "README.md".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.6.0".freeze)
-  s.rubygems_version = "4.0.16".freeze
+  s.rubygems_version = "4.0.20".freeze
   s.summary = "RDoc produces HTML and command-line documentation for Ruby projects".freeze
 
-  s.installed_by_version = "4.0.16".freeze
+  s.installed_by_version = "4.0.20".freeze
 
   s.specification_version = 4
 

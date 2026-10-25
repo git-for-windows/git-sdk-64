@@ -50,6 +50,19 @@ module Bundler
       end
     end
 
+    # `require_paths` is overridden above, but `full_require_paths` (and so
+    # `load_paths`) is computed from `raw_require_paths`, which would otherwise
+    # report the default `lib` for every gem
+    def raw_require_paths
+      if @remote_specification
+        @remote_specification.raw_require_paths
+      elsif _local_specification
+        _local_specification.raw_require_paths
+      else
+        super
+      end
+    end
+
     # needed for inline
     def load_paths
       # remote specs aren't installed, and can't have load_paths
@@ -153,8 +166,13 @@ module Bundler
         next unless v
         case k.to_s
         when "checksum"
+          # Some registries send empty checksum values, treat them as if the
+          # checksum was not included at all
+          checksum = v.last
+          next unless checksum
+
           begin
-            @checksum = Checksum.from_api(v.last, @spec_fetcher.uri)
+            @checksum = Checksum.from_api(checksum, @spec_fetcher.uri)
           rescue ArgumentError => e
             raise ArgumentError, "Invalid checksum for #{full_name}: #{e.message}"
           end

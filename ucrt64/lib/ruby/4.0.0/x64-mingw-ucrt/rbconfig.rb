@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("4.0.") or
-    raise "ruby lib version (4.0.6) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (4.0.9) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/4.0.0/x64-mingw-ucrt")
@@ -21,7 +21,7 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "4"
   CONFIG["MINOR"] = "0"
-  CONFIG["TEENY"] = "6"
+  CONFIG["TEENY"] = "9"
   CONFIG["PATCHLEVEL"] = "0"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
@@ -179,7 +179,7 @@ module RbConfig
   CONFIG["WINDRES"] = "windres"
   CONFIG["ARFLAGS"] = "rcD "
   CONFIG["try_header"] = ""
-  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev5, Built by MSYS2 project) 16.1.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  CONFIG["CC_VERSION_MESSAGE"] = "gcc.exe (Rev6, Built by MSYS2 project) 16.2.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   CONFIG["CC_VERSION"] = "$(CC) --version"
   CONFIG["CSRCFLAG"] = ""
   CONFIG["COUTFLAG"] = "-o "

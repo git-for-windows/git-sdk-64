@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masaki Suketa".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-07-14"
+  s.date = "2026-10-23"
   s.description = "Provides an interface for OLE Automation in Ruby".freeze
   s.email = ["suke@ruby-lang.org".freeze]
   s.extensions = ["ext/win32ole/extconf.rb".freeze]
@@ -22,5 +22,5 @@ Gem::Specification.new do |s|
   s.rubygems_version = "3.4.20".freeze
   s.summary = "Provides an interface for OLE Automation in Ruby".freeze
 
-  s.installed_by_version = "4.0.16".freeze
+  s.installed_by_version = "4.0.20".freeze
 end

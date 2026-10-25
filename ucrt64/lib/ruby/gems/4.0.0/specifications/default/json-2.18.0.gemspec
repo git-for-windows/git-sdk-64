@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.metadata = { "bug_tracker_uri" => "https://github.com/ruby/json/issues", "changelog_uri" => "https://github.com/ruby/json/blob/master/CHANGES.md", "documentation_uri" => "https://docs.ruby-lang.org/en/master/JSON.html", "homepage_uri" => "https://github.com/ruby/json", "source_code_uri" => "https://github.com/ruby/json" } if s.respond_to? :metadata=
   s.require_paths = ["lib".freeze]
   s.authors = ["Florian Frank".freeze]
-  s.date = "2026-07-14"
+  s.date = "2026-10-23"
   s.description = "This is a JSON implementation as a Ruby extension in C.".freeze
   s.email = "flori@ping.de".freeze
   s.extra_rdoc_files = ["README.md".freeze]
@@ -18,6 +18,6 @@ Gem::Specification.new do |s|
   s.licenses = ["Ruby".freeze]
   s.rdoc_options = ["--title".freeze, "JSON implementation for Ruby".freeze, "--main".freeze, "README.md".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.7".freeze)
-  s.rubygems_version = "4.0.16".freeze
+  s.rubygems_version = "4.0.20".freeze
   s.summary = "JSON Implementation for Ruby".freeze
 end
