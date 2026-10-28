@@ -27,33 +27,79 @@ install options for your operating system.
 
 ## Current status
 
-Git Credential Manager is currently available for Windows, macOS, and Linux\*.
-GCM only works with HTTP(S) remotes; you can still use Git with SSH:
+Git Credential Manager is currently available for Windows, macOS, and Linux and
+works with HTTP(S) remotes.
 
-- [Azure DevOps SSH][azure-devops-ssh]
-- [GitHub SSH][github-ssh]
-- [Bitbucket SSH][bitbucket-ssh]
+You can still use Git with SSH - see the specific documentation for your host on
+how to set up SSH: [Azure DevOps][azure-devops-ssh], [GitHub][github-ssh],
+[Bitbucket][bitbucket-ssh]
 
-Feature|Windows|macOS|Linux\*
+Feature|Windows|macOS|Linux¹
 -|:-:|:-:|:-:
 Installer/uninstaller|&#10003;|&#10003;|&#10003;
-Secure platform credential storage [(see more)][gcm-credstores]|&#10003;|&#10003;|&#10003;
-Multi-factor authentication support for Azure DevOps|&#10003;|&#10003;|&#10003;
-Two-factor authentication support for GitHub|&#10003;|&#10003;|&#10003;
-Two-factor authentication support for Bitbucket|&#10003;|&#10003;|&#10003;
-Two-factor authentication support for GitLab|&#10003;|&#10003;|&#10003;
-Windows Integrated Authentication (NTLM/Kerberos) support|&#10003;|_N/A_|_N/A_
-Basic HTTP authentication support|&#10003;|&#10003;|&#10003;
-Proxy support|&#10003;|&#10003;|&#10003;
-`amd64` support|&#10003;|&#10003;|&#10003;
-`x86` support|&#10003;|_N/A_|&#10007;
-`arm64` support|best effort|&#10003;|&#10003;
-`armhf` support|_N/A_|_N/A_|&#10003;
+Secure platform [credential storage][gcm-credstores]|&#10003;|&#10003;|&#10003;
+Entra authentication with [broker support][gcm-broker]|&#10003;|&#10003;|&#10003;
+Azure DevOps authentication|&#10003;|&#10003;|&#10003;
+GitHub & GHES authentication|&#10003;|&#10003;|&#10003;
+Bitbucket Cloud & DC authentication|&#10003;|&#10003;|&#10003;
+GitLab authentication|&#10003;|&#10003;|&#10003;
+Windows Integrated Authentication (NTLM/Kerberos)|&#10003;|_N/A_|_N/A_
+Generic OAuth authentication|&#10003;|&#10003;|&#10003;
+Basic HTTP authentication|&#10003;|&#10003;|&#10003;
+Network proxies|&#10003;|&#10003;|&#10003;
+x64 _(x86_64 / AMD64)_ support|&#10003;|&#10003;²|&#10003;
+x86 _(i686)_ support|&#10003;³|_N/A_|&#10007;
+ARM64 _(aarch64)_ support|&#10003;|&#10003;|&#10003;
+ARM32 _(armhf)_ support|_N/A_|_N/A_|&#10003;³
 
-(\*) GCM guarantees support only for [the Linux distributions that are officially
-supported by dotnet][dotnet-distributions].
+1. Linux support is limited to the
+   [distributions officially supported by .NET][dotnet-os-support].
 
-## Supported Git versions
+2. Mac support on Intel-based (x64) devices is best effort.
+   Apple announced that macOS 28 will [drop support][apple-intel-support] for
+   Intel-based applications.
+
+3. No official builds produced, but local builds should be possible.
+   Support is best effort.
+
+## Supported Environments
+
+We aim to support the broadest set of operating systems and distributions,
+within reason. We aim to target and update to the latest current .NET LTS
+version as they become generally available.
+
+### Windows
+
+GCM supports Windows 10 and later, including Windows Server 2016 and later.
+This is the same [support matrix][dotnet-os-support] as the .NET runtime on
+Windows.
+
+#### Windows Subsystem for Linux (WSL)
+
+See detailed WSL information [here][gcm-wsl].
+
+#### Windows 7 and Windows 8.x
+
+As of GCM version 3.x, Windows 7 and Windows 8.x are no longer supported.
+We continue to provide minimal, security-only support for GCM 2.9.x on Windows 7
+and Windows 8.x, but we recommend upgrading to a supported version of Windows.
+
+The [`maint-v2`][maint-v2] and [`releases/v2`][releases-v2] branches are
+maintained to allow for security patches and releases for GCM v2.x for Windows 7
+and Windows 8.x only. These branches will **not** receive new features.
+
+### macOS
+
+GCM supports macOS 14 and later.
+This is the same [support matrix][dotnet-os-support] as the .NET runtime on
+macOS.
+
+### Linux
+
+GCM provides support only for [the Linux distributions that are officially
+supported by dotnet][dotnet-os-support].
+
+### Git compatibility
 
 Git Credential Manager tries to be compatible with the broadest set of Git
 versions (within reason). However there are some known problematic releases of
@@ -76,11 +122,12 @@ Once it's installed and configured, Git Credential Manager is called implicitly
 by Git. You don't have to do anything special, and GCM isn't intended to be
 called directly by the user. For example, when pushing (`git push`) to
 [Azure DevOps][azure-devops], [Bitbucket][bitbucket], or [GitHub][github], a
-window will automatically open and walk you through the sign-in process. (This
-process will look slightly different for each Git host, and even in some cases,
-whether you've connected to an on-premises or cloud-hosted Git host.) Later Git
-commands in the same repository will re-use existing credentials or tokens that
-GCM has stored for as long as they're valid.
+window will automatically open and walk you through the sign-in process.
+
+This process will look slightly different for each Git host, and even in some
+cases, whether you've connected to an on-premises or cloud-hosted Git host.
+Later Git commands in the same repository will re-use existing credentials or
+tokens that GCM has stored for as long as they're valid.
 
 Read full command line usage [here][gcm-usage].
 
@@ -94,7 +141,7 @@ See the [documentation index][docs-index] for links to additional resources.
 
 ## Experimental Features
 
-- [Windows broker (experimental)][gcm-windows-broker]
+- (None at this time)
 
 ## Future features
 
@@ -117,30 +164,33 @@ When using GitHub logos, please be sure to follow the
 
 [azure-devops]: https://azure.microsoft.com/en-us/products/devops
 [azure-devops-ssh]: https://docs.microsoft.com/en-us/azure/devops/repos/git/use-ssh-keys-to-authenticate?view=azure-devops
-[bitbucket]: https://bitbucket.org
+[bitbucket]: https://www.atlassian.com/software/bitbucket
 [bitbucket-ssh]: https://confluence.atlassian.com/bitbucket/ssh-keys-935365775.html
 [build-status-badge]: https://github.com/git-ecosystem/git-credential-manager/actions/workflows/continuous-integration.yml/badge.svg
-[docs-index]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/README.md
+[docs-index]: docs/README.md
 [dotnet]: https://dotnet.microsoft.com
-[dotnet-distributions]: https://learn.microsoft.com/en-us/dotnet/core/install/linux
+[dotnet-os-support]: https://github.com/dotnet/core/blob/main/release-notes/10.0/supported-os.md
 [git-credential-helper]: https://git-scm.com/docs/gitcredentials
 [gcm]: https://github.com/git-ecosystem/git-credential-manager
 [gcm-coc]: CODE_OF_CONDUCT.md
 [gcm-commit-12294990]: https://github.com/git/git/commit/12294990c90e043862be9eb7eb22c3784b526340
 [gcm-contributing]: CONTRIBUTING.md
-[gcm-credstores]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/credstores.md
+[gcm-credstores]: docs/credstores.md
 [gcm-for-mac-and-linux]: https://github.com/microsoft/Git-Credential-Manager-for-Mac-and-Linux
 [gcm-for-windows]: https://github.com/microsoft/Git-Credential-Manager-for-Windows
-[gcm-http-proxy]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/netconfig.md#http-proxy
+[gcm-http-proxy]: docs/netconfig.md#http-proxy
 [gcm-license]: LICENSE
-[gcm-usage]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/usage.md
-[gcm-windows-broker]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/windows-broker.md
+[gcm-usage]: docs/usage.md
+[gcm-wsl]: docs/wsl.md
+[gcm-broker]: docs/msauth-broker.md
 [git-tools-credential-storage]: https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage
 [github]: https://github.com
 [github-ssh]: https://help.github.com/en/articles/connecting-to-github-with-ssh
 [github-logos]: https://github.com/logos
-[install]: https://github.com/git-ecosystem/git-credential-manager/blob/release/docs/install.md
-[ms-package-repos]: https://packages.microsoft.com/repos/
+[install]: docs/install.md
+[maint-v2]: https://github.com/git-ecosystem/git-credential-manager/tree/maint-v2
+[releases-v2]: https://github.com/git-ecosystem/git-credential-manager/tree/releases/v2
 [roadmap]: https://github.com/git-ecosystem/git-credential-manager/milestones?direction=desc&sort=due_date&state=open
 [roadmap-announcement]: https://github.com/git-ecosystem/git-credential-manager/discussions/1203
 [workflow-status]: https://github.com/git-ecosystem/git-credential-manager/actions/workflows/continuous-integration.yml
+[apple-intel-support]: https://support.apple.com/en-us/102527
