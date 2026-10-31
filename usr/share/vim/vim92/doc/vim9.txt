@@ -1,4 +1,4 @@
-*vim9.txt*	For Vim version 9.2.  Last change: 2026 Sep 28
+*vim9.txt*	For Vim version 9.2.  Last change: 2026 Oct 25
 
 
 		  VIM REFERENCE MANUAL	  by Bram Moolenaar
@@ -1215,9 +1215,14 @@ declared.  They can also be deleted with |:unlet|, for example:
 <
 Declaring any of the following with `:var` gives an error:
 - a global, buffer, tab, or window variable
+- an environment variable
 - an option, or
 - a register.
 Examples:
+							*E1000*  >vim9
+	vim9script
+	var $X = 1  # E1000: Cannot declare an environment variable: $X
+<
 							*E1016*  >vim9
 	vim9script
 	var t:err = 'err'  # E1016: Cannot declare a tab variable: t:err
@@ -3610,9 +3615,7 @@ or within a `:function`.  The three rules are:
     regardless of the function's parent context.  Similarly, it gives E1268 in
     the script-local scope of a Vim9 script.
  3. In a legacy Vim script, "s:" is optional in a `:def` function, regardless
-    of the function's parent context.  A `:def` function cannot create a
-    script-local variable, assigning to one that does not exist when the
-    function is compiled gives |E1089|.
+    of the function's parent context.
 
 The following three scripts demonstrate these rules:
 >vim
@@ -4047,6 +4050,11 @@ are examples of errors E1008, E1009, E1010, and E1012:
 	vim9cmd var l_1010: list<invalidtype>
 	vim9cmd var l_1012: list<number> = ['42']
 <
+							*E1439*
+A type cannot be nested too deeply, e.g. a "list<list<...>>" type nested more
+than 1000 times results in an error.  This includes nesting by using type
+aliases.
+
 There is no array type.  Instead, use either a list or a tuple.  Those types
 may also be literals (constants).  In the following example, [5, 6] is a list
 literal and (7, ) a tuple literal.  The echoed list is a list literal too:
@@ -5315,6 +5323,8 @@ An example:
 	enddef
 	Outer()
 <
+A nested generic function can also be called recursively and used in a
+closure, such as a lambda or another nested function.
 
 Using a type variable as a type argument ~
 
@@ -5375,6 +5385,10 @@ A generic class method in a base class can be overridden by a generic method
 in a child class.  The number of type variables must match between both
 methods.  A concrete class method cannot be overridden by a generic method,
 and vice versa.
+							*E1438*
+A method that implements an interface method must have the same number of
+type variables as the interface method.  A generic method cannot implement a
+regular method, and vice versa.
 
 
 Generic function reference~

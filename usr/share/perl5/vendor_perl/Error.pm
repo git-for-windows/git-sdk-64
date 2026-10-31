@@ -10,7 +10,7 @@
 # but modified ***significantly***
 
 package Error;
-$Error::VERSION = '0.17030';
+$Error::VERSION = '0.17031';
 use strict;
 use warnings;
 
@@ -277,7 +277,7 @@ sub value
 }
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17030';
+$Error::Simple::VERSION = '0.17031';
 @Error::Simple::ISA = qw(Error);
 
 sub new
@@ -314,7 +314,7 @@ sub stringify
 # Peter Seibel <peter@weblogic.com>
 
 package Error::subs;
-$Error::subs::VERSION = '0.17030';
+$Error::subs::VERSION = '0.17031';
 use Exporter ();
 use vars qw(@EXPORT_OK @ISA %EXPORT_TAGS);
 
@@ -567,7 +567,7 @@ sub otherwise (&;$)
 1;
 
 package Error::WarnDie;
-$Error::WarnDie::VERSION = '0.17030';
+$Error::WarnDie::VERSION = '0.17031';
 sub gen_callstack($)
 {
     my ($start) = @_;
@@ -683,7 +683,7 @@ Error - Error/exception handling in an OO-ish way
 
 =head1 VERSION
 
-version 0.17030
+version 0.17031
 
 =head1 SYNOPSIS
 
@@ -1188,7 +1188,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2025 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2026 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

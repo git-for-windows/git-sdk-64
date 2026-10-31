@@ -61,9 +61,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'msys-python3.dll',
  'CONFINCLUDEDIR': '/usr/include',
  'CONFINCLUDEPY': '/usr/include/python3.12',
  'COREPYTHONPATH': '',
- 'COVERAGE_INFO': '/d/S/B/src/Python-3.12.15/coverage.info',
+ 'COVERAGE_INFO': '/d/S/B/src/Python-3.12.16/coverage.info',
  'COVERAGE_LCOV_OPTIONS': '--rc lcov_branch_coverage=1',
- 'COVERAGE_REPORT': '/d/S/B/src/Python-3.12.15/lcov-report',
+ 'COVERAGE_REPORT': '/d/S/B/src/Python-3.12.16/lcov-report',
  'COVERAGE_REPORT_OPTIONS': '--rc lcov_branch_coverage=1 --branch-coverage '
                             '--title "CPython 3.12 LCOV report [commit $(shell '
                             ')]"',
@@ -951,8 +951,9 @@ build_time_vars = {'ABI3DLLLIBRARY': 'msys-python3.dll',
  'MODULE__SSL_CFLAGS': '',
  'MODULE__SSL_DEPS': './Modules/_ssl.h ./Modules/_ssl/cert.c '
                      './Modules/_ssl/debughelpers.c ./Modules/_ssl/misc.c '
-                     './Modules/_ssl_data.h ./Modules/_ssl_data_111.h '
-                     './Modules/_ssl_data_300.h ./Modules/socketmodule.h',
+                     './Modules/_ssl/distrusted_spki.h ./Modules/_ssl_data.h '
+                     './Modules/_ssl_data_111.h ./Modules/_ssl_data_300.h '
+                     './Modules/socketmodule.h',
  'MODULE__SSL_LDFLAGS': '-lssl -lcrypto',
  'MODULE__SSL_STATE': 'yes',
  'MODULE__STATISTICS_LDFLAGS': '',
@@ -1225,8 +1226,8 @@ build_time_vars = {'ABI3DLLLIBRARY': 'msys-python3.dll',
  'WITH_VALGRIND': 0,
  'X87_DOUBLE_ROUNDING': 0,
  'XMLLIBSUBDIRS': 'xml xml/dom xml/etree xml/parsers xml/sax',
- 'abs_builddir': '/d/S/B/src/Python-3.12.15',
- 'abs_srcdir': '/d/S/B/src/Python-3.12.15',
+ 'abs_builddir': '/d/S/B/src/Python-3.12.16',
+ 'abs_srcdir': '/d/S/B/src/Python-3.12.16',
  'datarootdir': '/usr/share',
  'exec_prefix': '/usr',
  'prefix': '/usr',

@@ -7,7 +7,7 @@
 # licence).
 
 package Error::Simple;
-$Error::Simple::VERSION = '0.17030';
+$Error::Simple::VERSION = '0.17031';
 use strict;
 use warnings;
 
@@ -27,7 +27,7 @@ Error::Simple - the simple error sub-class of Error
 
 =head1 VERSION
 
-version 0.17030
+version 0.17031
 
 =head1 SYNOPSIS
 
@@ -157,7 +157,7 @@ feature.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2025 by Shlomi Fish ( http://www.shlomifish.org/ ).
+This software is copyright (c) 2026 by Shlomi Fish ( http://www.shlomifish.org/ ).
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
