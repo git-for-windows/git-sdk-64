@@ -29,9 +29,9 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.14
-srcdir=		../Python-3.14.9
-VPATH=		../Python-3.14.9
-abs_srcdir=	/d/W/B/src/build-UCRT64/../Python-3.14.9
+srcdir=		../Python-3.14.10
+VPATH=		../Python-3.14.10
+abs_srcdir=	/d/W/B/src/build-UCRT64/../Python-3.14.10
 abs_builddir=	/d/W/B/src/build-UCRT64
 
 
@@ -133,7 +133,7 @@ PY_CORE_LDFLAGS=$(PY_LDFLAGS) $(PY_LDFLAGS_NODIST)
 CFLAGS_ALIASING=-fno-strict-aliasing
 # Compilation flags only for ceval.c.
 CFLAGS_CEVAL=
-RCFLAGS= -DFIELD3=9150 -O COFF --target=pe-x86-64
+RCFLAGS= -DFIELD3=10150 -O COFF --target=pe-x86-64
 
 
 # Machine-dependent subdirectories
@@ -160,8 +160,8 @@ host_exec_prefix= 	${exec_prefix}
 datarootdir=    ${prefix}/share
 
 # Locations needed for semi-native fixup of sysconfig.
-srcdir_b2h=		D:/W/B/src/Python-3.14.9
-abs_srcdir_b2h=		D:/W/B/src/Python-3.14.9
+srcdir_b2h=		D:/W/B/src/Python-3.14.10
+abs_srcdir_b2h=		D:/W/B/src/Python-3.14.10
 abs_builddir_b2h=	D:/W/B/src/build-UCRT64
 prefix_b2h=		D:/M/msys64/ucrt64
 
@@ -552,6 +552,7 @@ IO_OBJS=	\
 MIMALLOC_HEADERS= \
 	$(srcdir)/Include/internal/pycore_mimalloc.h \
 	$(srcdir)/Include/internal/mimalloc/mimalloc.h \
+	$(srcdir)/Include/internal/mimalloc/mimalloc-stats.h \
 	$(srcdir)/Include/internal/mimalloc/mimalloc/atomic.h \
 	$(srcdir)/Include/internal/mimalloc/mimalloc/internal.h \
 	$(srcdir)/Include/internal/mimalloc/mimalloc/prim.h \
@@ -1244,7 +1245,7 @@ libpython3.so:	libpython$(LDVERSION).so
 	$(BLDSHARED) $(NO_AS_NEEDED) -o $@ -Wl,-h$@ $^
 
 libpython$(LDVERSION).dylib: $(LIBRARY_OBJS)
-	 $(CC) -dynamiclib $(PY_CORE_LDFLAGS) -undefined dynamic_lookup -Wl,-install_name,$(prefix)/lib/libpython$(LDVERSION).dylib -Wl,-compatibility_version,$(VERSION) -Wl,-current_version,$(VERSION) -o $@ $(LIBRARY_OBJS) $(DTRACE_OBJS) $(SHLIBS) $(LIBC) $(LIBM); \
+	 $(CC) -dynamiclib $(PY_CORE_LDFLAGS) -undefined dynamic_lookup -Wl,-install_name,$(prefix)/lib/libpython$(LDVERSION).dylib -Wl,-compatibility_version,$(VERSION) -Wl,-current_version,$(VERSION) -o $@ $(LIBRARY_OBJS) $(DTRACE_OBJS) $(MODLIBS) $(SHLIBS) $(LIBC) $(LIBM); \
 
 
 libpython$(VERSION).sl: $(LIBRARY_OBJS)
@@ -1278,7 +1279,7 @@ $(PYTHONFRAMEWORKDIR)/Versions/$(VERSION)/$(PYTHONFRAMEWORK): \
 		-install_name $(PYTHONFRAMEWORKINSTALLNAMEPREFIX)/$(PYTHONFRAMEWORK) \
 		-compatibility_version $(VERSION) \
 		-current_version $(VERSION) \
-		-framework CoreFoundation $(LIBS);
+		-framework CoreFoundation $(MODLIBS) $(LIBS);
 	$(INSTALL) -d -m $(DIRMODE)  \
 		$(PYTHONFRAMEWORKDIR)/Versions/$(VERSION)/Resources/English.lproj
 	$(INSTALL_DATA) $(RESSRCDIR)/Info.plist \
@@ -1299,7 +1300,7 @@ $(PYTHONFRAMEWORKDIR)/$(PYTHONFRAMEWORK): \
 		-install_name $(PYTHONFRAMEWORKINSTALLNAMEPREFIX)/$(PYTHONFRAMEWORK) \
 		-compatibility_version $(VERSION) \
 		-current_version $(VERSION) \
-		-framework CoreFoundation $(LIBS);
+		-framework CoreFoundation $(MODLIBS) $(LIBS);
 	$(INSTALL_DATA) $(RESSRCDIR)/Info.plist $(PYTHONFRAMEWORKDIR)/Info.plist
 
 # This rule builds the Cygwin Python DLL and import library if configured
@@ -2348,9 +2349,12 @@ Objects/obmalloc.o: $(srcdir)/Objects/mimalloc/alloc.c \
 		$(srcdir)/Objects/mimalloc/alloc-aligned.c \
 		$(srcdir)/Objects/mimalloc/alloc-posix.c \
 		$(srcdir)/Objects/mimalloc/arena.c \
+		$(srcdir)/Objects/mimalloc/arena-abandon.c \
 		$(srcdir)/Objects/mimalloc/bitmap.c \
+		$(srcdir)/Objects/mimalloc/free.c \
 		$(srcdir)/Objects/mimalloc/heap.c \
 		$(srcdir)/Objects/mimalloc/init.c \
+		$(srcdir)/Objects/mimalloc/libc.c \
 		$(srcdir)/Objects/mimalloc/options.c \
 		$(srcdir)/Objects/mimalloc/os.c \
 		$(srcdir)/Objects/mimalloc/page.c \
@@ -2359,6 +2363,7 @@ Objects/obmalloc.o: $(srcdir)/Objects/mimalloc/alloc.c \
 		$(srcdir)/Objects/mimalloc/segment-map.c \
 		$(srcdir)/Objects/mimalloc/stats.c \
 		$(srcdir)/Objects/mimalloc/prim/prim.c \
+		$(srcdir)/Objects/mimalloc/prim/emscripten/prim.c \
 		$(srcdir)/Objects/mimalloc/prim/osx/prim.c \
 		$(srcdir)/Objects/mimalloc/prim/unix/prim.c \
 		$(srcdir)/Objects/mimalloc/prim/wasi/prim.c
@@ -3144,8 +3149,11 @@ inclinstall:
 		$(INSTALL_DATA) $$i $(DESTDIR)$(INCLUDEPY)/internal; \
 	done
 	@if test "$(INSTALL_MIMALLOC)" = "yes"; then \
-		echo $(INSTALL_DATA) $(srcdir)/Include/internal/mimalloc/mimalloc.h $(DESTDIR)$(INCLUDEPY)/internal/mimalloc/mimalloc.h; \
-		$(INSTALL_DATA) $(srcdir)/Include/internal/mimalloc/mimalloc.h $(DESTDIR)$(INCLUDEPY)/internal/mimalloc/mimalloc.h; \
+		for i in $(srcdir)/Include/internal/mimalloc/*.h; \
+		do \
+			echo $(INSTALL_DATA) $$i $(INCLUDEPY)/internal/mimalloc; \
+			$(INSTALL_DATA) $$i $(DESTDIR)$(INCLUDEPY)/internal/mimalloc; \
+		done; \
 		for i in $(srcdir)/Include/internal/mimalloc/mimalloc/*.h; \
 		do \
 			echo $(INSTALL_DATA) $$i $(INCLUDEPY)/internal/mimalloc/mimalloc; \
@@ -3642,7 +3650,7 @@ MODULE__HMAC_DEPS=$(srcdir)/Modules/hashlib.h $(LIBHACL_HMAC_HEADERS) $(LIBHACL_
 MODULE__HMAC_LDEPS=$(LIBHACL_HMAC_LIB_SHARED)
 
 MODULE__SOCKET_DEPS=$(srcdir)/Modules/socketmodule.h $(srcdir)/Modules/addrinfo.h $(srcdir)/Modules/getaddrinfo.c $(srcdir)/Modules/getnameinfo.c
-MODULE__SSL_DEPS=$(srcdir)/Modules/_ssl.h $(srcdir)/Modules/_ssl/cert.c $(srcdir)/Modules/_ssl/debughelpers.c $(srcdir)/Modules/_ssl/misc.c $(srcdir)/Modules/_ssl_data_111.h $(srcdir)/Modules/_ssl_data_300.h $(srcdir)/Modules/socketmodule.h
+MODULE__SSL_DEPS=$(srcdir)/Modules/_ssl.h $(srcdir)/Modules/_ssl/cert.c $(srcdir)/Modules/_ssl/debughelpers.c $(srcdir)/Modules/_ssl/misc.c $(srcdir)/Modules/_ssl/distrusted_spki.h $(srcdir)/Modules/_ssl_data_111.h $(srcdir)/Modules/_ssl_data_300.h $(srcdir)/Modules/socketmodule.h
 MODULE__TESTCAPI_DEPS=$(srcdir)/Modules/_testcapi/parts.h $(srcdir)/Modules/_testcapi/util.h
 MODULE__TESTLIMITEDCAPI_DEPS=$(srcdir)/Modules/_testlimitedcapi/testcapi_long.h $(srcdir)/Modules/_testlimitedcapi/parts.h $(srcdir)/Modules/_testlimitedcapi/util.h
 MODULE__TESTINTERNALCAPI_DEPS=$(srcdir)/Modules/_testinternalcapi/parts.h
