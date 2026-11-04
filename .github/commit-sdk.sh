@@ -25,6 +25,9 @@ summarize_commit () {
 	 -e '/ D\t/{s|.*local/\([^/]*\)/desc|\1|;s|-\([0-9].*\)| (removed)|p}'
 }
 
+bash ./.large-dll-filter.sh setup --no-refresh ||
+die "Could not configure UPX filters"
+
 git add -A . &&
 if git diff-index --exit-code --cached HEAD -- \
 	':(exclude)var/lib/pacman/sync/' \
