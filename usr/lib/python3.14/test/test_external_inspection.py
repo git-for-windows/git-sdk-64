@@ -1,0 +1,2016 @@
+import unittest
+from contextlib import contextmanager
+import asyncio
+import contextlib
+import os
+import textwrap
+import importlib
+import sys
+import socket
+import threading
+import time
+from asyncio import staggered, taskgroups, base_events, tasks
+from unittest.mock import ANY
+from test.support import (
+    os_helper,
+    SHORT_TIMEOUT,
+    busy_retry,
+    requires_gil_enabled,
+)
+from test.support.import_helper import import_module
+from test.support.script_helper import make_script
+from test.support.socket_helper import find_unused_port
+
+import subprocess
+
+PROCESS_VM_READV_SUPPORTED = False
+
+try:
+    from _remote_debugging import PROCESS_VM_READV_SUPPORTED
+    from _remote_debugging import RemoteUnwinder
+    from _remote_debugging import FrameInfo, CoroInfo, TaskInfo
+except ImportError:
+    raise unittest.SkipTest(
+        "Test only runs when _remote_debugging is available"
+    )
+
+
+def _make_test_script(script_dir, script_basename, source):
+    to_return = make_script(script_dir, script_basename, source)
+    importlib.invalidate_caches()
+    return to_return
+
+
+skip_if_not_supported = unittest.skipIf(
+    (
+        sys.platform != "darwin"
+        and sys.platform != "linux"
+        and sys.platform != "win32"
+    ),
+    "Test only runs on Linux, Windows and MacOS",
+)
+
+
+def get_stack_trace(pid):
+    unwinder = RemoteUnwinder(pid, all_threads=True, debug=True)
+    return unwinder.get_stack_trace()
+
+
+def get_async_stack_trace(pid):
+    unwinder = RemoteUnwinder(pid, debug=True)
+    return unwinder.get_async_stack_trace()
+
+
+def get_all_awaited_by(pid):
+    unwinder = RemoteUnwinder(pid, debug=True)
+    return unwinder.get_all_awaited_by()
+
+
+class TestGetStackTrace(unittest.TestCase):
+    maxDiff = None
+
+    def _extract_coroutine_funcnames(self, trace):
+        return {
+            task.task_name: [
+                frame.funcname.rpartition(".")[2]
+                for coro in task.coroutine_stack
+                for frame in coro.call_stack
+            ]
+            for info in trace
+            for task in info.awaited_by
+        }
+
+    @skip_if_not_supported
+    def test_async_generator_stack_is_not_truncated(self):
+        # gh-159620
+        async def agen():
+            await asyncio.sleep(10_000)
+            yield
+
+        async def agen_with_cleanup():
+            try:
+                yield
+            finally:
+                await asyncio.sleep(10_000)
+
+        async def outer_agen():
+            async for _ in agen():
+                yield
+
+        async def consumer(gen):
+            async for _ in gen:
+                pass
+
+        async def main():
+            g = agen_with_cleanup()
+            await anext(g)
+            async_for_task = asyncio.create_task(consumer(agen()), name="async for")
+            nested_task = asyncio.create_task(
+                consumer(outer_agen()), name="nested async for")
+            anext_task = asyncio.create_task(anext(agen()), name="anext")
+            aclose_task = asyncio.create_task(g.aclose(), name="aclose")
+            await asyncio.sleep(0)
+            return RemoteUnwinder(os.getpid()).get_all_awaited_by()
+
+        stacks = self._extract_coroutine_funcnames(asyncio.run(main()))
+        self.assertEqual(stacks["async for"], ["sleep", "agen", "consumer"])
+        self.assertEqual(stacks["nested async for"],
+                         ["sleep", "agen", "outer_agen", "consumer"])
+        self.assertEqual(stacks["anext"], ["sleep", "agen"])
+        self.assertEqual(stacks["aclose"], ["sleep", "agen_with_cleanup"])
+
+    @skip_if_not_supported
+    def test_async_generator_waiter_in_async_stack_trace(self):
+        # gh-159620
+        async def agen(task):
+            await task
+            yield
+
+        async def main():
+            waiter_task = asyncio.create_task(
+                anext(agen(asyncio.current_task())), name="anext")
+            await asyncio.sleep(0)
+            return RemoteUnwinder(os.getpid()).get_async_stack_trace()
+
+        stacks = self._extract_coroutine_funcnames(asyncio.run(main()))
+        self.assertEqual(stacks["anext"], ["agen"])
+
+    @skip_if_not_supported
+    def test_async_generator_running_task_stack(self):
+        # gh-159620
+        async def agen():
+            yield RemoteUnwinder(os.getpid()).get_async_stack_trace()
+
+        async def main():
+            return await asyncio.create_task(anext(agen()), name="anext")
+
+        stacks = self._extract_coroutine_funcnames(asyncio.run(main()))
+        self.assertEqual(stacks["anext"], ["agen"])
+
+    @skip_if_not_supported
+    def test_class_named_like_async_generator_wrapper_is_not_walked(self):
+        # gh-159620
+        async def decoy():
+            await asyncio.sleep(10_000)
+
+        class async_generator_asend:
+            __slots__ = ("gen",)
+            def __init__(self, gen):
+                self.gen = gen
+            def __await__(self):
+                return self
+            def __next__(self):
+                return None
+
+        async def consumer(aw):
+            await aw
+
+        async def main():
+            with contextlib.closing(decoy()) as gen:
+                consumer_task = asyncio.create_task(
+                    consumer(async_generator_asend(gen)), name="consumer")
+                await asyncio.sleep(0)
+                return RemoteUnwinder(os.getpid()).get_all_awaited_by()
+
+        stacks = self._extract_coroutine_funcnames(asyncio.run(main()))
+        self.assertEqual(stacks["consumer"], ["consumer"])
+
+    @skip_if_not_supported
+    def test_long_task_name_is_truncated(self):
+        # gh-157788
+        async def main():
+            asyncio.create_task(asyncio.sleep(10_000), name="x" * 300)
+            await asyncio.sleep(0)
+            names = [
+                task.task_name
+                for info in RemoteUnwinder(os.getpid()).get_all_awaited_by()
+                for task in info.awaited_by
+            ]
+            return asyncio.current_task().get_name(), names
+
+        main_name, names = asyncio.run(main())
+        self.assertIn(main_name, names)
+        self.assertEqual([len(n) for n in names if n.startswith("x")], [255])
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_remote_stack_trace(self):
+        # Spawn a process with some realistic Python code
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import time, sys, socket, threading
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            def bar():
+                for x in range(100):
+                    if x == 50:
+                        baz()
+
+            def baz():
+                foo()
+
+            def foo():
+                sock.sendall(b"ready:thread\\n"); time.sleep(10_000)  # same line number
+
+            t = threading.Thread(target=bar)
+            t.start()
+            sock.sendall(b"ready:main\\n"); t.join()  # same line number
+            """
+        )
+        stack_trace = None
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+                response = b""
+                while (
+                    b"ready:main" not in response
+                    or b"ready:thread" not in response
+                ):
+                    response += client_socket.recv(1024)
+                stack_trace = get_stack_trace(p.pid)
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+            thread_expected_stack_trace = [
+                FrameInfo([script_name, 15, "foo"]),
+                FrameInfo([script_name, 12, "baz"]),
+                FrameInfo([script_name, 9, "bar"]),
+                FrameInfo([threading.__file__, ANY, "Thread.run"]),
+            ]
+            # Is possible that there are more threads, so we check that the
+            # expected stack traces are in the result (looking at you Windows!)
+            self.assertIn((ANY, thread_expected_stack_trace), stack_trace)
+
+            # Check that the main thread stack trace is in the result
+            frame = FrameInfo([script_name, 19, "<module>"])
+            for _, stack in stack_trace:
+                if frame in stack:
+                    break
+            else:
+                self.fail("Main thread stack trace not found in result")
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_self_trace_after_ctypes_import(self):
+        """Test that RemoteUnwinder works on the same process after _ctypes import.
+
+        When _ctypes is imported, it may call dlopen on the libpython shared
+        library, creating a duplicate mapping in the process address space.
+        The remote debugging code must skip these uninitialized duplicate
+        mappings and find the real PyRuntime. See gh-144563.
+        """
+
+        # Skip the test if the _ctypes module is missing.
+        import_module("_ctypes")
+
+        # Run the test in a subprocess to avoid side effects
+        script = textwrap.dedent("""\
+            import os
+            import _remote_debugging
+
+            # Should work before _ctypes import
+            unwinder = _remote_debugging.RemoteUnwinder(os.getpid())
+
+            import _ctypes
+
+            # Should still work after _ctypes import (gh-144563)
+            unwinder = _remote_debugging.RemoteUnwinder(os.getpid())
+            """)
+
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            capture_output=True,
+            text=True,
+            timeout=SHORT_TIMEOUT,
+        )
+        self.assertEqual(
+            result.returncode, 0,
+            f"stdout: {result.stdout}\nstderr: {result.stderr}"
+        )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_async_remote_stack_trace(self):
+        # Spawn a process with some realistic Python code
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import asyncio
+            import time
+            import sys
+            import socket
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            def c5():
+                sock.sendall(b"ready"); time.sleep(10_000)  # same line number
+
+            async def c4():
+                await asyncio.sleep(0)
+                c5()
+
+            async def c3():
+                await c4()
+
+            async def c2():
+                await c3()
+
+            async def c1(task):
+                await task
+
+            async def main():
+                async with asyncio.TaskGroup() as tg:
+                    task = tg.create_task(c2(), name="c2_root")
+                    tg.create_task(c1(task), name="sub_main_1")
+                    tg.create_task(c1(task), name="sub_main_2")
+
+            def new_eager_loop():
+                loop = asyncio.new_event_loop()
+                eager_task_factory = asyncio.create_eager_task_factory(
+                    asyncio.Task)
+                loop.set_task_factory(eager_task_factory)
+                return loop
+
+            asyncio.run(main(), loop_factory={{TASK_FACTORY}})
+            """
+        )
+        stack_trace = None
+        for task_factory_variant in "asyncio.new_event_loop", "new_eager_loop":
+            with (
+                self.subTest(task_factory_variant=task_factory_variant),
+                os_helper.temp_dir() as work_dir,
+            ):
+                script_dir = os.path.join(work_dir, "script_pkg")
+                os.mkdir(script_dir)
+                server_socket = socket.socket(
+                    socket.AF_INET, socket.SOCK_STREAM
+                )
+                server_socket.setsockopt(
+                    socket.SOL_SOCKET, socket.SO_REUSEADDR, 1
+                )
+                server_socket.bind(("localhost", port))
+                server_socket.settimeout(SHORT_TIMEOUT)
+                server_socket.listen(1)
+                script_name = _make_test_script(
+                    script_dir,
+                    "script",
+                    script.format(TASK_FACTORY=task_factory_variant),
+                )
+                client_socket = None
+                try:
+                    p = subprocess.Popen([sys.executable, script_name])
+                    client_socket, _ = server_socket.accept()
+                    server_socket.close()
+                    response = client_socket.recv(1024)
+                    self.assertEqual(response, b"ready")
+                    stack_trace = get_async_stack_trace(p.pid)
+                except PermissionError:
+                    self.skipTest(
+                        "Insufficient permissions to read the stack trace"
+                    )
+                finally:
+                    if client_socket is not None:
+                        client_socket.close()
+                    p.kill()
+                    p.terminate()
+                    p.wait(timeout=SHORT_TIMEOUT)
+
+                # First check all the tasks are present
+                tasks_names = [
+                    task.task_name for task in stack_trace[0].awaited_by
+                ]
+                for task_name in ["c2_root", "sub_main_1", "sub_main_2"]:
+                    self.assertIn(task_name, tasks_names)
+
+                # Now ensure that the awaited_by_relationships are correct
+                id_to_task = {
+                    task.task_id: task for task in stack_trace[0].awaited_by
+                }
+                task_name_to_awaited_by = {
+                    task.task_name: set(
+                        id_to_task[awaited.task_name].task_name
+                        for awaited in task.awaited_by
+                    )
+                    for task in stack_trace[0].awaited_by
+                }
+                self.assertEqual(
+                    task_name_to_awaited_by,
+                    {
+                        "c2_root": {"Task-1", "sub_main_1", "sub_main_2"},
+                        "Task-1": set(),
+                        "sub_main_1": {"Task-1"},
+                        "sub_main_2": {"Task-1"},
+                    },
+                )
+
+                # Now ensure that the coroutine stacks are correct
+                coroutine_stacks = {
+                    task.task_name: sorted(
+                        tuple(tuple(frame) for frame in coro.call_stack)
+                        for coro in task.coroutine_stack
+                    )
+                    for task in stack_trace[0].awaited_by
+                }
+                self.assertEqual(
+                    coroutine_stacks,
+                    {
+                        "Task-1": [
+                            (
+                                tuple(
+                                    [
+                                        taskgroups.__file__,
+                                        ANY,
+                                        "TaskGroup._aexit",
+                                    ]
+                                ),
+                                tuple(
+                                    [
+                                        taskgroups.__file__,
+                                        ANY,
+                                        "TaskGroup.__aexit__",
+                                    ]
+                                ),
+                                tuple([script_name, 26, "main"]),
+                            )
+                        ],
+                        "c2_root": [
+                            (
+                                tuple([script_name, 10, "c5"]),
+                                tuple([script_name, 14, "c4"]),
+                                tuple([script_name, 17, "c3"]),
+                                tuple([script_name, 20, "c2"]),
+                            )
+                        ],
+                        "sub_main_1": [(tuple([script_name, 23, "c1"]),)],
+                        "sub_main_2": [(tuple([script_name, 23, "c1"]),)],
+                    },
+                )
+
+                # Now ensure the coroutine stacks for the awaited_by relationships are correct.
+                awaited_by_coroutine_stacks = {
+                    task.task_name: sorted(
+                        (
+                            id_to_task[coro.task_name].task_name,
+                            tuple(tuple(frame) for frame in coro.call_stack),
+                        )
+                        for coro in task.awaited_by
+                    )
+                    for task in stack_trace[0].awaited_by
+                }
+                self.assertEqual(
+                    awaited_by_coroutine_stacks,
+                    {
+                        "Task-1": [],
+                        "c2_root": [
+                            (
+                                "Task-1",
+                                (
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup._aexit",
+                                        ]
+                                    ),
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup.__aexit__",
+                                        ]
+                                    ),
+                                    tuple([script_name, 26, "main"]),
+                                ),
+                            ),
+                            ("sub_main_1", (tuple([script_name, 23, "c1"]),)),
+                            ("sub_main_2", (tuple([script_name, 23, "c1"]),)),
+                        ],
+                        "sub_main_1": [
+                            (
+                                "Task-1",
+                                (
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup._aexit",
+                                        ]
+                                    ),
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup.__aexit__",
+                                        ]
+                                    ),
+                                    tuple([script_name, 26, "main"]),
+                                ),
+                            )
+                        ],
+                        "sub_main_2": [
+                            (
+                                "Task-1",
+                                (
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup._aexit",
+                                        ]
+                                    ),
+                                    tuple(
+                                        [
+                                            taskgroups.__file__,
+                                            ANY,
+                                            "TaskGroup.__aexit__",
+                                        ]
+                                    ),
+                                    tuple([script_name, 26, "main"]),
+                                ),
+                            )
+                        ],
+                    },
+                )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_asyncgen_remote_stack_trace(self):
+        # Spawn a process with some realistic Python code
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import asyncio
+            import time
+            import sys
+            import socket
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            async def gen_nested_call():
+                sock.sendall(b"ready"); time.sleep(10_000)  # same line number
+
+            async def gen():
+                for num in range(2):
+                    yield num
+                    if num == 1:
+                        await gen_nested_call()
+
+            async def main():
+                async for el in gen():
+                    pass
+
+            asyncio.run(main())
+            """
+        )
+        stack_trace = None
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+                response = client_socket.recv(1024)
+                self.assertEqual(response, b"ready")
+                stack_trace = get_async_stack_trace(p.pid)
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+            # For this simple asyncgen test, we only expect one task with the full coroutine stack
+            self.assertEqual(len(stack_trace[0].awaited_by), 1)
+            task = stack_trace[0].awaited_by[0]
+            self.assertEqual(task.task_name, "Task-1")
+
+            # Check the coroutine stack - based on actual output, only shows main
+            coroutine_stack = sorted(
+                tuple(tuple(frame) for frame in coro.call_stack)
+                for coro in task.coroutine_stack
+            )
+            self.assertEqual(
+                coroutine_stack,
+                [
+                    (
+                        tuple([script_name, 10, "gen_nested_call"]),
+                        tuple([script_name, 16, "gen"]),
+                        tuple([script_name, 19, "main"]),
+                    )
+                ],
+            )
+
+            # No awaited_by relationships expected for this simple case
+            self.assertEqual(task.awaited_by, [])
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_async_gather_remote_stack_trace(self):
+        # Spawn a process with some realistic Python code
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import asyncio
+            import time
+            import sys
+            import socket
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            async def deep():
+                await asyncio.sleep(0)
+                sock.sendall(b"ready"); time.sleep(10_000)  # same line number
+
+            async def c1():
+                await asyncio.sleep(0)
+                await deep()
+
+            async def c2():
+                await asyncio.sleep(0)
+
+            async def main():
+                await asyncio.gather(c1(), c2())
+
+            asyncio.run(main())
+            """
+        )
+        stack_trace = None
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+                response = client_socket.recv(1024)
+                self.assertEqual(response, b"ready")
+                stack_trace = get_async_stack_trace(p.pid)
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+            # First check all the tasks are present
+            tasks_names = [
+                task.task_name for task in stack_trace[0].awaited_by
+            ]
+            for task_name in ["Task-1", "Task-2"]:
+                self.assertIn(task_name, tasks_names)
+
+            # Now ensure that the awaited_by_relationships are correct
+            id_to_task = {
+                task.task_id: task for task in stack_trace[0].awaited_by
+            }
+            task_name_to_awaited_by = {
+                task.task_name: set(
+                    id_to_task[awaited.task_name].task_name
+                    for awaited in task.awaited_by
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                task_name_to_awaited_by,
+                {
+                    "Task-1": set(),
+                    "Task-2": {"Task-1"},
+                },
+            )
+
+            # Now ensure that the coroutine stacks are correct
+            coroutine_stacks = {
+                task.task_name: sorted(
+                    tuple(tuple(frame) for frame in coro.call_stack)
+                    for coro in task.coroutine_stack
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                coroutine_stacks,
+                {
+                    "Task-1": [(tuple([script_name, 21, "main"]),)],
+                    "Task-2": [
+                        (
+                            tuple([script_name, 11, "deep"]),
+                            tuple([script_name, 15, "c1"]),
+                        )
+                    ],
+                },
+            )
+
+            # Now ensure the coroutine stacks for the awaited_by relationships are correct.
+            awaited_by_coroutine_stacks = {
+                task.task_name: sorted(
+                    (
+                        id_to_task[coro.task_name].task_name,
+                        tuple(tuple(frame) for frame in coro.call_stack),
+                    )
+                    for coro in task.awaited_by
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                awaited_by_coroutine_stacks,
+                {
+                    "Task-1": [],
+                    "Task-2": [
+                        ("Task-1", (tuple([script_name, 21, "main"]),))
+                    ],
+                },
+            )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_async_staggered_race_remote_stack_trace(self):
+        # Spawn a process with some realistic Python code
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import asyncio.staggered
+            import time
+            import sys
+            import socket
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            async def deep():
+                await asyncio.sleep(0)
+                sock.sendall(b"ready"); time.sleep(10_000)  # same line number
+
+            async def c1():
+                await asyncio.sleep(0)
+                await deep()
+
+            async def c2():
+                await asyncio.sleep(10_000)
+
+            async def main():
+                await asyncio.staggered.staggered_race(
+                    [c1, c2],
+                    delay=None,
+                )
+
+            asyncio.run(main())
+            """
+        )
+        stack_trace = None
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+                response = client_socket.recv(1024)
+                self.assertEqual(response, b"ready")
+                stack_trace = get_async_stack_trace(p.pid)
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+            # First check all the tasks are present
+            tasks_names = [
+                task.task_name for task in stack_trace[0].awaited_by
+            ]
+            for task_name in ["Task-1", "Task-2"]:
+                self.assertIn(task_name, tasks_names)
+
+            # Now ensure that the awaited_by_relationships are correct
+            id_to_task = {
+                task.task_id: task for task in stack_trace[0].awaited_by
+            }
+            task_name_to_awaited_by = {
+                task.task_name: set(
+                    id_to_task[awaited.task_name].task_name
+                    for awaited in task.awaited_by
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                task_name_to_awaited_by,
+                {
+                    "Task-1": set(),
+                    "Task-2": {"Task-1"},
+                },
+            )
+
+            # Now ensure that the coroutine stacks are correct
+            coroutine_stacks = {
+                task.task_name: sorted(
+                    tuple(tuple(frame) for frame in coro.call_stack)
+                    for coro in task.coroutine_stack
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                coroutine_stacks,
+                {
+                    "Task-1": [
+                        (
+                            tuple([staggered.__file__, ANY, "staggered_race"]),
+                            tuple([script_name, 21, "main"]),
+                        )
+                    ],
+                    "Task-2": [
+                        (
+                            tuple([script_name, 11, "deep"]),
+                            tuple([script_name, 15, "c1"]),
+                            tuple(
+                                [
+                                    staggered.__file__,
+                                    ANY,
+                                    "staggered_race.<locals>.run_one_coro",
+                                ]
+                            ),
+                        )
+                    ],
+                },
+            )
+
+            # Now ensure the coroutine stacks for the awaited_by relationships are correct.
+            awaited_by_coroutine_stacks = {
+                task.task_name: sorted(
+                    (
+                        id_to_task[coro.task_name].task_name,
+                        tuple(tuple(frame) for frame in coro.call_stack),
+                    )
+                    for coro in task.awaited_by
+                )
+                for task in stack_trace[0].awaited_by
+            }
+            self.assertEqual(
+                awaited_by_coroutine_stacks,
+                {
+                    "Task-1": [],
+                    "Task-2": [
+                        (
+                            "Task-1",
+                            (
+                                tuple(
+                                    [staggered.__file__, ANY, "staggered_race"]
+                                ),
+                                tuple([script_name, 21, "main"]),
+                            ),
+                        )
+                    ],
+                },
+            )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_async_global_awaited_by(self):
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import asyncio
+            import os
+            import random
+            import sys
+            import socket
+            from string import ascii_lowercase, digits
+            from test.support import socket_helper, SHORT_TIMEOUT
+
+            HOST = '127.0.0.1'
+            PORT = socket_helper.find_unused_port()
+            connections = 0
+
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            class EchoServerProtocol(asyncio.Protocol):
+                def connection_made(self, transport):
+                    global connections
+                    connections += 1
+                    self.transport = transport
+
+                def data_received(self, data):
+                    self.transport.write(data)
+                    self.transport.close()
+
+            async def echo_client(message):
+                reader, writer = await asyncio.open_connection(HOST, PORT)
+                writer.write(message.encode())
+                await writer.drain()
+
+                data = await reader.read(100)
+                assert message == data.decode()
+                writer.close()
+                await writer.wait_closed()
+                # Signal we are ready to sleep
+                sock.sendall(b"ready")
+                await asyncio.sleep(SHORT_TIMEOUT)
+
+            async def echo_client_spam(server):
+                async with asyncio.TaskGroup() as tg:
+                    while connections < 1000:
+                        msg = list(ascii_lowercase + digits)
+                        random.shuffle(msg)
+                        tg.create_task(echo_client("".join(msg)))
+                        await asyncio.sleep(0)
+                    # at least a 1000 tasks created. Each task will signal
+                    # when is ready to avoid the race caused by the fact that
+                    # tasks are waited on tg.__exit__ and we cannot signal when
+                    # that happens otherwise
+                # at this point all client tasks completed without assertion errors
+                # let's wrap up the test
+                server.close()
+                await server.wait_closed()
+
+            async def main():
+                loop = asyncio.get_running_loop()
+                server = await loop.create_server(EchoServerProtocol, HOST, PORT)
+                async with server:
+                    async with asyncio.TaskGroup() as tg:
+                        tg.create_task(server.serve_forever(), name="server task")
+                        tg.create_task(echo_client_spam(server), name="echo client spam")
+
+            asyncio.run(main())
+            """
+        )
+        stack_trace = None
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+                for _ in range(1000):
+                    expected_response = b"ready"
+                    response = client_socket.recv(len(expected_response))
+                    self.assertEqual(response, expected_response)
+                for _ in busy_retry(SHORT_TIMEOUT):
+                    try:
+                        all_awaited_by = get_all_awaited_by(p.pid)
+                    except RuntimeError:
+                        # Tasks and awaited objects can change while we read
+                        # the running process. Retry with a fresh sample.
+                        continue
+                    else:
+                        break
+                # expected: a list of two elements: 1 thread, 1 interp
+                self.assertEqual(len(all_awaited_by), 2)
+                # expected: a tuple with the thread ID and the awaited_by list
+                self.assertEqual(len(all_awaited_by[0]), 2)
+                # expected: no tasks in the fallback per-interp task list
+                self.assertEqual(all_awaited_by[1], (0, []))
+                entries = all_awaited_by[0][1]
+                # expected: at least 1000 pending tasks
+                self.assertGreaterEqual(len(entries), 1000)
+                # the first three tasks stem from the code structure
+                main_stack = [
+                    FrameInfo([taskgroups.__file__, ANY, "TaskGroup._aexit"]),
+                    FrameInfo(
+                        [taskgroups.__file__, ANY, "TaskGroup.__aexit__"]
+                    ),
+                    FrameInfo([script_name, 60, "main"]),
+                ]
+                self.assertIn(
+                    TaskInfo(
+                        [ANY, "Task-1", [CoroInfo([main_stack, ANY])], []]
+                    ),
+                    entries,
+                )
+                self.assertIn(
+                    TaskInfo(
+                        [
+                            ANY,
+                            "server task",
+                            [
+                                CoroInfo(
+                                    [
+                                        [
+                                            FrameInfo(
+                                                [
+                                                    base_events.__file__,
+                                                    ANY,
+                                                    "Server.serve_forever",
+                                                ]
+                                            )
+                                        ],
+                                        ANY,
+                                    ]
+                                )
+                            ],
+                            [
+                                CoroInfo(
+                                    [
+                                        [
+                                            FrameInfo(
+                                                [
+                                                    taskgroups.__file__,
+                                                    ANY,
+                                                    "TaskGroup._aexit",
+                                                ]
+                                            ),
+                                            FrameInfo(
+                                                [
+                                                    taskgroups.__file__,
+                                                    ANY,
+                                                    "TaskGroup.__aexit__",
+                                                ]
+                                            ),
+                                            FrameInfo(
+                                                [script_name, ANY, "main"]
+                                            ),
+                                        ],
+                                        ANY,
+                                    ]
+                                )
+                            ],
+                        ]
+                    ),
+                    entries,
+                )
+                self.assertIn(
+                    TaskInfo(
+                        [
+                            ANY,
+                            "Task-4",
+                            [
+                                CoroInfo(
+                                    [
+                                        [
+                                            FrameInfo(
+                                                [tasks.__file__, ANY, "sleep"]
+                                            ),
+                                            FrameInfo(
+                                                [
+                                                    script_name,
+                                                    38,
+                                                    "echo_client",
+                                                ]
+                                            ),
+                                        ],
+                                        ANY,
+                                    ]
+                                )
+                            ],
+                            [
+                                CoroInfo(
+                                    [
+                                        [
+                                            FrameInfo(
+                                                [
+                                                    taskgroups.__file__,
+                                                    ANY,
+                                                    "TaskGroup._aexit",
+                                                ]
+                                            ),
+                                            FrameInfo(
+                                                [
+                                                    taskgroups.__file__,
+                                                    ANY,
+                                                    "TaskGroup.__aexit__",
+                                                ]
+                                            ),
+                                            FrameInfo(
+                                                [
+                                                    script_name,
+                                                    41,
+                                                    "echo_client_spam",
+                                                ]
+                                            ),
+                                        ],
+                                        ANY,
+                                    ]
+                                )
+                            ],
+                        ]
+                    ),
+                    entries,
+                )
+
+                expected_awaited_by = [
+                    CoroInfo(
+                        [
+                            [
+                                FrameInfo(
+                                    [
+                                        taskgroups.__file__,
+                                        ANY,
+                                        "TaskGroup._aexit",
+                                    ]
+                                ),
+                                FrameInfo(
+                                    [
+                                        taskgroups.__file__,
+                                        ANY,
+                                        "TaskGroup.__aexit__",
+                                    ]
+                                ),
+                                FrameInfo(
+                                    [script_name, 41, "echo_client_spam"]
+                                ),
+                            ],
+                            ANY,
+                        ]
+                    )
+                ]
+                tasks_with_awaited = [
+                    task
+                    for task in entries
+                    if task.awaited_by == expected_awaited_by
+                ]
+                self.assertGreaterEqual(len(tasks_with_awaited), 1000)
+
+                # the final task will have some random number, but it should for
+                # sure be one of the echo client spam horde (In windows this is not true
+                # for some reason)
+                if sys.platform != "win32":
+                    self.assertEqual(
+                        tasks_with_awaited[-1].awaited_by,
+                        entries[-1].awaited_by,
+                    )
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_self_trace(self):
+        stack_trace = get_stack_trace(os.getpid())
+        # Is possible that there are more threads, so we check that the
+        # expected stack traces are in the result (looking at you Windows!)
+        this_tread_stack = None
+        for thread_id, stack in stack_trace:
+            if thread_id == threading.get_native_id():
+                this_tread_stack = stack
+                break
+        self.assertIsNotNone(this_tread_stack)
+        self.assertEqual(
+            stack[:2],
+            [
+                FrameInfo(
+                    [
+                        __file__,
+                        get_stack_trace.__code__.co_firstlineno + 2,
+                        "get_stack_trace",
+                    ]
+                ),
+                FrameInfo(
+                    [
+                        __file__,
+                        self.test_self_trace.__code__.co_firstlineno + 6,
+                        "TestGetStackTrace.test_self_trace",
+                    ]
+                ),
+            ],
+        )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    @requires_gil_enabled("Free threaded builds don't have an 'active thread'")
+    def test_only_active_thread(self):
+        # Test that only_active_thread parameter works correctly
+        port = find_unused_port()
+        script = textwrap.dedent(
+            f"""\
+            import time, sys, socket, threading
+
+            # Connect to the test process
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('localhost', {port}))
+
+            def worker_thread(name, barrier, ready_event):
+                barrier.wait()  # Synchronize thread start
+                ready_event.wait()  # Wait for main thread signal
+                # Sleep to keep thread alive
+                time.sleep(10_000)
+
+            def main_work():
+                # Do busy work to hold the GIL
+                sock.sendall(b"working\\n")
+                count = 0
+                while count < 100000000:
+                    count += 1
+                    if count % 10000000 == 0:
+                        pass  # Keep main thread busy
+                sock.sendall(b"done\\n")
+
+            # Create synchronization primitives
+            num_threads = 3
+            barrier = threading.Barrier(num_threads + 1)  # +1 for main thread
+            ready_event = threading.Event()
+
+            # Start worker threads
+            threads = []
+            for i in range(num_threads):
+                t = threading.Thread(target=worker_thread, args=(f"Worker-{{i}}", barrier, ready_event))
+                t.start()
+                threads.append(t)
+
+            # Wait for all threads to be ready
+            barrier.wait()
+
+            # Signal ready to parent process
+            sock.sendall(b"ready\\n")
+
+            # Signal threads to start waiting
+            ready_event.set()
+
+            # Now do busy work to hold the GIL
+            main_work()
+            """
+        )
+
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+
+            # Create a socket server to communicate with the target process
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(("localhost", port))
+            server_socket.settimeout(SHORT_TIMEOUT)
+            server_socket.listen(1)
+
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+            try:
+                p = subprocess.Popen([sys.executable, script_name])
+                client_socket, _ = server_socket.accept()
+                server_socket.close()
+
+                # Wait for ready signal
+                response = b""
+                while b"ready" not in response:
+                    response += client_socket.recv(1024)
+
+                # Wait for the main thread to start its busy work
+                while b"working" not in response:
+                    response += client_socket.recv(1024)
+
+                # Get stack trace with all threads
+                unwinder_all = RemoteUnwinder(p.pid, all_threads=True)
+                for _ in range(10):
+                    # Wait for the main thread to start its busy work
+                    all_traces = unwinder_all.get_stack_trace()
+                    found = False
+                    for thread_id, stack in all_traces:
+                        if not stack:
+                            continue
+                        current_frame = stack[0]
+                        if (
+                            current_frame.funcname == "main_work"
+                            and current_frame.lineno > 15
+                        ):
+                            found = True
+
+                    if found:
+                        break
+                    # Give a bit of time to take the next sample
+                    time.sleep(0.1)
+                else:
+                    self.fail(
+                        "Main thread did not start its busy work on time"
+                    )
+
+                # Get stack trace with only GIL holder
+                unwinder_gil = RemoteUnwinder(p.pid, only_active_thread=True)
+                gil_traces = unwinder_gil.get_stack_trace()
+
+            except PermissionError:
+                self.skipTest(
+                    "Insufficient permissions to read the stack trace"
+                )
+            finally:
+                if client_socket is not None:
+                    client_socket.close()
+                p.kill()
+                p.terminate()
+                p.wait(timeout=SHORT_TIMEOUT)
+
+            # Verify we got multiple threads in all_traces
+            self.assertGreater(
+                len(all_traces), 1, "Should have multiple threads"
+            )
+
+            # Verify we got exactly one thread in gil_traces
+            self.assertEqual(
+                len(gil_traces), 1, "Should have exactly one GIL holder"
+            )
+
+            # The GIL holder should be in the all_traces list
+            gil_thread_id = gil_traces[0][0]
+            all_thread_ids = [trace[0] for trace in all_traces]
+            self.assertIn(
+                gil_thread_id,
+                all_thread_ids,
+                "GIL holder should be among all threads",
+            )
+
+    @skip_if_not_supported
+    @unittest.skipIf(sys._is_gil_enabled(), "Requires free-threading")
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Requires process_vm_readv",
+    )
+    def test_tlbc_cache_refresh_after_growth(self):
+        # Reproducer from gh-157660.
+        script = textwrap.dedent("""\
+            import os, threading
+            from _remote_debugging import RemoteUnwinder
+            from _queue import SimpleQueue
+            from test import support
+
+            go = threading.Lock()
+            stop = threading.Lock()
+            go.acquire()
+            stop.acquire()
+            ready = SimpleQueue()
+
+            def leaf():
+                ready.put(None)
+                stop.acquire()
+
+            def start_leaf():
+                ready.put(None)
+                go.acquire()
+                leaf()
+
+            def park():
+                ready.put(None)
+                stop.acquire()
+
+            def leaf_count(u):
+                return sum(
+                    f.funcname == "leaf"
+                    for t in u.get_stack_trace() for f in t.frame_info
+                )
+
+            # SimpleQueue.put() and Lock.acquire() do not push Python frames.
+            # Once notified, the worker's stack stays stable until go is released.
+            threading.Thread(target=leaf, daemon=True).start()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+            for _ in range(16):
+                threading.Thread(target=park, daemon=True).start()
+                ready.get(timeout=support.SHORT_TIMEOUT)
+            threading.Thread(target=start_leaf, daemon=True).start()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+
+            u = RemoteUnwinder(os.getpid(), all_threads=True)
+            assert leaf_count(u) == 1
+            go.release()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+            assert leaf_count(u) == 2
+            """)
+        result = subprocess.run(
+            [sys.executable, "-X", "gil=0", "-X", "tlbc=1", "-c", script],
+            capture_output=True,
+            text=True,
+            timeout=SHORT_TIMEOUT,
+        )
+        self.assertEqual(
+            result.returncode, 0,
+            f"stdout: {result.stdout}\nstderr: {result.stderr}",
+        )
+
+    @skip_if_not_supported
+    @unittest.skipIf(sys._is_gil_enabled(), "Requires free-threading")
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Requires process_vm_readv",
+    )
+    def test_tlbc_cache_refresh_after_slot_fill(self):
+        # Reproducer from gh-157660.
+        script = textwrap.dedent("""\
+            import os, threading
+            from _remote_debugging import RemoteUnwinder
+            from _queue import SimpleQueue
+
+            go = threading.Lock()
+            stop = threading.Lock()
+            go.acquire()
+            stop.acquire()
+            ready = SimpleQueue()
+
+            def leaf():
+                ready.put(None)
+                stop.acquire()
+
+            def start_leaf():
+                ready.put(None)
+                go.acquire()
+                leaf()
+
+            from test import support
+
+            def lines(u):
+                return sorted(
+                    f.lineno
+                    for t in u.get_stack_trace() for f in t.frame_info
+                    if f.funcname == "leaf"
+                )
+
+            # SimpleQueue.put() and Lock.acquire() do not push Python frames.
+            # Once notified, the worker's stack stays stable until go is released.
+            threading.Thread(target=leaf, daemon=True).start()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+            threading.Thread(target=start_leaf, daemon=True).start()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+            u = RemoteUnwinder(os.getpid(), all_threads=True)
+            before = lines(u)
+            # The notification can be observed before put() returns, so either
+            # line in leaf() is a valid sample.
+            assert before in ([12], [13]), before
+            go.release()
+            ready.get(timeout=support.SHORT_TIMEOUT)
+            cached = lines(u)
+            assert len(cached) == 2, cached
+            assert all(line in (12, 13) for line in cached), cached
+            """)
+        result = subprocess.run(
+            [sys.executable, "-X", "gil=0", "-X", "tlbc=1", "-c", script],
+            capture_output=True,
+            text=True,
+            timeout=SHORT_TIMEOUT,
+        )
+        self.assertEqual(
+            result.returncode, 0,
+            f"stdout: {result.stdout}\nstderr: {result.stderr}",
+        )
+
+
+
+
+TRANSIENT_ERRORS = (OSError, RuntimeError, UnicodeDecodeError)
+
+def _create_server_socket(port, backlog=1):
+    """Create and configure a server socket for test communication."""
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(("localhost", port))
+    server_socket.settimeout(SHORT_TIMEOUT)
+    server_socket.listen(backlog)
+    return server_socket
+
+
+def _wait_for_signal(sock, expected_signals, timeout=SHORT_TIMEOUT):
+    """
+    Wait for expected signal(s) from a socket with proper timeout and EOF handling.
+
+    Args:
+        sock: Connected socket to read from
+        expected_signals: Single bytes object or list of bytes objects to wait for
+        timeout: Socket timeout in seconds
+
+    Returns:
+        bytes: Complete accumulated response buffer
+
+    Raises:
+        RuntimeError: If connection closed before signal received or timeout
+    """
+    if isinstance(expected_signals, bytes):
+        expected_signals = [expected_signals]
+
+    sock.settimeout(timeout)
+    buffer = b""
+
+    while True:
+        # Check if all expected signals are in buffer
+        if all(sig in buffer for sig in expected_signals):
+            return buffer
+
+        try:
+            chunk = sock.recv(4096)
+            if not chunk:
+                # EOF - connection closed
+                raise RuntimeError(
+                    f"Connection closed before receiving expected signals. "
+                    f"Expected: {expected_signals}, Got: {buffer[-200:]!r}"
+                )
+            buffer += chunk
+        except socket.timeout:
+            raise RuntimeError(
+                f"Timeout waiting for signals. "
+                f"Expected: {expected_signals}, Got: {buffer[-200:]!r}"
+            )
+
+
+@contextmanager
+def _managed_subprocess(args, timeout=SHORT_TIMEOUT):
+    """
+    Context manager for subprocess lifecycle management.
+
+    Ensures process is properly terminated and cleaned up even on exceptions.
+    Uses graceful termination first, then forceful kill if needed.
+    """
+    p = subprocess.Popen(args)
+    try:
+        yield p
+    finally:
+        try:
+            p.terminate()
+            try:
+                p.wait(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                p.kill()
+                try:
+                    p.wait(timeout=timeout)
+                except subprocess.TimeoutExpired:
+                    pass  # Process refuses to die, nothing more we can do
+        except OSError:
+            pass  # Process already dead
+
+
+def _cleanup_sockets(*sockets):
+    """Safely close multiple sockets, ignoring errors."""
+    for sock in sockets:
+        if sock is not None:
+            try:
+                sock.close()
+            except OSError:
+                pass
+
+
+
+class RemoteInspectionTestBase(unittest.TestCase):
+    @contextmanager
+    def _target_process(self, script_body):
+        """Context manager for running a target process with socket sync."""
+        port = find_unused_port()
+        script = f"""\
+import socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect(('localhost', {port}))
+{textwrap.dedent(script_body)}
+"""
+
+        with os_helper.temp_dir() as work_dir:
+            script_dir = os.path.join(work_dir, "script_pkg")
+            os.mkdir(script_dir)
+
+            server_socket = _create_server_socket(port)
+            script_name = _make_test_script(script_dir, "script", script)
+            client_socket = None
+
+            try:
+                with _managed_subprocess([sys.executable, script_name]) as p:
+                    client_socket, _ = server_socket.accept()
+                    server_socket.close()
+                    server_socket = None
+
+                    def make_unwinder():
+                        try:
+                            return RemoteUnwinder(p.pid, all_threads=True)
+                        except PermissionError:
+                            self.skipTest("Insufficient permissions to read the stack trace")
+
+                    yield p, client_socket, make_unwinder
+            finally:
+                _cleanup_sockets(client_socket, server_socket)
+
+
+    def _get_task_id_map(self, stack_trace):
+        """Create task_id -> task mapping from async stack trace."""
+        return {task.task_id: task for task in stack_trace[0].awaited_by}
+
+
+    def _get_awaited_by_relationships(self, stack_trace):
+        """Extract task name to awaited_by set mapping."""
+        id_to_task = self._get_task_id_map(stack_trace)
+        return {
+            task.task_name: set(
+                id_to_task[awaited.task_name].task_name
+                for awaited in task.awaited_by
+            )
+            for task in stack_trace[0].awaited_by
+        }
+
+
+
+@skip_if_not_supported
+@unittest.skipIf(
+    sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+    "Test only runs on Linux with process_vm_readv support",
+)
+class TestMetadataDegradation(RemoteInspectionTestBase):
+    """Tests for graceful degradation of oversized code-object metadata."""
+
+    def _find_frame_in_trace(self, stack_trace, predicate):
+        for thread_info in stack_trace:
+            for frame in thread_info.frame_info:
+                if predicate(frame):
+                    return frame
+        return None
+
+    def test_long_qualname_truncated_not_dropped(self):
+        """A qualname longer than 1024 chars is truncated instead of
+        failing the whole sample."""
+        name = "f" * 1100
+        src = f"def {name}(sample):\n    return sample()\n"
+        ns = {}
+        exec(src, ns)
+
+        trace = ns[name](RemoteUnwinder(os.getpid()).get_stack_trace)
+        frame = self._find_frame_in_trace(
+            trace, lambda f: f.funcname.startswith("fff")
+        )
+        self.assertIsNotNone(frame)
+        self.assertEqual(frame.funcname, "f" * 1024)
+
+    def test_long_filename_truncated(self):
+        """A filename longer than 1024 chars is truncated instead of
+        failing the whole sample."""
+        src = "def g(sample):\n    return sample()\n"
+        ns = {}
+        exec(compile(src, "x" * 1500 + ".py", "exec"), ns)
+
+        trace = ns["g"](RemoteUnwinder(os.getpid()).get_stack_trace)
+        frame = self._find_frame_in_trace(trace, lambda f: f.funcname == "g")
+        self.assertIsNotNone(frame)
+        self.assertEqual(frame.filename, "x" * 1024)
+
+    def test_oversized_linetable_degrades_to_no_location(self):
+        """A linetable over the 4096-byte limit degrades to a frame without
+        location instead of failing the whole sample."""
+        src = (
+            "def big(sample):\n"
+            + "    x = 1\n" * 1200
+            + "    return sample()\n"
+        )
+        ns = {}
+        exec(compile(src, "big_linetable.py", "exec"), ns)
+        big = ns["big"]
+        self.assertGreater(len(big.__code__.co_linetable), 4096)
+
+        trace = big(RemoteUnwinder(os.getpid()).get_stack_trace)
+        frame = self._find_frame_in_trace(
+            trace, lambda f: f.funcname == "big"
+        )
+        self.assertIsNone(frame.lineno)
+        self.assertEqual(frame.filename, "big_linetable.py")
+
+    @unittest.skipUnless(
+        sys.platform == "linux",
+        "Process death maps to ProcessLookupError only on Linux in 3.14",
+    )
+    def test_dead_process_raises_not_degrades(self):
+        """Death of the target raises ProcessLookupError instead of
+        degrading to synthetic frames."""
+        script_body = """\
+            import time
+            sock.sendall(b"ready")
+            time.sleep(10_000)
+            """
+        with self._target_process(script_body) as (p, client_socket, make_unwinder):
+            _wait_for_signal(client_socket, b"ready")
+            unwinder = make_unwinder()
+            unwinder.get_stack_trace()
+
+            p.kill()
+            p.wait()
+
+            for _ in busy_retry(SHORT_TIMEOUT, error=False):
+                try:
+                    unwinder.get_stack_trace()
+                except ProcessLookupError:
+                    break
+                except RuntimeError:
+                    continue
+            else:
+                self.fail("ProcessLookupError never raised for dead process")
+
+
+class TestFrameChainLimits(RemoteInspectionTestBase):
+    """Frame chain walks abort instead of looping/overflowing on deep chains."""
+
+    # Limits plus one, to exceed them (must match MAX_FRAME_CHAIN_DEPTH /
+    # MAX_TASK_WAITER_WALK_TASKS from _remote_debugging_module.c)
+    FRAME_CHAIN_DEPTH = 1024 + 1
+    TASK_WAITER_WALK_TASKS = 2**14 + 1
+
+    def _assert_unwinder_limit_error(self, unwind, expected_substring):
+        """Call unwind() until it raises the frame chain limit error.
+
+        unwind must construct the RemoteUnwinder and call it, so that
+        transient RuntimeErrors from either step are retried; a successful
+        call means the limit never triggered and fails immediately.
+        """
+        last_error = None
+        for _ in busy_retry(SHORT_TIMEOUT, error=False):
+            try:
+                unwind()
+            except PermissionError:
+                self.skipTest("Insufficient permissions to read the stack trace")
+            except TRANSIENT_ERRORS as e:
+                if expected_substring in str(e):
+                    return
+                last_error = e
+                continue
+            self.fail(
+                "frame chain limit did not trigger; call returned a result"
+            )
+        self.fail(
+            f"frame chain limit never raised; last transient error: "
+            f"{last_error!r}"
+        )
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_get_stack_trace_deep_frame_chain_aborts(self):
+        """Test that a frame chain deeper than the limit aborts the
+        synchronous stack walk instead of walking it indefinitely."""
+        script_body = f"""\
+            import sys
+            sys.setrecursionlimit({self.FRAME_CHAIN_DEPTH * 2})
+
+            def recurse(n):
+                if n <= 0:
+                    sock.sendall(b"ready")
+                    sock.recv(16)
+                    return
+                recurse(n - 1)
+
+            recurse({self.FRAME_CHAIN_DEPTH})
+            """
+        with self._target_process(script_body) as (p, client_socket, _):
+            _wait_for_signal(client_socket, b"ready")
+            self._assert_unwinder_limit_error(
+                lambda: RemoteUnwinder(p.pid).get_stack_trace(),
+                "Too many stack frames",
+            )
+            client_socket.sendall(b"done")
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_get_async_stack_trace_deep_task_waiter_chain_aborts(self):
+        """Test that a task waiter chain deeper than the limit aborts
+        the walk instead of overflowing the C stack."""
+        script_body = f"""\
+            import asyncio
+
+            async def chain(n):
+                if n <= 0:
+                    sock.sendall(b"ready")
+                    sock.recv(16)
+                    return
+
+                task = asyncio.create_task(chain(n - 1))
+                await task
+
+            asyncio.run(chain({self.TASK_WAITER_WALK_TASKS}))
+            """
+        with self._target_process(script_body) as (p, client_socket, _):
+            _wait_for_signal(client_socket, b"ready")
+            self._assert_unwinder_limit_error(
+                lambda: RemoteUnwinder(p.pid).get_async_stack_trace(),
+                "Too many task waiters",
+            )
+            client_socket.sendall(b"done")
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_get_async_stack_trace_deep_frame_chain_aborts(self):
+        """Test that a frame chain deeper than the limit aborts the async
+        stack walk instead of walking it indefinitely."""
+        script_body = f"""\
+            import sys, asyncio
+            sys.setrecursionlimit({self.FRAME_CHAIN_DEPTH * 2})
+
+            def recurse(n):
+                if n <= 0:
+                    sock.sendall(b"ready")
+                    sock.recv(16)
+                    return
+                recurse(n - 1)
+
+            async def deep():
+                recurse({self.FRAME_CHAIN_DEPTH})
+
+            asyncio.run(deep())
+            """
+        with self._target_process(script_body) as (p, client_socket, _):
+            _wait_for_signal(client_socket, b"ready")
+            self._assert_unwinder_limit_error(
+                lambda: RemoteUnwinder(p.pid).get_async_stack_trace(),
+                "Too many async stack frames",
+            )
+            client_socket.sendall(b"done")
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_get_all_awaited_by_deep_coro_chain_aborts(self):
+        """Test that a coroutine await chain deeper than the limit aborts
+        the walk instead of overflowing the C stack."""
+        script_body = f"""\
+            import sys, asyncio
+            sys.setrecursionlimit({self.FRAME_CHAIN_DEPTH * 2})
+
+            async def chain(n):
+                if n <= 0:
+                    await asyncio.sleep(10_000)
+                    return
+                await chain(n - 1)
+
+            async def main():
+                task = asyncio.create_task(chain({self.FRAME_CHAIN_DEPTH}))
+                await asyncio.sleep(0)
+                sock.sendall(b"ready")
+                await task
+
+            asyncio.run(main())
+            """
+        with self._target_process(script_body) as (p, client_socket, _):
+            _wait_for_signal(client_socket, b"ready")
+            self._assert_unwinder_limit_error(
+                lambda: RemoteUnwinder(p.pid).get_all_awaited_by(),
+                "Too many coroutine frames",
+            )
+
+
+    @skip_if_not_supported
+    @unittest.skipIf(
+        sys.platform == "linux" and not PROCESS_VM_READV_SUPPORTED,
+        "Test only runs on Linux with process_vm_readv support",
+    )
+    def test_async_awaited_by_skips_set_tombstones(self):
+        script_body = """\
+            import asyncio
+
+            class RemovedTask(asyncio.Task):
+                def __hash__(self):
+                    return 0
+
+            class RemainingTask(asyncio.Task):
+                def __hash__(self):
+                    return 1
+
+            async def main():
+                victim = asyncio.current_task()
+                victim.set_name("victim")
+                removed = RemovedTask(
+                    asyncio.sleep(10_000), name="removed"
+                )
+                remaining = RemainingTask(
+                    asyncio.sleep(10_000), name="remaining"
+                )
+
+                asyncio.future_add_to_awaited_by(victim, removed)
+                asyncio.future_add_to_awaited_by(victim, remaining)
+
+                # Removing hash 0 leaves a dummy in slot 0 before the only
+                # active entry in slot 1. It must not count toward the set's
+                # used entries.
+                asyncio.future_discard_from_awaited_by(victim, removed)
+
+                sock.sendall(b"ready")
+                sock.recv(16)
+
+            asyncio.run(main())
+            """
+
+        with self._target_process(script_body) as (
+            _,
+            client_socket,
+            make_unwinder,
+        ):
+            _wait_for_signal(client_socket, b"ready")
+
+            for method_name in (
+                "get_async_stack_trace",
+                "get_all_awaited_by",
+            ):
+                with self.subTest(method=method_name):
+                    unwinder = make_unwinder()
+                    stack_trace = getattr(unwinder, method_name)()
+                    relationships = self._get_awaited_by_relationships(
+                        stack_trace
+                    )
+                    self.assertEqual(
+                        relationships["victim"],
+                        {"remaining"},
+                    )
+
+            client_socket.sendall(b"done")
+
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -23,22 +23,10 @@ HTTP/2.  Now we are updating our code to implement `RFC 9113
 The nghttp2 code base was forked from the spdylay
 (https://github.com/tatsuhiro-t/spdylay) project.
 
-Public Test Server
-------------------
-
-The following endpoints are available to try out our nghttp2
-implementation.
-
-* https://nghttp2.org/ (TLS + ALPN and HTTP/3)
-
-  This endpoint supports ``h2`` and ``http/1.1`` via ALPN and requires
-  TLSv1.2 for HTTP/2 connection.
-
-  It also supports HTTP/3.
-
-* http://nghttp2.org/ (HTTP Upgrade and HTTP/2 Direct)
-
-  ``h2c`` and ``http/1.1``.
+The new `nghttp2 version 2 <https://github.com/nghttp2/nghttp2-v2>`_
+(nghttp2-v2) development has begun.  It is a rewrite of nghttp2
+version 1 (this repository), aiming for better performance, security,
+and API ergonomics.
 
 Requirements
 ------------
@@ -126,7 +114,7 @@ following libraries are required:
   <https://github.com/quictls/openssl/tree/OpenSSL_1_1_1w+quic>`_; or
   wolfSSL; or LibreSSL (does not support 0RTT); or aws-lc; or
   `BoringSSL <https://boringssl.googlesource.com/boringssl/>`_ (commit
-  3c6315e00ab02d7bc9b8922aff1f85d8f81ee130); or OpenSSL >= 3.5.0
+  ed9209cff8b5a2fbc6c10050f29b3355048bda85); or OpenSSL >= 3.5.0
 * `ngtcp2 <https://github.com/ngtcp2/ngtcp2>`_ >= 1.23.0
 * `nghttp3 <https://github.com/ngtcp2/nghttp3>`_ >= 1.17.0
 
@@ -340,7 +328,7 @@ Build aws-lc:
 
 .. code-block:: text
 
-   $ git clone --depth 1 -b v5.4.0 https://github.com/aws/aws-lc
+   $ git clone --depth 1 -b v5.12.0 https://github.com/aws/aws-lc
    $ cd aws-lc
    $ cmake -B build -DDISABLE_GO=ON --install-prefix=$PWD/opt
    $ make -j$(nproc) -C build
@@ -351,7 +339,7 @@ Build nghttp3:
 
 .. code-block:: text
 
-   $ git clone --depth 1 -b v1.18.0 https://github.com/ngtcp2/nghttp3
+   $ git clone --depth 1 -b v1.19.0 https://github.com/ngtcp2/nghttp3
    $ cd nghttp3
    $ git submodule update --init --depth 1
    $ autoreconf -i
@@ -364,7 +352,7 @@ Build ngtcp2:
 
 .. code-block:: text
 
-   $ git clone --depth 1 -b v1.25.0 https://github.com/ngtcp2/ngtcp2
+   $ git clone --depth 1 -b v1.26.0 https://github.com/ngtcp2/ngtcp2
    $ cd ngtcp2
    $ git submodule update --init --depth 1
    $ autoreconf -i
@@ -380,7 +368,7 @@ from source:
 
 .. code-block:: text
 
-   $ git clone --depth 1 -b v1.7.0 https://github.com/libbpf/libbpf
+   $ git clone --depth 1 -b v1.8.0 https://github.com/libbpf/libbpf
    $ cd libbpf
    $ PREFIX=$PWD/build make -C src install
    $ cd ..
