@@ -48,7 +48,7 @@ CMS_RecipientInfo *CMS_add0_recipient_key(CMS_ContentInfo *cms, int nid,
 
 <p>CMS_add1_recipient() adds recipient <b>recip</b> and provides the originator pkey <b>originatorPrivKey</b> and originator certificate <b>originator</b> to CMS_ContentInfo. The originator-related fields are relevant only in case when the keyAgreement method of providing of the shared key is in use.</p>
 
-<p>CMS_add1_recipient_cert() adds recipient <b>recip</b> to CMS_ContentInfo enveloped data structure <b>cms</b> as a KeyTransRecipientInfo structure.</p>
+<p>CMS_add1_recipient_cert() adds recipient <b>recip</b> to CMS_ContentInfo enveloped data structure <b>cms</b> as a KeyTransRecipientInfo or KEMRecipientInfo structure, or as a KeyAgreeRecipientInfo structure with an ephemeral key.</p>
 
 <p>CMS_add0_recipient_key() adds symmetric key <b>key</b> of length <b>keylen</b> using wrapping algorithm <b>nid</b>, identifier <b>id</b> of length <b>idlen</b> and optional values <b>date</b>, <b>otherTypeId</b> and <b>otherType</b> to CMS_ContentInfo enveloped data structure <b>cms</b> as a KEKRecipientInfo structure.</p>
 
@@ -76,7 +76,7 @@ CMS_RecipientInfo *CMS_add0_recipient_key(CMS_ContentInfo *cms, int nid,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

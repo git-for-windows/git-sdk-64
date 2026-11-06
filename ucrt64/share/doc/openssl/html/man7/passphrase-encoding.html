@@ -77,7 +77,7 @@
 
 <h1 id="RECOMMENDATIONS">RECOMMENDATIONS</h1>
 
-<p>This section assumes that you know what pass phrase was used for encryption, but that it may have been encoded in a different character encoding than the one used by your current input method. For example, the pass phrase may have been used at a time when your default encoding was ISO-8859-1 (i.e. &quot;na&iuml;ve&quot; resulting in the byte sequence 0x6E 0x61 0xEF 0x76 0x65), and you&#39;re now in an environment where your default encoding is UTF-8 (i.e. &quot;na&iuml;ve&quot; resulting in the byte sequence 0x6E 0x61 0xC3 0xAF 0x76 0x65). Whenever it&#39;s mentioned that you should use a certain character encoding, it should be understood that you either change the input method to use the mentioned encoding when you type in your pass phrase, or use some suitable tool to convert your pass phrase from your default encoding to the target encoding.</p>
+<p>This section assumes that you know what pass phrase was used for encryption, but that it may have been encoded in a different character encoding than the one used by your current input method. For example, the pass phrase may have been used at a time when your default encoding was ISO-8859-1 (i.e. &quot;naïve&quot; resulting in the byte sequence 0x6E 0x61 0xEF 0x76 0x65), and you&#39;re now in an environment where your default encoding is UTF-8 (i.e. &quot;naïve&quot; resulting in the byte sequence 0x6E 0x61 0xC3 0xAF 0x76 0x65). Whenever it&#39;s mentioned that you should use a certain character encoding, it should be understood that you either change the input method to use the mentioned encoding when you type in your pass phrase, or use some suitable tool to convert your pass phrase from your default encoding to the target encoding.</p>
 
 <p>Also note that the sub-sections below discuss human readable pass phrases. This is particularly relevant for PKCS#12 objects, where human readable pass phrases are assumed. For other objects, it&#39;s as legitimate to use any byte sequence (such as a sequence of bytes from <i>/dev/urandom</i> that&#39;s been saved away), which makes any character encoding discussion irrelevant; in such cases, simply use the same byte sequence as it is.</p>
 
@@ -99,9 +99,9 @@
 <li><p>Convert the pass phrase to UTF-8 and try with the result. Specifically with PKCS#12, this should open up any object that was created according to the specification.</p>
 
 </li>
-<li><p>Do a na&iuml;ve (i.e. purely mathematical) ISO-8859-1 to UTF-8 conversion and try with the result. This differs from the previous attempt because ISO-8859-1 maps directly to U+0000 to U+00FF, which other non-UTF-8 character sets do not.</p>
+<li><p>Do a naïve (i.e. purely mathematical) ISO-8859-1 to UTF-8 conversion and try with the result. This differs from the previous attempt because ISO-8859-1 maps directly to U+0000 to U+00FF, which other non-UTF-8 character sets do not.</p>
 
-<p>This also takes care of the case when a UTF-8 encoded string was used with OpenSSL older than 1.1.0. (for example, <code>&iuml;</code>, which is 0xC3 0xAF when encoded in UTF-8, would become 0xC3 0x83 0xC2 0xAF when re-encoded in the na&iuml;ve manner. The conversion to BMPString would then yield 0x00 0xC3 0x00 0xA4 0x00 0x00, the erroneous/non-compliant encoding used by OpenSSL older than 1.1.0)</p>
+<p>This also takes care of the case when a UTF-8 encoded string was used with OpenSSL older than 1.1.0. (for example, <code>ï</code>, which is 0xC3 0xAF when encoded in UTF-8, would become 0xC3 0x83 0xC2 0xAF when re-encoded in the naïve manner. The conversion to BMPString would then yield 0x00 0xC3 0x00 0xA4 0x00 0x00, the erroneous/non-compliant encoding used by OpenSSL older than 1.1.0)</p>
 
 </li>
 </ol>

@@ -59,7 +59,11 @@ int ASN1_item_verify_ctx(const ASN1_ITEM *it, const X509_ALGOR *alg,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>ASN1_item_sign_ex() is used to sign arbitrary ASN1 data using a data object <i>data</i>, the ASN.1 structure <i>it</i>, private key <i>pkey</i> and message digest <i>md</i>. The data that is signed is formed by taking the data object in <i>data</i> and converting it to der format using the ASN.1 structure <i>it</i>. The <i>data</i> that will be signed, and a structure containing the signature may both have a copy of the <b>X509_ALGOR</b>. The ASN1_item_sign_ex() function will write the correct <b>X509_ALGOR</b> to the structs based on the algorithms and parameters that have been set up. If one of <i>algor1</i> or <i>algor2</i> points to the <b>X509_ALGOR</b> of the <i>data</i> to be signed, then that <b>X509_ALGOR</b> will first be written before the signature is generated. Examples of valid values that can be used by the ASN.1 structure <i>it</i> are ASN1_ITEM_rptr(X509_CINF), ASN1_ITEM_rptr(X509_REQ_INFO) and ASN1_ITEM_rptr(X509_CRL_INFO). The <b>OSSL_LIB_CTX</b> specified in <i>libctx</i> and the property query string specified in <i>props</i> are used when searching for algorithms in providers. The generated signature is set into <i>signature</i>. The optional parameter <i>id</i> can be NULL, but can be set for special key types. See EVP_PKEY_CTX_set1_id() for further info. The output parameters &lt;algor1&gt; and <i>algor2</i> are ignored if they are NULL.</p>
+<p>ASN1_item_sign_ex() is used to sign arbitrary ASN1 data using a data object <i>data</i>, the ASN.1 structure <i>it</i>, private key <i>pkey</i>, and message digest <i>md</i>. The data to be signed is formed by taking the data object in <i>data</i> and converting it to DER format using the ASN.1 type structure <i>it</i>. Examples of values that can be used for <i>it</i> are <i>ASN1_ITEM_rptr(X509_CINF)</i>, <i>ASN1_ITEM_rptr(X509_REQ_INFO)</i>, and <i>ASN1_ITEM_rptr(X509_CRL_INFO)</i>.</p>
+
+<p><i>signature</i>, &lt;algor1&gt;, and <i>algor2</i> are essentially output parameters. The generated signature is set into <i>signature</i>, which must have been allocated beforehand, e.g., using <i>ASN1_BIT_STRING_new()</i>. This may happen indirectly, for instance by having an ASN.1 structure like <b>X509</b> that includes a non-optional signature field of type <b>ASN1_BIT_STRING</b>. The &lt;algor1&gt; and <i>algor2</i> parameters are optional and support outputting up to two <b>X509_ALGOR</b> values representing the signature algorithm (typically including a digest algorithm, and/or possibly other parameters), which is useful for structures like <b>X509</b> that must contain the same signature algorithm information in two places: <i>sig_alg</i> and <i>cert_info.signature</i>. Each of the &lt;algor1&gt; and <i>algor2</i> pointers may be NULL, otherwise they must have been allocated beforehand (e.g., using <i>X509_ALGOR_new()</i>, or indirectly like for the <b>X509</b>fields <i>sig_alg</i> and <i>cert_info.signature</i>), and the ASN1_item_sign_ex() function sets into it the signature algorithm. This is done before generating the signature value and setting it into <i>signature</i>.</p>
+
+<p>The <b>OSSL_LIB_CTX</b> specified in <i>libctx</i> and the property query string specified in <i>props</i> are used when searching for algorithms in providers. The optional parameter <i>id</i> can be NULL, but can be set for special key types. See EVP_PKEY_CTX_set1_id() for further info.</p>
 
 <p>ASN1_item_sign() is similar to ASN1_item_sign_ex() but uses default values of NULL for the <i>id</i>, <i>libctx</i> and <i>propq</i>.</p>
 
@@ -200,7 +204,7 @@ err:
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2022 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

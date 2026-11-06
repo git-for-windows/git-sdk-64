@@ -146,11 +146,13 @@ basicConstraints = critical, CA:TRUE, pathlen:1</code></pre>
 
 <h2 id="Key-Usage">Key Usage</h2>
 
-<p>Key usage is a multi-valued extension consisting of a list of names of the permitted key usages. The defined values are: <code>digitalSignature</code>, <code>nonRepudiation</code>, <code>keyEncipherment</code>, <code>dataEncipherment</code>, <code>keyAgreement</code>, <code>keyCertSign</code>, <code>cRLSign</code>, <code>encipherOnly</code>, and <code>decipherOnly</code>.</p>
+<p>Key usage is a multi-valued extension consisting of a list of names of the permitted key usages. The defined values are: <code>digitalSignature</code>, <code>nonRepudiation</code> (with an alternative name <code>contentCommitment</code>), <code>keyEncipherment</code>, <code>dataEncipherment</code>, <code>keyAgreement</code>, <code>keyCertSign</code>, <code>cRLSign</code>, <code>encipherOnly</code>, and <code>decipherOnly</code>.</p>
 
 <p>Examples:</p>
 
 <pre><code>keyUsage = digitalSignature, nonRepudiation
+
+keyUsage = digitalSignature, contentCommitment
 
 keyUsage = critical, keyCertSign</code></pre>
 
@@ -528,7 +530,7 @@ field2 = UTF8:field2</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

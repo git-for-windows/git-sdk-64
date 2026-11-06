@@ -65,9 +65,9 @@ CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
 
 <p>Several functions including SMIME_write_CMS(), i2d_CMS_bio_stream(), PEM_write_bio_CMS_stream() finalize the structure. Alternatively finalization can be performed by obtaining the streaming ASN1 <b>BIO</b> directly using BIO_new_CMS().</p>
 
-<p>The recipients specified in <b>certs</b> use a CMS KeyTransRecipientInfo info structure. KEKRecipientInfo is also supported using the flag <b>CMS_PARTIAL</b> and CMS_add0_recipient_key().</p>
+<p>The recipients specified in <b>certs</b> use a CMS KeyTransRecipientInfo info structure. KEKRecipientInfo is also supported using the flag <b>CMS_PARTIAL</b> and CMS_add0_recipient_key(). KEMRecipientInfo is also supported using the flag <b>CMS_PARTIAL</b> and CMS_add1_recipient().</p>
 
-<p>The parameter <b>certs</b> may be NULL if <b>CMS_PARTIAL</b> is set and recipients added later using CMS_add1_recipient_cert() or CMS_add0_recipient_key().</p>
+<p>The parameter <b>certs</b> may be NULL if <b>CMS_PARTIAL</b> is set and recipients are added later using CMS_add1_recipient() or CMS_add1_recipient_cert() with CMS_add0_recipient_key().</p>
 
 <p>CMS_encrypt() is similar to CMS_encrypt_ex() but uses default values of NULL for the library context <i>libctx</i> and the property query <i>propq</i>.</p>
 
@@ -87,7 +87,7 @@ CMS_ContentInfo *CMS_encrypt(STACK_OF(X509) *certs, BIO *in,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2008-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2008-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
