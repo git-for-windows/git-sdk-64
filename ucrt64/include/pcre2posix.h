@@ -126,7 +126,7 @@ file. So, we don't change existing definitions of PCRE2POSIX_EXP_DECL.
 By default, we use the standard "extern" declarations. */
 
 #ifndef PCRE2POSIX_EXP_DECL
-#  if defined(_WIN32) && defined(PCRE2POSIX_SHARED)
+#  if defined(_WIN32) && !defined(PCRE2_STATIC)
 #    define PCRE2POSIX_EXP_DECL  extern __declspec(dllimport)
 #  elif defined __cplusplus
 #    define PCRE2POSIX_EXP_DECL  extern "C"
