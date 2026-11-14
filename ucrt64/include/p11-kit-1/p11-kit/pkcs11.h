@@ -1133,6 +1133,7 @@ extern "C" {
 #define CKM_SKIPJACK_RELAYX                     (0x100aUL)
 #define CKM_KEA_KEY_PAIR_GEN                    (0x1010UL)
 #define CKM_KEA_KEY_DERIVE                      (0x1011UL)
+#define CKM_KEA_DERIVE                          (0x1012UL)
 #define CKM_FORTEZZA_TIMESTAMP                  (0x1020UL)
 #define CKM_BATON_KEY_GEN                       (0x1030UL)
 #define CKM_BATON_ECB128                        (0x1031UL)
@@ -1837,8 +1838,8 @@ struct ck_dsa_parameter_gen_param {
 struct ck_ecdh_aes_key_wrap_params {
   unsigned long aes_key_bits;
   ck_ec_kdf_type_t kdf;
-  unsigned long seed_len;
-  unsigned long index;
+  unsigned long shared_data_len;
+  unsigned char *shared_data;
 };
 
 struct ck_ecdh1_derive_params {
@@ -2846,7 +2847,7 @@ _CK_DECLARE_FUNCTION (C_DecapsulateKey,
                        struct ck_attribute *templ,
                        unsigned long attribute_count,
                        unsigned char *ciphertext,
-                       unsigned long *ciphertext_len,
+                       unsigned long ciphertext_len,
                        ck_object_handle_t *key_ptr));
 _CK_DECLARE_FUNCTION (C_VerifySignatureInit,
                       (ck_session_handle_t session,

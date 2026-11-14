@@ -259,11 +259,12 @@ $ <span class="command"><strong>pkg-config p11-kit-1 --variable p11_module_path<
 <a name="p11-kit-generate-keypair"></a><h2>Generate Key-pair</h2>
 <p>Generate key-pair on a PKCS#11 token.</p>
 <pre class="programlisting">
-$ p11-kit generate-keypair --type=algorithm {--bits=n|--curve=name} [--label=label] [--id=object_id] pkcs11:token
+$ p11-kit generate-keypair --type=algorithm {--bits=n|--curve=name|--parameter-set=set} [--label=label] [--id=object_id] pkcs11:token
 </pre>
 <p>Generate private-public key-pair of given type on the first
 	token matched by given PKCS#11 URI. This command should be used
-	together with --type option and one of --bits or --curve options.</p>
+	together with --type option and one of --bits, --curve or
+	--parameter-set options.</p>
 <p>The following options are required:</p>
 <div class="variablelist"><table border="0" class="variablelist">
 <colgroup>
@@ -274,7 +275,7 @@ $ p11-kit generate-keypair --type=algorithm {--bits=n|--curve=name} [--label=lab
 <tr>
 <td><p><span class="term"><code class="option">--type=&lt;algorithm&gt;</code></span></p></td>
 <td><p>Specify the type of keys to generate.
-			Supported values are rsa, ecdsa and eddsa.</p></td>
+			Supported values are rsa, ecdsa, eddsa, ml-dsa, ml-kem and slh-dsa.</p></td>
 </tr>
 <tr>
 <td><p><span class="term"><code class="option">--bits=&lt;n&gt;</code></span></p></td>
@@ -286,6 +287,12 @@ $ p11-kit generate-keypair --type=algorithm {--bits=n|--curve=name} [--label=lab
 <td><p>Specify an elliptic curve for the key-pair generation.
                         Supported values are secp256r1, secp384r1, secp521r1, ed25519 and ed448.
 			Cannot be used together with --bits option.</p></td>
+</tr>
+<tr>
+<td><p><span class="term"><code class="option">--parameter-set=&lt;set&gt;</code></span></p></td>
+<td><p>Specify the parameter set for post-quantum key-pair
+			generation. Used with ml-dsa (44, 65, 87), ml-kem (512, 768, 1024)
+			and slh-dsa (e.g. sha2-128s, shake-256f).</p></td>
 </tr>
 </tbody>
 </table></div>

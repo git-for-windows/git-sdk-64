@@ -426,7 +426,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/ucrt64' '--host=x86_64-w64-mingw32' '--build=x86_64-w64-mingw32' '--enable-shared' '--with-system-expat' '--with-system-ffi' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/ucrt64/share/zoneinfo' '--enable-optimizations' 'build_alias=x86_64-w64-mingw32' 'host_alias=x86_64-w64-mingw32' 'PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig:/ucrt64/share/pkgconfig' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3' 'LDFLAGS=' 'CPPFLAGS='
+CONFIG_ARGS=	 '--prefix=/ucrt64' '--enable-shared' '--with-system-expat' '--with-system-libmpdec' '--without-ensurepip' '--enable-loadable-sqlite-extensions' '--with-tzpath=/ucrt64/share/zoneinfo' '--enable-optimizations' 'PKG_CONFIG_PATH=/ucrt64/lib/pkgconfig:/ucrt64/share/pkgconfig' 'CC=gcc' 'CFLAGS=-march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3' 'LDFLAGS=' 'CPPFLAGS='
 
 
 # Subdirectories with code

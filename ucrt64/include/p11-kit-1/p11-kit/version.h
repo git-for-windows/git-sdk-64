@@ -41,7 +41,7 @@ extern "C" {
 
 #define P11_KIT_VERSION_MAJOR (0)
 #define P11_KIT_VERSION_MINOR (26)
-#define P11_KIT_VERSION_MICRO (5)
+#define P11_KIT_VERSION_MICRO (6)
 
 #define P11_KIT_CHECK_VERSION(major, minor, micro)	\
 	(P11_KIT_VERSION_MAJOR > (major) ||		\
