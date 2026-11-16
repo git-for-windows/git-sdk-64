@@ -15,6 +15,7 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -29,7 +30,7 @@
 
 <pre><code>#include &lt;openssl/x509v3.h&gt;
 
-int X509_check_purpose(X509 *x, int id, int ca);
+int X509_check_purpose(const X509 *x, int id, int ca);
 
 int X509_PURPOSE_get_count(void);
 int X509_PURPOSE_get_unused_id(OSSL_LIB_CTX *libctx);
@@ -66,6 +67,8 @@ int X509_PURPOSE_set(int *p, int purpose);</code></pre>
 
 <p>The checks performed take into account the X.509 extensions keyUsage, extendedKeyUsage, and basicConstraints.</p>
 
+<p>No actual check is performed if <i>id</i> is -1.</p>
+
 <p>X509_PURPOSE_get_count() returns the number of currently defined purposes.</p>
 
 <p>X509_PURPOSE_get_unused_id() returns the smallest purpose id not yet used, which is guaranteed to be unique and larger than <b>X509_PURPOSE_MAX</b>. The <i>libctx</i> parameter should be used to provide the library context. It is currently ignored as the purpose mapping table is global.</p>
@@ -89,6 +92,10 @@ int X509_PURPOSE_set(int *p, int purpose);</code></pre>
 <p>X509_PURPOSE_get_trust() returns the trust id of the given <b>X509_PURPOSE</b>.</p>
 
 <p>X509_PURPOSE_set() assigns the given <i>purpose</i> id to the location pointed at by <i>p</i>. This resets to the any purpose if <i>purpose</i> is <b>X509_PURPOSE_DEFAULT_ANY</b>.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>X509_check_purpose() fills in various internal fields of the certificate structure <i>x</i>. This is safe despite the <i>x</i> argument&#39;s type change to <i>const X509 *</i> as of OpenSSL 4.0.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -176,9 +183,11 @@ int X509_PURPOSE_set(int *p, int purpose);</code></pre>
 
 <p>X509_PURPOSE_get_unused_id() was added in OpensSL 3.5.</p>
 
+<p>X509_check_purpose() had its <b>X509</b> parameter converted to const in OpenSSL 4.0.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved. Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+<p>Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved. Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 
 
 </body>

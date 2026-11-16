@@ -49,9 +49,9 @@ uint16_t SSL_CIPHER_get_protocol_id(const SSL_CIPHER *c);</code></pre>
 
 <p>SSL_CIPHER_get_name() returns a pointer to the name of <b>cipher</b>. If the <b>cipher</b> is NULL, it returns &quot;(NONE)&quot;.</p>
 
-<p>SSL_CIPHER_standard_name() returns a pointer to the standard RFC name of <b>cipher</b>. If the <b>cipher</b> is NULL, it returns &quot;(NONE)&quot;. If the <b>cipher</b> has no standard name, it returns <b>NULL</b>. If <b>cipher</b> was defined in both SSLv3 and TLS, it returns the TLS name.</p>
+<p>SSL_CIPHER_standard_name() returns a pointer to the standard RFC name of <b>cipher</b>. If the <b>cipher</b> is NULL, it returns &quot;(NONE)&quot;. If the <b>cipher</b> has no standard name, it returns <b>NULL</b>.</p>
 
-<p>OPENSSL_cipher_name() returns a pointer to the OpenSSL name of <b>stdname</b>. If the <b>stdname</b> is NULL, or <b>stdname</b> has no corresponding OpenSSL name, it returns &quot;(NONE)&quot;. Where both exist, <b>stdname</b> should be the TLS name rather than the SSLv3 name.</p>
+<p>OPENSSL_cipher_name() returns a pointer to the OpenSSL name of <b>stdname</b>. If the <b>stdname</b> is NULL, or <b>stdname</b> has no corresponding OpenSSL name, it returns &quot;(NONE)&quot;.</p>
 
 <p>SSL_CIPHER_get_bits() returns the number of secret bits used for <b>cipher</b>. If <b>cipher</b> is NULL, 0 is returned.</p>
 
@@ -63,14 +63,14 @@ uint16_t SSL_CIPHER_get_protocol_id(const SSL_CIPHER *c);</code></pre>
 
 <p>SSL_CIPHER_get_handshake_digest() returns an EVP_MD for the digest used during the SSL/TLS handshake when using the SSL_CIPHER <b>c</b>. Note that this may be different to the digest used to calculate the MAC for encrypted records.</p>
 
-<p>SSL_CIPHER_get_kx_nid() returns the key exchange NID corresponding to the method used by <b>c</b>. If there is no key exchange, then <b>NID_undef</b> is returned. If any appropriate key exchange algorithm can be used (as in the case of TLS 1.3 cipher suites) <b>NID_kx_any</b> is returned. Examples (not comprehensive):</p>
+<p>SSL_CIPHER_get_kx_nid() returns the key exchange NID corresponding to the method used by <b>c</b>. If there is no key exchange, then <b>NID_undef</b> is returned. If any appropriate key exchange algorithm can be used (as in the case of (D)TLS 1.3 cipher suites) <b>NID_kx_any</b> is returned. Examples (not comprehensive):</p>
 
 <pre><code>NID_kx_rsa
 NID_kx_ecdhe
 NID_kx_dhe
 NID_kx_psk</code></pre>
 
-<p>SSL_CIPHER_get_auth_nid() returns the authentication NID corresponding to the method used by <b>c</b>. If there is no authentication, then <b>NID_undef</b> is returned. If any appropriate authentication algorithm can be used (as in the case of TLS 1.3 cipher suites) <b>NID_auth_any</b> is returned. Examples (not comprehensive):</p>
+<p>SSL_CIPHER_get_auth_nid() returns the authentication NID corresponding to the method used by <b>c</b>. If there is no authentication, then <b>NID_undef</b> is returned. If any appropriate authentication algorithm can be used (as in the case of (D)TLS 1.3 cipher suites) <b>NID_auth_any</b> is returned. Examples (not comprehensive):</p>
 
 <pre><code>NID_auth_rsa
 NID_auth_ecdsa
@@ -169,7 +169,7 @@ RSA-PSK-AES256-CBC-SHA384 TLSv1.0 Kx=RSAPSK   Au=RSA  Enc=AES(256)  Mac=SHA384</
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -123,7 +123,7 @@ EVP_PKEY *verify_key;
  * NB: assumes verify_key, sig, siglen md and mdlen are already set up
  * and that verify_key is an RSA public key
  */
-ctx = EVP_PKEY_CTX_new(verify_key, NULL /* no engine */);
+ctx = EVP_PKEY_CTX_new(verify_key, NULL);
 if (ctx == NULL)
     /* Error occurred */
 if (EVP_PKEY_verify_init(ctx) &lt;= 0)
@@ -158,7 +158,7 @@ EVP_PKEY *signing_key;
  * NB: assumes verify_key, sig, siglen, md and mdlen are already set up
  * and that verify_key is an RSA public key
  */
-ctx = EVP_PKEY_CTX_new(signing_key, NULL /* no engine */);
+ctx = EVP_PKEY_CTX_new(signing_key, NULL);
 alg = EVP_SIGNATURE_fetch(NULL, &quot;RSA-SHA256&quot;, NULL);
 
 if (ctx == NULL)
@@ -199,7 +199,7 @@ EVP_SIGNATURE *alg;
  * in must point to data to be digested and signed, and
  * inlen must be the size of the data in bytes.
  */
-ctx = EVP_PKEY_CTX_new(signing_key, NULL /* no engine */);
+ctx = EVP_PKEY_CTX_new(signing_key, NULL);
 alg = EVP_SIGNATURE_fetch(NULL, &quot;RSA-SHA256&quot;, NULL);
 
 if (ctx == NULL || alg == NULL)
@@ -236,7 +236,7 @@ EVP_SIGNATURE *alg;
  * in must point to data to be digested and signed, and
  * inlen must be the size of the data in bytes.
  */
-ctx = EVP_PKEY_CTX_new(signing_key, NULL /* no engine */);
+ctx = EVP_PKEY_CTX_new(signing_key, NULL);
 alg = EVP_SIGNATURE_fetch(NULL, &quot;RSA-SHA256&quot;, NULL);
 
 if (ctx == NULL || alg == NULL)

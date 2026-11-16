@@ -45,7 +45,7 @@ int EVP_VerifyInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>The EVP signature verification routines are a high-level interface to digital signatures.</p>
 
-<p>EVP_VerifyInit_ex() sets up verification context <i>ctx</i> to use digest <i>type</i> from ENGINE <i>impl</i>. <i>ctx</i> must be created by calling EVP_MD_CTX_new() before calling this function.</p>
+<p>EVP_VerifyInit_ex() sets up verification context <i>ctx</i> to use digest <i>type</i>. <i>ctx</i> <b>must</b> be created by calling EVP_MD_CTX_new() before calling this function. <i>impl</i> <b>must</b> be NULL.</p>
 
 <p>EVP_VerifyUpdate() hashes <i>cnt</i> bytes of data at <i>d</i> into the verification context <i>ctx</i>. This function can be called several times on the same <i>ctx</i> to include additional data.</p>
 
@@ -93,7 +93,7 @@ int EVP_VerifyInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

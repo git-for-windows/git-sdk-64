@@ -35,11 +35,11 @@ int SSL_config(SSL *s, const char *name);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The functions SSL_CTX_config() and SSL_config() configure an <b>SSL_CTX</b> or <b>SSL</b> structure using the configuration <b>name</b>.</p>
+<p>The functions SSL_CTX_config() and SSL_config() apply additional configuration settings to an <b>SSL_CTX</b> or <b>SSL</b> structure using the configuration <b>name</b>. The <b>name</b> must match a parameter in the configuration file&#39;s <b>ssl</b> module section, whose value is the name of another section with SSL configuration commands. See <a href="../man3/SSL_CONF_cmd.html">SSL_CONF_cmd(3)</a> for a description of the available commands.</p>
 
-<p>By calling SSL_CTX_config() or SSL_config() an application can perform many complex tasks based on the contents of the configuration file: greatly simplifying application configuration code. A degree of future proofing can also be achieved: an application can support configuration features in newer versions of OpenSSL automatically.</p>
+<p>By calling SSL_CTX_config() or SSL_config() an application can perform many complex tasks based on the contents of the configuration file: greatly simplifying application configuration code. Some future-proofing can be attained this way: the specified configuration section can specify settings supported by the run-time version of OpenSSL that were not known at the time the application code was written.</p>
 
-<p>A configuration file must have been previously loaded, for example using CONF_modules_load_file(). See <a href="../man5/config.html">config(5)</a> for details of the configuration file syntax.</p>
+<p>A configuration file must have been previously loaded, for example using CONF_modules_load_file(3). See <a href="../man5/config.html">config(5)</a> for details of the configuration file syntax. In most applications the default <b>openssl.cnf</b> file is loaded automatically as part of library initialisation.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -47,42 +47,61 @@ int SSL_config(SSL *s, const char *name);</code></pre>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>If the file &quot;config.cnf&quot; contains the following:</p>
+<p>If, for example, the loaded configuration file contains the following:</p>
 
-<pre><code>testapp = test_sect
+<pre><code># Top level &quot;default&quot; section, if no application name was specified as part
+# initialisation, it defaults to &quot;openssl_conf&quot;.
+openssl_conf = openssl_init
 
-[test_sect]
-# list of configuration modules
+[openssl_init]
+# SSL module initialisation
+ssl_conf = ssl_init
 
-ssl_conf = ssl_sect
+[ssl_init]
+system_default = default_ssl_settings
+tweaks_for_tls12 = tls12_custom_settings
+tweaks_for_tls13 = tls13_custom_settings
 
-[ssl_sect]
-server = server_section
+[default_ssl_settings]
+MinProtocol = TLSv1.2
+# Defaults are typically the wisest choice, override only with good cause.
+MinProtocol = ...
+Ciphers = ...
+Groups = ...
+SignatureAlgorithms = ...
 
-[server_section]
-RSA.Certificate = server-rsa.pem
-ECDSA.Certificate = server-ecdsa.pem
-Ciphers = ALL:!RC4</code></pre>
+[tls12_custom_settings]
+# Defaults are typically the wisest choice, override only with good cause.
+MaxProtocol = TLSv1.2
+...
 
-<p>An application could call:</p>
+[tls13_custom_settings]
+# Defaults are typically the wisest choice, override only with good cause.
+MinProtocol = TLSv1.3
+...</code></pre>
 
-<pre><code>if (CONF_modules_load_file(&quot;config.cnf&quot;, &quot;testapp&quot;, 0) &lt;= 0) {
-    fprintf(stderr, &quot;Error processing config file\n&quot;);
+<p>An application that wants to only use &quot;TLS 1.2&quot; might call:</p>
+
+<pre><code>/* Initialised per &quot;system_default&quot; settings */
+if ((ctx = SSL_CTX_new(TLS_server_method())) == NULL) {
+    fprintf(stderr, &quot;Error creating the SSL context.\n&quot;);
     goto err;
 }
 
-ctx = SSL_CTX_new(TLS_server_method());
-
-if (SSL_CTX_config(ctx, &quot;server&quot;) == 0) {
-    fprintf(stderr, &quot;Error configuring server.\n&quot;);
+/*
+ * Further tweaks per the &quot;ssl&quot; module &quot;tweaks_for_tls12&quot; setting, i.e. the
+ * configuration file&#39;s &quot;tls12_custom_settings&quot; section.
+ */
+if (SSL_CTX_config(ctx, &quot;tweaks_for_tls12&quot;) == 0) {
+    fprintf(stderr, &quot;Error applying &#39;tweaks_for_tls12&#39; context configuration.\n&quot;);
     goto err;
 }</code></pre>
 
-<p>In this example two certificates and the cipher list are configured without the need for any additional application code.</p>
+<p>The setting of the protocol version ceiling and any other settings relevant to TLS 1.2 are in the configuration file, and don&#39;t need to be hard-coded in the application. Similarly, using <code>tweaks_for_tls13</code> as the configuration <b>name</b> applies the corresponding settings from the &quot;tls13_custom_settings&quot; section (per the SSL module <code>tweaks_for_tls13</code> parameter).</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man3/SSL_CONF_cmd.html">SSL_CONF_cmd(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man3/SSL_CONF_cmd.html">SSL_CONF_cmd(3)</a>, <a href="../man3/SSL_CTX_new.html">SSL_CTX_new(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>, <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

@@ -19,8 +19,10 @@
       <li><a href="#EC-key-validation">EC key validation</a></li>
     </ul>
   </li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -113,6 +115,10 @@
 
 <p>Sets or gets the point_conversion_form for the <i>key</i>. For a description of point_conversion_forms please see <a href="../man3/EC_POINT_new.html">EC_POINT_new(3)</a>. Valid values are &quot;uncompressed&quot; or &quot;compressed&quot;. The default value is &quot;uncompressed&quot;.</p>
 
+<p>At key generation time the public point is emitted in uncompressed form. Any <b>point-format</b> supplied via <b>EVP_PKEY_CTX_set_params</b>(3) or <b>-pkeyopt point-format:&lt;form&gt;</b> is validated -- an invalid value is rejected -- but is otherwise ignored on the generated key.</p>
+
+<p>On EC parameter generation the <b>point-format</b> setting selects the encoding of the group&#39;s generator. On an existing key the setting is honoured normally, so imported keys retain their original form through <b>EVP_PKEY_set_params</b>(3), <b>EVP_PKEY_fromdata</b>(3), <b>EVP_PKEY_todata</b>(3) and PEM/DER encoding and decoding.</p>
+
 </dd>
 <dt id="group-check-OSSL_PKEY_PARAM_EC_GROUP_CHECK_TYPE-UTF8-string">&quot;group-check&quot; (<b>OSSL_PKEY_PARAM_EC_GROUP_CHECK_TYPE</b>) &lt;UTF8 string&gt;</dt>
 <dd>
@@ -176,6 +182,12 @@
 
 <dl>
 
+<dt id="field-degree-OSSL_PKEY_PARAM_EC_FIELD_DEGREE-integer">&quot;field-degree&quot; (<b>OSSL_PKEY_PARAM_EC_FIELD_DEGREE</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This is the bit length of the curve&#39;s field coefficients. It coincides with the <b>OSSL_PKEY_PARAM_EC_CHAR2_M</b> parameter for binary fields, and is otherwise (for prime fields) equal to the bit length of the field&#39;s characteristic. For most curves (e.g. <code>secp160r1</code>) this number is embedded in the curve&#39;s name.</p>
+
+</dd>
 <dt id="basis-type-OSSL_PKEY_PARAM_EC_CHAR2_TYPE-UTF8-string">&quot;basis-type&quot; (<b>OSSL_PKEY_PARAM_EC_CHAR2_TYPE</b>) &lt;UTF8 string&gt;</dt>
 <dd>
 
@@ -217,7 +229,7 @@
 <dt id="key-check-OSSL_PKEY_PARAM_FIPS_KEY_CHECK-integer">&quot;key-check&quot; (<b>OSSL_PKEY_PARAM_FIPS_KEY_CHECK</b>) &lt;integer&gt;</dt>
 <dd>
 
-<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for further information.</p>
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a> for descriptions of additional parameters generally available across all algorithms.</p>
 
 </dd>
 </dl>
@@ -243,6 +255,10 @@
 <p>For EC keys, <a href="../man3/EVP_PKEY_public_check.html">EVP_PKEY_public_check(3)</a> and <a href="../man3/EVP_PKEY_public_check_quick.html">EVP_PKEY_public_check_quick(3)</a> conform to SP800-56Ar3 <i>ECC Full Public-Key Validation</i> and <i>ECC Partial Public-Key Validation</i> respectively.</p>
 
 <p>For EC Keys, <a href="../man3/EVP_PKEY_private_check.html">EVP_PKEY_private_check(3)</a> and <a href="../man3/EVP_PKEY_pairwise_check.html">EVP_PKEY_pairwise_check(3)</a> conform to SP800-56Ar3 <i>Private key validity</i> and <i>Owner Assurance of Pair-wise Consistency</i> respectively.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>&quot;qx&quot; (<b>OSSL_PKEY_PARAM_EC_PUB_X</b>) and &quot;qy&quot; (<b>OSSL_PKEY_PARAM_EC_PUB_Y</b>) can be used for getting the EC public key affine coordinates. To set them call EVP_EC_affine2oct() to convert affine coordinates to an octet string and then use &quot;pub&quot; (<b>OSSL_PKEY_PARAM_PUB_KEY</b>).</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
@@ -308,9 +324,13 @@ EVP_PKEY_CTX_free(gctx);</code></pre>
 
 <p><a href="../man3/EVP_EC_gen.html">EVP_EC_gen(3)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man7/EVP_SIGNATURE-ECDSA.html">EVP_SIGNATURE-ECDSA(7)</a>, <a href="../man7/EVP_KEYEXCH-ECDH.html">EVP_KEYEXCH-ECDH(7)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>OSSL_PKEY_PARAM_EC_FIELD_DEGREE</b> parameter was added in OpenSSL 4.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

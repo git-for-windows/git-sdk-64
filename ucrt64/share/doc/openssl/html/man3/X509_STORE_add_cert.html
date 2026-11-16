@@ -31,7 +31,7 @@
 
 typedef x509_store_st X509_STORE;
 
-int X509_STORE_add_cert(X509_STORE *xs, X509 *x);
+int X509_STORE_add_cert(X509_STORE *xs, const X509 *x);
 int X509_STORE_add_crl(X509_STORE *xs, X509_CRL *x);
 int X509_STORE_set_depth(X509_STORE *store, int depth);
 int X509_STORE_set_flags(X509_STORE *xs, unsigned long flags);
@@ -73,13 +73,13 @@ int X509_STORE_load_locations(X509_STORE *xs,
 
 <p>X509_STORE_add_lookup() finds or creates a <a href="../man3/X509_LOOKUP.html">X509_LOOKUP(3)</a> with the <a href="../man3/X509_LOOKUP_METHOD.html">X509_LOOKUP_METHOD(3)</a> <i>meth</i> and adds it to the <b>X509_STORE</b> <i>store</i>. This also associates the <b>X509_STORE</b> with the lookup, so <b>X509_LOOKUP</b> functions can look up objects in that store.</p>
 
-<p>X509_STORE_load_file_ex() loads trusted certificate(s) into an <b>X509_STORE</b> from a given file. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers.</p>
+<p>X509_STORE_load_file_ex() loads trusted certificate(s) into an <b>X509_STORE</b> from a given file in PEM format. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers.</p>
 
 <p>X509_STORE_load_file() is similar to X509_STORE_load_file_ex() but uses NULL for the library context <i>libctx</i> and property query <i>propq</i>.</p>
 
-<p>X509_STORE_load_path() loads trusted certificate(s) into an <b>X509_STORE</b> from a given directory path. The certificates in the directory must be in hashed form, as documented in <a href="../man3/X509_LOOKUP_hash_dir.html">X509_LOOKUP_hash_dir(3)</a>.</p>
+<p>X509_STORE_load_path() sets in <b>X509_STORE</b> the given directory with certificate files in PEM format as source of trusted certificate(s). The certificate files in <i>dir</i> are only looked up when required, e.g., when building the certificate chain or when verifying a peer certificate. The certificates in the directory must be in hashed form, as documented in <a href="../man3/X509_LOOKUP_hash_dir.html">X509_LOOKUP_hash_dir(3)</a>. Use the <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a> utility to create the necessary links.</p>
 
-<p>X509_STORE_load_store_ex() loads trusted certificate(s) into an <b>X509_STORE</b> from a store at a given URI. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers.</p>
+<p>X509_STORE_load_store_ex() loads trusted certificate(s) into an <b>X509_STORE</b> from a given URI. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers. <i>uri</i> must not be NULL. It must be a URI to a store, which may represent a single container or a whole catalogue of containers. If <i>uri</i> starts with the scheme <code>file:</code>, it is treated like a local file or directory.</p>
 
 <p>X509_STORE_load_store() is similar to X509_STORE_load_store_ex() but uses NULL for the library context <i>libctx</i> and property query <i>propq</i>.</p>
 
@@ -99,7 +99,7 @@ int X509_STORE_load_locations(X509_STORE *xs,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/X509_LOOKUP_hash_dir.html">X509_LOOKUP_hash_dir(3)</a>. <a href="../man3/X509_VERIFY_PARAM_set_depth.html">X509_VERIFY_PARAM_set_depth(3)</a>. <a href="../man3/X509_STORE_new.html">X509_STORE_new(3)</a>, <a href="../man3/X509_STORE_get0_param.html">X509_STORE_get0_param(3)</a></p>
+<p><a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>, <a href="../man3/X509_LOOKUP_hash_dir.html">X509_LOOKUP_hash_dir(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set_depth.html">X509_VERIFY_PARAM_set_depth(3)</a>, <a href="../man3/X509_STORE_new.html">X509_STORE_new(3)</a>, <a href="../man3/X509_STORE_get0_param.html">X509_STORE_get0_param(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -107,7 +107,7 @@ int X509_STORE_load_locations(X509_STORE *xs,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2017-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2017-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -48,9 +48,9 @@ uint8_t SSL_SESSION_get_max_fragment_length(const SSL_SESSION *session);</code><
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>Some engines are able to process multiple simultaneous crypto operations. This capability could be utilised to parallelise the processing of a single connection. For example a single write can be split into multiple records and each one encrypted independently and in parallel. Note: this will only work in TLS1.1+. There is no support in SSLv3, TLSv1.0 or DTLS (any version). This capability is known as &quot;pipelining&quot; within OpenSSL.</p>
+<p>Previous versions of libssl supported the concept of cipher pipelining. There is no support for this in OpenSSL 4.0. In previous versions some engines were able to process multiple simultaneous crypto operations. This capability could be utilised to parallelise the processing of a single connection. For example a single write can be split into multiple records and each one encrypted independently and in parallel. Note: this would only work in TLS1.1+. There was no support in TLSv1.0 or DTLS (any version). This capability is known as &quot;pipelining&quot; within OpenSSL.</p>
 
-<p>In order to benefit from the pipelining capability. You need to have an engine that provides ciphers that support this. The OpenSSL &quot;dasync&quot; engine provides AES128-SHA based ciphers that have this capability. However, these are for development and test purposes only.</p>
+<p>In order to benefit from the pipelining capability, you would need to have an engine that provides ciphers that support this. Since OpenSSL 4.0 engines are no longer supported and therefore pipelining is not supported either. In some future version it may be that this capability is added back via the provider mechanism.</p>
 
 <p>SSL_CTX_set_max_send_fragment() and SSL_set_max_send_fragment() set the <b>max_send_fragment</b> parameter for SSL_CTX and SSL objects respectively. This value restricts the amount of plaintext bytes that will be sent in any one SSL/TLS record. By default its value is SSL3_RT_MAX_PLAIN_LENGTH (16384). These functions will only accept a value in the range 512 - SSL3_RT_MAX_PLAIN_LENGTH.</p>
 
@@ -140,7 +140,7 @@ uint8_t SSL_SESSION_get_max_fragment_length(const SSL_SESSION *session);</code><
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

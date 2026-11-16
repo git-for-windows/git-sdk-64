@@ -51,21 +51,21 @@ RSA *RSA_new_method(ENGINE *engine);</code></pre>
 
 <p>All of the functions described on this page are deprecated. Applications should instead use the OSSL_PROVIDER APIs.</p>
 
-<p>An <b>RSA_METHOD</b> specifies the functions that OpenSSL uses for RSA operations. By modifying the method, alternative implementations such as hardware accelerators may be used. IMPORTANT: See the NOTES section for important information about how these RSA API functions are affected by the use of <b>ENGINE</b> API calls.</p>
+<p>An <b>RSA_METHOD</b> specifies the functions that OpenSSL uses for RSA operations. By modifying the method, alternative implementations such as hardware accelerators may be used.</p>
 
 <p>Initially, the default RSA_METHOD is the OpenSSL internal implementation, as returned by RSA_PKCS1_OpenSSL().</p>
 
-<p>RSA_set_default_method() makes <b>meth</b> the default method for all RSA structures created later. <b>NB</b>: This is true only whilst no ENGINE has been set as a default for RSA, so this function is no longer recommended. This function is not thread-safe and should not be called at the same time as other OpenSSL functions.</p>
+<p>RSA_set_default_method() makes <b>meth</b> the default method for all RSA structures created later. <b>NB</b>: This function is not thread-safe and should not be called at the same time as other OpenSSL functions.</p>
 
-<p>RSA_get_default_method() returns a pointer to the current default RSA_METHOD. However, the meaningfulness of this result is dependent on whether the ENGINE API is being used, so this function is no longer recommended.</p>
+<p>RSA_get_default_method() returns a pointer to the current default RSA_METHOD.</p>
 
-<p>RSA_set_method() selects <b>meth</b> to perform all operations using the key <b>rsa</b>. This will replace the RSA_METHOD used by the RSA key and if the previous method was supplied by an ENGINE, the handle to that ENGINE will be released during the change. It is possible to have RSA keys that only work with certain RSA_METHOD implementations (e.g. from an ENGINE module that supports embedded hardware-protected keys), and in such cases attempting to change the RSA_METHOD for the key can have unexpected results.</p>
+<p>RSA_set_method() selects <b>meth</b> to perform all operations using the key <b>rsa</b>. This will replace the RSA_METHOD used by the RSA key. It is possible to have RSA keys that only work with certain RSA_METHOD implementations, and in such cases attempting to change the RSA_METHOD for the key can have unexpected results.</p>
 
-<p>RSA_get_method() returns a pointer to the RSA_METHOD being used by <b>rsa</b>. This method may or may not be supplied by an ENGINE implementation, but if it is, the return value can only be guaranteed to be valid as long as the RSA key itself is valid and does not have its implementation changed by RSA_set_method().</p>
+<p>RSA_get_method() returns a pointer to the RSA_METHOD being used by <b>rsa</b>. The return value can only be guaranteed to be valid as long as the RSA key itself is valid and does not have its implementation changed by RSA_set_method().</p>
 
 <p>RSA_flags() returns the <b>flags</b> that are set for <b>rsa</b>&#39;s current RSA_METHOD. See the BUGS section.</p>
 
-<p>RSA_new_method() allocates and initializes an RSA structure so that <b>engine</b> will be used for the RSA operations. If <b>engine</b> is NULL, the default ENGINE for RSA operations is used, and if no default ENGINE is set, the RSA_METHOD controlled by RSA_set_default_method() is used.</p>
+<p>RSA_new_method() allocates and initializes an RSA structure. <b>engine</b> must be NULL and the RSA_METHOD controlled by RSA_set_default_method() is used.</p>
 
 <p>RSA_flags() returns the <b>flags</b> that are set for <b>rsa</b>&#39;s current method.</p>
 

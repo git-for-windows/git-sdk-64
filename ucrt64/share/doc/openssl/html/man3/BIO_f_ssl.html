@@ -60,7 +60,7 @@ long BIO_do_handshake(BIO *b);</code></pre>
 
 <p>If the close flag is set when an SSL BIO is freed then the internal SSL structure is also freed using SSL_free().</p>
 
-<p>BIO_set_ssl() sets the internal SSL pointer of SSL BIO <b>b</b> to <b>ssl</b> using the close flag <b>c</b>.</p>
+<p>BIO_set_ssl() sets the internal SSL pointer of SSL BIO <b>b</b> to <b>ssl</b> using the close flag <b>c</b>. On success, ownership of <b>ssl</b> is transferred to BIO <b>b</b>.</p>
 
 <p>BIO_get_ssl() retrieves the SSL pointer of SSL BIO <b>b</b>, it can then be manipulated using the standard SSL library functions.</p>
 
@@ -246,7 +246,7 @@ BIO_free_all(sbio);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

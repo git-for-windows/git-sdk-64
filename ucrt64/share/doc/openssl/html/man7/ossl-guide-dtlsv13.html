@@ -1,0 +1,246 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ossl-guide-dtlsv13</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#INTRODUCTION">INTRODUCTION</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#UNIFIED-HEADER">UNIFIED HEADER</a>
+    <ul>
+      <li><a href="#Epoch">Epoch</a></li>
+      <li><a href="#Encrypted-Sequence-Numbers">Encrypted Sequence Numbers</a></li>
+    </ul>
+  </li>
+  <li><a href="#ACKNOWLEDGEMENT-MESSAGE">ACKNOWLEDGEMENT MESSAGE</a></li>
+  <li><a href="#END-OF-EARLY-DATA-MESSAGE">END OF EARLY DATA MESSAGE</a></li>
+  <li><a href="#HELLO-RETRY-REQUEST">HELLO RETRY REQUEST</a></li>
+  <li><a href="#DTLS-LISTENER-API">DTLS LISTENER API</a></li>
+  <li><a href="#APPLICATION-DATA">APPLICATION DATA</a></li>
+  <li><a href="#SCTP">SCTP</a></li>
+  <li><a href="#CONNECTION-ID">CONNECTION ID</a></li>
+  <li><a href="#CIPHER-SUITES">CIPHER SUITES</a></li>
+  <li><a href="#HOW-TO-UTILIZE-DTLSV1.3-IN-OPENSSL">HOW TO UTILIZE DTLSV1.3 IN OPENSSL</a>
+    <ul>
+      <li><a href="#SSL_set_min_proto_version-and-SSL_set_max_proto_version">SSL_set_min_proto_version and SSL_set_max_proto_version</a></li>
+      <li><a href="#SSL_CTX_set_min_proto_version-and-SSL_CTX_set_max_proto_version">SSL_CTX_set_min_proto_version and SSL_CTX_set_max_proto_version</a></li>
+      <li><a href="#s_client">s_client</a></li>
+      <li><a href="#s_server">s_server</a></li>
+    </ul>
+  </li>
+  <li><a href="#DEMOS">DEMOS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>ossl-guide-dtlsv13 - OpenSSL DTLSv1.3</p>
+
+<h1 id="INTRODUCTION">INTRODUCTION</h1>
+
+<p>This page provides an introduction to the DTLSv1.3 protocol. It explains the concepts behind the protocol and how it differs from previous versions of DTLS.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>DTLSv1.3 is a version of the Datagram Transport Layer Security (DTLS) protocol. DTLSv1.3 is defined in RFC 9147. It is based on TLSv1.3 and provides similar security guarantees to TLSv1.3 but is designed to work over datagram transport protocols such as UDP.</p>
+
+<p>The Supported Versions extension in the ClientHello and ServerHello is updated to include support for DTLSv1.3 by adding the value 0xFEFD to the list of supported versions.</p>
+
+<p>The TLSv1.3 state machine has been updated to support the DTLSv1.3 protocol. The main difference in the state machine between TLSv1.3 and DTLSv1.3 is the addition of Acknowledgement messages that are used to acknowledge the receipt of messages in the DTLSv1.3 protocol. This allows either the client or the server to signal to the peer that they have received and processed a handshake message. This prevents unnecessary retransmissions of messages.</p>
+
+<p>A major difference between DTLSv1.3 and DTLSv1.2 is the addition of the Unified Header. This Unified Header is in plaintext, and it contains an encrypted sequence number. The handshake header follows the Unified Header, and both the handshake header and all of its contents are encrypted.</p>
+
+<pre><code>struct {
+    ContentType type;
+    ProtocolVersion legacy_record_version;
+    uint16 epoch_val = 0;
+    uint48 sequence_number;
+    uint16 length;
+    opaque fragment[DTLSPlaintext.length];
+} DTLSPlaintext;
+
+struct {
+     opaque content[DTLSPlaintext.length];
+     ContentType type;
+     uint8 zeros[length_of_padding];
+} DTLSInnerPlaintext;
+
+struct {
+    opaque unified_hdr[variable];
+    opaque encrypted_record[length];
+} DTLSCiphertext;</code></pre>
+
+<h1 id="UNIFIED-HEADER">UNIFIED HEADER</h1>
+
+<p>The first byte of a Unified Header indicates which fields are present in the Unified Header.</p>
+
+<pre><code>0 1 2 3 4 5 6 7
++-+-+-+-+-+-+-+-+
+|0|0|1|C|S|L|E E|
++-+-+-+-+-+-+-+-+
+| Connection ID |   Legend:
+| (if any,      |
+/  length as    /   C   - Connection ID (CID) present
+|  negotiated)  |   S   - Sequence number length
++-+-+-+-+-+-+-+-+   L   - Length present
+|  8 or 16 bit  |   E   - Epoch
+|Sequence Number|
++-+-+-+-+-+-+-+-+
+| 16 bit Length |
+| (if present)  |
++-+-+-+-+-+-+-+-+</code></pre>
+
+<p>When OpenSSL is generating a Unified Header it will always have Connection ID (C) set to zero. The Sequence Number will always be set to 1, indicating a 2 byte Sequence Number. Lastly the length bit will always be set indicating a length is present in the Unified Header.</p>
+
+<h2 id="Epoch">Epoch</h2>
+
+<p>The Epoch value is incremented every time the cryptographic parameters change. ClientHello and ServerHello use an Epoch of 0. Only the client uses an Epoch of 1 when it is sending Early Data. The rest of the handshake messages use an Epoch of 2.</p>
+
+<h2 id="Encrypted-Sequence-Numbers">Encrypted Sequence Numbers</h2>
+
+<p>The Sequence Number in the Unified Header is encrypted. For each Epoch, it always starts at 0, but since it is encrypted, it will not appear as zero when viewing it on the wire. The Sequence Number increments with every new DTLSv1.3 record.</p>
+
+<h1 id="ACKNOWLEDGEMENT-MESSAGE">ACKNOWLEDGEMENT MESSAGE</h1>
+
+<p>DTLSv1.3 adds explicit Acknowledgement messages to the protocol. There are also implicit acknowledgements in DTLSv1.3. For instance, when the client receives ServerHello, that ServerHello implicitly acknowledges the receipt of the ClientHello message. Also, ClientFinished implicitly acknowledges the receipt of ServerFinished. The new explicit Acknowledgement messages are used for the server to acknowledge the receipt of the ClientFinished message. The client uses an explicit Acknowledgement message to acknowledge the receipt of NewSessionTicket messages. Both the server and the client use the explicit Acknowledgement to acknowledge the receipt of KeyUpdate messages.</p>
+
+<p>When the server sends data immediately after the connection is established, there is a potential race condition where the Application Data may be received by the client before the Acknowledgement message for the ClientFinished message is received. OpenSSL buffers the Application Data until the Acknowledgement message is received and processed.</p>
+
+<h1 id="END-OF-EARLY-DATA-MESSAGE">END OF EARLY DATA MESSAGE</h1>
+
+<p>In DTLSv1.3, the End of Early Data message is not sent. Instead, when the client starts sending messages in Epoch 2, this signals to the server that the client has finished sending Early Data.</p>
+
+<h1 id="HELLO-RETRY-REQUEST">HELLO RETRY REQUEST</h1>
+
+<p>For DTLSv1.3 server applications, use <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>: HelloRetryRequest cookie validation is enabled by default. This provides connection demultiplexing for multiple clients on a single UDP socket.</p>
+
+<p>Note that <a href="../man3/DTLSv1_listen.html">DTLSv1_listen(3)</a> only supports DTLS 1.0/1.2 with HelloVerifyRequest and cannot be used with DTLSv1.3.</p>
+
+<h1 id="DTLS-LISTENER-API">DTLS LISTENER API</h1>
+
+<p>For DTLSv1.3 server applications that need to handle multiple clients on a single UDP socket, the SSL Listener API provides connection demultiplexing and address validation. Unlike <a href="../man3/DTLSv1_listen.html">DTLSv1_listen(3)</a> which only supports DTLS 1.0/1.2 with HelloVerifyRequest, the listener API fully supports DTLSv1.3 with HelloRetryRequest cookie validation.</p>
+
+<p>Create a DTLS listener using <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> with an SSL_CTX configured for DTLS. Address validation is enabled by default. The following flags adjust listener behavior:</p>
+
+<dl>
+
+<dt id="SSL_LISTENER_FLAG_ADDRESS_VALIDATION"><b>SSL_LISTENER_FLAG_ADDRESS_VALIDATION</b></dt>
+<dd>
+
+<p>Requests address validation by HelloRetryRequest and HelloVerifyRequest. This is the default.</p>
+
+</dd>
+<dt id="SSL_LISTENER_FLAG_NO_VALIDATE"><b>SSL_LISTENER_FLAG_NO_VALIDATE</b></dt>
+<dd>
+
+<p>Disables all address validation. The listener will not send HelloVerifyRequest (for DTLS 1.0/1.2) or HelloRetryRequest with cookie (for DTLSv1.3). This is faster but provides no protection against amplification attacks. Not recommended for use in untrusted network environments. If both this flag and <b>SSL_LISTENER_FLAG_ADDRESS_VALIDATION</b> are specified, the listener fails safe and performs address validation.</p>
+
+</dd>
+<dt id="SSL_LISTENER_FLAG_SINGLE_THREAD"><b>SSL_LISTENER_FLAG_SINGLE_THREAD</b></dt>
+<dd>
+
+<p>Specifies that the DTLS listener will operate in single-threaded mode. When this flag is set, the listener and all connections accepted from it should only be used from a single thread. This avoids the overhead of internal synchronization mechanisms.</p>
+
+</dd>
+</dl>
+
+<p>By default (when <b>SSL_LISTENER_FLAG_SINGLE_THREAD</b> is not set), the listener initializes internal synchronization mechanisms that allow connections accepted from the listener to be safely used from multiple threads concurrently. This includes a notifier mechanism that enables efficient polling across threads.</p>
+
+<p>After attaching a UDP socket BIO with <a href="../man3/SSL_set0_rbio.html">SSL_set0_rbio(3)</a> and <a href="../man3/SSL_set0_wbio.html">SSL_set0_wbio(3)</a> and calling <a href="../man3/SSL_listen.html">SSL_listen(3)</a>, use <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a> to accept incoming connections. Each accepted connection has completed cookie validation (if required) but still requires <a href="../man3/SSL_do_handshake.html">SSL_do_handshake(3)</a> or <a href="../man3/SSL_accept.html">SSL_accept(3)</a> to complete the TLS handshake before application data can be exchanged.</p>
+
+<p>By default a DTLS listener created with <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> operates in blocking mode. Because a listener demultiplexes a single UDP socket across many connections, it cannot allow a read for one connection to block and thereby stall the others. Its network BIO is therefore configured for nonblocking operation, and blocking is instead provided by waiting for readiness of the underlying socket. This applies to <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a> on the listener as well as to <a href="../man3/SSL_read.html">SSL_read(3)</a> and <a href="../man3/SSL_write.html">SSL_write(3)</a> on the connections it returns.</p>
+
+<p>Use <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a> to enable or disable blocking mode, and <a href="../man3/SSL_get_blocking_mode.html">SSL_get_blocking_mode(3)</a> to query it. The blocking mode of a listener is normally configured once, before it is used.</p>
+
+<p>A connection SSL object returned by <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a> inherits the blocking mode of the listener it came from. Calling <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a> on such a connection overrides that inheritance for that connection only. To perform a single nonblocking accept on an otherwise blocking listener, pass the <b>SSL_ACCEPT_CONNECTION_NO_BLOCK</b> flag to <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>.</p>
+
+<p>See <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a> for full details.</p>
+
+<p>The following tunables are available via <a href="../man3/SSL_get_value_uint.html">SSL_get_value_uint(3)</a> / <a href="../man3/SSL_set_value_uint.html">SSL_set_value_uint(3)</a>: <b>SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS</b> (cap on listener-owned connections, default 256), <b>SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT</b> (pending connection timeout in milliseconds, default 30000; pending connections that do not complete their handshake within this period are automatically cleaned up), and <b>SSL_VALUE_DTLS_LISTENER_MAX_DGRAM_SIZE</b> (maximum received datagram size in bytes, default 2000).</p>
+
+<p>See <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> for complete API documentation.</p>
+
+<p>The complete source code for an example DTLS listener server (and a matching client) is available in the <b>demos/dtlslistenerecho</b> directory of the OpenSSL source distribution in the file <b>main.c</b>. It is also available online at <a href="https://github.com/openssl/openssl/blob/master/demos/dtlslistenerecho/main.c">https://github.com/openssl/openssl/blob/master/demos/dtlslistenerecho/main.c</a>.</p>
+
+<h1 id="APPLICATION-DATA">APPLICATION DATA</h1>
+
+<p>When either the DTLSv1.3 client or server is awaiting an Acknowledgement message, Application Data will be buffered until the Acknowledgement message is received and processed. Once either the DTLSv1.3 client or server processes the Acknowledgement message it will then process the buffered Application Data.</p>
+
+<p>Another scenario when Application Data is buffered is when multiple handshake messages like the NewSessionTicket are received with Application Data. The Application Data will be buffered until all the handshake messages have been processed.</p>
+
+<h1 id="SCTP">SCTP</h1>
+
+<p>Even though DTLSv1.3 is enabled, the client will only perform a DTLSv1.2 or DTLSv1.0 handshake. If a DTLSv1.3 over SCTP compatible client connects to an OpenSSL server, the server will downgrade to DTLSv1.2 or earlier.</p>
+
+<h1 id="CONNECTION-ID">CONNECTION ID</h1>
+
+<p>OpenSSL does not support Connection IDs in DTLSv1.3. If a client that supports Connection IDs connects to an OpenSSL server, the server will ignore the Connection ID and will not include a Connection ID in its responses.</p>
+
+<h1 id="CIPHER-SUITES">CIPHER SUITES</h1>
+
+<p>RFC 9147 requires that TLS_AES_128_CCM_8_SHA256 must not be used with DTLS without additional safeguards against forgery, due to its short authentication tag. OpenSSL does not implement such safeguards, so this ciphersuite is not available when negotiating DTLS, even though it remains available for TLS.</p>
+
+<h1 id="HOW-TO-UTILIZE-DTLSV1.3-IN-OPENSSL">HOW TO UTILIZE DTLSV1.3 IN OPENSSL</h1>
+
+<h2 id="SSL_set_min_proto_version-and-SSL_set_max_proto_version">SSL_set_min_proto_version and SSL_set_max_proto_version</h2>
+
+<p>Use <a href="../man3/SSL_set_min_proto_version.html">SSL_set_min_proto_version(3)</a> and <a href="../man3/SSL_set_max_proto_version.html">SSL_set_max_proto_version(3)</a> with the DTLS1_3_VERSION macro to set the minimum and maximum protocol version to DTLSv1.3.</p>
+
+<h2 id="SSL_CTX_set_min_proto_version-and-SSL_CTX_set_max_proto_version">SSL_CTX_set_min_proto_version and SSL_CTX_set_max_proto_version</h2>
+
+<p>Use <a href="../man3/SSL_CTX_set_min_proto_version.html">SSL_CTX_set_min_proto_version(3)</a> and <a href="../man3/SSL_CTX_set_max_proto_version.html">SSL_CTX_set_max_proto_version(3)</a> with the DTLS1_3_VERSION macro to set the minimum and maximum protocol version to DTLSv1.3.</p>
+
+<h2 id="s_client">s_client</h2>
+
+<p>Use the min_protocol and max_protocol parameters and set them to DTLSv1.3. Use the -dtls option to specify that you want to use DTLS instead of TLS.</p>
+
+<h2 id="s_server">s_server</h2>
+
+<p>Use the min_protocol and max_protocol parameters and set them to DTLSv1.3.</p>
+
+<h1 id="DEMOS">DEMOS</h1>
+
+<p>OpenSSL is distributed with two DTLS demo applications that illustrate the concepts described on this page. They can be found in the <b>demos</b> directory of the OpenSSL source distribution:</p>
+
+<dl>
+
+<dt id="demos-dtlsecho"><b>demos/dtlsecho</b></dt>
+<dd>
+
+<p>A simple DTLSv1.3 echo client and server built on a single <b>SSL</b> object per connection. The complete source code is available in the <b>demos/dtlsecho</b> directory of the OpenSSL source distribution in the file <b>main.c</b>. It is also available online at <a href="https://github.com/openssl/openssl/blob/master/demos/dtlsecho/main.c">https://github.com/openssl/openssl/blob/master/demos/dtlsecho/main.c</a>.</p>
+
+</dd>
+<dt id="demos-dtlslistenerecho"><b>demos/dtlslistenerecho</b></dt>
+<dd>
+
+<p>A DTLS echo server that uses the DTLS listener API (<a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, <a href="../man3/SSL_listen.html">SSL_listen(3)</a> and <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>) to demultiplex and handle multiple client connections on a single UDP socket, together with a matching client. The complete source code is available in the <b>demos/dtlslistenerecho</b> directory of the OpenSSL source distribution in the file <b>main.c</b>. It is also available online at <a href="https://github.com/openssl/openssl/blob/master/demos/dtlslistenerecho/main.c">https://github.com/openssl/openssl/blob/master/demos/dtlslistenerecho/main.c</a>.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/ossl-guide-introduction.html">ossl-guide-introduction(7)</a>, <a href="../man7/ossl-guide-libraries-introduction.html">ossl-guide-libraries-introduction(7)</a>, <a href="../man7/ossl-guide-libssl-introduction.html">ossl-guide-libssl-introduction(7)</a>, <a href="../man7/ossl-guide-tls-introduction.html">ossl-guide-tls-introduction(7)</a>, <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a>, <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a></p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

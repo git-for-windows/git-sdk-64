@@ -28,7 +28,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>verify</b> [<b>-help</b>] [<b>-CRLfile</b> <i>filename</i>|<i>uri</i>] [<b>-crl_download</b>] [<b>-show_chain</b>] [<b>-verbose</b>] [<b>-trusted</b> <i>filename</i>|<i>uri</i>] [<b>-untrusted</b> <i>filename</i>|<i>uri</i>] [<b>-vfyopt</b> <i>nm</i>:<i>v</i>] [<b>-nameopt</b> <i>option</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-engine</b> <i>id</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>--</b>] [<i>certificate</i> ...]</p>
+<p><b>openssl</b> <b>verify</b> [<b>-help</b>] [<b>-CRLfile</b> <i>filename</i>|<i>uri</i>] [<b>-crl_download</b>] [<b>-show_chain</b>] [<b>-verbose</b>] [<b>-trusted</b> <i>filename</i>|<i>uri</i>] [<b>-untrusted</b> <i>filename</i>|<i>uri</i>] [<b>-vfyopt</b> <i>nm</i>:<i>v</i>] [<b>-nameopt</b> <i>option</i>] [<b>-CAfile</b> <i>file</i>] [<b>-no-CAfile</b>] [<b>-CApath</b> <i>dir</i>] [<b>-no-CApath</b>] [<b>-CAstore</b> <i>uri</i>] [<b>-no-CAstore</b>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>--</b>] [<i>certificate</i> ...]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -92,14 +92,6 @@
 <dd>
 
 <p>This specifies how the subject or issuer names are displayed. See <a href="../man1/openssl-namedisplay-options.html">openssl-namedisplay-options(1)</a> for details.</p>
-
-</dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
-
-<p>To load certificates or CRLs that require engine support, specify the <b>-engine</b> option before any of the <b>-trusted</b>, <b>-untrusted</b> or <b>-CRLfile</b> options.</p>
 
 </dd>
 <dt id="CAfile-file--no-CAfile--CApath-dir--no-CApath--CAstore-uri--no-CAstore"><b>-CAfile</b> <i>file</i>, <b>-no-CAfile</b>, <b>-CApath</b> <i>dir</i>, <b>-no-CApath</b>, <b>-CAstore</b> <i>uri</i>, <b>-no-CAstore</b></dt>
@@ -169,7 +161,7 @@ error 24 at 1 depth lookup:invalid CA certificate</code></pre>
 
 <p>The <b>-show_chain</b> option was added in OpenSSL 1.1.0.</p>
 
-<p>The <b>-engine option</b> was deprecated in OpenSSL 3.0.</p>
+<p>The <b>-engine</b> option was removed in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

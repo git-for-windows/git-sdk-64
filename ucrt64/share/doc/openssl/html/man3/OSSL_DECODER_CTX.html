@@ -108,6 +108,8 @@ int OSSL_DECODER_export(OSSL_DECODER_INSTANCE *decoder_inst,
 
 <p>OSSL_DECODER_CTX_add_extra() finds decoders that generate input for already added decoders, and adds them as well. This is used to build decoder chains.</p>
 
+<p>OSSL_DECODER_CTX_set_selection() sets what the input is expected to contain.</p>
+
 <p>OSSL_DECODER_CTX_set_input_type() sets the starting input type. This limits the decoder chains to be considered, as explained in the general description above.</p>
 
 <p>OSSL_DECODER_CTX_set_input_structure() sets the name of the structure that the input is expected to have. This may be used to determines what decoder implementations may be used. NULL is a valid input structure, when it&#39;s not relevant, or when the decoder implementations are expected to figure it out.</p>
@@ -123,8 +125,6 @@ int OSSL_DECODER_export(OSSL_DECODER_INSTANCE *decoder_inst,
 <p>OSSL_DECODER_CTX_get_construct(), OSSL_DECODER_CTX_get_construct_data() and OSSL_DECODER_CTX_get_cleanup() return the values that have been set by OSSL_DECODER_CTX_set_construct(), OSSL_DECODER_CTX_set_construct_data() and OSSL_DECODER_CTX_set_cleanup() respectively.</p>
 
 <p>OSSL_DECODER_export() is a fallback function for constructors that cannot use the data they get directly for diverse reasons. It takes the same decode instance <i>decoder_inst</i> that the constructor got and an object <i>reference</i>, unpacks the object which it refers to, and exports it by creating an <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that it then passes to <i>export_cb</i>, along with <i>export_arg</i>.</p>
-
-<p>Note that functions OSSL_DECODER_CTX_set_selection(), OSSL_DECODER_CTX_set_output_type(), OSSL_DECODER_CTX_set_output_structure(), OSSL_DECODER_CTX_add_encoder(), OSSL_DECODER_CTX_add_extra(), OSSL_DECODER_CTX_set_construct(), OSSL_DECODER_CTX_set_construct_data(), and OSSL_DECODER_CTX_set_cleanup() shouldn&#39;t be used after the context is finalised, in particular after calling the function OSSL_DECODER_CTX_new_for_pkey().</p>
 
 <h2 id="Constructor">Constructor</h2>
 
@@ -172,7 +172,7 @@ int OSSL_DECODER_export(OSSL_DECODER_INSTANCE *decoder_inst,
 
 <p>OSSL_DECODER_CTX_set_params() returns 1 if all recognised parameters were valid, or 0 if one of them was invalid or caused some other failure in the implementation.</p>
 
-<p>OSSL_DECODER_CTX_add_decoder(), OSSL_DECODER_CTX_add_extra(), OSSL_DECODER_CTX_set_construct(), OSSL_DECODER_CTX_set_construct_data() and OSSL_DECODER_CTX_set_cleanup() return 1 on success, or 0 on failure.</p>
+<p>OSSL_DECODER_CTX_add_decoder(), OSSL_DECODER_CTX_add_extra(), OSSL_DECODER_CTX_set_cleanup(), OSSL_DECODER_CTX_set_construct(), OSSL_DECODER_CTX_set_construct_data(), OSSL_DECODER_CTX_set_input_structure(), OSSL_DECODER_CTX_set_input_type(), OSSL_DECODER_CTX_set_params(), and OSSL_DECODER_CTX_set_selection() return 1 on success, or 0 on failure. They always fail for decoder contexts created in a frozen state via <a href="../man3/OSSL_DECODER_CTX_new_for_pkey.html">OSSL_DECODER_CTX_new_for_pkey(3)</a>.</p>
 
 <p>OSSL_DECODER_CTX_get_construct(), OSSL_DECODER_CTX_get_construct_data() and OSSL_DECODER_CTX_get_cleanup() return the current pointers to the constructor, the constructor data and the cleanup functions, respectively.</p>
 

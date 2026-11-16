@@ -63,7 +63,7 @@ void *OSSL_LIB_CTX_get_data(OSSL_LIB_CTX *ctx, int index);</code></pre>
 
 <p>OSSL_LIB_CTX_load_config() loads a configuration file using the given <i>ctx</i>. This can be used to associate a library context with providers that are loaded from a configuration. This function must not be called concurrently from multiple threads on a single <i>ctx</i>.</p>
 
-<p>OSSL_LIB_CTX_free() frees the given <i>ctx</i>, unless it happens to be the default OpenSSL library context. If the argument is NULL, nothing is done.</p>
+<p>OSSL_LIB_CTX_free() frees the given <i>ctx</i>, unless it happens to be the default OpenSSL library context. If the argument is NULL, nothing is done. Any providers loaded into <i>ctx</i> are automatically deactivated and freed as part of the library context cleanup. Any <b>OSSL_PROVIDER</b> pointers obtained from <i>ctx</i> must not be used after this call.</p>
 
 <p>OSSL_LIB_CTX_get0_global_default() returns a concrete (non NULL) reference to the global default library context.</p>
 
@@ -91,7 +91,7 @@ void *OSSL_LIB_CTX_get_data(OSSL_LIB_CTX *ctx, int index);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

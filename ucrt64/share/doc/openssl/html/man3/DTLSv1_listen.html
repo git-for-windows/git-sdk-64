@@ -35,7 +35,7 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_stateless() statelessly listens for new incoming TLSv1.3 connections. DTLSv1_listen() statelessly listens for new incoming DTLS connections. If a ClientHello is received that does not contain a cookie, then they respond with a request for a new ClientHello that does contain a cookie. If a ClientHello is received with a cookie that is verified then the function returns in order to enable the handshake to be completed (for example by using SSL_accept()).</p>
+<p>SSL_stateless() statelessly listens for new incoming TLSv1.3 connections. DTLSv1_listen() statelessly listens for new incoming DTLS 1.0 and DTLS 1.2 connections. <b>DTLSv1_listen() does not support DTLS 1.3</b>; for DTLS 1.3 server applications, use <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> instead. If a ClientHello is received that does not contain a cookie, then they respond with a request for a new ClientHello that does contain a cookie. If a ClientHello is received with a cookie that is verified then the function returns in order to enable the handshake to be completed (for example by using SSL_accept()).</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -65,6 +65,10 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <p>SSL_stateless() cannot be used with QUIC SSL objects and returns an error if called on such an object.</p>
 
+<p>DTLSv1_listen() with an SSL object configured for a max of DTLSv1.3 will silently downgrade it to a max of DTLSv1.2.</p>
+
+<p>DTLSv1_listen() cannot be used with DTLS 1.3. If the SSL object is configured for DTLS 1.3 only (i.e., both minimum and maximum protocol versions are set to DTLS 1.3), DTLSv1_listen() will fail. For DTLS 1.3 server applications, use <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> instead, which performs address validation via HelloRetryRequest (HRR) by default, or set <b>SSL_OP_COOKIE_EXCHANGE</b> on a server SSL object to have SSL_accept() request an HRR cookie itself.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>For SSL_stateless() a return value of 1 indicates success and the <b>ssl</b> object will be set up ready to continue the handshake. A return value of 0 or -1 indicates failure. If the value is 0 then a HelloRetryRequest was sent. A value of -1 indicates any other error. User code may retry the SSL_stateless() call.</p>
@@ -79,7 +83,7 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_CTX_set_cookie_generate_cb.html">SSL_CTX_set_cookie_generate_cb(3)</a>, <a href="../man3/SSL_CTX_set_cookie_verify_cb.html">SSL_CTX_set_cookie_verify_cb(3)</a>, <a href="../man3/SSL_CTX_set_stateless_cookie_generate_cb.html">SSL_CTX_set_stateless_cookie_generate_cb(3)</a>, <a href="../man3/SSL_CTX_set_stateless_cookie_verify_cb.html">SSL_CTX_set_stateless_cookie_verify_cb(3)</a>, <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
+<p><a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, <a href="../man3/SSL_CTX_set_cookie_generate_cb.html">SSL_CTX_set_cookie_generate_cb(3)</a>, <a href="../man3/SSL_CTX_set_cookie_verify_cb.html">SSL_CTX_set_cookie_verify_cb(3)</a>, <a href="../man3/SSL_CTX_set_stateless_cookie_generate_cb.html">SSL_CTX_set_stateless_cookie_generate_cb(3)</a>, <a href="../man3/SSL_CTX_set_stateless_cookie_verify_cb.html">SSL_CTX_set_stateless_cookie_verify_cb(3)</a>, <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a>, <a href="../man3/SSL_accept.html">SSL_accept(3)</a>, <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man7/bio.html">bio(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -87,9 +91,11 @@ int DTLSv1_listen(SSL *ssl, BIO_ADDR *peer);</code></pre>
 
 <p>The DTLSv1_listen() return codes were clarified in OpenSSL 1.1.0. The type of &quot;peer&quot; also changed in OpenSSL 1.1.0.</p>
 
+<p>DTLSv1_listen() supports only DTLS 1.0 and DTLS 1.2 in OpenSSL 4.1. DTLS 1.3 applications should use <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> instead.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

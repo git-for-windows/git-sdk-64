@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>CMS_add_standard_smimecap_ex</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CMS_add_standard_smimecap_ex, CMS_add_standard_smimecap, CMS_add_smimecap, CMS_add_simple_smimecap - CMS SMIMECapabilities attribute utilities</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/cms.h&gt;
+
+int CMS_add_standard_smimecap_ex(STACK_OF(X509_ALGOR) **smcap,
+                                 OSSL_LIB_CTX *libctx, const char *propq);
+int CMS_add_standard_smimecap(STACK_OF(X509_ALGOR) **smcap);
+
+int CMS_add_smimecap(CMS_SignerInfo *si, STACK_OF(X509_ALGOR) *algs);
+int CMS_add_simple_smimecap(STACK_OF(X509_ALGOR) **algs,
+                            int algnid, int keysize);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>CMS_add_standard_smimecap_ex() populates <b>*smcap</b> with the set of algorithms that should be advertised in an SMIMECapabilities signed attribute. Only algorithms that are available in the providers associated with <b>libctx</b> and the property query string <b>propq</b> are included, so the list accurately reflects what the caller can actually use. If <b>libctx</b> is NULL the default library context is used. If <b>*smcap</b> is NULL a new <b>STACK_OF(X509_ALGOR)</b> is allocated; otherwise entries are appended to the existing stack.</p>
+
+<p>The candidate algorithms, listed in preference order, are: AES-256-CBC, GOST R 34.11-2012 (256-bit), GOST R 34.11-2012 (512-bit), GOST R 34.11-94, GOST 28147-89, AES-192-CBC, AES-128-CBC, DES-EDE3-CBC, RC2-CBC (128-bit key), RC2-CBC (64-bit key), DES-CBC, and RC2-CBC (40-bit key). Algorithms not available in the active providers (for example, RC2 and DES when only the default provider is loaded) are silently omitted.</p>
+
+<p>CMS_add_standard_smimecap() is a wrapper that calls CMS_add_standard_smimecap_ex() with a NULL library context and NULL property query string.</p>
+
+<p>CMS_add_smimecap() adds a pre-built stack of algorithm identifiers <b>algs</b> as the SMIMECapabilities signed attribute on the <b>CMS_SignerInfo</b> <b>si</b>.</p>
+
+<p>CMS_add_simple_smimecap() appends a single algorithm entry to <b>*algs</b>. <b>algnid</b> is the NID of the algorithm and <b>keysize</b> is the key size in bits, or -1 if the algorithm does not use a variable key size.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>Applications that need accurate capability advertisements should use CMS_add_standard_smimecap_ex(), passing the same <b>libctx</b> and <b>propq</b> used for the rest of the CMS operation. This ensures that only algorithms genuinely available to the application are listed.</p>
+
+<p>CMS_add1_signer() calls CMS_add_standard_smimecap_ex() internally using the library context associated with the CMS_ContentInfo structure, so applications that use CMS_add1_signer() without <b>CMS_NOSMIMECAP</b> do not need to call these functions directly.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>All functions return 1 for success or 0 for failure.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/CMS_add1_signer.html">CMS_add1_signer(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a>, <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>CMS_add_standard_smimecap_ex() was added in OpenSSL 4.1.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

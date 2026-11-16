@@ -103,7 +103,7 @@ int OSSL_PROVIDER_self_test(const OSSL_PROVIDER *prov);</code></pre>
 
 <p>OSSL_PROVIDER_load_ex() and OSSL_PROVIDER_try_load_ex() are the variants of the previous functions accepting an <code>OSSL_PARAM</code> array of the parameters that are passed as the configuration of the loaded provider. The parameters of any type but <code>OSSL_PARAM_UTF8_STRING</code> are silently ignored. If the parameters are provided, they replace <b>all</b> the ones specified in the configuration file.</p>
 
-<p>OSSL_PROVIDER_unload() unloads the given provider. For a provider added with OSSL_PROVIDER_add_builtin(), this simply runs its teardown function.</p>
+<p>OSSL_PROVIDER_unload() unloads the given provider. For a provider added with OSSL_PROVIDER_add_builtin(), this simply runs its teardown function. It is not necessary to explicitly unload providers before calling <a href="../man3/OSSL_LIB_CTX_free.html">OSSL_LIB_CTX_free(3)</a>, as freeing a library context automatically deactivates and frees all providers associated with it. OSSL_PROVIDER_unload() must not be called after <a href="../man3/OSSL_LIB_CTX_free.html">OSSL_LIB_CTX_free(3)</a> has been called on the associated library context.</p>
 
 <p>OSSL_PROVIDER_available() checks if a named provider is available for use.</p>
 
@@ -190,7 +190,7 @@ else
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -92,7 +92,7 @@ int EVP_RAND_get_state(EVP_RAND_CTX *ctx);
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP RAND routines are a high-level interface to random number generators both deterministic and not. If you just want to generate random bytes then you don&#39;t need to use these functions: just call RAND_bytes() or RAND_priv_bytes(). If you want to do more, these calls should be used instead of the older RAND and RAND_DRBG functions.</p>
+<p>The EVP RAND routines are a high-level interface to random number generators both deterministic and not. If you just want to generate random bytes then you don&#39;t need to use these functions: just call RAND_bytes() or RAND_priv_bytes(). If you want to do more, these calls should be used instead of the older RAND functions.</p>
 
 <p>After creating a <b>EVP_RAND_CTX</b> for the required algorithm using EVP_RAND_CTX_new(), inputs to the algorithm are supplied either by passing them as part of the EVP_RAND_instantiate() call or using calls to EVP_RAND_CTX_set_params() before calling EVP_RAND_instantiate(). Finally, call EVP_RAND_generate() to produce cryptographically secure random bytes.</p>
 
@@ -267,10 +267,6 @@ int EVP_RAND_get_state(EVP_RAND_CTX *ctx);
 <dd>
 
 </dd>
-<dt id="mac-OSSL_RAND_PARAM_MAC-UTF8-string">&quot;mac&quot; (<b>OSSL_RAND_PARAM_MAC</b>) &lt;UTF8 string&gt;</dt>
-<dd>
-
-</dd>
 <dt id="digest-OSSL_RAND_PARAM_DIGEST-UTF8-string">&quot;digest&quot; (<b>OSSL_RAND_PARAM_DIGEST</b>) &lt;UTF8 string&gt;</dt>
 <dd>
 
@@ -278,7 +274,7 @@ int EVP_RAND_get_state(EVP_RAND_CTX *ctx);
 <dt id="cipher-OSSL_RAND_PARAM_CIPHER-UTF8-string">&quot;cipher&quot; (<b>OSSL_RAND_PARAM_CIPHER</b>) &lt;UTF8 string&gt;</dt>
 <dd>
 
-<p>For RAND implementations that use an underlying computation MAC, digest or cipher, these parameters set what the algorithm should be.</p>
+<p>For RAND implementations that use an underlying digest or cipher, these parameters set what the algorithm should be.</p>
 
 <p>The value is always the name of the intended algorithm, or the properties in the case of <b>OSSL_RAND_PARAM_PROPERTIES</b>.</p>
 
@@ -335,7 +331,7 @@ int EVP_RAND_get_state(EVP_RAND_CTX *ctx);
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

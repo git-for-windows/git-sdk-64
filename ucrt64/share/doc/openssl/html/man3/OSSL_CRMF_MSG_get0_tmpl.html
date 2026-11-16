@@ -68,7 +68,7 @@ X509
 
 int OSSL_CRMF_MSG_get_certReqId(const OSSL_CRMF_MSG *crm);
 int OSSL_CRMF_MSG_centralkeygen_requested(const OSSL_CRMF_MSG *crm,
-                                          const X509_REQ *p10cr);</code></pre>
+                                          const X509_REQ *p10);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -100,7 +100,7 @@ int OSSL_CRMF_MSG_centralkeygen_requested(const OSSL_CRMF_MSG *crm,
 
 <p>OSSL_CRMF_MSG_get_certReqId() retrieves the certReqId of <i>crm</i>.</p>
 
-<p>OSSL_CRMF_MSG_centralkeygen_requested() returns 1 if central key generation is requested i.e., the public key in the certificate request (<i>crm</i> is taken if it is non-NULL, otherwise <i>p10cr</i>) is NULL or has an empty key value (with length zero). In case <i>crm</i> is non-NULL, this is checked for consistency with its <b>popo</b> field (must be NULL if and only if central key generation is requested). Otherwise it returns 0, and on error a negative value.</p>
+<p>OSSL_CRMF_MSG_centralkeygen_requested() returns 1 if central key generation is requested i.e., the public key in the certificate request (<i>crm</i> is taken if it is non-NULL, otherwise <i>p10</i>) is NULL or has an empty key value (with length zero). In case <i>crm</i> is non-NULL, this is checked for consistency with its <b>popo</b> field (must be NULL if and only if central key generation is requested). Otherwise it returns 0, and on error a negative value.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -124,7 +124,7 @@ int OSSL_CRMF_MSG_centralkeygen_requested(const OSSL_CRMF_MSG *crm,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2007-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2007-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

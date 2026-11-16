@@ -30,7 +30,6 @@
       </li>
       <li><a href="#EVP-Configuration">EVP Configuration</a></li>
       <li><a href="#SSL-Configuration">SSL Configuration</a></li>
-      <li><a href="#Engine-Configuration">Engine Configuration</a></li>
       <li><a href="#Random-Configuration">Random Configuration</a></li>
     </ul>
   </li>
@@ -88,9 +87,9 @@
 
 <h2 id="Settings">Settings</h2>
 
-<p>A configuration file is divided into a number of <i>sections</i>. A section begins with the section name in square brackets, and ends when a new section starts, or at the end of the file. The section name can consist of alphanumeric characters and underscores. Whitespace between the name and the brackets is removed.</p>
+<p>A configuration file is divided into a number of <i>sections</i>. A section begins with the section name in square brackets, and ends when a new section starts, or at the end of the file. The section name can consist of alphanumeric characters and underscores. Whitespace between the name and the brackets is ignored.</p>
 
-<p>The first section of a configuration file is special and is referred to as the <b>default</b> section. This section is usually unnamed and spans from the start of file until the first named section. When a name is being looked up, it is first looked up in the current or named section, and then the default section if necessary.</p>
+<p>The content at the start of the configuration file that precedes its first named section is special and is referred to as the <b>default</b> or <b>unnamed</b> section.</p>
 
 <p>The environment is mapped onto a section called <b>ENV</b>.</p>
 
@@ -129,9 +128,9 @@ name3 = Value 3</code></pre>
 
 <p>The sections below use the informal term <i>module</i> to refer to a part of the OpenSSL functionality. This is not the same as the formal term <i>FIPS module</i>, for example.</p>
 
-<p>The OpenSSL configuration looks up the value of <b>openssl_conf</b> in the default section and takes that as the name of a section that specifies how to configure any modules in the library. It is not an error to leave any module in its default configuration. An application can specify a different name by calling CONF_modules_load_file(), for example, directly.</p>
+<p>The OpenSSL configuration looks up the value of <b>openssl_conf</b> in the default section and takes that as the name of a section that specifies how to configure any modules in the library. It is not an error to leave any module in its default configuration. An application can specify a name other than <b>openssl_conf</b> by, for example, directly calling <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>. The same can also be achieved by calling <a href="../man3/OPENSSL_INIT_set_config_appname.html">OPENSSL_INIT_set_config_appname(3)</a> to set a nondefault application name for use with <a href="../man3/OPENSSL_init_crypto.html">OPENSSL_init_crypto(3)</a> or <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>, sufficiently early in the main program, before implicit OpenSSL library initialisation has taken place as a side-effect of other OpenSSL function calls.</p>
 
-<p>OpenSSL also looks up the value of <b>config_diagnostics</b>. If this exists and has a nonzero numeric value, any error suppressing flags passed to CONF_modules_load() will be ignored. This is useful for diagnosing misconfigurations but its use in production requires additional consideration. With this option enabled, a configuration error will completely prevent access to a service. Without this option and in the presence of a configuration error, access will be allowed but the desired configuration will <b>not</b> be used.</p>
+<p>OpenSSL also looks up the value of the default section&#39;s <b>config_diagnostics</b> parameter. If this exists and has a nonzero numeric value, any error suppressing flags passed to CONF_modules_load() will be ignored. This is useful for diagnosing misconfigurations but its use in production requires additional consideration. With this option enabled, a configuration error will completely prevent access to a service. Without this option and in the presence of a configuration error, access will be allowed but the desired configuration will <b>not</b> be used.</p>
 
 <pre><code># These must be in the default section
 config_diagnostics = 1
@@ -142,7 +141,6 @@ oid_section = oids
 providers = providers
 alg_section = evp_properties
 ssl_conf = ssl_configuration
-engines = engines
 random = random
 
 [oids]
@@ -156,9 +154,6 @@ random = random
 
 [ssl_configuration]
 ... SSL/TLS configuration properties here ...
-
-[engines]
-... engine properties here ...
 
 [random]
 ... random properties here ...</code></pre>
@@ -285,57 +280,6 @@ MinProtocol = DTLSv1.2</code></pre>
 RSA.Certificate = server-rsa.pem
 ECDSA.Certificate = server-ecdsa.pem</code></pre>
 
-<h2 id="Engine-Configuration">Engine Configuration</h2>
-
-<p>The name <b>engines</b> in the initialization section names the section containing the list of ENGINE configurations. As with the providers, each name in this section identifies an engine with the configuration for that engine. The engine-specific section is used to specify how to load the engine, activate it, and set other parameters.</p>
-
-<p>Within an engine section, the following names have meaning:</p>
-
-<dl>
-
-<dt id="engine_id"><b>engine_id</b></dt>
-<dd>
-
-<p>This is used to specify an alternate name, overriding the default name specified in the list of engines. If present, it must be first. For example:</p>
-
-<pre><code>[engines]
-foo = foo_engine
-
-[foo_engine]
-engine_id = myfoo</code></pre>
-
-</dd>
-<dt id="dynamic_path"><b>dynamic_path</b></dt>
-<dd>
-
-<p>This loads and adds an ENGINE from the given path. It is equivalent to sending the ctrls <b>SO_PATH</b> with the path argument followed by <b>LIST_ADD</b> with value <b>2</b> and <b>LOAD</b> to the dynamic ENGINE. If this is not the required behaviour then alternative ctrls can be sent directly to the dynamic ENGINE using ctrl commands.</p>
-
-</dd>
-<dt id="init"><b>init</b></dt>
-<dd>
-
-<p>This specifies whether to initialize the ENGINE. If the value is <b>0</b> the ENGINE will not be initialized, if the value is <b>1</b> an attempt is made to initialize the ENGINE immediately. If the <b>init</b> command is not present then an attempt will be made to initialize the ENGINE after all commands in its section have been processed.</p>
-
-</dd>
-<dt id="default_algorithms"><b>default_algorithms</b></dt>
-<dd>
-
-<p>This sets the default algorithms an ENGINE will supply using the function ENGINE_set_default_string().</p>
-
-</dd>
-</dl>
-
-<p>All other names are taken to be the name of a ctrl command that is sent to the ENGINE, and the value is the argument passed with the command. The special value <b>EMPTY</b> means no value is sent with the command. For example:</p>
-
-<pre><code>[engines]
-foo = foo_engine
-
-[foo_engine]
-dynamic_path = /some/path/fooengine.so
-some_ctrl = some_value
-default_algorithms = ALL
-other_ctrl = EMPTY</code></pre>
-
 <h2 id="Random-Configuration">Random Configuration</h2>
 
 <p>The name <b>random</b> in the initialization section names the section containing the random number generator settings.</p>
@@ -401,6 +345,12 @@ random = CTR-DRBG</code></pre>
 <p>This sets the property query used when fetching the randomness source.</p>
 
 </dd>
+<dt id="seed_strict"><b>seed_strict</b></dt>
+<dd>
+
+<p>This enables strict seeding. The randomness source is then instantiated on first use, even for a provider entropy or nonce request arriving before the DRBG setup, and an unusable randomness source is an error instead of a silent fallback to the operating system entropy sources. Recognised values are <b>yes</b>, <b>on</b>, <b>true</b>, <b>1</b> to enable and <b>no</b>, <b>off</b>, <b>false</b>, <b>0</b> to disable, in lower or uppercase. The default is <b>no</b>, except for the <b>JITTER</b> randomness source, which seeds strictly unless this option disables it. Builds configured with <b>enable-fips-jitter</b> always seed strictly.</p>
+
+</dd>
 <dt id="random_provider"><b>random_provider</b></dt>
 <dd>
 
@@ -457,12 +407,6 @@ default_properties = &quot;fips=yes&quot;</code></pre>
 <p>The path to the config file, or the empty string for none. Ignored in set-user-ID and set-group-ID programs.</p>
 
 </dd>
-<dt id="OPENSSL_ENGINES"><b>OPENSSL_ENGINES</b></dt>
-<dd>
-
-<p>The path to the engines directory. Ignored in set-user-ID and set-group-ID programs.</p>
-
-</dd>
 <dt id="OPENSSL_MODULES"><b>OPENSSL_MODULES</b></dt>
 <dd>
 
@@ -489,13 +433,15 @@ default_properties = &quot;fips=yes&quot;</code></pre>
 
 <p>An undocumented API, NCONF_WIN32(), used a slightly different set of parsing rules there were intended to be tailored to the Microsoft Windows platform. Specifically, the backslash character was not an escape character and could be used in pathnames, only the double-quote character was recognized, and comments began with a semi-colon. This function was deprecated in OpenSSL 3.0; applications with configuration files using that syntax will have to be modified.</p>
 
+<p>The <i>engines</i> parameter was removed in OpenSSL 4.0.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man3/ASN1_generate_nconf.html">ASN1_generate_nconf(3)</a>, <a href="../man3/EVP_set_default_properties.html">EVP_set_default_properties(3)</a>, <a href="../man3/CONF_modules_load.html">CONF_modules_load(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>, <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, and <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
+<p><a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-fipsinstall.html">openssl-fipsinstall(1)</a>, <a href="../man3/ASN1_generate_nconf.html">ASN1_generate_nconf(3)</a>, <a href="../man3/EVP_set_default_properties.html">EVP_set_default_properties(3)</a>, <a href="../man3/CONF_modules_load.html">CONF_modules_load(3)</a>, <a href="../man3/CONF_modules_load_file.html">CONF_modules_load_file(3)</a>, <a href="../man3/OPENSSL_INIT_set_config_appname.html">OPENSSL_INIT_set_config_appname(3)</a>, <a href="../man3/OPENSSL_init_crypto.html">OPENSSL_init_crypto(3)</a>, <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>, <a href="../man3/RAND_bytes.html">RAND_bytes(3)</a>, <a href="../man5/fips_config.html">fips_config(5)</a>, and <a href="../man5/x509v3_config.html">x509v3_config(5)</a>.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

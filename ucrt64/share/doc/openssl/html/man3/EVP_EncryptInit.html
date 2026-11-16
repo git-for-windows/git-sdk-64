@@ -171,8 +171,6 @@ int EVP_CIPHER_CTX_get_iv_length(const EVP_CIPHER_CTX *ctx);
 int EVP_CIPHER_CTX_get_tag_length(const EVP_CIPHER_CTX *ctx);
 int EVP_CIPHER_CTX_get_type(const EVP_CIPHER_CTX *ctx);
 int EVP_CIPHER_CTX_get_mode(const EVP_CIPHER_CTX *ctx);
-int EVP_CIPHER_CTX_get_num(const EVP_CIPHER_CTX *ctx);
-int EVP_CIPHER_CTX_set_num(EVP_CIPHER_CTX *ctx, int num);
 int EVP_CIPHER_CTX_is_encrypting(const EVP_CIPHER_CTX *ctx);
 
 int EVP_CIPHER_param_to_asn1(EVP_CIPHER_CTX *c, ASN1_TYPE *type);
@@ -196,9 +194,14 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 #define EVP_CIPHER_CTX_key_length EVP_CIPHER_CTX_get_key_length
 #define EVP_CIPHER_CTX_iv_length EVP_CIPHER_CTX_get_iv_length
 #define EVP_CIPHER_CTX_tag_length EVP_CIPHER_CTX_get_tag_length
-#define EVP_CIPHER_CTX_num EVP_CIPHER_CTX_get_num
 #define EVP_CIPHER_CTX_type EVP_CIPHER_CTX_get_type
 #define EVP_CIPHER_CTX_mode EVP_CIPHER_CTX_get_mode</code></pre>
+
+<p>The following functions and alias have been deprecated since OpenSSL 4.1, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>int EVP_CIPHER_CTX_get_num(const EVP_CIPHER_CTX *ctx);
+int EVP_CIPHER_CTX_set_num(EVP_CIPHER_CTX *ctx, int num);
+#define EVP_CIPHER_CTX_num EVP_CIPHER_CTX_get_num</code></pre>
 
 <p>The following function has been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
@@ -319,7 +322,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <dt id="EVP_EncryptInit_ex">EVP_EncryptInit_ex()</dt>
 <dd>
 
-<p>This legacy function is similar to EVP_EncryptInit_ex2() when <i>impl</i> is NULL. The implementation of the <i>type</i> from the <i>impl</i> engine will be used if it exists.</p>
+<p>This legacy function is the same as EVP_EncryptInit_ex2() except <b>params</b> will be NULL. <i>impl</i> <b>must</b> be NULL.</p>
 
 </dd>
 <dt id="EVP_EncryptUpdate">EVP_EncryptUpdate()</dt>
@@ -632,6 +635,12 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <p>Gets 1 if the cipher algorithm <i>cipher</i> supports the gettable EVP_CIPHER_CTX parameter <b>OSSL_CIPHER_PARAM_RANDOM_KEY</b>. Only DES and 3DES set this to 1, all other OpenSSL ciphers return 0.</p>
 
 </dd>
+<dt id="encrypt-then-mac-OSSL_CIPHER_PARAM_ENCRYPT_THEN_MAC-integer">&quot;encrypt-then-mac&quot; (<b>OSSL_CIPHER_PARAM_ENCRYPT_THEN_MAC</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Gets 1 if the cipher algorithm <i>cipher</i> supports TLS Encrypt-then-MAC, otherwise it gets 0.</p>
+
+</dd>
 <dt id="decrypt-only-OSSL_CIPHER_PARAM_DECRYPT_ONLY-integer">&quot;decrypt-only&quot; (<b>OSSL_CIPHER_PARAM_DECRYPT_ONLY) &lt;integer</b></dt>
 <dd>
 
@@ -655,7 +664,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <dt id="num-OSSL_CIPHER_PARAM_NUM-unsigned-integer">&quot;num&quot; (<b>OSSL_CIPHER_PARAM_NUM</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
-<p>Gets or sets the cipher specific &quot;num&quot; parameter for the cipher context <i>ctx</i>. Built-in ciphers typically use this to track how much of the current underlying block has been &quot;used&quot; already. See also EVP_CIPHER_CTX_get_num() and EVP_CIPHER_CTX_set_num().</p>
+<p>Gets or sets the cipher specific &quot;num&quot; parameter for the cipher context <i>ctx</i>. Built-in ciphers typically use this to track how much of the current underlying block has been &quot;used&quot; already. See also EVP_CIPHER_CTX_get_num() and EVP_CIPHER_CTX_set_num(). This parameter was deprecated in OpenSSL 4.1.</p>
 
 </dd>
 <dt id="keylen-OSSL_CIPHER_PARAM_KEYLEN-unsigned-integer1">&quot;keylen&quot; (<b>OSSL_CIPHER_PARAM_KEYLEN</b>) &lt;unsigned integer&gt;</dt>
@@ -1132,17 +1141,27 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 <p>See <a href="#Gettable-EVP_CIPHER-parameters">&quot;Gettable EVP_CIPHER parameters&quot;</a> &quot;has-randkey&quot;.</p>
 
 </dd>
+<dt id="EVP_CIPH_FLAG_ENC_THEN_MAC">EVP_CIPH_FLAG_ENC_THEN_MAC</dt>
+<dd>
+
+<p>See <a href="#Gettable-EVP_CIPHER-parameters">&quot;Gettable EVP_CIPHER parameters&quot;</a> &quot;encrypt-then-mac&quot;.</p>
+
+</dd>
+<dt id="EVP_CIPH_STREAM_CIPHER-EVP_CIPH_ECB_MODE-EVP_CIPH_CBC_MODE-EVP_CIPH_CFB_MODE-EVP_CIPH_OFB_MODE-EVP_CIPH_CTR_MODE-EVP_CIPH_GCM_MODE-EVP_CIPH_CCM_MODE-EVP_CIPH_XTS_MODE-EVP_CIPH_WRAP_MODE-EVP_CIPH_OCB_MODE-EVP_CIPH_SIV_MODE">EVP_CIPH_STREAM_CIPHER, EVP_CIPH_ECB_MODE EVP_CIPH_CBC_MODE, EVP_CIPH_CFB_MODE, EVP_CIPH_OFB_MODE, EVP_CIPH_CTR_MODE, EVP_CIPH_GCM_MODE, EVP_CIPH_CCM_MODE, EVP_CIPH_XTS_MODE, EVP_CIPH_WRAP_MODE, EVP_CIPH_OCB_MODE, EVP_CIPH_SIV_MODE</dt>
+<dd>
+
+<p>See <a href="#Gettable-EVP_CIPHER-parameters">&quot;Gettable EVP_CIPHER parameters&quot;</a> &quot;mode&quot;.</p>
+
+</dd>
 </dl>
 
-<p>EVP_CIPHER_flags() uses the following flags for legacy purposes only:</p>
+<p>EVP_CIPHER_flags() also uses the flag <b>EVP_CIPH_FLAG_CUSTOM_CIPHER</b> to indicate that the cipher supports any input length when used with the EVP_Cipher() function. See EVP_Cipher() for more details.</p>
+
+<p>The following flags are defined for legacy purposes and are not returned by EVP_CIPHER_flags():</p>
 
 <dl>
 
 <dt id="EVP_CIPH_VARIABLE_LENGTH">EVP_CIPH_VARIABLE_LENGTH</dt>
-<dd>
-
-</dd>
-<dt id="EVP_CIPH_FLAG_CUSTOM_CIPHER">EVP_CIPH_FLAG_CUSTOM_CIPHER</dt>
 <dd>
 
 </dd>
@@ -1164,8 +1183,6 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 </dd>
 <dt id="EVP_CIPH_FLAG_DEFAULT_ASN1">EVP_CIPH_FLAG_DEFAULT_ASN1</dt>
 <dd>
-
-<p>See <a href="../man3/EVP_CIPHER_meth_set_flags.html">EVP_CIPHER_meth_set_flags(3)</a> for further information related to the above flags.</p>
 
 </dd>
 </dl>
@@ -1228,7 +1245,7 @@ void EVP_CIPHER_do_all_provided(OSSL_LIB_CTX *libctx,
 
 <p>EVP_CIPHER_names_do_all() returns 1 if the callback was called for all names. A return value of 0 means that the callback was not called for any names.</p>
 
-<p>EVP_CIPHER_get_params(), EVP_CIPHER_CTX_get_params() and EVP_CIPHER_CTX_set_params() return 1 for success and 0 for failure.</p>
+<p>EVP_CIPHER_get_params(), EVP_CIPHER_CTX_get_params() and EVP_CIPHER_CTX_set_params() return a positive value for success and 0 or a negative value for failure.</p>
 
 <h1 id="CIPHER-LISTING">CIPHER LISTING</h1>
 
@@ -1594,6 +1611,8 @@ err:
 <p><b>EVP_CIPHER_CTX</b> was made opaque in OpenSSL 1.1.0. As a result, EVP_CIPHER_CTX_reset() appeared and EVP_CIPHER_CTX_cleanup() disappeared. EVP_CIPHER_CTX_init() remains as an alias for EVP_CIPHER_CTX_reset().</p>
 
 <p>The EVP_CIPHER_CTX_cipher() function was deprecated in OpenSSL 3.0; use EVP_CIPHER_CTX_get0_cipher() instead.</p>
+
+<p>The EVP_CIPHER_CTX_get_num(), EVP_CIPHER_CTX_set_num() functions and the EVP_CIPHER_CTX_num() macro were deprecated in OpenSSL 4.1.</p>
 
 <p>The EVP_EncryptInit_ex2(), EVP_DecryptInit_ex2(), EVP_CipherInit_ex2(), EVP_CIPHER_fetch(), EVP_CIPHER_free(), EVP_CIPHER_up_ref(), EVP_CIPHER_CTX_get0_cipher(), EVP_CIPHER_CTX_get1_cipher(), EVP_CIPHER_get_params(), EVP_CIPHER_CTX_set_params(), EVP_CIPHER_CTX_get_params(), EVP_CIPHER_gettable_params(), EVP_CIPHER_settable_ctx_params(), EVP_CIPHER_gettable_ctx_params(), EVP_CIPHER_CTX_settable_params() and EVP_CIPHER_CTX_gettable_params() functions were added in 3.0.</p>
 

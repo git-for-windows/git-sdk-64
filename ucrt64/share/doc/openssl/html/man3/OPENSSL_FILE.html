@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OPENSSL_FILE, OPENSSL_LINE, OPENSSL_FUNC, OPENSSL_MSTR, OPENSSL_MSTR_HELPER - generic C programming utility macros</p>
+<p>OPENSSL_FILE, OPENSSL_LINE, OPENSSL_FUNC, OSSL_BEGIN_ALLOW_DEPRECATED, OSSL_END_ALLOW_DEPRECATED, OPENSSL_MSTR, OPENSSL_MSTR_HELPER - generic C programming utility macros</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -34,7 +34,10 @@
 #define OPENSSL_FUNC /* typically: __func__ */
 
 #define OPENSSL_MSTR_HELPER(x) #x
-#define OPENSSL_MSTR(x) OPENSSL_MSTR_HELPER(x)</code></pre>
+#define OPENSSL_MSTR(x) OPENSSL_MSTR_HELPER(x)
+
+#define OSSL_BEGIN_ALLOW_DEPRECATED /* compiler specific */
+#define OSSL_END_ALLOW_DEPRECATED /* compiler specific */</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -44,21 +47,25 @@
 
 <p>The macro <b>OPENSSL_MSTR</b> yields the expansion of the macro given as argument, which is useful for concatenation with string constants. The macro <b>OPENSSL_MSTR_HELPER</b> is an auxiliary macro for this purpose.</p>
 
+<p>The macros <b>OSSL_BEGIN_ALLOW_DEPRECATED</b> and <b>OSSL_END_ALLOW_DEPRECATED</b> respectively disable and then re-enable compiler warnings for deprecated functions within a source file, for compilers which OpenSSL supports. They are equivalent to disabling the warnings with compiler-specific options, but may be convenient when you wish to use deprecated OpenSSL functions temporarily in limited areas of code without turning off warnings more globally. It is nevertheless important to remember to eventually transition such code to replacement functions, as deprecated functions may be removed in later major OpenSSL releases.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>see above</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/crypto.html">crypto(7)</a></p>
+<p><a href="../man7/crypto.html">crypto(7)</a>, <a href="../man7/OPENSSL_NO_DEPRECATED.html">OPENSSL_NO_DEPRECATED(7)</a>, <a href="../man7/OPENSSL_SUPPRESS_DEPRECATED.html">OPENSSL_SUPPRESS_DEPRECATED(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
 <p><b>OPENSSL_FUNC</b>, <b>OPENSSL_MSTR</b>, and <b>OPENSSL_MSTR_HELPER</b> were added in OpenSSL 3.0.</p>
 
+<p><b>OSSL_BEGIN_ALLOW_DEPRECATED</b> and <b>OSSL_END_ALLOW_DEPRECATED</b> were added in OpenSSL 4.0, inspired by BoringSSL.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2019 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -32,9 +32,9 @@
 
 <p>This page presents various source code samples demonstrating how to write a simple, non-concurrent, QUIC &quot;echo&quot; server application which accepts one client connection at a time, echoing input from the client back to the same client. Once the current client disconnects, the next client connection is accepted.</p>
 
-<p>The server only accepts <code>http/1.0</code> and <code>hq-interop</code> ALPN&#39;s and doesn&#39;t actually implement HTTP but only does a simple echo. This is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
+<p>The server only accepts <code>http/1.1</code> and <code>hq-interop</code> ALPN&#39;s and doesn&#39;t actually implement HTTP but only does a simple echo. This is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
 
-<p>There are various methods to test this server: <b>quic-client-block.c</b> and <b>quic-client-non-block.c</b> will send a basic HTTP/1.0 request, which the server will echo back. You can also test this server by running <code>openssl s_client -connect localhost:4443 -4 -quic -alpn http/1.0</code> and entering text that will be echoed back by the server.</p>
+<p>There are various methods to test this server: <b>quic-client-block.c</b> and <b>quic-client-non-block.c</b> will send a basic HTTP/1.1 request, which the server will echo back. You can also test this server by running <code>openssl s_client -connect localhost:4443 -4 -quic -alpn http/1.1</code> and entering text that will be echoed back by the server.</p>
 
 <p>Both the listening socket and connected socket are &quot;nonblocking&quot;. However, we use select() to make the listening socket block when it cannot read/write. Rather than stopping and waiting, your application may need to go and do other tasks whilst the <b>SSL</b> object is unable to read/write. For example: updating a GUI or performing operations on some other connection or stream.</p>
 
@@ -107,14 +107,14 @@ SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);</code></pre>
 <pre><code>/* Setup ALPN negotiation callback to decide which ALPN is accepted. */
 SSL_CTX_set_alpn_select_cb(ctx, select_alpn, NULL);</code></pre>
 
-<p>In this case, we only accept &quot;http/1.0&quot; and &quot;hq-interop&quot;.</p>
+<p>In this case, we only accept &quot;http/1.1&quot; and &quot;hq-interop&quot;.</p>
 
 <pre><code>/*
-* ALPN strings for TLS handshake. Only &#39;http/1.0&#39; and &#39;hq-interop&#39;
+* ALPN strings for TLS handshake. Only &#39;http/1.1&#39; and &#39;hq-interop&#39;
 * are accepted.
 */
 static const unsigned char alpn_ossltest[] = {
-    8,  &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;0&#39;,
+    8,  &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;1&#39;,
     10, &#39;h&#39;, &#39;q&#39;, &#39;-&#39;, &#39;i&#39;, &#39;n&#39;, &#39;t&#39;, &#39;e&#39;, &#39;r&#39;, &#39;o&#39;, &#39;p&#39;,
 };
 
@@ -308,7 +308,7 @@ BIO_closesocket(fd);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

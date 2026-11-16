@@ -16,6 +16,7 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#CONFIGURABLE-VALUES-FOR-QUIC-OBJECTS">CONFIGURABLE VALUES FOR QUIC OBJECTS</a></li>
+  <li><a href="#CONFIGURABLE-VALUES-FOR-DTLS-SSL-LISTENER-OBJECTS">CONFIGURABLE VALUES FOR DTLS SSL LISTENER OBJECTS</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -24,7 +25,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_get_value_uint, SSL_set_value_uint, SSL_get_generic_value_uint, SSL_set_generic_value_uint, SSL_get_feature_request_uint, SSL_set_feature_request_uint, SSL_get_feature_peer_request_uint, SSL_get_feature_negotiated_uint, SSL_get_quic_stream_bidi_local_avail, SSL_get_quic_stream_bidi_remote_avail, SSL_get_quic_stream_uni_local_avail, SSL_get_quic_stream_uni_remote_avail, SSL_VALUE_CLASS_GENERIC, SSL_VALUE_CLASS_FEATURE_REQUEST, SSL_VALUE_CLASS_FEATURE_PEER_REQUEST, SSL_VALUE_CLASS_FEATURE_NEGOTIATED, SSL_VALUE_QUIC_STREAM_BIDI_LOCAL_AVAIL, SSL_VALUE_QUIC_STREAM_BIDI_REMOTE_AVAIL, SSL_VALUE_QUIC_STREAM_UNI_LOCAL_AVAIL, SSL_VALUE_QUIC_STREAM_UNI_REMOTE_AVAIL, SSL_VALUE_QUIC_IDLE_TIMEOUT, SSL_VALUE_QUIC_MAX_PENDING_CONNS, SSL_VALUE_EVENT_HANDLING_MODE, SSL_VALUE_EVENT_HANDLING_MODE_INHERIT, SSL_VALUE_EVENT_HANDLING_MODE_EXPLICIT, SSL_VALUE_EVENT_HANDLING_MODE_IMPLICIT, SSL_get_event_handling_mode, SSL_set_event_handling_mode, SSL_VALUE_STREAM_WRITE_BUF_SIZE, SSL_get_stream_write_buf_size, SSL_VALUE_STREAM_WRITE_BUF_USED, SSL_get_stream_write_buf_used, SSL_VALUE_STREAM_WRITE_BUF_AVAIL, SSL_get_stream_write_buf_avail - manage negotiable features and configuration values for an SSL object</p>
+<p>SSL_get_value_uint, SSL_set_value_uint, SSL_get_generic_value_uint, SSL_set_generic_value_uint, SSL_get_feature_request_uint, SSL_set_feature_request_uint, SSL_get_feature_peer_request_uint, SSL_get_feature_negotiated_uint, SSL_get_quic_stream_bidi_local_avail, SSL_get_quic_stream_bidi_remote_avail, SSL_get_quic_stream_uni_local_avail, SSL_get_quic_stream_uni_remote_avail, SSL_VALUE_CLASS_GENERIC, SSL_VALUE_CLASS_FEATURE_REQUEST, SSL_VALUE_CLASS_FEATURE_PEER_REQUEST, SSL_VALUE_CLASS_FEATURE_NEGOTIATED, SSL_VALUE_QUIC_STREAM_BIDI_LOCAL_AVAIL, SSL_VALUE_QUIC_STREAM_BIDI_REMOTE_AVAIL, SSL_VALUE_QUIC_STREAM_UNI_LOCAL_AVAIL, SSL_VALUE_QUIC_STREAM_UNI_REMOTE_AVAIL, SSL_VALUE_QUIC_IDLE_TIMEOUT, SSL_VALUE_QUIC_UDP_PAYLOAD_SIZE_MAX, SSL_VALUE_QUIC_WINDOWCON, SSL_VALUE_QUIC_WINDOWBSTR, SSL_VALUE_QUIC_WINDOWUSTR, SSL_VALUE_QUIC_ACK_DELAY_EXPONENT, SSL_VALUE_QUIC_ACK_DELAY_MAX, SSL_VALUE_QUIC_MAX_PENDING_CONNS, SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS, SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT, SSL_VALUE_DTLS_LISTENER_MAX_DGRAM_SIZE, SSL_VALUE_EVENT_HANDLING_MODE, SSL_VALUE_EVENT_HANDLING_MODE_INHERIT, SSL_VALUE_EVENT_HANDLING_MODE_EXPLICIT, SSL_VALUE_EVENT_HANDLING_MODE_IMPLICIT, SSL_get_event_handling_mode, SSL_set_event_handling_mode, SSL_VALUE_STREAM_WRITE_BUF_SIZE, SSL_get_stream_write_buf_size, SSL_VALUE_STREAM_WRITE_BUF_USED, SSL_get_stream_write_buf_used, SSL_VALUE_STREAM_WRITE_BUF_AVAIL, SSL_get_stream_write_buf_avail - manage negotiable features and configuration values for an SSL object</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -45,7 +46,17 @@ int SSL_set_value_uint(SSL *ssl, uint32_t class_, uint32_t id,
 #define SSL_VALUE_QUIC_STREAM_UNI_LOCAL_AVAIL
 #define SSL_VALUE_QUIC_STREAM_UNI_REMOTE_AVAIL
 #define SSL_VALUE_QUIC_IDLE_TIMEOUT
+#define SSL_VALUE_QUIC_UDP_PAYLOAD_SIZE_MAX
+#define SSL_VALUE_QUIC_WINDOWCON
+#define SSL_VALUE_QUIC_WINDOWBSTR
+#define SSL_VALUE_QUIC_WINDOWUSTR
+#define SSL_VALUE_QUIC_ACK_DELAY_EXPONENT
+#define SSL_VALUE_QUIC_ACK_DELAY_MAX
 #define SSL_VALUE_QUIC_MAX_PENDING_CONNS
+
+#define SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS
+#define SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT
+#define SSL_VALUE_DTLS_LISTENER_MAX_DGRAM_SIZE
 
 #define SSL_VALUE_EVENT_HANDLING_MODE
 #define SSL_VALUE_EVENT_HANDLING_MODE_INHERIT
@@ -133,12 +144,58 @@ int SSL_get_stream_write_buf_used(SSL *ssl, uint64_t *value);</code></pre>
 
 <dl>
 
-<dt id="SSL_VALUE_QUIC_IDLE_TIMEOUT-connection-object"><b>SSL_VALUE_QUIC_IDLE_TIMEOUT</b> (connection object)</dt>
+<dt id="SSL_VALUE_QUIC_IDLE_TIMEOUT-connection-listener-object"><b>SSL_VALUE_QUIC_IDLE_TIMEOUT</b> (connection/listener object)</dt>
 <dd>
 
 <p>Negotiated feature value. This configures the desired QUIC idle timeout in milliseconds, where 0 represents a lack of an idle timeout. This feature can only be configured prior to connection establishment and cannot be subsequently changed.</p>
 
 <p>This release of OpenSSL uses a default value of 30 seconds. This default value may change between releases of OpenSSL.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_UDP_PAYLOAD_SIZE_MAX-connection-listener-object"><b>SSL_VALUE_QUIC_UDP_PAYLOAD_SIZE_MAX</b> (connection/listener object)</dt>
+<dd>
+
+<p>Feature (peer) request value. This configures the maximum UDP payload size in bytes, corresponding to the QUIC max_udp_payload_size transport parameter as defined in RFC 9000, Section 18.2. It limits the size of UDP datagrams the local QUIC stack is willing to receive from the peer. It does not change the maximum datagram payload size used on the transmit path. This feature can only be configured prior to connection establishment and cannot be subsequently changed. This value will be sent to the peer in the transport parameters.</p>
+
+<p>This release of OpenSSL uses a default value of 1200 bytes. This default value may change between releases of OpenSSL.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_WINDOWCON-connection-listener-object"><b>SSL_VALUE_QUIC_WINDOWCON</b> (connection/listener object)</dt>
+<dd>
+
+<p>Feature (peer) request value. This configures the initial QUIC connection-level flow control receive window in bytes. This feature can only be configured prior to connection establishment and cannot be subsequently changed. This value will be sent to the peer in the transport parameters.</p>
+
+<p>This release of OpenSSL uses a default value of 768 * 1024 bytes. This default value may change between releases of OpenSSL.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_WINDOWBSTR-connection-listener-object"><b>SSL_VALUE_QUIC_WINDOWBSTR</b> (connection/listener object)</dt>
+<dd>
+
+<p>Feature (peer) request value. This sets the initial receive window size, in bytes, for QUIC stream flow control on a bidirectional stream created by the local endpoint. This feature can only be configured prior to connection establishment and cannot be subsequently changed. This value will be sent to the peer in the transport parameters.</p>
+
+<p>This release of OpenSSL uses a default value of 512 * 1024 bytes. This default value may change between releases of OpenSSL.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_WINDOWUSTR-connection-listener-object"><b>SSL_VALUE_QUIC_WINDOWUSTR</b> (connection/listener object)</dt>
+<dd>
+
+<p>As above, but configures the initial receive window size for QUIC stream flow control on a unidirectional stream created by the remote endpoint.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_ACK_DELAY_EXPONENT-connection-listener-object"><b>SSL_VALUE_QUIC_ACK_DELAY_EXPONENT</b> (connection/listener object)</dt>
+<dd>
+
+<p>Feature (peer) request value. This configures the ACK delay exponent. This feature can only be configured prior to connection establishment and cannot be subsequently changed. This value will be sent to the peer in the transport parameters.</p>
+
+<p>This release of OpenSSL uses a default value of 3. This default value may change between releases of OpenSSL.</p>
+
+</dd>
+<dt id="SSL_VALUE_QUIC_ACK_DELAY_MAX-connection-listener-object"><b>SSL_VALUE_QUIC_ACK_DELAY_MAX</b> (connection/listener object)</dt>
+<dd>
+
+<p>Feature (peer) request value. This configures the maximum ACK delay in milliseconds. This feature can only be configured prior to connection establishment and cannot be subsequently changed. This value will be sent to the peer in the transport parameters.</p>
+
+<p>This release of OpenSSL uses a default value of 25 milliseconds. This default value may change between releases of OpenSSL.</p>
 
 </dd>
 <dt id="SSL_VALUE_QUIC_MAX_PENDING_CONNS-listener-object"><b>SSL_VALUE_QUIC_MAX_PENDING_CONNS</b> (listener object)</dt>
@@ -243,7 +300,37 @@ int SSL_get_stream_write_buf_used(SSL *ssl, uint64_t *value);</code></pre>
 </dd>
 </dl>
 
-<p>No configurable values are currently defined for non-QUIC SSL objects.</p>
+<h1 id="CONFIGURABLE-VALUES-FOR-DTLS-SSL-LISTENER-OBJECTS">CONFIGURABLE VALUES FOR DTLS SSL LISTENER OBJECTS</h1>
+
+<p>The following configurable values are supported for DTLS SSL listener objects created by <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>. These are purely local configuration values that do not participate in feature negotiation with a peer, and are therefore accessed using the <b>SSL_VALUE_CLASS_GENERIC</b> value class (for example via the SSL_get_generic_value_uint() and SSL_set_generic_value_uint() convenience macros). Using any other value class fails with an error.</p>
+
+<dl>
+
+<dt id="SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS-DTLS-listener-object"><b>SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS</b> (DTLS listener object)</dt>
+<dd>
+
+<p>Generic value. Bounds the number of connections a DTLS listener created by <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> owns at any one time: pending (handshake-in-progress) connections plus validated connections waiting in the accept queue for <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>. When the limit is reached, datagrams from novel peers are silently discarded before any connection state is allocated; the peer retransmits its ClientHello and is admitted once a slot frees up. A connection returned by <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a> is no longer counted.</p>
+
+<p>The default limit is 256. Setting the value to 0 is rejected: a cap of 0 would reject every incoming connection and leave the listener unable to accept anything. Lowering the value does not evict connections the listener already owns; it only affects later admission. Stale pending entries age out via <b>SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT</b>; accept-queue entries do not expire.</p>
+
+</dd>
+<dt id="SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT-DTLS-listener-object"><b>SSL_VALUE_DTLS_LISTENER_PENDING_TIMEOUT</b> (DTLS listener object)</dt>
+<dd>
+
+<p>Generic value. Sets the maximum time in milliseconds that a pending (handshake-in-progress) DTLS connection may remain in the listener&#39;s pending table before being reaped. Expired pending connections are silently discarded, freeing a slot in the <b>SSL_VALUE_DTLS_LISTENER_MAX_PENDING_CONNS</b> budget. The timeout applies only to the pending table; accept-queue entries do not expire.</p>
+
+<p>The default is 30000 (30 seconds). Setting the value to 0 is rejected: a zero timeout will remove all pending connections on the next tick, before the handshake could complete. Setting the value to <b>UINT64_MAX</b> disables the timeout (pending connections are never expired).</p>
+
+</dd>
+<dt id="SSL_VALUE_DTLS_LISTENER_MAX_DGRAM_SIZE-DTLS-listener-object"><b>SSL_VALUE_DTLS_LISTENER_MAX_DGRAM_SIZE</b> (DTLS listener object)</dt>
+<dd>
+
+<p>Generic value. Sets the maximum size in bytes of a datagram that a DTLS listener created by <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a> will receive. Datagrams larger than this are truncated by the operating system on receipt; for a handshake datagram such as a large ClientHello this prevents the connection from being established.</p>
+
+<p>The default is 2000, chosen a little above the 1500-byte Ethernet MTU so that a DTLS 1.3 ClientHello carrying large (for example post-quantum) key shares is received whole rather than truncated. Deployments over a transport with a larger MTU (for example jumbo frames) may raise it. Values are clamped to 65535 (the maximum UDP payload), and values below the minimum receive size (1200) are rejected.</p>
+
+</dd>
+</dl>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -270,6 +357,8 @@ int SSL_get_stream_write_buf_used(SSL *ssl, uint64_t *value);</code></pre>
 <p><a href="../man3/SSL_ctrl.html">SSL_ctrl(3)</a>, <a href="../man3/SSL_get_accept_stream_queue_len.html">SSL_get_accept_stream_queue_len(3)</a>, <a href="../man3/SSL_get_stream_read_state.html">SSL_get_stream_read_state(3)</a>, <a href="../man3/SSL_get_stream_write_state.html">SSL_get_stream_write_state(3)</a>, <a href="../man3/SSL_get_stream_read_error_code.html">SSL_get_stream_read_error_code(3)</a>, <a href="../man3/SSL_get_stream_write_error_code.html">SSL_get_stream_write_error_code(3)</a>, <a href="../man3/SSL_set_default_stream_mode.html">SSL_set_default_stream_mode(3)</a>, <a href="../man3/SSL_set_incoming_stream_policy.html">SSL_set_incoming_stream_policy(3)</a>, <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
+
+<p>The values SSL_VALUE_QUIC_UDP_PAYLOAD_SIZE_MAX, SSL_VALUE_QUIC_WINDOWCON, SSL_VALUE_QUIC_WINDOWBSTR, SSL_VALUE_QUIC_WINDOWUSTR, SSL_VALUE_QUIC_ACK_DELAY_EXPONENT, and SSL_VALUE_QUIC_ACK_DELAY_MAX were added in OpenSSL 4.1.</p>
 
 <p>The value SSL_VALUE_QUIC_MAX_PENDING_CONNS has been added in OpenSSL 4.1 and ported to older releases 4.0.2, 3.6.4 and 3.5.8.</p>
 

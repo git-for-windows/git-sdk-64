@@ -34,7 +34,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>pkey</b> [<b>-help</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>-check</b>] [<b>-pubcheck</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-passin</b> <i>arg</i>] [<b>-pubin</b>] [<b>-out</b> <i>filename</i>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-<i>cipher</i></b>] [<b>-passout</b> <i>arg</i>] [<b>-traditional</b>] [<b>-pubout</b>] [<b>-noout</b>] [<b>-text</b>] [<b>-text_pub</b>] [<b>-ec_conv_form</b> <i>arg</i>] [<b>-ec_param_enc</b> <i>arg</i>]</p>
+<p><b>openssl</b> <b>pkey</b> [<b>-help</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<b>-check</b>] [<b>-pubcheck</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-passin</b> <i>arg</i>] [<b>-pubin</b>] [<b>-out</b> <i>filename</i>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-encopt</b> <i>opt</i>:<i>value</i>] [<b>-<i>cipher</i></b>] [<b>-passout</b> <i>arg</i>] [<b>-traditional</b>] [<b>-pubout</b>] [<b>-noout</b>] [<b>-text</b>] [<b>-text_pub</b>] [<b>-ec_conv_form</b> <i>arg</i>] [<b>-ec_param_enc</b> <i>arg</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -50,12 +50,6 @@
 <dd>
 
 <p>Print out a usage message.</p>
-
-</dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
 
 </dd>
 <dt id="provider-name"><b>-provider</b> <i>name</i></dt>
@@ -102,7 +96,7 @@
 <p>If the key input is encrypted and <b>-passin</b> is not given a pass phrase will be prompted for.</p>
 
 </dd>
-<dt id="inform-DER-PEM-P12-ENGINE"><b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
+<dt id="inform-DER-PEM-P12"><b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b></dt>
 <dd>
 
 <p>The key input format; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
@@ -142,10 +136,16 @@
 <p>The key output format; the default is <b>PEM</b>. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
 
 </dd>
+<dt id="encopt-opt:value"><b>-encopt</b> <i>opt</i>:<i>value</i></dt>
+<dd>
+
+<p>Set the private key encoder parameter <i>opt</i> to <i>value</i>. In order to set multiple parameters, multiple <b>-encopt</b> options can be specified, each specifying a single parameter. The precise set of supported parameters depends on the public key algorithm involved and its implementation. This is primarily applicable to <b>ML-DSA</b> and <b>ML-KEM</b>, whose private key encoding to a <b>PKCS#8</b> object can take a number of different forms. The <code>output_formats</code> parameter can be used to select the preferred output forms. See <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a> and <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> for details.</p>
+
+</dd>
 <dt id="cipher"><b>-<i>cipher</i></b></dt>
 <dd>
 
-<p>Encrypt the PEM encoded private key with the supplied cipher. Any algorithm name accepted by EVP_get_cipherbyname() is acceptable such as <b>aes128</b>. Encryption is not supported for DER output.</p>
+<p>Encrypt the PEM encoded private key with the supplied cipher. This option is specified by prepending a hyphen to the cipher name (e.g., <b>-aes-256-cbc</b> or <b>-aes128</b>), not as an argument to a <code>-cipher</code> flag. In <b>DER</b> output form encryption is supported only in the default <b>PKCS#8</b> form and is not available when the <b>-traditional</b> option is used. Use <code>openssl list -cipher-algorithms</code> to see the available ciphers.</p>
 
 </dd>
 <dt id="passout-arg"><b>-passout</b> <i>arg</i></dt>
@@ -159,7 +159,7 @@
 <dt id="traditional"><b>-traditional</b></dt>
 <dd>
 
-<p>Normally a private key is written using standard format: this is PKCS#8 form with the appropriate encryption algorithm (if any). If the <b>-traditional</b> option is specified then the older &quot;traditional&quot; format is used instead.</p>
+<p>Normally a private key is written using standard format: this is PKCS#8 form with the appropriate encryption algorithm (if any). If the <b>-traditional</b> option is specified then the older &quot;traditional&quot; format is used instead, and in <b>DER</b> output form encryption is not available.</p>
 
 </dd>
 <dt id="pubout"><b>-pubout</b></dt>
@@ -193,7 +193,7 @@
 
 <p>This option only applies to elliptic-curve based keys.</p>
 
-<p>This specifies how the points on the elliptic curve are converted into octet strings. Possible values are: <b>compressed</b> (the default value), <b>uncompressed</b> and <b>hybrid</b>. For more information regarding the point conversion forms please read the X9.62 standard. <b>Note</b> Due to patent issues the <b>compressed</b> option is disabled by default for binary curves and can be enabled by defining the preprocessor macro <b>OPENSSL_EC_BIN_PT_COMP</b> at compile time.</p>
+<p>This specifies how the points on the elliptic curve are converted into octet strings. Possible values are: <b>uncompressed</b> (the default value), <b>compressed</b> and <b>hybrid</b>. For more information regarding the point conversion forms please read the X9.62 standard.</p>
 
 </dd>
 <dt id="ec_param_enc-arg"><b>-ec_param_enc</b> <i>arg</i></dt>
@@ -246,11 +246,15 @@
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+<p>The <b>-engine</b> option was removed in OpenSSL 4.0.</p>
+
+<p>The <b>-encopt</b> option was added in OpenSSL 4.0.</p>
+
+<p>As of OpenSSL 4.0 the <b>-pass</b> and <b>-<i>cipher</i></b> options apply when private keys are output in both <b>PEM</b> and <b>DER</b> (except with <b>-traditional</b>) forms. Previously, these private key encryption options were rejected in combination with the <b>DER</b> output form.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

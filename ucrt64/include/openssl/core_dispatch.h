@@ -315,6 +315,8 @@ OSSL_CORE_MAKE_FUNC(int, SSL_QUIC_TLS_alert,
 #define OSSL_FUNC_DIGEST_GETTABLE_CTX_PARAMS 13
 #define OSSL_FUNC_DIGEST_SQUEEZE 14
 #define OSSL_FUNC_DIGEST_COPYCTX 15
+#define OSSL_FUNC_DIGEST_SERIALIZE 16
+#define OSSL_FUNC_DIGEST_DESERIALIZE 17
 
 OSSL_CORE_MAKE_FUNC(void *, digest_newctx, (void *provctx))
 OSSL_CORE_MAKE_FUNC(int, digest_init, (void *dctx, const OSSL_PARAM params[]))
@@ -345,6 +347,10 @@ OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, digest_settable_ctx_params,
     (void *dctx, void *provctx))
 OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *, digest_gettable_ctx_params,
     (void *dctx, void *provctx))
+OSSL_CORE_MAKE_FUNC(int, digest_serialize,
+    (void *dctx, unsigned char *out, size_t *outl))
+OSSL_CORE_MAKE_FUNC(int, digest_deserialize,
+    (void *dctx, const unsigned char *in, size_t inl))
 
 /* Symmetric Ciphers */
 
@@ -482,6 +488,8 @@ OSSL_CORE_MAKE_FUNC(int, mac_init_skey, (void *mctx, void *key, const OSSL_PARAM
 #define OSSL_FUNC_SKEYMGMT_GET_KEY_ID 5
 #define OSSL_FUNC_SKEYMGMT_IMP_SETTABLE_PARAMS 6
 #define OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS 7
+#define OSSL_FUNC_SKEYMGMT_GET_LOCAL_KEYID 8
+#define OSSL_FUNC_SKEYMGMT_GET_ALGORITHM_ID 9
 
 OSSL_CORE_MAKE_FUNC(void, skeymgmt_free, (void *keydata))
 OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
@@ -494,6 +502,12 @@ OSSL_CORE_MAKE_FUNC(const OSSL_PARAM *,
     skeymgmt_gen_settable_params, (void *provctx))
 OSSL_CORE_MAKE_FUNC(void *, skeymgmt_generate, (void *provctx, const OSSL_PARAM params[]))
 OSSL_CORE_MAKE_FUNC(const char *, skeymgmt_get_key_id, (void *keydata))
+OSSL_CORE_MAKE_FUNC(int, skeymgmt_get_local_keyid,
+    (void *keydata, const unsigned char **id, size_t *len))
+OSSL_CORE_MAKE_FUNC(int, skeymgmt_get_algorithm_id,
+    (void *keydata,
+        const unsigned char **oid, size_t *oid_len,
+        const unsigned char **params, size_t *params_len))
 
 /* KDFs and PRFs */
 
@@ -657,6 +671,8 @@ OSSL_CORE_MAKE_FUNC(void, rand_clear_seed,
 /* Basic key object creation */
 #define OSSL_FUNC_KEYMGMT_NEW 1
 OSSL_CORE_MAKE_FUNC(void *, keymgmt_new, (void *provctx))
+#define OSSL_FUNC_KEYMGMT_NEW_EX 17
+OSSL_CORE_MAKE_FUNC(void *, keymgmt_new_ex, (void *provctx, const OSSL_PARAM params[]))
 
 /* Generation, a more complex constructor */
 #define OSSL_FUNC_KEYMGMT_GEN_INIT 2

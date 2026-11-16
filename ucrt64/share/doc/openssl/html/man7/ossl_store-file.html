@@ -17,6 +17,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -36,6 +37,10 @@
 
 <p>If the file isn&#39;t determined to be formatted as PEM, the content is loaded in raw form in its entirety and passed to the available file handlers as is, with no PEM name or headers.</p>
 
+<p>Store &#39;file&#39; also supports load of symmetric keys from arbitrary files. As symmetric keys don&#39;t have any structure and encapsulation, the interpretation of a file as a symmetric key should be requested explicitly via <a href="../man3/OSSL_STORE_expect.html">OSSL_STORE_expect(3)</a>.</p>
+
+<p>When loading from a file, symmetric keys are limited to 2048 bytes in length.</p>
+
 <p>Each file handler is expected to handle PEM and non-PEM content as appropriate. Some may refuse non-PEM content for the sake of determinism (for example, there are keys out in the wild that are represented as an ASN.1 OCTET STRING. In raw form, it&#39;s not easily possible to distinguish those from any other data coming as an ASN.1 OCTET STRING, so such keys would naturally be accepted as PEM files only).</p>
 
 <h1 id="NOTES">NOTES</h1>
@@ -44,11 +49,15 @@
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ossl_store.html">ossl_store(7)</a>, <a href="../man7/passphrase-encoding.html">passphrase-encoding(7)</a></p>
+<p><a href="../man7/ossl_store.html">ossl_store(7)</a>, <a href="../man7/passphrase-encoding.html">passphrase-encoding(7)</a>, <a href="../man3/OSSL_STORE_expect.html">OSSL_STORE_expect(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Support for reading symmetric keys from files was added in OpenSSL 4.0</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

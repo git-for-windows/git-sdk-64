@@ -1,0 +1,371 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_KDF-IKEV2KDF</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Identity">Identity</a></li>
+      <li><a href="#Supported-parameters">Supported parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a>
+    <ul>
+      <li><a href="#Example-of-SEEDKEY-generation">Example of SEEDKEY generation</a></li>
+      <li><a href="#Example-of-deriving-key-material-DKM-Initial-SA">Example of deriving key material DKM(Initial SA)</a></li>
+      <li><a href="#Example-of-generating-DKM-Child_SA">Example of generating DKM(Child_SA)</a></li>
+      <li><a href="#Example-of-generating-DKM-Child_DH">Example of generating DKM(Child_DH)</a></li>
+      <li><a href="#Example-of-rekeying-the-IKE-SA">Example of rekeying the IKE SA</a></li>
+    </ul>
+  </li>
+  <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_KDF-IKEV2KDF - The IKEV2KDF EVP_KDF implementation</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Support for computing the <b>IKEV2KDF</b> KDF through the <b>EVP_KDF</b> API.</p>
+
+<p>The EVP_KDF-IKEV2KDF algorithm implements the IKEv2 key derivation function. It is defined in RFC 7296, sections 2.13, 2.14, 2.17, 2.18 and is used by the Internet Key Exchange version 2 (IKEv2) protocol to derive various keys from the shared secret established during the Diffie-Hellman (DH) exchange. RFC 4753 specifies additional ECDH groups for use with IKEv2. The key derivation requires several inputs including the hash function, the shared secret (g^ir), nonces from both parties, the Security Parameter Index (SPI) values from both parties, and new shared secret (new g^ir). SA refers to the Security Association established between the two parties.</p>
+
+<h2 id="Identity">Identity</h2>
+
+<p>&quot;IKEV2KDF&quot; is the name for this implementation; it can be used with the EVP_KDF_fetch() function.</p>
+
+<h2 id="Supported-parameters">Supported parameters</h2>
+
+<p>The supported parameters are:</p>
+
+<dl>
+
+<dt id="properties-OSSL_KDF_PARAM_PROPERTIES-UTF8-string">&quot;properties&quot; (<b>OSSL_KDF_PARAM_PROPERTIES</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+</dd>
+<dt id="digest-OSSL_KDF_PARAM_DIGEST-UTF8-string">&quot;digest&quot; (<b>OSSL_KDF_PARAM_DIGEST</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>These parameters work as described in <a href="../man3/EVP_KDF.html">&quot;PARAMETERS&quot; in EVP_KDF(3)</a>. The digest parameter must be set to one of &quot;SHA1&quot;, &quot;SHA224&quot;, &quot;SHA256&quot;, &quot;SHA384&quot;, or &quot;SHA512&quot; for the IKEV2KDF implementation. If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="secret-OSSL_KDF_PARAM_SECRET-octet-string">&quot;secret&quot; (<b>OSSL_KDF_PARAM_SECRET</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the shared secret (g^ir) used for generating the SEEDKEY, or the new shared secret (new g^ir) used for deriving DKM(Child_DH) or REKEY. The shared secret length is in the range of 8 to 1024 bytes as specified in the NIST ACVP draft (<a href="https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html">https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html</a>). If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="ni-OSSL_KDF_PARAM_IKEV2_NI-octet-string">&quot;ni&quot; (<b>OSSL_KDF_PARAM_IKEV2_NI</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the initiator&#39;s nonce (Ni) value for the KDF. The nonce length is in the range of 8 to 256 bytes as specified in NIST ACVP draft (<a href="https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html">https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html</a>). If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="nr-OSSL_KDF_PARAM_IKEV2_NR-octet-string">&quot;nr&quot; (<b>OSSL_KDF_PARAM_IKEV2_NR</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the responder&#39;s nonce (Nr) value for the KDF. The nonce length is in the range of 8 to 256 bytes as specified in NIST ACVP draft (<a href="https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html">https://pages.nist.gov/ACVP/draft-celi-acvp-kdf-ikev2.html</a>). If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="spii-OSSL_KDF_PARAM_IKEV2_SPII-octet-string">&quot;spii&quot; (<b>OSSL_KDF_PARAM_IKEV2_SPII</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the initiator&#39;s Security Parameter Index (SPIi) value for the KDF. If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="spir-OSSL_KDF_PARAM_IKEV2_SPIR-octet-string">&quot;spir&quot; (<b>OSSL_KDF_PARAM_IKEV2_SPIR</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the responder&#39;s Security Parameter Index (SPIr) value for the KDF. If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="seedkey-OSSL_KDF_PARAM_SEEDKEY-octet-string">&quot;seedkey&quot; (<b>OSSL_KDF_PARAM_SEEDKEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the SEEDKEY used for deriving DKM(Initial SA). If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="key-OSSL_KDF_PARAM_KEY-octet-string">&quot;key&quot; (<b>OSSL_KDF_PARAM_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the SK_d used for deriving DKM(Child_SA) or REKEY. If a value is already set, the contents are replaced.</p>
+
+</dd>
+<dt id="mode-OSSL_KDF_PARAM_MODE-int">&quot;mode&quot; (<b>OSSL_KDF_PARAM_MODE</b>) &lt;int&gt;</dt>
+<dd>
+
+<p>This parameter sets the IKEv2 KDF mode. The IKEV2KDF implementation supports three different modes of operation:</p>
+
+<dl>
+
+<dt id="EVP_KDF_IKEV2_MODE_GEN">EVP_KDF_IKEV2_MODE_GEN</dt>
+<dd>
+
+<p>It generates the SKEYSEED used in deriving key material. It is the default mode if the &quot;mode&quot; parameter is not set. It takes the shared secret (g^ir) and nonces (Ni and Nr) as input and generates the SKEYSEED.</p>
+
+</dd>
+<dt id="EVP_KDF_IKEV2_MODE_DKM">EVP_KDF_IKEV2_MODE_DKM</dt>
+<dd>
+
+<p>It operates in three stages, based on the input parameter sets.</p>
+
+<p>It first performs initial key derivation: it derives the initial set of keys (SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, SK_pr) using SKEYSEED generated in &quot;EVP_KDF_IKEV2_MODE_GEN&quot;, the nonces (from both sides), and security parameter index (SPI) values (from both sides).</p>
+
+<p>Then, it derives keying material for the Child_SA, using the SK_d as input along with new nonces.</p>
+
+<p>Finally, it derives keying material for the Child_DH, using the SK_d as input along with new nonces and new shared secret (new g^ir).</p>
+
+</dd>
+<dt id="EVP_KDF_IKEV2_MODE_REKEY">EVP_KDF_IKEV2_MODE_REKEY</dt>
+<dd>
+
+<p>It derives a new SKEYSEED when rekeying the IKE SA, using the existing SK_d as input along with new nonces and new shared secret (new g^ir).</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="fips-indicator-OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The OpenSSL FIPS provider returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>A context for IKEV2KDF can be obtained by calling:</p>
+
+<pre><code>EVP_KDF *kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+EVP_KDF_CTX *kctx = EVP_KDF_CTX_new(kdf);</code></pre>
+
+<p>The output length for IKEV2KDF can be specified by the caller based on the specific key being derived (e.g., SK_d, SK_ai, SK_ar, SK_ei, SK_er, SK_pi, SK_pr). Different keys may require different lengths depending on the cryptographic algorithms being used.</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<h2 id="Example-of-SEEDKEY-generation">Example of SEEDKEY generation</h2>
+
+<p>This example derives a 32-byte SEEDKEY using SHA-256 with the appropriate shared secret and nonces:</p>
+
+<pre><code>EVP_KDF *kdf = NULL;
+EVP_KDF_CTX *kctx = NULL;
+unsigned char secret[32] = &quot;0123456789abcdef0123456789abcdef&quot;; /* g^ir */
+unsigned char ni[8] = &quot;01234567&quot;;
+unsigned char nr[8] = &quot;89abcdef&quot;;
+int mode = EVP_KDF_IKEV2_MODE_GEN;
+unsigned char out[32];
+size_t outlen = sizeof(out);
+OSSL_PARAM params[6], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+if (!kctx) {
+    /* Error handling */
+}
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    SN_sha256, strlen(SN_sha256));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SECRET,
+    secret, sizeof(secret));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NI,
+    ni, sizeof(ni));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NR,
+    nr, sizeof(nr));
+*p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_MODE, &amp;mode);
+*p = OSSL_PARAM_construct_end();
+if (EVP_KDF_derive(kctx, out, outlen, params) &lt;= 0) {
+    /* Error */
+    ;
+}
+EVP_KDF_CTX_free(kctx);
+EVP_KDF_free(kdf);</code></pre>
+
+<h2 id="Example-of-deriving-key-material-DKM-Initial-SA">Example of deriving key material DKM(Initial SA)</h2>
+
+<pre><code>EVP_KDF *kdf = NULL;
+EVP_KDF_CTX *kctx = NULL;
+unsigned char ni[8] = &quot;01234567&quot;;
+unsigned char nr[8] = &quot;89abcdef&quot;;
+unsigned char spii[8] = &quot;01234567&quot;;
+unsigned char spir[8] = &quot;89abcdef&quot;;
+unsigned char skeyseed[32] = &quot;0123456789abcdef0123456789abcdef&quot;;
+int mode = EVP_KDF_IKEV2_MODE_DKM;
+unsigned char out[224];
+OSSL_PARAM params[8], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+if (!kctx) {
+    /* Error handling */
+}
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    SN_sha256, strlen(SN_sha256));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SEED,
+    skeyseed, sizeof(skeyseed));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NI,
+    ni, sizeof(ni));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NR,
+    nr, sizeof(nr));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_SPII,
+    spii, sizeof(spii));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_SPIR,
+    spir, sizeof(spir));
+*p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_MODE, &amp;mode);
+*p = OSSL_PARAM_construct_end();
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    /* Error handling */
+    ;
+}
+EVP_KDF_CTX_free(kctx);
+EVP_KDF_free(kdf);</code></pre>
+
+<h2 id="Example-of-generating-DKM-Child_SA">Example of generating DKM(Child_SA)</h2>
+
+<pre><code>EVP_KDF *kdf = NULL;
+EVP_KDF_CTX *kctx = NULL;
+unsigned char ni[8] = &quot;01234567&quot;;
+unsigned char nr[8] = &quot;89abcdef&quot;;
+unsigned char sk_d[32] = &quot;0123456789abcdef0123456789abcdef&quot;;
+int mode = EVP_KDF_IKEV2_MODE_DKM;
+unsigned char out[224];
+OSSL_PARAM params[6], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+if (!kctx) {
+    /* Error handling */
+}
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    SN_sha256, strlen(SN_sha256));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_KEY,
+    sk_d, sizeof(sk_d));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NI,
+    ni, sizeof(ni));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NR,
+    nr, sizeof(nr));
+*p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_MODE, &amp;mode);
+*p = OSSL_PARAM_construct_end();
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    /* Error handling */
+    ;
+}
+EVP_KDF_CTX_free(kctx);
+EVP_KDF_free(kdf);</code></pre>
+
+<h2 id="Example-of-generating-DKM-Child_DH">Example of generating DKM(Child_DH)</h2>
+
+<pre><code>EVP_KDF *kdf = NULL;
+EVP_KDF_CTX *kctx = NULL;
+unsigned char ni[8] = &quot;01234567&quot;;
+unsigned char nr[8] = &quot;89abcdef&quot;;
+unsigned char sk_d[32] = &quot;0123456789abcdef0123456789abcdef&quot;;
+unsigned char new_secret[32] = &quot;0123456789abcdef0123456789abcdef&quot;; /* new g^ir */
+int mode = EVP_KDF_IKEV2_MODE_DKM;
+unsigned char out[224];
+OSSL_PARAM params[7], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+if (!kctx) {
+    /* Error handling */
+}
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    SN_sha256, strlen(SN_sha256));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_KEY,
+    sk_d, sizeof(sk_d));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SECRET,
+    new_secret, sizeof(new_secret));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NI,
+    ni, sizeof(ni));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NR,
+    nr, sizeof(nr));
+*p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_MODE, &amp;mode);
+*p = OSSL_PARAM_construct_end();
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    /* Error */
+    ;
+}
+EVP_KDF_CTX_free(kctx);
+EVP_KDF_free(kdf);</code></pre>
+
+<h2 id="Example-of-rekeying-the-IKE-SA">Example of rekeying the IKE SA</h2>
+
+<pre><code>EVP_KDF *kdf = NULL;
+EVP_KDF_CTX *kctx = NULL;
+unsigned char ni[8] = &quot;01234567&quot;;
+unsigned char nr[8] = &quot;89abcdef&quot;;
+unsigned char sk_d[32] = &quot;0123456789abcdef0123456789abcdef&quot;;
+unsigned char new_secret[32] = &quot;0123456789abcdef0123456789abcdef&quot;; /* new g^ir */
+int mode = EVP_KDF_IKEV2_MODE_REKEY;
+unsigned char out[32];
+OSSL_PARAM params[7], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;IKEV2KDF&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+if (!kctx) {
+    /* Error handling */
+}
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+    SN_sha256, strlen(SN_sha256));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_KEY,
+    sk_d, sizeof(sk_d));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SECRET,
+    new_secret, sizeof(new_secret));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NI,
+    ni, sizeof(ni));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_IKEV2KDF_NR,
+    nr, sizeof(nr));
+*p++ = OSSL_PARAM_construct_int(OSSL_KDF_PARAM_MODE, &amp;mode);
+*p = OSSL_PARAM_construct_end();
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    /* Error handling */
+    ;
+}
+EVP_KDF_CTX_free(kctx);
+EVP_KDF_free(kdf);</code></pre>
+
+<h1 id="CONFORMING-TO">CONFORMING TO</h1>
+
+<p>RFC 7296 and SP800-135</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/EVP_KDF.html">EVP_KDF(3)</a>, <a href="../man3/EVP_KDF_CTX_new.html">EVP_KDF_CTX_new(3)</a>, <a href="../man3/EVP_KDF_CTX_dup.html">EVP_KDF_CTX_dup(3)</a>, <a href="../man3/EVP_KDF_CTX_free.html">EVP_KDF_CTX_free(3)</a>, <a href="../man3/EVP_KDF_CTX_set_params.html">EVP_KDF_CTX_set_params(3)</a>, <a href="../man3/EVP_KDF_CTX_get_kdf_size.html">EVP_KDF_CTX_get_kdf_size(3)</a>, <a href="../man3/EVP_KDF_derive.html">EVP_KDF_derive(3)</a>, <a href="../man3/EVP_KDF.html">&quot;PARAMETERS&quot; in EVP_KDF(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This functionality was added in OpenSSL 4.1.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

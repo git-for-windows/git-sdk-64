@@ -15,6 +15,39 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPENSSL-4.1">OPENSSL 4.1</a>
+    <ul>
+      <li><a href="#Main-Changes-from-OpenSSL-4.0">Main Changes from OpenSSL 4.0</a>
+        <ul>
+          <li><a href="#Deprecation-of-EVP_CIPHER_CTX_get_num-and-EVP_CIPHER_CTX_set_num">Deprecation of EVP_CIPHER_CTX_get_num() and EVP_CIPHER_CTX_set_num()</a></li>
+          <li><a href="#Deprecation-of-ASN1_BIT_STRING_set">Deprecation of ASN1_BIT_STRING_set()</a></li>
+          <li><a href="#Deprecation-of-EVP_KDF_CTX_kdf">Deprecation of EVP_KDF_CTX_kdf()</a></li>
+          <li><a href="#SSL_OP_TLSEXT_PADDING-is-now-a-no-op">SSL_OP_TLSEXT_PADDING is now a no-op</a></li>
+          <li><a href="#ASN1_STRING-values-have-never-been-NUL-byte-terminated">ASN1_STRING values have never been NUL byte terminated</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#OPENSSL-4.0">OPENSSL 4.0</a>
+    <ul>
+      <li><a href="#Main-Changes-from-OpenSSL-3.6">Main Changes from OpenSSL 3.6</a>
+        <ul>
+          <li><a href="#Major-Release">Major Release</a></li>
+        </ul>
+      </li>
+      <li><a href="#Upgrading-from-OpenSSL-3.x">Upgrading from OpenSSL 3.x</a>
+        <ul>
+          <li><a href="#The-ASN1_STRING-type-is-now-opaque">The ASN1_STRING type is now opaque</a></li>
+          <li><a href="#Constification-of-X509-functions">Constification of X509 functions</a></li>
+          <li><a href="#Removal-of-atexit-usage">Removal of atexit() usage</a></li>
+          <li><a href="#Removal-of-fixed-D-TLS-version-method-functions">Removal of fixed (D)TLS version method functions</a></li>
+          <li><a href="#Deprecation-of-EVP_MD_CTX_get0_md_data">Deprecation of EVP_MD_CTX_get0_md_data()</a></li>
+          <li><a href="#Deprecation-of-ASN1_OBJECT_new">Deprecation of ASN1_OBJECT_new()</a></li>
+          <li><a href="#Practical-behaviour-change-of-EVP_get_cipherby-and-EVP_get_digestby-functions">Practical behaviour change of EVP_get_cipherby* and EVP_get_digestby* functions</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
   <li><a href="#OPENSSL-3.6">OPENSSL 3.6</a>
     <ul>
       <li><a href="#Main-Changes-from-OpenSSL-3.5">Main Changes from OpenSSL 3.5</a></li>
@@ -29,7 +62,7 @@
     <ul>
       <li><a href="#Main-Changes-from-OpenSSL-1.1.1">Main Changes from OpenSSL 1.1.1</a>
         <ul>
-          <li><a href="#Major-Release">Major Release</a></li>
+          <li><a href="#Major-Release1">Major Release</a></li>
           <li><a href="#License-Change">License Change</a></li>
           <li><a href="#Providers-and-FIPS-support">Providers and FIPS support</a></li>
           <li><a href="#Low-Level-APIs">Low Level APIs</a></li>
@@ -146,7 +179,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>ossl-guide-migration, migration_guide - OpenSSL Guide: Migrating from older OpenSSL versions</p>
+<p>ossl-guide-migration, migration_guide, ossl-migration-guide - OpenSSL Guide: Migrating from older OpenSSL versions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -156,11 +189,147 @@
 
 <p>This guide details the changes required to migrate to new versions of OpenSSL, covering OpenSSL 3.0 and later versions. For earlier versions, refer to <a href="https://github.com/openssl/openssl/blob/master/CHANGES.md">https://github.com/openssl/openssl/blob/master/CHANGES.md</a>. For an overview of some of the key concepts introduced since OpenSSL 3.0, see <a href="../man7/crypto.html">crypto(7)</a>.</p>
 
+<h1 id="OPENSSL-4.1">OPENSSL 4.1</h1>
+
+<h2 id="Main-Changes-from-OpenSSL-4.0">Main Changes from OpenSSL 4.0</h2>
+
+<h3 id="Deprecation-of-EVP_CIPHER_CTX_get_num-and-EVP_CIPHER_CTX_set_num">Deprecation of EVP_CIPHER_CTX_get_num() and EVP_CIPHER_CTX_set_num()</h3>
+
+<p>These functions have been deprecated in OpenSSL 4.1 since they were primarily used by engines, which were removed in OpenSSL 4.0. OpenSSL Provider algorithms maintain their state internally and should not expose this information. If required the state should be set and get via an OSSL_PARAM, bearing in mind that the bounds must be checked if setting this value.</p>
+
+<h3 id="Deprecation-of-ASN1_BIT_STRING_set">Deprecation of ASN1_BIT_STRING_set()</h3>
+
+<p>This function was deprecated in OpenSSL 4.1 in favour of ASN1_BIT_STRING_set1(). The new functions in addition to what ASN1_BIT_STRING_set() does, validates the function arguments and sets unused bits after setting the BIT STRING value.</p>
+
+<h3 id="Deprecation-of-EVP_KDF_CTX_kdf">Deprecation of EVP_KDF_CTX_kdf()</h3>
+
+<p>This function is deprecated in favour of EVP_KDF_CTX_get0_ctx(), to align with the naming of functions that provide similar functionality for other kinds of EVP context oobjects.</p>
+
+<h3 id="SSL_OP_TLSEXT_PADDING-is-now-a-no-op"><b>SSL_OP_TLSEXT_PADDING</b> is now a no-op</h3>
+
+<p>Prior to OpenSSL 4.1, when <b>SSL_OP_TLSEXT_PADDING</b> was set, TLS clients sent a padding extension (RFC 7685) whenever the ClientHello would otherwise be between 256 and 511 bytes long. The option was part of <b>SSL_OP_ALL</b>, so any application setting <b>SSL_OP_ALL</b> sent this padding. It worked around a bug in F5 middleboxes; the fix shipped long ago and the affected hardware is long out of support, so nothing should still be running the problematic version. The option now has no effect and has been removed from <b>SSL_OP_ALL</b>.</p>
+
+<p>Applications that require the padding extension can construct it themselves by registering a handler for <b>TLSEXT_TYPE_padding</b> with <a href="../man3/SSL_CTX_add_custom_ext.html">SSL_CTX_add_custom_ext(3)</a>. Registering a handler for this extension type was previously refused.</p>
+
+<h3 id="ASN1_STRING-values-have-never-been-NUL-byte-terminated"><b>ASN1_STRING</b> values have never been NUL byte terminated</h3>
+
+<p>The bytes returned by <a href="../man3/ASN1_STRING_get0_data.html">ASN1_STRING_get0_data(3)</a> have never been guaranteed to be NUL byte terminated, and the documentation has said so since 2002. Values constructed as pointers into parsed DER never have been. Applications treating them as C strings have always relied on behaviour that was never promised.</p>
+
+<p>Such code usually escaped consequences because ASN1_STRING_set() allocated one byte more than the requested length and wrote a NUL byte into it. That byte was never counted in the length reported by ASN1_STRING_length().</p>
+
+<p>ASN1_STRING_set() is now deprecated. Its replacements, <a href="../man3/ASN1_STRING_set1_data.html">ASN1_STRING_set1_data(3)</a> and <a href="../man3/ASN1_STRING_set1_string.html">ASN1_STRING_set1_string(3)</a>, allocate exactly the requested number of bytes and append nothing. This includes ASN1_STRING_set1_string(): it takes a NUL byte terminated C string, but does not store the terminator.</p>
+
+<p>Applications must use the data only together with its length, obtained from <a href="../man3/ASN1_STRING_get_length.html">ASN1_STRING_get_length(3)</a>, and never derive the length from the data. Applications should be cautious of passing a NULL data pointer when an <b>ASN1_STRING</b> has a length of 0 to functions where this behaviour may be undefined.</p>
+
+<p>Applications which wish to use the content of an <b>ASN1_STRING</b> as a C string should make a copy of the data, NUL byte terminate it, and when appropriate, sanitize it for embedded NUL bytes. They should never have been using the <b>ASN1_STRING</b> data directly.</p>
+
+<h1 id="OPENSSL-4.0">OPENSSL 4.0</h1>
+
+<h2 id="Main-Changes-from-OpenSSL-3.6">Main Changes from OpenSSL 3.6</h2>
+
+<h3 id="Major-Release">Major Release</h3>
+
+<p>OpenSSL 4.0 is a major release and consequently any application that currently uses an older version of OpenSSL will at the very least need to be recompiled in order to work with the new version. It is the intention that many applications will work unchanged with OpenSSL 4.0 if those applications previously worked with OpenSSL 3.6 and did not use deprecated API. However this is not guaranteed and some changes may be required in some cases. Changes may be required to applications using previously deprecated API. Changes may also be required if applications need to take advantage of some of the new features available in OpenSSL 4.0.</p>
+
+<p>Some functions have been removed that were deprecated in previous versions of OpenSSL. See <a href="../man7/ossl-removed-api.html">ossl-removed-api(7)</a>.</p>
+
+<p>The ASN1_STRING type has been made opaque. Accessors for the needed values from this type have been present since OpenSSL 1.1, Code which directly attempts to access internals of ASN1_STRING should be converted to use the accessors. The ASN1_FLAGS have also been made private, most of which were purely internal. ASN1_STRING_FLAG_BITS_LEFT, which used to be exposed to allow manipulating the internal representation of a bit string should be replaced by using the appropriate setter for an ASN1_BIT_STRING type, instead of direct flag and structure manipulation.</p>
+
+<h2 id="Upgrading-from-OpenSSL-3.x">Upgrading from OpenSSL 3.x</h2>
+
+<h3 id="The-ASN1_STRING-type-is-now-opaque">The <b>ASN1_STRING</b> type is now opaque</h3>
+
+<p><b>ASN1_STRING</b> is the basis for many types in OpenSSL. Since OpenSSL 1.1.1 accessor functions have been available to access and create <b>ASN1_STRING</b> values of various types. See <a href="../man3/ASN1_STRING_type_new.html">ASN1_STRING_type_new(3)</a>, <a href="../man3/ASN1_STRING_get0_data.html">ASN1_STRING_get0_data(3)</a>, <a href="../man3/ASN1_STRING_set.html">ASN1_STRING_set(3)</a> and <a href="../man3/ASN1_STRING_length.html">ASN1_STRING_length(3)</a>.</p>
+
+<p>If your code uses direct access to <b>ASN1_STRING</b> structure members you will need to convert it to allocate the correct type <b>ASN1_STRING</b>, and use accessors.</p>
+
+<p>If your code has in the past used an <b>ASN1_STRING</b> as a stack allocated object, you will need to allocate it from the heap with <a href="../man3/ASN1_STRING_new.html">ASN1_STRING_new(3)</a> or <a href="../man3/ASN1_STRING_type_new.html">ASN1_STRING_type_new(3)</a>.</p>
+
+<p>The flags member of <b>ASN1_STRING</b> has become inaccessible, and the definitions of the flags are no longer public. This includes the public definition of the flags:</p>
+
+<dl>
+
+<dt id="ASN1_STRING_FLAG_NDEF"><b>ASN1_STRING_FLAG_NDEF</b></dt>
+<dd>
+
+</dd>
+<dt id="ASN1_STRING_FLAG_CONT"><b>ASN1_STRING_FLAG_CONT</b></dt>
+<dd>
+
+</dd>
+<dt id="ASN1_STRING_FLAG_MSTRING"><b>ASN1_STRING_FLAG_MSTRING</b></dt>
+<dd>
+
+</dd>
+<dt id="ASN1_STRING_FLAG_EMBED"><b>ASN1_STRING_FLAG_EMBED</b></dt>
+<dd>
+
+</dd>
+<dt id="ASN1_STRING_FLAG_BITS_LEFT"><b>ASN1_STRING_FLAG_BITS_LEFT</b></dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>For the first four values, these were internal use flags which were never user settable in a way that would not cause things to break.</p>
+
+<p>The final flag was used to indicate that an <b>ASN1_BIT_STRING</b> has a value of unused bits left - Most applications do not touch this. You should not use ASN1_STRING_set() to set the value of an <b>ASN1_BIT_STRING</b> that may have unused bits on the end. To ensure the number of unused bits is correctly set in an <b>ASN1_BIT_STRING</b> type, use the functions <a href="../man3/ASN1_BIT_STRING_set_bit.html">ASN1_BIT_STRING_set_bit(3)</a> or <a href="../man3/ASN1_BIT_STRING_set1.html">ASN1_BIT_STRING_set1(3)</a> to set the value of an <b>ASN1_BIT_STRING</b>, and ensure that the number of unused bits is correctly set. The function <a href="../man3/ASN1_BIT_STRING_get_length.html">ASN1_BIT_STRING_get_length(3)</a> may be used to retrieve the length in bytes, and the number of unused bits of an <b>ASN1_BIT_STRING</b>.</p>
+
+<h3 id="Constification-of-X509-functions">Constification of <b>X509</b> functions</h3>
+
+<p>A large number of public API functions that access an <b>X509</b> * object have been constified. This change has been made to allow for future improvements to the <b>X509</b> layer to reduce the number of memory allocations and copies that are made. These changes can impact code which uses these functions if a returned pointer value which was not const in previous versions of OpenSSL has now been made const. When such a value is assigned to a non-const pointer variable you will get a compiler warning.</p>
+
+<p>The returned values being const is an indication that you may not mutate these values safely.</p>
+
+<p>Typically, you will need to change any variables holding these values to be const. If for some reason you need to mutate the returned object, you should make a copy of the returned const object into a mutable non-const object, bearing in mind that your copy has no effect on the original <b>X509</b> object itself.</p>
+
+<p>The following functions have had arguments / return values related to <b>X509</b> constified. For full details see their relevant manual pages.</p>
+
+<p>NAME_CONSTRAINTS_check, NAME_CONSTRAINTS_check_CN, <a href="../man3/X509_add_cert.html">X509_add_cert(3)</a>, <a href="../man3/X509_add_ext.html">X509_add_ext(3)</a>, X509_alias_get0, <a href="../man3/X509_build_chain.html">X509_build_chain(3)</a>, X509_chain_check_suiteb, <a href="../man3/X509_check_ca.html">X509_check_ca(3)</a>, <a href="../man3/X509_check_email.html">X509_check_email(3)</a>, <a href="../man3/X509_check_host.html">X509_check_host(3)</a>, <a href="../man3/X509_check_ip.html">X509_check_ip(3)</a>, <a href="../man3/X509_check_ip_asc.html">X509_check_ip_asc(3)</a>, <a href="../man3/X509_check_issued.html">X509_check_issued(3)</a>, <a href="../man3/X509_check_purpose.html">X509_check_purpose(3)</a>, X509_check_trust, <a href="../man3/X509_CRL_get0_by_cert.html">X509_CRL_get0_by_cert(3)</a>, X509_find_by_issuer_and_serial, X509_find_by_subject, <a href="../man3/X509_get_ext.html">X509_get_ext(3)</a>, <a href="../man3/X509_get_extended_key_usage.html">X509_get_extended_key_usage(3)</a>, <a href="../man3/X509_get_extension_flags.html">X509_get_extension_flags(3)</a>, <a href="../man3/X509_get_key_usage.html">X509_get_key_usage(3)</a>, <a href="../man3/X509_get_pathlen.html">X509_get_pathlen(3)</a>, <a href="../man3/X509_get_proxy_pathlen.html">X509_get_proxy_pathlen(3)</a>, <a href="../man3/X509_get_pubkey.html">X509_get_pubkey(3)</a>, X509_get_pubkey_parameters, <a href="../man3/X509_get_signature_info.html">X509_get_signature_info(3)</a>, <a href="../man3/X509_get0_authority_issuer.html">X509_get0_authority_issuer(3)</a>, <a href="../man3/X509_get0_authority_key_id.html">X509_get0_authority_key_id(3)</a>, <a href="../man3/X509_get0_authority_serial.html">X509_get0_authority_serial(3)</a>, <a href="../man3/X509_get0_pubkey.html">X509_get0_pubkey(3)</a>, X509_get0_reject_objects, <a href="../man3/X509_get0_subject_key_id.html">X509_get0_subject_key_id(3)</a>, X509_get0_trust_objects, X509_get1_email, X509_get1_ocsp, X509_issuer_and_serial_hash, <a href="../man3/X509_issuer_name_hash.html">X509_issuer_name_hash(3)</a>, X509_issuer_name_hash_old, X509_keyid_get0, <a href="../man3/X509_load_http.html">X509_load_http(3)</a>, X509_print_ex_fp, X509_print_fp, X509_REQ_get1_email, X509_REQ_to_X509, <a href="../man3/X509_self_signed.html">X509_self_signed(3)</a>, <a href="../man3/X509_STORE_add_cert.html">X509_STORE_add_cert(3)</a>, <a href="../man3/X509_STORE_CTX_get1_issuer.html">X509_STORE_CTX_get1_issuer(3)</a>, <a href="../man3/X509_subject_name_hash.html">X509_subject_name_hash(3)</a>, X509_subject_name_hash_old, X509_to_X509_REQ, X509_TRUST_add, X509v3_addr_validate_resource_set, X509v3_asid_validate_resource_set</p>
+
+<p>The following two functions we &quot;un-constified&quot; As they were documented as returning an explicitly mutable pointer from within an <b>X509</b> object:</p>
+
+<dl>
+
+<dt id="X509_getm_notAfter-3"><a href="../man3/X509_getm_notAfter.html">X509_getm_notAfter(3)</a></dt>
+<dd>
+
+</dd>
+<dt id="X509_getm_notBefore-3"><a href="../man3/X509_getm_notBefore.html">X509_getm_notBefore(3)</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h3 id="Removal-of-atexit-usage">Removal of atexit() usage</h3>
+
+<p>libcrypto no longer arms OPENSSL_cleanup() function as atexit(3) handler. Memory leak detectors may report there is allocated, but still reachable, allocated memory at application exit. If clean report is desired, then application must call OPENSSL_cleanup() explicitly before main() returns.</p>
+
+<h3 id="Removal-of-fixed-D-TLS-version-method-functions">Removal of fixed (D)TLS version method functions</h3>
+
+<p>SSLv3_method(), SSLv3_server_method(), SSLv3_client_method(), TLSv1_method(), TLSv1_server_method(), TLSv1_client_method(), TLSv1_1_method(), TLSv1_1_server_method(), TLSv1_1_client_method(), TLSv1_2_method(), TLSv1_2_server_method(), TLSv1_2_client_method(), DTLSv1_method(), DTLSv1_server_method(), DTLSv1_client_method(), DTLSv1_2_method(), DTLSv1_2_server_method() and DTLSv1_2_client_method() were deprecated in the OpenSSL 1.1.0 release.</p>
+
+<p>Migrating applications should use DTLS_method(), DTLS_server_method(), DTLS_client_method(), TLS_method(), TLS_server_method(), TLS_client_method(), instead and set the version with the SSL_CTX_set_min_proto_version() and/or SSL_CTX_set_max_proto_version() API&#39;s.</p>
+
+<h3 id="Deprecation-of-EVP_MD_CTX_get0_md_data">Deprecation of EVP_MD_CTX_get0_md_data()</h3>
+
+<p>The function EVP_MD_CTX_get0_md_data() has been deprecated in 4.0. This function is only useful in previous versions to obtain the data stored in an <b>EVP_MD_CTX</b> by a custom EVP_MD implementation. However, the ability to create custom EVP_MD implementations has been removed in OpenSSL 4.0, so this function is no longer useful. It always returns NULL, so should simply be removed from applications that call it. Applications wishing to use a custom digest implementation should instead use the provider API.</p>
+
+<h3 id="Deprecation-of-ASN1_OBJECT_new">Deprecation of ASN1_OBJECT_new()</h3>
+
+<p>The function ASN1_OBJECT_new() has been deprecated in 4.0. The function is only useful internally because the type is opaque and there exist no setter functions. Hence, there never was a real use case for the function and calls to it can simply be removed.</p>
+
+<h3 id="Practical-behaviour-change-of-EVP_get_cipherby-and-EVP_get_digestby-functions">Practical behaviour change of EVP_get_cipherby* and EVP_get_digestby* functions</h3>
+
+<p>Before 4.0 functions <b>EVP_get_cipherby*</b> and <b>EVP_get_digestby*</b> were often used as fallback for EVP_CIPHER_fetch() and EVP_MD_fetch() implying the possibility to access an algorithm implementation provided by an engine. In case when an engine-provided algorithm was not available, these functions on success return the implementation from the default OpenSSL library context with default properties. Version 4.0 doesn&#39;t support engines, so, on success, these functions always return the implementation from the default OpenSSL library context with default properties. This is probably not the desired result for applications that use a nondefault library context.</p>
+
+<p>The other difference between <b>EVP_get_cipherby*</b>/<b>EVP_get_digestby*</b> and EVP_CIPHER_fetch()/EVP_MD_fetch() is that the former functions deal with algorithm aliases algorithm aliases added via OBJ_NAME_add(), and the newer ones don&#39;t (except the ones declared in a specific provider as explicit aliases). Applications wishing to preserve alias handling behaviour can first check for an alias using <b>OBJ_NAME_get()</b> (with <b>OBJ_NAME_TYPE_CIPHER_METH</b> or <b>OBJ_NAME_TYPE_MD_METH</b>) and fall back to EVP_CIPHER_fetch() or EVP_MD_fetch() if no match is found.</p>
+
 <h1 id="OPENSSL-3.6">OPENSSL 3.6</h1>
 
 <h2 id="Main-Changes-from-OpenSSL-3.5">Main Changes from OpenSSL 3.5</h2>
 
-<p>The functions EVP_PKEY_asn1_*() and <a href="../man3/EVP_PKEY_get0_asn1.html">EVP_PKEY_get0_asn1(3)</a> were deprecated in favour of the provider API. EVP_PKEY_assign_[DSA|SIPHASH]() were also deprecated. Please use the new high level and provider API.</p>
+<p>The functions EVP_PKEY_asn1_*() and EVP_PKEY_get0_asn1() were deprecated in favour of the provider API. EVP_PKEY_assign_[DSA|SIPHASH]() were also deprecated. Please use the new high level and provider API.</p>
 
 <h1 id="OPENSSL-3.1">OPENSSL 3.1</h1>
 
@@ -190,7 +359,7 @@
 
 <h2 id="Main-Changes-from-OpenSSL-1.1.1">Main Changes from OpenSSL 1.1.1</h2>
 
-<h3 id="Major-Release">Major Release</h3>
+<h3 id="Major-Release1">Major Release</h3>
 
 <p>OpenSSL 3.0 is a major release and consequently any application that currently uses an older version of OpenSSL will at the very least need to be recompiled in order to work with the new version. It is the intention that the large majority of applications will work unchanged with OpenSSL 3.0 if those applications previously worked with OpenSSL 1.1.1. However this is not guaranteed and some changes may be required in some cases. Changes may also be required if applications need to take advantage of some of the new features available in OpenSSL 3.0 such as the availability of the FIPS module.</p>
 
@@ -222,7 +391,7 @@
 
 <h3 id="Engines-and-METHOD-APIs">Engines and &quot;METHOD&quot; APIs</h3>
 
-<p>The refactoring to support Providers conflicts internally with the APIs used to support engines, including the ENGINE API and any function that creates or modifies custom &quot;METHODS&quot; (for example <a href="../man3/EVP_MD_meth_new.html">EVP_MD_meth_new(3)</a>, <a href="../man3/EVP_CIPHER_meth_new.html">EVP_CIPHER_meth_new(3)</a>, <a href="../man3/EVP_PKEY_meth_new.html">EVP_PKEY_meth_new(3)</a>, <a href="../man3/RSA_meth_new.html">RSA_meth_new(3)</a>, <a href="../man3/EC_KEY_METHOD_new.html">EC_KEY_METHOD_new(3)</a>, etc.). These functions are being deprecated in OpenSSL 3.0, and users of these APIs should know that their use can likely bypass provider selection and configuration, with unintended consequences. This is particularly relevant for applications written to use the OpenSSL 3.0 FIPS module, as detailed below. Authors and maintainers of external engines are strongly encouraged to refactor their code transforming engines into providers using the new Provider API and avoiding deprecated methods.</p>
+<p>The refactoring to support Providers conflicts internally with the APIs used to support engines, including the ENGINE API and any function that creates or modifies custom &quot;METHODS&quot; (for example EVP_MD_meth_new(), EVP_CIPHER_meth_new(), EVP_PKEY_meth_new(), <a href="../man3/RSA_meth_new.html">RSA_meth_new(3)</a>, <a href="../man3/EC_KEY_METHOD_new.html">EC_KEY_METHOD_new(3)</a>, etc.). These functions are being deprecated in OpenSSL 3.0, and users of these APIs should know that their use can likely bypass provider selection and configuration, with unintended consequences. This is particularly relevant for applications written to use the OpenSSL 3.0 FIPS module, as detailed below. Authors and maintainers of external engines are strongly encouraged to refactor their code transforming engines into providers using the new Provider API and avoiding deprecated methods.</p>
 
 <h3 id="Support-of-legacy-engines">Support of legacy engines</h3>
 
@@ -380,7 +549,7 @@
 
 <h4 id="Removed-FIPS_mode-and-FIPS_mode_set">Removed FIPS_mode() and FIPS_mode_set()</h4>
 
-<p>These functions are legacy APIs that are not applicable to the new provider model. Applications should instead use <a href="../man3/EVP_default_properties_is_fips_enabled.html">EVP_default_properties_is_fips_enabled(3)</a> and <a href="../man3/EVP_default_properties_enable_fips.html">EVP_default_properties_enable_fips(3)</a>.</p>
+<p>These functions are legacy APIs that are not applicable to the new provider model. Applications should instead use <a href="../man3/EVP_default_properties_is_fips_enabled.html">EVP_default_properties_is_fips_enabled(3)</a> and <a href="../man3/EVP_default_properties_enable_fips.html">EVP_default_properties_enable_fips(3)</a>. A convenience define from FIPS_mode() to <a href="../man3/EVP_default_properties_is_fips_enabled.html">EVP_default_properties_is_fips_enabled(3)</a> is provided in the &lt;openssl/evp.h&gt; header.</p>
 
 <h4 id="Key-generation-is-slower">Key generation is slower</h4>
 
@@ -1528,7 +1697,7 @@ EVP_MD_CTX_free(md_ctx);</code></pre>
 </li>
 <li><p>RSA_private_encrypt(), RSA_public_decrypt()</p>
 
-<p>This is equivalent to doing sign and verify recover operations (with a padding mode of none). See <a href="#Deprecated-low-level-signing-functions">&quot;Deprecated low-level signing functions&quot;</a>.</p>
+<p>These are equivalent to <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a> and <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a> operations, respectively. For compatibility with the legacy low-level operations, do not configure a signature digest and use the same padding mode as the legacy call (<b>RSA_PKCS1_PADDING</b> or <b>RSA_NO_PADDING</b>). See <a href="#Deprecated-low-level-signing-functions">&quot;Deprecated low-level signing functions&quot;</a>.</p>
 
 </li>
 <li><p>RSAPrivateKey_dup(), RSAPublicKey_dup()</p>

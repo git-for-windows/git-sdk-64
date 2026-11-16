@@ -48,6 +48,8 @@
 
 <p>A separate, although related, issue is modifying &quot;factory&quot; objects when other objects have been created from that. For example, an <b>SSL_CTX</b> object created by <a href="../man3/SSL_CTX_new.html">SSL_CTX_new(3)</a> is used to create per-connection <b>SSL</b> objects by calling <a href="../man3/SSL_new.html">SSL_new(3)</a>. In this specific case, and probably for factory methods in general, it is not safe to modify the factory object after it has been used to create other objects.</p>
 
+<p>An <b>SSL</b> connection object created by <a href="../man3/SSL_new.html">SSL_new(3)</a> should only be used by a single thread at a time. While it is possible for one thread to use an <b>SSL</b> object and then pass it to another thread, the application must ensure that no two threads are using the same <b>SSL</b> object concurrently. Each thread handling TLS connections in parallel should create its own <b>SSL</b> object from the shared <b>SSL_CTX</b>.</p>
+
 <h1 id="THREAD-CANCELLATION">THREAD CANCELLATION</h1>
 
 <p>Thread safety does not imply cancellation safety. Unless a specific function documents otherwise, OpenSSL does not guarantee that an in-progress call can be abandoned safely by thread cancellation or forced termination. An interruption can leave locks held, resources unreleased, or shared state inconsistent, making later use or cleanup unsafe.</p>

@@ -68,13 +68,15 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 <dt id="The-master-key">The master key</dt>
 <dd>
 
-<p>This can be set via a call to <a href="../man3/SSL_SESSION_set1_master_key.html">SSL_SESSION_set1_master_key(3)</a>.</p>
+<p>This can be set via a call to <a href="../man3/SSL_SESSION_set1_master_key.html">SSL_SESSION_set1_master_key(3)</a>. The master key must not be empty: a session whose master key has zero length is rejected with <b>SSL_R_BAD_PSK</b>.</p>
 
 </dd>
 <dt id="A-ciphersuite">A ciphersuite</dt>
 <dd>
 
-<p>Only the handshake digest associated with the ciphersuite is relevant for the PSK (the server may go on to negotiate any ciphersuite which is compatible with the digest). The application can use any TLSv1.3 ciphersuite. If <b>md</b> is not NULL the handshake digest for the ciphersuite should be the same. The ciphersuite can be set via a call to &lt;SSL_SESSION_set_cipher(3)&gt;. The handshake digest of an SSL_CIPHER object can be checked using &lt;SSL_CIPHER_get_handshake_digest(3)&gt;.</p>
+<p>Only the handshake digest associated with the ciphersuite is relevant for the PSK (the server may go on to negotiate any ciphersuite which is compatible with the digest). The application can use any TLSv1.3 ciphersuite. If <b>md</b> is not NULL the handshake digest for the ciphersuite should be the same. The ciphersuite can be set via a call to <a href="../man3/SSL_SESSION_set_cipher.html">SSL_SESSION_set_cipher(3)</a>. The handshake digest of an SSL_CIPHER object can be checked using <a href="../man3/SSL_CIPHER_get_handshake_digest.html">SSL_CIPHER_get_handshake_digest(3)</a>.</p>
+
+<p>While only the digest matters for the handshake, early data (0-RTT) is protected with the exact ciphersuite recorded on the session, and the associated ALPN protocol, if any. To send early data with this PSK the application must therefore offer that ciphersuite (not merely a digest-compatible one) and, where applicable, at least that ALPN protocol on the connection; otherwise the client completes the handshake without sending early data. See <a href="../man3/SSL_write_early_data.html">SSL_write_early_data(3)</a>.</p>
 
 </dd>
 <dt id="The-protocol-version">The protocol version</dt>
@@ -85,7 +87,7 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 </dd>
 </dl>
 
-<p>Additionally the maximum early data value should be set via a call to <a href="../man3/SSL_SESSION_set_max_early_data.html">SSL_SESSION_set_max_early_data(3)</a> if the PSK will be used for sending early data.</p>
+<p>Additionally the maximum early data value should be set via a call to <a href="../man3/SSL_SESSION_set_max_early_data.html">SSL_SESSION_set_max_early_data(3)</a> if the PSK will be used for sending early data; see <a href="../man3/SSL_write_early_data.html">SSL_write_early_data(3)</a> for the conditions under which early data is actually sent.</p>
 
 <p>Alternatively an SSL_SESSION created from a previous non-PSK handshake may also be used as the basis for a PSK.</p>
 
@@ -125,7 +127,7 @@ void SSL_set_psk_client_callback(SSL *ssl, SSL_psk_client_cb_func cb);</code></p
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_psk_find_session_callback.html">SSL_CTX_set_psk_find_session_callback(3)</a>, <a href="../man3/SSL_set_psk_find_session_callback.html">SSL_set_psk_find_session_callback(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_psk_find_session_callback.html">SSL_CTX_set_psk_find_session_callback(3)</a>, <a href="../man3/SSL_set_psk_find_session_callback.html">SSL_set_psk_find_session_callback(3)</a>, <a href="../man3/SSL_write_early_data.html">SSL_write_early_data(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

@@ -83,6 +83,8 @@
 </li>
 </ul>
 
+<p>String values in property definitions and queries are matched case-sensitively. An unquoted string value is converted to lowercase when it is parsed, while a quoted string value retains its case. For example, <code>foo=bar</code> matches <code>foo=&#39;bar&#39;</code>, and <code>foo=BAR</code> is treated as <code>foo=bar</code>, but neither matches <code>foo=&#39;BAR&#39;</code>.</p>
+
 <h2 id="Lookups">Lookups</h2>
 
 <p>When an algorithm is looked up, a property query is used to determine the best matching algorithm. All mandatory query clauses <b>must</b> be present and the implementation that additionally has the largest number of matching optional query clauses will be used. If there is more than one such optimal candidate, the result will be chosen from amongst those in an indeterminate way. Ordering of optional clauses is not significant.</p>

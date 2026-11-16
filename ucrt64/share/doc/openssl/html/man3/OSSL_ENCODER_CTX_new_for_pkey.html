@@ -63,7 +63,7 @@ int OSSL_ENCODER_CTX_set_passphrase_cb(OSSL_ENCODER_CTX *ctx,
 
 <p>If no suitable encoder implementation is found, OSSL_ENCODER_CTX_new_for_pkey() still creates a <b>OSSL_ENCODER_CTX</b>, but with no associated encoder (<a href="../man3/OSSL_ENCODER_CTX_get_num_encoders.html">OSSL_ENCODER_CTX_get_num_encoders(3)</a> returns zero). This helps the caller to distinguish between an error when creating the <b>OSSL_ENCODER_CTX</b> and missing encoder implementation, and allows it to act accordingly.</p>
 
-<p>Note that OSSL_ENCODER_CTX_new_for_pkey() finalises the OSSL_ENCODER_CTX; after that the OSSL_ENCODER_CTX_set_* and OSSL_ENCODER_CTX_add_* functions described in <a href="../man3/OSSL_ENCODER_CTX.html">OSSL_ENCODER_CTX(3)</a> shouldn&#39;t be called.</p>
+<p>Note that OSSL_ENCODER_CTX_new_for_pkey() freezes some fields of the OSSL_ENCODER_CTX, and as a result the functions <a href="../man3/OSSL_ENCODER_CTX_add_encoder.html">OSSL_ENCODER_CTX_add_encoder(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_add_extra.html">OSSL_ENCODER_CTX_add_extra(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_cleanup.html">OSSL_ENCODER_CTX_set_cleanup(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_construct.html">OSSL_ENCODER_CTX_set_construct(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_construct_data.html">OSSL_ENCODER_CTX_set_construct_data(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_output_structure.html">OSSL_ENCODER_CTX_set_output_structure(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_output_type.html">OSSL_ENCODER_CTX_set_output_type(3)</a> and <a href="../man3/OSSL_ENCODER_CTX_set_selection.html">OSSL_ENCODER_CTX_set_selection(3)</a> return an error if called on the resulting context. Note that <a href="../man3/OSSL_ENCODER_CTX_set_params.html">OSSL_ENCODER_CTX_set_params(3)</a> remains available to set encoder parameters.</p>
 
 <p>OSSL_ENCODER_CTX_set_cipher() tells the implementation what cipher should be used to encrypt encoded keys. The cipher is given by name <i>cipher_name</i>. The interpretation of that <i>cipher_name</i> is implementation dependent. The implementation may implement the cipher directly itself or by other implementations, or it may choose to fetch it. If the implementation supports fetching the cipher, then it may use <i>propquery</i> as properties to be queried for when fetching. <i>cipher_name</i> may also be NULL, which will result in unencrypted encoding.</p>
 
@@ -113,7 +113,7 @@ int OSSL_ENCODER_CTX_set_passphrase_cb(OSSL_ENCODER_CTX *ctx,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man3/OSSL_ENCODER.html">OSSL_ENCODER(3)</a>, <a href="../man3/OSSL_ENCODER_CTX.html">OSSL_ENCODER_CTX(3)</a></p>
+<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man3/OSSL_ENCODER.html">OSSL_ENCODER(3)</a>, <a href="../man3/OSSL_ENCODER_CTX.html">OSSL_ENCODER_CTX(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_params.html">OSSL_ENCODER_CTX_set_params(3)</a>.</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

@@ -16,32 +16,42 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>ASN1_STRING_dup, ASN1_STRING_cmp, ASN1_STRING_set, ASN1_STRING_length, ASN1_STRING_type, ASN1_STRING_get0_data, ASN1_STRING_data, ASN1_STRING_to_UTF8 - ASN1_STRING utility functions</p>
+<p>ASN1_STRING_set1_data, ASN1_STRING_set1_string, ASN1_STRING_get_length, ASN1_STRING_dup, ASN1_STRING_cmp, ASN1_STRING_set, ASN1_STRING_length, ASN1_STRING_type, ASN1_STRING_get0_data, ASN1_STRING_to_UTF8 - ASN1_STRING utility functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/asn1.h&gt;
 
-int ASN1_STRING_length(ASN1_STRING *x);
 const unsigned char *ASN1_STRING_get0_data(const ASN1_STRING *x);
-unsigned char *ASN1_STRING_data(ASN1_STRING *x);
 
 ASN1_STRING *ASN1_STRING_dup(const ASN1_STRING *a);
 
 int ASN1_STRING_cmp(ASN1_STRING *a, ASN1_STRING *b);
 
-int ASN1_STRING_set(ASN1_STRING *str, const void *data, int len);
-
 int ASN1_STRING_type(const ASN1_STRING *x);
 
-int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in);</code></pre>
+int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in);
+
+int ASN1_STRING_set1_data(ASN1_STRING *str, const uint8_t *data, size_t len);
+
+int ASN1_STRING_set1_string(ASN1_STRING *str, const char *data);
+
+size_t ASN1_STRING_get_length(const ASN1_STRING *x);</code></pre>
+
+<p>The following functions have been deprecated since OpenSSL 4.1, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>int ASN1_STRING_set(ASN1_STRING *str, const void *data, int len);
+
+int ASN1_STRING_length(ASN1_STRING *x);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -51,17 +61,19 @@ int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in);</code></pre
 
 <p>ASN1_STRING_get0_data() returns an internal pointer to the data of <i>x</i>. Since this is an internal pointer it should <b>not</b> be freed or modified in any way. <i>x</i> <b>MUST NOT</b> be NULL.</p>
 
-<p>ASN1_STRING_data() is similar to ASN1_STRING_get0_data() except the returned value is not constant. This function is deprecated: applications should use ASN1_STRING_get0_data() instead.</p>
-
 <p>ASN1_STRING_dup() returns a copy of the structure <i>a</i>.</p>
 
 <p>ASN1_STRING_cmp() compares <i>a</i> and <i>b</i> returning 0 if the two are identical. The string types and content are compared.</p>
 
-<p>ASN1_STRING_set() sets the data of string <i>str</i> to the buffer <i>data</i> or length <i>len</i>. The supplied data is copied. If <i>len</i> is -1 then the length is determined by strlen(data).</p>
+<p>ASN1_STRING_set() allocates memory for string <i>str</i> to hold <i>len</i> bytes of data. Any previously allocated memory owned by <i>str</i> will be freed or re-used. If <i>data</i> is not NULL, <i>len</i> bytes are copied from the memory pointed to by <i>data</i> to <i>str</i>. If <i>len</i> is -1 then the length is determined by strlen(data).</p>
+
+<p>ASN1_STRING_set1_data() allocates memory for string <i>str</i> to hold <i>len</i> bytes of data. Any previously allocated memory owned by <i>str</i> will be freed or re-used. If <i>data</i> is not NULL, <i>len</i> bytes are copied from the memory pointed to by <i>data</i> to <i>str</i>. It is an error to use this function on a string of type <b>ASN1_BIT_STRING</b>.</p>
+
+<p>ASN1_STRING_set1_string() allocates memory for the string <i>str</i> and makes a copy of the characters from <i>cstring</i>. Any previously allocated memory owned by <i>str</i> will be freed or re-used. <i>cstring</i> must point to a valid NUL-terminated C string, and must not be NULL. The terminating NUL byte is not included in the data copied into <i>str</i>. It is an error to use this function on a string of type <b>ASN1_BIT_STRING</b>.</p>
 
 <p>ASN1_STRING_type() returns the type of <i>x</i>, using standard constants such as <b>V_ASN1_OCTET_STRING</b>.</p>
 
-<p>ASN1_STRING_to_UTF8() converts the string <i>in</i> to UTF8 format, the converted data is allocated in a buffer in <i>*out</i>. The length of <i>out</i> is returned or a negative error code. The buffer <i>*out</i> should be freed using OPENSSL_free().</p>
+<p>ASN1_STRING_to_UTF8() converts the string <i>in</i> to UTF8 format, the converted data is allocated in a buffer in <i>*out</i>. The buffer is NUL terminated, so it is a valid C string, but the returned length does not include the terminating NUL. The length of <i>out</i> is returned or a negative error code. The buffer <i>*out</i> should be freed using OPENSSL_free(). See <a href="#WARNINGS">&quot;WARNINGS&quot;</a> below.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -69,21 +81,25 @@ int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in);</code></pre
 
 <p>These functions should <b>not</b> be used to examine or modify <b>ASN1_INTEGER</b> or <b>ASN1_ENUMERATED</b> types: the relevant <b>INTEGER</b> or <b>ENUMERATED</b> utility functions should be used instead.</p>
 
-<p>In general it cannot be assumed that the data returned by ASN1_STRING_data() is null terminated or does not contain embedded nulls. The actual format of the data will depend on the actual string type itself: for example for an IA5String the data will be ASCII, for a BMPString two bytes per character in big endian format, and for a UTF8String it will be in UTF8 format.</p>
+<p>In general it cannot be assumed that the data returned by ASN1_STRING_get0_data() is null terminated or does not contain embedded nulls. The actual format of the data will depend on the actual string type itself: for example for an IA5String the data will be ASCII, for a BMPString two bytes per character in big endian format, and for a UTF8String it will be in UTF8 format.</p>
 
-<p>Similar care should be take to ensure the data is in the correct format when calling ASN1_STRING_set().</p>
+<p>Similar care should be taken to ensure the data is in the correct format when calling ASN1_STRING_set(), ASN1_STRING_set1_data(), or ASN1_STRING_set1_string().</p>
+
+<h1 id="WARNINGS">WARNINGS</h1>
+
+<p>Although the buffer returned by ASN1_STRING_to_UTF8() is NUL terminated and is therefore a valid C string, the converted data may itself contain embedded NUL bytes. Using C string functions such as strlen() or strcmp() on the output is therefore inherently dangerous: they will stop at the first embedded NUL and silently process only part of the string, which can lead to incorrect comparisons or truncated data. Callers should use the returned length and not rely on NUL termination.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>ASN1_STRING_length() returns the length of the content of <i>x</i>.</p>
 
-<p>ASN1_STRING_get0_data() and ASN1_STRING_data() return an internal pointer to the data of <i>x</i>.</p>
+<p>ASN1_STRING_get0_data() returns an internal pointer to the data of <i>x</i>.</p>
 
 <p>ASN1_STRING_dup() returns a valid <b>ASN1_STRING</b> structure or NULL if an error occurred.</p>
 
 <p>ASN1_STRING_cmp() returns an integer greater than, equal to, or less than 0, according to whether <i>a</i> is greater than, equal to, or less than <i>b</i>.</p>
 
-<p>ASN1_STRING_set() returns 1 on success or 0 on error.</p>
+<p>ASN1_STRING_set(), ASN1_STRING_set1_data(), and ASN1_STRING_set1_string() return 1 on success or 0 on error or failure.</p>
 
 <p>ASN1_STRING_type() returns the type of <i>x</i>.</p>
 
@@ -93,9 +109,13 @@ int ASN1_STRING_to_UTF8(unsigned char **out, const ASN1_STRING *in);</code></pre
 
 <p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>ASN1_STRING_set1_data(), ASN1_STRING_set1_string(), and ASN1_STRING_get_length() were added in OpenSSL 4.1.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

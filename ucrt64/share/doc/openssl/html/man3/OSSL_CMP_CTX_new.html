@@ -268,6 +268,12 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 <p>Accept unprotected error responses which are either explicitly unprotected or where protection verification failed. Applies to regular error messages as well as certificate responses (IP/CP/KUP) and revocation responses (RP) with rejection. <b>WARNING:</b> This setting leads to unspecified behavior and it is meant exclusively to allow interoperability with server implementations violating RFC 9810.</p>
 
 </dd>
+<dt id="OSSL_CMP_OPT_NONMATCHED_ERROR_NONCES"><b>OSSL_CMP_OPT_NONMATCHED_ERROR_NONCES</b></dt>
+<dd>
+
+<p>Accept missing or non-matching transactionID or recipNonce in error messages. This can be helpful in case the server cannot provide a proper error message, for instance if it was unable to parse the ASN.1 encoding of a request message.</p>
+
+</dd>
 <dt id="OSSL_CMP_OPT_IGNORE_KEYUSAGE"><b>OSSL_CMP_OPT_IGNORE_KEYUSAGE</b></dt>
 <dd>
 
@@ -277,9 +283,9 @@ OSSL_CRMF_POPO_KEYENC     - decrypt the encrypted certificate
 <dt id="OSSL_CMP_OPT_PERMIT_TA_IN_EXTRACERTS_FOR_IR"><b>OSSL_CMP_OPT_PERMIT_TA_IN_EXTRACERTS_FOR_IR</b></dt>
 <dd>
 
-<p>Allow retrieving a trust anchor from extraCerts and using that to validate the certificate chain of an IP message. This is a quirk option added to support 3GPP TS 33.310.</p>
+<p>This is a quirk option added to support 3GPP TS 33.310. It leads to behavior violating RFCs 4210 and 9810. It allows using self-issued certificates from the extraCerts in an IP message as trust anchors when validating the CMP message protection certificate in this and any subsequent responses from the server in the same transaction, but only if these extraCerts can also be used as trust anchors for validating the newly enrolled certificate received in the IP message.</p>
 
-<p>Note that using this option is dangerous as the certificate obtained this way has not been authenticated (at least not at CMP level). Taking it over as a trust anchor implements trust-on-first-use (TOFU).</p>
+<p>Note that using this option is dangerous as the to-be-trusted certificates obtained this way have not been authenticated (at least not at CMP level). Taking them over as initial trust anchors implements a form of trust-on-first-use (TOFU).</p>
 
 </dd>
 <dt id="OSSL_CMP_OPT_NO_CACHE_EXTRACERTS"><b>OSSL_CMP_OPT_NO_CACHE_EXTRACERTS</b></dt>
@@ -502,7 +508,7 @@ OSSL_CMP_CTX_set1_secretValue(cmp_ctx, NULL, 0);</code></pre>
 
 <pre><code>OSSL_CMP_CTX_set1_cert(cmp_ctx, initialCert);
 OSSL_CMP_CTX_set1_pkey(cmp_ctx, initialKey);
-OSSL_CMP_CTX_set0_newPkey(cmp_ctx, 1, curentKey);
+OSSL_CMP_CTX_set0_newPkey(cmp_ctx, 1, currentKey);
 currentCert = OSSL_CMP_exec_CR_ses(cmp_ctx);</code></pre>
 
 <p>Perform a Key Update Request, signed using the cert (and key) to be updated:</p>
@@ -541,9 +547,11 @@ sk_OSSL_CMP_ITAV_pop_free(itavs, OSSL_CMP_ITAV_free);</code></pre>
 
 <p>OSSL_CMP_CTX_set1_serialNumber(), OSSL_CMP_CTX_get0_libctx(), OSSL_CMP_CTX_get0_propq(), and OSSL_CMP_CTX_get0_validatedSrvCert() were added in OpenSSL 3.2.</p>
 
-<p>OSSL_CMP_CTX_get0_geninfo_ITAVs() and the <b>OSSL_CMP_OPT_NO_CACHE_EXTRACERTS</b> option were added in OpenSSL 3.3.</p>
+<p>The <b>OSSL_CMP_OPT_NO_CACHE_EXTRACERTS</b> option as well as OSSL_CMP_CTX_get0_geninfo_ITAVs() were added in OpenSSL 3.3.</p>
 
 <p>Support for central key generation, requested via <b>OSSL_CRMF_POPO_NONE</b>, was added in OpenSSL 3.5.</p>
+
+<p>The <b>OSSL_CMP_OPT_NONMATCHED_ERROR_NONCES</b> option was added in OpenSSL 4.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

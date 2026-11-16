@@ -1,0 +1,192 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>X509_VERIFY_PARAM_set1_host</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Hostname-matching">Hostname matching</a></li>
+      <li><a href="#Email-matching">Email matching</a></li>
+      <li><a href="#IP-address-matching">IP address matching</a></li>
+      <li><a href="#Input-validation">Input validation</a></li>
+    </ul>
+  </li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>X509_VERIFY_PARAM_set1_host, X509_VERIFY_PARAM_add1_host, X509_VERIFY_PARAM_get0_host, X509_VERIFY_PARAM_set1_email, X509_VERIFY_PARAM_get0_email, X509_VERIFY_PARAM_set1_rfc822, X509_VERIFY_PARAM_add1_rfc822, X509_VERIFY_PARAM_set1_smtputf8, X509_VERIFY_PARAM_add1_smtputf8, X509_VERIFY_PARAM_set1_ip, X509_VERIFY_PARAM_add1_ip, X509_VERIFY_PARAM_set1_ip_asc, X509_VERIFY_PARAM_add1_ip_asc, X509_VERIFY_PARAM_get1_ip_asc, X509_VERIFY_PARAM_set1_host_input_validation, X509_VERIFY_PARAM_set1_rfc822_input_validation, X509_VERIFY_PARAM_set1_smtputf8_input_validation, X509_VERIFY_PARAM_set1_ip_input_validation - X509 verification reference identifier configuration</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/x509_vfy.h&gt;
+
+int X509_VERIFY_PARAM_set1_host(X509_VERIFY_PARAM *param,
+                                const char *name, size_t namelen);
+int X509_VERIFY_PARAM_add1_host(X509_VERIFY_PARAM *param,
+                                const char *name, size_t namelen);
+char *X509_VERIFY_PARAM_get0_host(X509_VERIFY_PARAM *param, int idx);
+
+int X509_VERIFY_PARAM_set1_email(X509_VERIFY_PARAM *param,
+                                 const char *email, size_t emaillen);
+char *X509_VERIFY_PARAM_get0_email(X509_VERIFY_PARAM *param);
+int X509_VERIFY_PARAM_set1_rfc822(X509_VERIFY_PARAM *param,
+                                  const char *email, size_t emaillen);
+int X509_VERIFY_PARAM_add1_rfc822(X509_VERIFY_PARAM *param,
+                                  const char *email, size_t emaillen);
+int X509_VERIFY_PARAM_set1_smtputf8(X509_VERIFY_PARAM *param,
+                                    const char *email, size_t emaillen);
+int X509_VERIFY_PARAM_add1_smtputf8(X509_VERIFY_PARAM *param,
+                                    const char *email, size_t emaillen);
+
+int X509_VERIFY_PARAM_set1_ip(X509_VERIFY_PARAM *param,
+                              const unsigned char *ip, size_t iplen);
+int X509_VERIFY_PARAM_add1_ip(X509_VERIFY_PARAM *param,
+                              const unsigned char *ip, size_t iplen);
+int X509_VERIFY_PARAM_set1_ip_asc(X509_VERIFY_PARAM *param,
+                                  const char *ip_asc);
+int X509_VERIFY_PARAM_add1_ip_asc(X509_VERIFY_PARAM *param,
+                                  const char *ip_asc);
+char *X509_VERIFY_PARAM_get1_ip_asc(X509_VERIFY_PARAM *param);
+
+void X509_VERIFY_PARAM_set1_host_input_validation(X509_VERIFY_PARAM *param,
+    int (*validate_host)(const char *name, size_t len));
+void X509_VERIFY_PARAM_set1_rfc822_input_validation(X509_VERIFY_PARAM *param,
+    int (*validate_rfc822)(const char *name, size_t len));
+void X509_VERIFY_PARAM_set1_smtputf8_input_validation(X509_VERIFY_PARAM *param,
+    int (*validate_smtputf8)(const char *name, size_t len));
+void X509_VERIFY_PARAM_set1_ip_input_validation(X509_VERIFY_PARAM *param,
+    int (*validate_ip)(const uint8_t *name, size_t len));</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>These functions configure the set of <b>reference identifiers</b> that an <b>X509_VERIFY_PARAM</b> will match against the names asserted by a peer&#39;s certificate during certificate verification. Four families of reference identifier are supported, each matched against a distinct location in the certificate:</p>
+
+<ul>
+
+<li><p><b>DNS hostnames</b>, matched against <b>dNSName</b> entries in the certificate&#39;s subject alternative name (SAN) extension.</p>
+
+</li>
+<li><p><b>RFC 822 email addresses</b>, matched against <b>rfc822Name</b> entries in the certificate&#39;s SAN.</p>
+
+</li>
+<li><p><b>SMTPUTF8 email addresses</b>, matched against <b>otherName</b> entries of type <b>id-on-SmtpUTF8Mailbox</b> (RFC 8398) in the certificate&#39;s SAN.</p>
+
+</li>
+<li><p><b>IP addresses</b>, matched against <b>iPAddress</b> entries in the certificate&#39;s SAN.</p>
+
+</li>
+</ul>
+
+<p>For each family the <code>set1_</code> form clears any previously configured values and installs the supplied value as the sole reference identifier, and the <code>add1_</code> form appends the supplied value to the existing list. When a list contains more than one entry, the certificate is considered to match if any of the configured values matches a corresponding name in the certificate.</p>
+
+<p>For the functions whose value is a string with an explicit length (the hostname and email families), if the length argument is zero the value must be NUL-terminated; otherwise the length argument must be the length of the value in bytes.</p>
+
+<h2 id="Hostname-matching">Hostname matching</h2>
+
+<p>X509_VERIFY_PARAM_set1_host() sets in <i>param</i> the expected DNS hostname to <i>name</i>, for matching against <b>dNSName</b> SAN entries in the peer&#39;s certificate, clearing any previously specified hostname. If <i>name</i> is NULL or the empty string, the host list is cleared, hostname matching is disabled, and the call succeeds.</p>
+
+<p>X509_VERIFY_PARAM_add1_host() adds <i>name</i> as an additional reference identifier that can match a <b>dNSName</b> SAN entry in the peer&#39;s certificate. Any previous names set via X509_VERIFY_PARAM_set1_host() or X509_VERIFY_PARAM_add1_host() are retained. If <i>name</i> is NULL or the empty string, the list is left unchanged and the call succeeds.</p>
+
+<p>X509_VERIFY_PARAM_get0_host() returns the <i>idx</i>th DNS hostname previously configured on <i>param</i> via X509_VERIFY_PARAM_set1_host() or X509_VERIFY_PARAM_add1_host(), or NULL if <i>idx</i> is out of range. To iterate over the configured hostnames, start with <i>idx</i> = 0 and increment <i>idx</i> until the function returns NULL. The returned string is owned by the library and remains valid until <i>param</i> is modified or freed; the caller must not free it.</p>
+
+<p>Hostname matching is governed by the <b>X509_CHECK_FLAG_*</b> host flags; see <a href="../man3/X509_VERIFY_PARAM_set_hostflags.html">X509_VERIFY_PARAM_set_hostflags(3)</a> for the available flags and their effect on wildcards and subject-DN consultation. The names by which the peer matched can be retrieved via <a href="../man3/X509_VERIFY_PARAM_get0_peername.html">X509_VERIFY_PARAM_get0_peername(3)</a>.</p>
+
+<h2 id="Email-matching">Email matching</h2>
+
+<p>The <code>_rfc822()</code> family of functions is used for email names that have ASCII localpart addresses, in which case the domain part of the address must be represented in A-label form. They are used to specify the list of values to match against the SAN <b>rfc822Name</b> entries in certificates.</p>
+
+<p>X509_VERIFY_PARAM_set1_rfc822() clears all expected RFC 822 email addresses, and sets the expected RFC 822 email address to <i>email</i> for matching against <b>rfc822Name</b> SAN entries in the peer&#39;s certificate. A NULL <i>email</i> clears the RFC 822 list and returns success; the empty string clears the list but returns failure.</p>
+
+<p>X509_VERIFY_PARAM_add1_rfc822() adds <i>email</i> as an additional reference identifier that can match a <b>rfc822Name</b> SAN entry in the peer&#39;s certificate. Any previous names set via X509_VERIFY_PARAM_set1_rfc822(), X509_VERIFY_PARAM_add1_rfc822(), or X509_VERIFY_PARAM_set1_email() are retained on success; no change is made on failure. <i>email</i> must not be NULL, and the empty string is rejected as a failure.</p>
+
+<p>The <code>_smtputf8()</code> family of functions is used for email names that have a non-ASCII localpart, in which case the domain part of the address must be represented in U-label form. They are used to specify the list of values to match against the <b>otherName</b> entries of type <b>id-on-SmtpUTF8Mailbox</b> (RFC 8398) in certificates.</p>
+
+<p>X509_VERIFY_PARAM_set1_smtputf8() sets the expected SMTPUTF8 email address to <i>email</i> for matching against <b>otherName</b> SAN entries of type <b>id-on-SmtpUTF8Mailbox</b>, clearing any previously specified SMTPUTF8 email address. A NULL <i>email</i> clears the SMTPUTF8 list and returns success; the empty string clears the list but returns failure.</p>
+
+<p>X509_VERIFY_PARAM_add1_smtputf8() adds <i>email</i> as an additional reference identifier that can match an <b>otherName</b> SAN entry of type <b>id-on-SmtpUTF8Mailbox</b> in the peer&#39;s certificate. Any previous names set via X509_VERIFY_PARAM_set1_smtputf8(), X509_VERIFY_PARAM_add1_smtputf8(), or X509_VERIFY_PARAM_set1_email() are retained on success; no change is made on failure. <i>email</i> must not be NULL, and the empty string is rejected as a failure.</p>
+
+<p>X509_VERIFY_PARAM_set1_email() is a convenience function that calls X509_VERIFY_PARAM_set1_rfc822() and X509_VERIFY_PARAM_set1_smtputf8() with the same <i>email</i> argument and succeeds if either call succeeds. This allows a caller that does not know whether a given email value is ASCII-localpart or SMTPUTF8 to install it for matching against both <b>rfc822Name</b> and <b>otherName</b> id-on-SmtpUTF8Mailbox SAN entries. A NULL <i>email</i> clears both lists and returns success.</p>
+
+<p>When any email address is configured, certificate verification automatically invokes <a href="../man3/X509_check_email.html">X509_check_email(3)</a>. The peer is considered verified when any one of the specified RFC 822 names matches an <b>rfc822Name</b> SAN entry, or any one of the specified SMTPUTF8 names matches an <b>otherName</b> id-on-SmtpUTF8Mailbox SAN entry, in the certificate.</p>
+
+<p>X509_VERIFY_PARAM_get0_email() returns a previously configured expected email address from <i>param</i>, or NULL if neither an RFC 822 nor an SMTPUTF8 address has been set. When both have been configured, the first RFC 822 address is returned in preference to any SMTPUTF8 address. The returned string is owned by the library and remains valid until <i>param</i> is modified or freed; the caller must not free it.</p>
+
+<h2 id="IP-address-matching">IP address matching</h2>
+
+<p>X509_VERIFY_PARAM_set1_ip() sets the expected IP address to <i>ip</i> for matching against <b>iPAddress</b> SAN entries in the peer&#39;s certificate, clearing any previously specified IP address. The <i>ip</i> argument must be in binary format, in network byte order, and <i>iplen</i> must be 4 for IPv4 or 16 for IPv6. A NULL <i>ip</i> clears the IP list, disables IP matching, and returns success.</p>
+
+<p>X509_VERIFY_PARAM_add1_ip() adds <i>ip</i> as an additional reference identifier that can match an <b>iPAddress</b> SAN entry in the peer&#39;s certificate. Any previous addresses set via X509_VERIFY_PARAM_set1_ip(), X509_VERIFY_PARAM_add1_ip(), X509_VERIFY_PARAM_set1_ip_asc(), or X509_VERIFY_PARAM_add1_ip_asc() are retained on success; no change is made on failure. It is a failure if <i>ip</i> is NULL or <i>iplen</i> is neither 4 nor 16.</p>
+
+<p>X509_VERIFY_PARAM_set1_ip_asc() sets the expected IP address to <i>ip_asc</i> for matching against <b>iPAddress</b> SAN entries in the peer&#39;s certificate, clearing any previously specified IP address. The <i>ip_asc</i> argument must be a NUL-terminated ASCII string: dotted decimal quad for IPv4 and colon-separated hexadecimal for IPv6. The condensed &quot;::&quot; notation is supported for IPv6 addresses. A NULL <i>ip_asc</i> clears the IP list and returns success; a string that cannot be parsed as an IP address, including the empty string, returns failure and leaves the list unchanged.</p>
+
+<p>X509_VERIFY_PARAM_add1_ip_asc() adds <i>ip_asc</i> as an additional reference identifier that can match an <b>iPAddress</b> SAN entry in the peer&#39;s certificate. The format requirements on <i>ip_asc</i> are the same as for X509_VERIFY_PARAM_set1_ip_asc(). Any previous addresses set via X509_VERIFY_PARAM_set1_ip(), X509_VERIFY_PARAM_add1_ip(), X509_VERIFY_PARAM_set1_ip_asc(), or X509_VERIFY_PARAM_add1_ip_asc() are retained on success; no change is made on failure. <i>ip_asc</i> must not be NULL; a string that cannot be parsed as an IP address, including the empty string, is a failure.</p>
+
+<p>When any IP address is configured, certificate verification automatically invokes <a href="../man3/X509_check_ip.html">X509_check_ip(3)</a> to match against <b>iPAddress</b> SAN entries.</p>
+
+<p>X509_VERIFY_PARAM_get1_ip_asc() returns a previously configured expected IP address from <i>param</i> as a freshly allocated ASCII string (dotted decimal quad for IPv4, colon-separated hexadecimal for IPv6), or NULL if no IP address has been set. The caller is responsible for freeing the returned string with <a href="../man3/OPENSSL_free.html">OPENSSL_free(3)</a>.</p>
+
+<h2 id="Input-validation">Input validation</h2>
+
+<p>X509_VERIFY_PARAM_set1_host_input_validation(), X509_VERIFY_PARAM_set1_rfc822_input_validation(), X509_VERIFY_PARAM_set1_smtputf8_input_validation() and X509_VERIFY_PARAM_set1_ip_input_validation() install a caller-supplied callback that validates a reference-identifier value at the point it is configured via the corresponding <code>set1_</code> or <code>add1_</code> function. The callback receives the value and its length, and returns a nonzero value to accept the input or zero to reject it; on rejection the <code>set1_</code>/<code>add1_</code> call fails and no value is stored.</p>
+
+<p>These callbacks override OpenSSL&#39;s built-in input validation for the corresponding name type. They affect only the validation performed when reference identifiers are installed on the verification parameters; they do not affect the actual matching performed during certificate verification.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>The <code>set1_</code> and <code>add1_</code> functions return 1 for success and 0 for failure.</p>
+
+<p>X509_VERIFY_PARAM_get0_host() and X509_VERIFY_PARAM_get0_email() return a pointer to a library-owned string, or NULL if no such configured value exists (X509_VERIFY_PARAM_get0_host() also returns NULL when its index argument is out of range). Callers must not free the returned pointer.</p>
+
+<p>X509_VERIFY_PARAM_get1_ip_asc() returns a freshly allocated string that the caller must free with <a href="../man3/OPENSSL_free.html">OPENSSL_free(3)</a>, or NULL if no IP address has been configured.</p>
+
+<p>The <code>set1_*_input_validation()</code> functions do not return a value.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>The reference identifier lists configured by these functions are consulted by <a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a> when the corresponding <b>X509_check_*</b> checks are performed. Configuring a list for a given name type implicitly enables the corresponding check; clearing it (by passing NULL or the empty string to the <code>set1_</code> form) disables it.</p>
+
+<p>By default only the subject alternative name extension is consulted. When <b>X509_CHECK_FLAG_ALWAYS_CHECK_SUBJECT</b> is set, the configured hostnames are also matched against the <b>commonName</b> attribute of the certificate&#39;s subject distinguished name, and the configured RFC 822 email addresses against the subject <b>emailAddress</b> attribute. SMTPUTF8 email and IP addresses have no subject distinguished name counterpart and are always matched only against the subject alternative name extension. See <a href="../man3/X509_VERIFY_PARAM_set_hostflags.html">X509_VERIFY_PARAM_set_hostflags(3)</a> and <a href="../man3/X509_check_host.html">X509_check_host(3)</a>.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set_flags.html">X509_VERIFY_PARAM_set_flags(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set_hostflags.html">X509_VERIFY_PARAM_set_hostflags(3)</a>, <a href="../man3/X509_check_host.html">X509_check_host(3)</a>, <a href="../man3/X509_check_email.html">X509_check_email(3)</a>, <a href="../man3/X509_check_ip.html">X509_check_ip(3)</a>, <a href="../man3/NAME_CONSTRAINTS_check.html">NAME_CONSTRAINTS_check(3)</a>, <a href="../man3/SSL_set1_host.html">SSL_set1_host(3)</a>, <a href="../man3/SSL_add1_host.html">SSL_add1_host(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>X509_VERIFY_PARAM_set1_host(), X509_VERIFY_PARAM_add1_host(), X509_VERIFY_PARAM_set1_email(), X509_VERIFY_PARAM_set1_ip(), and X509_VERIFY_PARAM_set1_ip_asc() were added in OpenSSL 1.0.2.</p>
+
+<p>X509_VERIFY_PARAM_get0_host(), X509_VERIFY_PARAM_get0_email(), and X509_VERIFY_PARAM_get1_ip_asc() were added in OpenSSL 3.0.</p>
+
+<p>X509_VERIFY_PARAM_add1_ip_asc() was added in OpenSSL 1.1.0.</p>
+
+<p>X509_VERIFY_PARAM_set1_rfc822(), X509_VERIFY_PARAM_add1_rfc822(), X509_VERIFY_PARAM_set1_smtputf8(), X509_VERIFY_PARAM_add1_smtputf8(), X509_VERIFY_PARAM_add1_ip(), X509_VERIFY_PARAM_set1_host_input_validation(), X509_VERIFY_PARAM_set1_rfc822_input_validation(), X509_VERIFY_PARAM_set1_smtputf8_input_validation(), and X509_VERIFY_PARAM_set1_ip_input_validation() were added in OpenSSL 4.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

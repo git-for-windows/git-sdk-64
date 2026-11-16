@@ -43,7 +43,7 @@ STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <p>X509_STORE_get1_objects() returns a snapshot of all objects in the store&#39;s X509 cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The caller is responsible for freeing the returned list, using sk_X509_OBJECT_pop_free(sk, X509_OBJECT_free).</p>
 
-<p>X509_STORE_get0_objects() retrieves an internal pointer to the store&#39;s X509 object cache. The cache contains <b>X509</b> and <b>X509_CRL</b> objects. The returned pointer must not be freed by the calling application. If the store is shared across multiple threads, it is not safe to use the result of this function. Use X509_STORE_get1_objects() instead, which avoids this problem.</p>
+<p>X509_STORE_get0_objects() was deprecated in OpenSSL 4.0. Applications should instead use X509_STORE_get1_objects() to avoid potential issues associated with X509_STORE_get0_objects(). The X509_STORE_get0_objects() returns an internal pointer to the store&#39;s cache of X509 and X509_CRL objects. This pointer references internal data structures and must not be freed by the application. Since the returned pointer exposes shared internal state, its use in multithreaded contexts is inherently unsafe without external synchronisation. When a store is shared across threads, callers are required to acquire the store lock via X509_STORE_lock() before invoking X509_STORE_get0_objects().</p>
 
 <p>X509_STORE_get1_all_certs() returns a list of all certificates in the store. The caller is responsible for freeing the returned list with OSSL_STACK_OF_X509_free().</p>
 
@@ -55,7 +55,7 @@ STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <p>X509_STORE_get1_objects() returns a pointer to a stack of the retrieved objects on success, else NULL.</p>
 
-<p>X509_STORE_get0_objects() returns a pointer to a stack of <b>X509_OBJECT</b>.</p>
+<p>X509_STORE_get0_objects() returns a pointer to a stack of <b>X509_OBJECT</b> or NULL if the stack construction has failed.</p>
 
 <p>X509_STORE_get1_all_certs() returns a pointer to a stack of the retrieved certificates on success, else NULL.</p>
 
@@ -69,7 +69,7 @@ STACK_OF(X509) *X509_STORE_get1_all_certs(X509_STORE *xs);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

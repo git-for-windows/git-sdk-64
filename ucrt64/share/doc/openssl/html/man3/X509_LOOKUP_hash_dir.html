@@ -49,7 +49,7 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type);</code
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p><b>X509_LOOKUP_hash_dir</b> and <b>X509_LOOKUP_file</b> are two certificate lookup methods to use with <b>X509_STORE</b>, provided by OpenSSL library.</p>
+<p><b>X509_LOOKUP_hash_dir</b> and <b>X509_LOOKUP_file</b>, and <b>X509_LOOKUP_store</b> are certificate and CRL lookup methods to use with <b>X509_STORE</b>, provided by OpenSSL library.</p>
 
 <p>Users of the library typically do not need to create instances of these methods manually, they would be created automatically by <a href="../man3/X509_STORE_load_locations.html">X509_STORE_load_locations(3)</a> or <a href="../man3/SSL_CTX_load_verify_locations.html">SSL_CTX_load_verify_locations(3)</a> functions.</p>
 
@@ -75,7 +75,7 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type);</code
 
 <h2 id="Hashed-Directory-Method">Hashed Directory Method</h2>
 
-<p><b>X509_LOOKUP_hash_dir</b> is a more advanced method, which loads certificates and CRLs on demand, and caches them in memory once they are loaded. As of OpenSSL 1.0.0, it also checks for newer CRLs upon each lookup, so that newer CRLs are as soon as they appear in the directory.</p>
+<p><b>X509_LOOKUP_hash_dir</b> is a more advanced method, which loads certificates and CRLs on demand, and caches them in memory once they are loaded. It also checks for newer CRLs upon each lookup, so that newer CRLs are as soon as they appear in the directory.</p>
 
 <p>The directory should contain one certificate or CRL per file in PEM format, with a filename of the form <i>hash</i>.<i>N</i> for a certificate, or <i>hash</i>.<b>r</b><i>N</i> for a CRL. The <i>hash</i> is the value returned by the <a href="../man3/X509_NAME_hash_ex.html">X509_NAME_hash_ex(3)</a> function applied to the subject name for certificates or issuer name for CRLs. The hash can also be obtained via the <b>-hash</b> option of the <a href="../man1/openssl-x509.html">openssl-x509(1)</a> or <a href="../man1/openssl-crl.html">openssl-crl(1)</a> commands.</p>
 
@@ -85,13 +85,13 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type);</code
 
 <p>When checking for new CRLs once one CRL for given hash value is loaded, hash_dir lookup method checks only for certificates with sequence number greater than that of the already cached CRL.</p>
 
-<p>Note that the hash algorithm used for subject name hashing changed in OpenSSL 1.0.0, and all certificate stores have to be rehashed when moving from OpenSSL 0.9.8 to 1.0.0.</p>
-
-<p>OpenSSL includes a <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a> utility which creates symlinks with hashed names for all files with <i>.pem</i> suffix in a given directory.</p>
+<p>OpenSSL includes a <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a> utility which creates symlinks with hashed names for files in PEM format in a given directory.</p>
 
 <h2 id="OSSL_STORE-Method">OSSL_STORE Method</h2>
 
 <p><b>X509_LOOKUP_store</b> is a method that allows access to any store of certificates and CRLs through any loader supported by <a href="../man7/ossl_store.html">ossl_store(7)</a>. It works with the help of URIs, which can be direct references to certificates or CRLs, but can also be references to catalogues of such objects (that behave like directories).</p>
+
+<p><b>X509_LOOKUP_store</b> ignores in its input anything else besides certificates and CRLs since OpenSSL 4.0.</p>
 
 <p>This method overlaps the <a href="#File-Method">&quot;File Method&quot;</a> and <a href="#Hashed-Directory-Method">&quot;Hashed Directory Method&quot;</a> because of the &#39;file:&#39; scheme loader. It does no caching of its own, but can use a caching <a href="../man7/ossl_store.html">ossl_store(7)</a> loader, and therefore depends on the loader&#39;s capability.</p>
 
@@ -103,15 +103,17 @@ int X509_load_cert_crl_file(X509_LOOKUP *ctx, const char *file, int type);</code
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/PEM_read_PrivateKey.html">PEM_read_PrivateKey(3)</a>, <a href="../man3/X509_STORE_load_locations.html">X509_STORE_load_locations(3)</a>, <a href="../man3/SSL_CTX_load_verify_locations.html">SSL_CTX_load_verify_locations(3)</a>, <a href="../man3/X509_LOOKUP_meth_new.html">X509_LOOKUP_meth_new(3)</a>, <a href="../man7/ossl_store.html">ossl_store(7)</a></p>
+<p><a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>, <a href="../man3/PEM_read_PrivateKey.html">PEM_read_PrivateKey(3)</a>, <a href="../man3/X509_STORE_load_locations.html">X509_STORE_load_locations(3)</a>, <a href="../man3/SSL_CTX_load_verify_locations.html">SSL_CTX_load_verify_locations(3)</a>, <a href="../man3/X509_LOOKUP_meth_new.html">X509_LOOKUP_meth_new(3)</a>, <a href="../man7/ossl_store.html">ossl_store(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
+
+<p>The hash algorithm used for subject name hashing changed in OpenSSL 1.0.0. All certificate stores had to be rehashed when moving from OpenSSL 0.9.8 to 1.0.0.</p>
 
 <p>The functions X509_load_cert_file_ex(), X509_load_cert_crl_file_ex() and X509_LOOKUP_store() were added in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

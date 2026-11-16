@@ -38,8 +38,6 @@
 
 <p>Since OpenSSL 3.0 keys, single certificates, and CRLs can be read from files in any of the <b>DER</b>, <b>PEM</b> or <b>P12</b> formats. Specifying their input format is no more needed and the openssl commands will automatically try all the possible formats. However if the <b>DER</b> or <b>PEM</b> input format is specified it will be enforced.</p>
 
-<p>In order to access a key via an engine the input format <b>ENGINE</b> may be used; alternatively the key identifier in the &lt;uri&gt; argument of the respective key option may be preceded by <code>org.openssl.engine:</code>. See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a> for an example usage of the latter.</p>
-
 <h1 id="OPTIONS">OPTIONS</h1>
 
 <h2 id="Format-Options">Format Options</h2>
@@ -81,11 +79,7 @@
 
 <p>A binary format, encoded or parsed according to Distinguished Encoding Rules (DER) of the ASN.1 data language.</p>
 
-</dd>
-<dt id="ENGINE"><b>ENGINE</b></dt>
-<dd>
-
-<p>Used to specify that the cryptographic material is in an OpenSSL <b>engine</b>. An engine must be configured or specified using the <b>-engine</b> option. A password or PIN may be supplied to the engine using the <b>-passin</b> option.</p>
+<p>When a command reads a single DER object, it may stop after successfully decoding that object. Any trailing data in the input is not necessarily examined or rejected. Therefore, a successful command does not by itself confirm that the entire input consists of one valid DER object.</p>
 
 </dd>
 <dt id="P12"><b>P12</b></dt>

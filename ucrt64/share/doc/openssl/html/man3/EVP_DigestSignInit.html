@@ -117,7 +117,7 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sig,
 
 <p>If RSA-PSS is used and restrictions apply then the digest must match.</p>
 
-<p>EVP_DigestSignInit() works in the same way as EVP_DigestSignInit_ex() except that the <i>mdname</i> parameter will be inferred from the supplied digest <i>type</i>, and <i>props</i> will be NULL. Where supplied the ENGINE <i>e</i> will be used for the signing and digest algorithm implementations. <i>e</i> may be NULL.</p>
+<p>EVP_DigestSignInit() works in the same way as EVP_DigestSignInit_ex() except that the <i>mdname</i> parameter will be inferred from the supplied digest <i>type</i>, and <i>props</i> will be NULL. <i>e</i> <b>must</b> be NULL.</p>
 
 <p>EVP_DigestSignUpdate() hashes <i>cnt</i> bytes of data at <i>d</i> into the signature context <i>ctx</i>. This function can be called several times on the same <i>ctx</i> to include additional data. <i>ctx</i> <b>MUST NOT</b> be NULL.</p>
 

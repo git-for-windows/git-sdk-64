@@ -73,7 +73,7 @@
 
 <p>Server authentication options:</p>
 
-<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-no_cache_extracerts</b>] [<b>-srvcertout</b> <i>filename</i>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>] [<b>-oldwithold</b> <i>filename</i>] [<b>-newwithnew</b> <i>filename</i>] [<b>-newwithold</b> <i>filename</i>] [<b>-oldwithnew</b> <i>filename</i>] [<b>-crlcert</b> <i>filename</i>] [<b>-oldcrl</b> <i>filename</i>] [<b>-crlout</b> <i>filename</i>]</p>
+<p>[<b>-trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-untrusted</b> <i>filenames</i>|<i>uris</i>] [<b>-srvcert</b> <i>filename</i>|<i>uri</i>] [<b>-expect_sender</b> <i>name</i>] [<b>-ignore_keyusage</b>] [<b>-unprotected_errors</b>] [<b>-nonmatched_error_nonces</b>] [<b>-ta_in_ip_extracerts</b>] [<b>-no_cache_extracerts</b>] [<b>-srvcertout</b> <i>filename</i>] [<b>-extracertsout</b> <i>filename</i>] [<b>-cacertsout</b> <i>filename</i>] [<b>-oldwithold</b> <i>filename</i>] [<b>-newwithnew</b> <i>filename</i>] [<b>-newwithold</b> <i>filename</i>] [<b>-oldwithnew</b> <i>filename</i>] [<b>-crlcert</b> <i>filename</i>] [<b>-oldcrl</b> <i>filename</i>] [<b>-crlout</b> <i>filename</i>]</p>
 
 <p>Client authentication and protection options:</p>
 
@@ -81,7 +81,7 @@
 
 <p>Credentials format options:</p>
 
-<p>[<b>-certform</b> <i>PEM|DER</i>] [<b>-crlform</b> <i>PEM|DER</i>] [<b>-keyform</b> <i>PEM|DER|P12|ENGINE</i>] [<b>-otherpass</b> <i>arg</i>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p>[<b>-certform</b> <i>PEM|DER</i>] [<b>-crlform</b> <i>PEM|DER</i>] [<b>-keyform</b> <i>PEM|DER|P12</i>] [<b>-otherpass</b> <i>arg</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p>Random state options:</p>
 
@@ -89,7 +89,7 @@
 
 <p>TLS connection options:</p>
 
-<p>[<b>-tls_used</b>] [<b>-tls_cert</b> <i>filename</i>|<i>uri</i>] [<b>-tls_key</b> <i>filename</i>|<i>uri</i>] [<b>-tls_keypass</b> <i>arg</i>] [<b>-tls_extra</b> <i>filenames</i>|<i>uris</i>] [<b>-tls_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-tls_host</b> <i>name</i>]</p>
+<p>[<b>-tls_used</b>] [<b>-tls_cert</b> <i>filename</i>|<i>uri</i>] [<b>-tls_key</b> <i>filename</i>|<i>uri</i>] [<b>-tls_keypass</b> <i>arg</i>] [<b>-tls_extra</b> <i>filenames</i>|<i>uris</i>] [<b>-tls_trusted</b> <i>filenames</i>|<i>uris</i>] [<b>-tls_host</b> <i>host</i>]</p>
 
 <p>Client-side debugging options:</p>
 
@@ -426,17 +426,21 @@
 <dt id="server-http-s-:-userinfo-host-:port-path-query-fragment"><b>-server</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The <i>host</i> domain name or IP address and optionally <i>port</i> of the CMP server to connect to using HTTP(S). IP address may be for v4 or v6, such as <code>127.0.0.1</code> or <code>[::1]</code> for localhost. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
+<p>The <i>host</i> domain name or IP address and optionally <i>port</i> of the CMP server to connect to via HTTP(S). An IP address may be for v4 or v6, such as <code>127.0.0.1</code> or <code>[::1]</code> for <code>localhost</code>. If the <i>host</i> string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>.</p>
+
+<p>For TLS connections, the name verified in server certificates is <i>host</i> unless the <b>-tls_host</b> option is used to specify a different name. If <i>host</i> is a DNS name, it is also used for TLS Server Name Indication (SNI) according to RFC 3546 section 3.1.</p>
 
 <p>This option excludes <i>-port</i> and <i>-use_mock_srv</i>. It is ignored if <i>-rspin</i> is given with enough filename arguments.</p>
 
-<p>If the scheme <code>https</code> is given, the <b>-tls_used</b> option is implied. When TLS is used, the default port is 443, otherwise 80. The optional userinfo and fragment components are ignored. Any given query component is handled as part of the path component. If a path is included it provides the default value for the <b>-path</b> option.</p>
+<p>If the scheme <code>https</code> is given, the <b>-tls_used</b> option is implied. When TLS is used, the default port is 443, otherwise 80. The optional userinfo component is ignored. Any given query and fragment components are handled as part of the path component. If a path is included it provides the default value for the <b>-path</b> option.</p>
 
 </dd>
 <dt id="proxy-http-s-:-userinfo-host-:port-path-query-fragment"><b>-proxy</b> <i>[http[s]://][userinfo@]host[:port][/path][?query][#fragment]</i></dt>
 <dd>
 
-<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that using TLS may be required by <b>-tls_used</b> or <b>-server</b> with the prefix <code>https</code>), as well as any path, userinfo, and query, and fragment components. Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
+<p>The HTTP(S) proxy server to use for reaching the CMP server unless <b>-no_proxy</b> applies, see below. If the host string is an IPv6 address, it must be enclosed in <code>[</code> and <code>]</code>. The proxy port defaults to 80 or 443 if the scheme is <code>https</code>; apart from that the optional <code>http://</code> or <code>https://</code> prefix is ignored (note that using TLS may be required by <b>-tls_used</b> or <b>-server</b> with the prefix <code>https</code>), as well as any path, userinfo, and query, and fragment components.</p>
+
+<p>Defaults to the environment variable <code>http_proxy</code> if set, else <code>HTTP_PROXY</code> in case no TLS is used, otherwise <code>https_proxy</code> if set, else <code>HTTPS_PROXY</code>. This option is ignored if <i>-server</i> is not given.</p>
 
 </dd>
 <dt id="no_proxy-addresses"><b>-no_proxy</b> <i>addresses</i></dt>
@@ -564,6 +568,22 @@
 
 </li>
 </ul>
+
+</dd>
+<dt id="nonmatched_error_nonces"><b>-nonmatched_error_nonces</b></dt>
+<dd>
+
+<p>Accept missing or non-matching transactionID or recipNonce values in error messages. This can be helpful in case the server cannot provide a proper error message, for instance if it was unable to parse the ASN.1 encoding of a request message.</p>
+
+</dd>
+<dt id="ta_in_ip_extracerts"><b>-ta_in_ip_extracerts</b></dt>
+<dd>
+
+<p>This is a quirk option added to support 3GPP TS 33.310. <b>WARNING:</b> This leads to behavior violating RFCs 4210 and 9810.</p>
+
+<p>It allows using self-issued certificates from the extraCerts in an IP message as non-authenticated trust anchors when validating the CMP message protection certificate in this and any subsequent responses from the server in the same transaction, but only if these extraCerts can also be used as trust anchors for validating the newly enrolled certificate received in the IP message.</p>
+
+<p>Note that using this option is dangerous as the to-be-trusted certificates obtained this way have not been authenticated (at least not at CMP level). Taking them over as initial trust anchors implements a form of trust-on-first-use (TOFU).</p>
 
 </dd>
 <dt id="no_cache_extracerts"><b>-no_cache_extracerts</b></dt>
@@ -746,7 +766,7 @@
 <p>File format to use when saving a CRL to a file. Default value is DER. DER format is preferred because it enables more efficient storage of large CRLs.</p>
 
 </dd>
-<dt id="keyform-PEM-DER-P12-ENGINE"><b>-keyform</b> <i>PEM|DER|P12|ENGINE</i></dt>
+<dt id="keyform-PEM-DER-P12"><b>-keyform</b> <i>PEM|DER|P12</i></dt>
 <dd>
 
 <p>The format of the key input; unspecified by default. See <a href="../man1/openssl.html">&quot;Format Options&quot; in openssl(1)</a> for details.</p>
@@ -758,22 +778,6 @@
 <p>Pass phrase source for certificate given with the <b>-trusted</b>, <b>-untrusted</b>, <b>-own_trusted</b>, <b>-srvcert</b>, <b>-crlcert</b>, <b>-out_trusted</b>, <b>-extracerts</b>, <b>-srv_trusted</b>, <b>-srv_untrusted</b>, <b>-ref_cert</b>, <b>-rsp_extracerts</b>, <b>-rsp_capubs</b>, <b>-rsp_newwithnew</b>, <b>-rsp_newwithold</b>, <b>-rsp_oldwithnew</b>, <b>-tls_extra</b>, and <b>-tls_trusted</b> options. If not given here, the password will be prompted for if needed.</p>
 
 <p>For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
-
-</dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
-
-<p>As an alternative to using this combination:</p>
-
-<pre><code>-engine {engineid} -key {keyid} -keyform ENGINE</code></pre>
-
-<p>... it&#39;s also possible to just give the key ID in URI form to <b>-key</b>, like this:</p>
-
-<pre><code>-key org.openssl.engine:{engineid}:{keyid}</code></pre>
-
-<p>This applies to all options specifying keys: <b>-key</b>, <b>-newkey</b>, and <b>-tls_key</b>.</p>
 
 </dd>
 </dl>
@@ -821,7 +825,7 @@
 <dt id="tls_used"><b>-tls_used</b></dt>
 <dd>
 
-<p>Make the CMP client use TLS (regardless if other TLS-related options are set) for message exchange with the server via HTTP. This option is not supported with the <i>-port</i> option. It is implied if the <b>-server</b> option is given with the scheme <code>https</code>. It is ignored if the <b>-server</b> option is not given or <b>-use_mock_srv</b> is given or <b>-rspin</b> is given with enough filename arguments.</p>
+<p>Require the CMP client to use TLS (regardless if other TLS-related options are set) for message exchange with the server via HTTP. This option is not supported with the <i>-port</i> option. It is implied if the <b>-server</b> option is given with the scheme <code>https</code>. It is ignored if the <b>-server</b> option is not given or <b>-use_mock_srv</b> is given or <b>-rspin</b> is given with enough filename arguments.</p>
 
 <p>The following TLS-related options are ignored if TLS is not used.</p>
 
@@ -862,10 +866,10 @@
 <p>The certificate verification options <b>-verify_hostname</b>, <b>-verify_ip</b>, and <b>-verify_email</b> have no effect on the certificate verification enabled via this option.</p>
 
 </dd>
-<dt id="tls_host-name"><b>-tls_host</b> <i>name</i></dt>
+<dt id="tls_host-host"><b>-tls_host</b> <i>host</i></dt>
 <dd>
 
-<p>Address to be checked during hostname validation. This may be a DNS name or an IP address. If not given it defaults to the <b>-server</b> address.</p>
+<p>Hostname or IP address to be checked in the TLS server certificate. If not given it defaults to the host part of the <b>-server</b> option URL argument.</p>
 
 </dd>
 </dl>
@@ -1309,8 +1313,6 @@ openssl cmp -cmd kur -newkey cl_key_new.pem</code></pre>
 
 <p>The <b>cmp</b> application was added in OpenSSL 3.0.</p>
 
-<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
-
 <p>The <b>-oldwithold</b>, <b>-newwithnew</b>, <b>-newwithold</b>, <b>-oldwithnew</b>, The <b>-srvcertout</b>, and <b>-serial</b> option were added in OpenSSL 3.2, as well as an extension of <b>-cacertsout</b> to use when getting CA certificates. Since then, the <b>-issuer</b> may be used also for certificates to be revoked.</p>
 
 <p>The <b>-profile</b> and <b>-no_cache_extracerts</b> options were added in OpenSSL 3.3, as well as support for delayed delivery of all types of response messages.</p>
@@ -1318,6 +1320,12 @@ openssl cmp -cmd kur -newkey cl_key_new.pem</code></pre>
 <p>The <b>-template</b>, <b>-crlcert</b>, <b>-oldcrl</b>, <b>-crlout</b>, <b>-crlform</b> and <b>-rsp_crl</b> options were added in OpenSSL 3.4.</p>
 
 <p><b>-centralkeygen</b>, <b>-newkeyout</b>, <b>-rsp_key</b> and <b>-rsp_keypass</b> were added in OpenSSL 3.5.</p>
+
+<p>The <b>-ta_in_ip_extracerts</b> quirk option was added in OpenSSL 4.0.</p>
+
+<p>The <b>-engine</b> option was removed in OpenSSL 4.0.</p>
+
+<p>The <b>-nonmatched_error_nonces</b> option was added in OpenSSL 4.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

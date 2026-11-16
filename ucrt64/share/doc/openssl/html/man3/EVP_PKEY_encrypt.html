@@ -39,9 +39,9 @@ int EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP_PKEY_encrypt_init() function initializes a public key algorithm context using key <b>pkey</b> for an encryption operation.</p>
+<p>The EVP_PKEY_encrypt_init() function initializes the public key algorithm context <i>ctx</i> for an encryption operation. A key must already be associated with <i>ctx</i>; this is normally done by creating it with <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a> or <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>.</p>
 
-<p>The EVP_PKEY_encrypt_init_ex() function initializes a public key algorithm context using key <b>pkey</b> for an encryption operation and sets the algorithm specific <b>params</b>.</p>
+<p>The EVP_PKEY_encrypt_init_ex() function is the same as EVP_PKEY_encrypt_init() but additionally sets the algorithm-specific <i>params</i>.</p>
 
 <p>The EVP_PKEY_encrypt() function performs a public key encryption operation using <b>ctx</b>. The data to be encrypted is specified using the <b>in</b> and <b>inlen</b> parameters. If <b>out</b> is <b>NULL</b> then the maximum size of the output buffer is written to the <b>outlen</b> parameter. If <b>out</b> is not <b>NULL</b> then before the call the <b>outlen</b> parameter should contain the length of the <b>out</b> buffer, if the call is successful the encrypted data is written to <b>out</b> and the amount of data written to <b>outlen</b>.</p>
 
@@ -57,23 +57,21 @@ int EVP_PKEY_encrypt(EVP_PKEY_CTX *ctx,
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>Encrypt data using OAEP (for RSA keys). See also <a href="../man3/PEM_read_PUBKEY.html">PEM_read_PUBKEY(3)</a> or <a href="../man3/d2i_X509.html">d2i_X509(3)</a> for means to load a public key. You may also simply set &#39;eng = NULL;&#39; to start with the default OpenSSL RSA implementation:</p>
+<p>Encrypt data using OAEP (for RSA keys). See also <a href="../man3/PEM_read_PUBKEY.html">PEM_read_PUBKEY(3)</a> or <a href="../man3/d2i_X509.html">d2i_X509(3)</a> for means to load a public key.</p>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 #include &lt;openssl/rsa.h&gt;
-#include &lt;openssl/engine.h&gt;
 
 EVP_PKEY_CTX *ctx;
-ENGINE *eng;
 unsigned char *out, *in;
 size_t outlen, inlen;
 EVP_PKEY *key;
 
 /*
- * NB: assumes eng, key, in, inlen are already set up,
+ * NB: assumes key, in, inlen are already set up,
  * and that key is an RSA public key
  */
-ctx = EVP_PKEY_CTX_new(key, eng);
+ctx = EVP_PKEY_CTX_new_from_pkey(NULL, key, NULL);
 if (!ctx)
     /* Error occurred */
 if (EVP_PKEY_encrypt_init(ctx) &lt;= 0)
@@ -97,7 +95,7 @@ if (EVP_PKEY_encrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/d2i_X509.html">d2i_X509(3)</a>, <a href="../man3/ENGINE_by_id.html">ENGINE_by_id(3)</a>, <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a>, <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
+<p><a href="../man3/d2i_X509.html">d2i_X509(3)</a>, <a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_PKEY_decrypt.html">EVP_PKEY_decrypt(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a>, <a href="../man3/EVP_PKEY_verify_recover.html">EVP_PKEY_verify_recover(3)</a>, <a href="../man3/EVP_PKEY_derive.html">EVP_PKEY_derive(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -105,7 +103,7 @@ if (EVP_PKEY_encrypt(ctx, out, &amp;outlen, in, inlen) &lt;= 0)
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

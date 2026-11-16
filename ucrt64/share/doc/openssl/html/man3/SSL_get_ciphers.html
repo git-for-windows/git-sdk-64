@@ -49,7 +49,7 @@ char *SSL_get_shared_ciphers(const SSL *s, char *buf, int size);</code></pre>
 
 <p>SSL_get_client_ciphers() returns the stack of available SSL_CIPHERs matching the list received from the client on <b>ssl</b>. If <b>ssl</b> is NULL, no ciphers are available, or <b>ssl</b> is not operating in server mode, NULL is returned.</p>
 
-<p>SSL_bytes_to_cipher_list() treats the supplied <b>len</b> octets in <b>bytes</b> as a wire-protocol cipher suite specification (in the three-octet-per-cipher SSLv2 wire format if <b>isv2format</b> is nonzero; otherwise the two-octet SSLv3/TLS wire format), and parses the cipher suites supported by the library into the returned stacks of SSL_CIPHER objects sk and Signalling Cipher-Suite Values scsvs. Unsupported cipher suites are ignored. Returns 1 on success and 0 on failure.</p>
+<p>SSL_bytes_to_cipher_list() treats the supplied <b>len</b> octets in <b>bytes</b> as a wire-protocol cipher suite specification in the two-octet SSLv3/TLS wire format, and parses the cipher suites supported by the library into the returned stacks of SSL_CIPHER objects sk and Signalling Cipher-Suite Values scsvs. The <b>isv2format</b> is no longer supported and should always be set to 0. Unsupported cipher suites are ignored. Returns 1 on success and 0 on failure.</p>
 
 <p>SSL_get_cipher_list() returns a pointer to the name of the SSL_CIPHER listed for <b>ssl</b> with <b>priority</b>. If <b>ssl</b> is NULL, no ciphers are available, or there are less ciphers than <b>priority</b> available, NULL is returned.</p>
 

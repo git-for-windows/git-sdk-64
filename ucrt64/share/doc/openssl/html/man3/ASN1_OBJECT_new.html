@@ -18,6 +18,7 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -29,14 +30,17 @@
 
 <pre><code>#include &lt;openssl/asn1.h&gt;
 
-ASN1_OBJECT *ASN1_OBJECT_new(void);
 void ASN1_OBJECT_free(ASN1_OBJECT *a);</code></pre>
+
+<p>The following functions have been deprecated since OpenSSL 4.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
+
+<pre><code>ASN1_OBJECT *ASN1_OBJECT_new(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>The <b>ASN1_OBJECT</b> allocation routines, allocate and free an <b>ASN1_OBJECT</b> structure, which represents an ASN1 OBJECT IDENTIFIER.</p>
 
-<p>ASN1_OBJECT_new() allocates and initializes an <b>ASN1_OBJECT</b> structure.</p>
+<p>ASN1_OBJECT_new() is deprecated and exists for legacy backward compatibility reasons and always returns NULL.</p>
 
 <p>ASN1_OBJECT_free() frees up the <b>ASN1_OBJECT</b> structure <i>a</i>. If <i>a</i> is NULL, nothing is done.</p>
 
@@ -46,17 +50,21 @@ void ASN1_OBJECT_free(ASN1_OBJECT *a);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>If the allocation fails, ASN1_OBJECT_new() returns NULL and sets an error code that can be obtained by <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>. Otherwise it returns a pointer to the newly allocated structure.</p>
+<p>ASN1_OBJECT_new() always return NULL.</p>
 
 <p>ASN1_OBJECT_free() returns no value.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/d2i_ASN1_OBJECT.html">d2i_ASN1_OBJECT(3)</a></p>
+<p><a href="../man3/d2i_ASN1_OBJECT.html">d2i_ASN1_OBJECT(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>ASN1_OBJECT_new() was deprecated in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

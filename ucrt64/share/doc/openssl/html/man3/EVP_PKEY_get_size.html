@@ -45,7 +45,79 @@ int EVP_PKEY_get_security_category(const EVP_PKEY *pkey);
 
 <p>It must be stressed that, unless the documentation for the operation that&#39;s being performed says otherwise, the size returned by EVP_PKEY_get_size() is only preliminary and not exact, so the final contents of the target buffer may be smaller. It is therefore crucial to take note of the size given back by the function that performs the operation, such as <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a> (the <i>siglen</i> argument will receive that length), to avoid bugs.</p>
 
-<p>EVP_PKEY_get_bits() returns the cryptographic length of the cryptosystem to which the key in <i>pkey</i> belongs, in bits. Note that the definition of cryptographic length is specific to the key cryptosystem. This length corresponds to the provider parameter <b>OSSL_PKEY_PARAM_BITS</b>.</p>
+<p>EVP_PKEY_get_bits() returns the cryptographic length of the cryptosystem to which the key in <i>pkey</i> belongs, in bits. Note that the definition of cryptographic length is specific to the key cryptosystem:</p>
+
+<dl>
+
+<dt id="RSA"><b>RSA</b></dt>
+<dd>
+
+<p>The bit length of the modulus <b>n</b>.</p>
+
+</dd>
+<dt id="DSA"><b>DSA</b></dt>
+<dd>
+
+<p>The bit length of the prime <b>p</b>.</p>
+
+</dd>
+<dt id="DH"><b>DH</b></dt>
+<dd>
+
+<p>The bit length of the prime <b>p</b>.</p>
+
+</dd>
+<dt id="EC"><b>EC</b></dt>
+<dd>
+
+<p>The bit length of the group order.</p>
+
+</dd>
+<dt id="X25519"><b>X25519</b></dt>
+<dd>
+
+<p>253 (fixed for the curve).</p>
+
+</dd>
+<dt id="X448"><b>X448</b></dt>
+<dd>
+
+<p>448 (fixed for the curve).</p>
+
+</dd>
+<dt id="Ed25519"><b>Ed25519</b></dt>
+<dd>
+
+<p>256 (fixed for the curve).</p>
+
+</dd>
+<dt id="Ed448"><b>Ed448</b></dt>
+<dd>
+
+<p>456 (fixed for the curve).</p>
+
+</dd>
+<dt id="ML-DSA"><b>ML-DSA</b></dt>
+<dd>
+
+<p>The bit size of the public key (8 times the public key length in bytes). For <b>ML-DSA-44</b>, <b>ML-DSA-65</b>, and <b>ML-DSA-87</b>, this is 10496, 15616, and 20736 bits respectively.</p>
+
+</dd>
+<dt id="SLH-DSA"><b>SLH-DSA</b></dt>
+<dd>
+
+<p>The bit size of the public key (8 times the public key length in bytes). For <b>SLH-DSA*128*</b>, <b>SLH-DSA*192*</b>, and <b>SLH-DSA*256*</b> variants, this is 256, 384, and 512 bits respectively.</p>
+
+</dd>
+<dt id="ML-KEM"><b>ML-KEM</b></dt>
+<dd>
+
+<p>The security strength indicator from the algorithm name: 512, 768, or 1024 for <b>ML-KEM-512</b>, <b>ML-KEM-768</b>, and <b>ML-KEM-1024</b> respectively.</p>
+
+</dd>
+</dl>
+
+<p>This length corresponds to the provider parameter <b>OSSL_PKEY_PARAM_BITS</b>.</p>
 
 <p>EVP_PKEY_get_security_bits() returns the number of security bits of the given <i>pkey</i>, bits of security is defined in NIST SP800-57. This corresponds to the provider parameter <b>OSSL_PKEY_PARAM_SECURITY_BITS</b>.</p>
 

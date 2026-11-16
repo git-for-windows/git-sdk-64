@@ -34,7 +34,7 @@ long SSL_get_verify_result(const SSL *ssl);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_get_verify_result() returns the result of the verification of the X509 certificate presented by the peer, if any. <i>ssl</i> <b>MUST NOT</b> be NULL.</p>
+<p>SSL_get_verify_result() returns the result of the verification of the X509 certificate or raw public key presented by the peer, if any. <i>ssl</i> <b>MUST NOT</b> be NULL.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -44,9 +44,13 @@ long SSL_get_verify_result(const SSL *ssl);</code></pre>
 
 <p>The verification result is part of the established session and is restored when a session is reused.</p>
 
+<p>When a server accepts an empty client Certificate message during the initial handshake, the result is X509_V_OK. This applies to both X.509 certificates and raw public keys. No credential verification was performed, and this result does not establish that the peer was authenticated. The handshake can still complete if client authentication is optional.</p>
+
+<p>An empty response to an optional post-handshake authentication request leaves the previous peer identity and verification result unchanged. No certificate or raw public key verification is performed for an empty response.</p>
+
 <h1 id="BUGS">BUGS</h1>
 
-<p>If no peer certificate was presented, the returned result code is X509_V_OK. This is because no verification error occurred, it does however not indicate success. SSL_get_verify_result() is only useful in connection with <a href="../man3/SSL_get_peer_certificate.html">SSL_get_peer_certificate(3)</a>.</p>
+<p>In other cases where no peer certificate or raw public key was presented, the returned result can still be X509_V_OK, for example when a server did not request a client certificate during the initial handshake. X509_V_OK alone does not establish how or whether the peer was authenticated. A suitably provisioned external PSK can authenticate a peer without a certificate or raw public key. When certificate or raw public key authentication is expected, applications must also check that the expected credential is present using <a href="../man3/SSL_get_peer_certificate.html">SSL_get_peer_certificate(3)</a> or <a href="../man3/SSL_get0_peer_rpk.html">SSL_get0_peer_rpk(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -57,7 +61,7 @@ long SSL_get_verify_result(const SSL *ssl);</code></pre>
 <dt id="X509_V_OK">X509_V_OK</dt>
 <dd>
 
-<p>The verification succeeded or no peer certificate was presented.</p>
+<p>No verification error was recorded. A peer certificate or raw public key might not have been presented; see <a href="#BUGS">&quot;BUGS&quot;</a>.</p>
 
 </dd>
 <dt id="Any-other-value">Any other value</dt>
@@ -70,11 +74,11 @@ long SSL_get_verify_result(const SSL *ssl);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_set_verify_result.html">SSL_set_verify_result(3)</a>, <a href="../man3/SSL_get_peer_certificate.html">SSL_get_peer_certificate(3)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_set_verify_result.html">SSL_set_verify_result(3)</a>, <a href="../man3/SSL_get_peer_certificate.html">SSL_get_peer_certificate(3)</a>, <a href="../man3/SSL_get0_peer_rpk.html">SSL_get0_peer_rpk(3)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

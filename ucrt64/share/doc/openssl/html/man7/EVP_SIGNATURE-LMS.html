@@ -57,6 +57,8 @@
 
 <p>LMS support is disabled by default at compile-time. To enable, specify the <b>enable-lms</b> build configuration option.</p>
 
+<p>For backwards compatibility reasons EVP_DigestVerifyInit_ex() and EVP_DigestVerify() may also be used, but the digest passed in <i>mdname</i> must be NULL.</p>
+
 <p>LMS should only be used for older deployments. New deployments should use either <a href="../man7/EVP_SIGNATURE-ML-DSA.html">EVP_SIGNATURE-ML-DSA(7)</a> or &lt;L/EVP_SIGNATURE-SLH-DSA(7)&gt;.</p>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
@@ -85,7 +87,7 @@ ret = EVP_PKEY_verify(ctx, sigdata, sigdata_len, msg, msglen);
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>This functionality was added in OpenSSL 3.6.</p>
+<p>This functionality was added in OpenSSL 3.6. Support for EVP_DigestVerifyInit_ex() and EVP_DigestVerify() was added in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -30,15 +30,16 @@
 
 <pre><code>#include &lt;openssl/pkcs7.h&gt;
 
-PKCS7 *PKCS7_sign_ex(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
+PKCS7 *PKCS7_sign_ex(X509 *signcert, EVP_PKEY *pkey,
+                     const STACK_OF(X509) *certs,
                      BIO *data, int flags, OSSL_LIB_CTX *libctx,
                      const char *propq);
-PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
+PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, const STACK_OF(X509) *certs,
                   BIO *data, int flags);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>PKCS7_sign_ex() creates and returns a PKCS#7 signedData structure. <i>signcert</i> is the certificate to sign with, <i>pkey</i> is the corresponding private key. <i>certs</i> is an optional set of extra certificates to include in the PKCS#7 structure (for example any intermediate CAs in the chain). The library context <i>libctx</i> and property query <i>propq</i> are used when retrieving algorithms from providers.</p>
+<p>PKCS7_sign_ex() creates and returns a PKCS#7 signedData structure. <i>signcert</i> is the certificate to sign with, <i>pkey</i> is the corresponding private key. <i>certs</i> is an optional additional set of certificates to include, unless <b>PKCS7_NOCERTS</b> is set, in the <b>PKCS7</b> structure. They may be used as untrusted CA certificates for chain building or as extra signer certificates. The library context <i>libctx</i> and property query <i>propq</i> are used when retrieving algorithms from providers.</p>
 
 <p>The data to be signed is read from BIO <i>data</i>.</p>
 
@@ -48,9 +49,9 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>Many S/MIME clients expect the signed content to include valid MIME headers. If the <b>PKCS7_TEXT</b> flag is set MIME headers for type <code>text/plain</code> are prepended to the data.</p>
 
-<p>If <b>PKCS7_NOCERTS</b> is set the signer&#39;s certificate and the extra <i>certs</i> will not be included in the PKCS7 structure. The signer&#39;s certificate must still be supplied in the <i>signcert</i> parameter though. This can reduce the size of the signatures if the signer&#39;s certificates can be obtained by other means: for example a previously signed message.</p>
+<p>If <b>PKCS7_NOCERTS</b> is set, the signer&#39;s certificate and extra certificates given in the <i>certs</i> parameter will not be included in the <b>PKCS7</b> structure. The signer&#39;s certificate must still be supplied in the <b>signcert</b> parameter though. This can reduce the size of the signatures if the signer certificates can be obtained by other means: for example a previously signed message.</p>
 
-<p>The data being signed is included in the PKCS7 structure, unless <b>PKCS7_DETACHED</b> is set in which case it is omitted. This is used for PKCS7 detached signatures which are used in S/MIME plaintext signed messages for example.</p>
+<p>The data being signed is included in the <b>PKCS7</b> structure, unless <b>PKCS7_DETACHED</b> is set in which case it is omitted. This is used for PKCS#7 detached signatures which are used in S/MIME plaintext signed messages for example.</p>
 
 <p>Normally the supplied content is translated into MIME canonical format (as required by the S/MIME specifications) if <b>PKCS7_BINARY</b> is set no translation occurs. This option should be used if the supplied data is in binary format otherwise the translation will corrupt it.</p>
 
@@ -70,7 +71,7 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <p>The <i>certs</i>, <i>signcert</i> and <i>pkey</i> parameters can all be NULL if the <b>PKCS7_PARTIAL</b> flag is set. One or more signers can be added using the function PKCS7_sign_add_signer(). PKCS7_final() must also be called to finalize the structure if streaming is not enabled. Alternative signing digests can also be specified using this method.</p>
 
-<p>If <i>signcert</i> and <i>pkey</i> are NULL then a certificates only PKCS#7 structure is output.</p>
+<p>If <i>signcert</i> and <i>pkey</i> are NULL then a certificates only <b>PKCS7</b> structure is output.</p>
 
 <p>In versions of OpenSSL before 1.0.0 the <i>signcert</i> and <i>pkey</i> parameters must not be NULL.</p>
 
@@ -82,7 +83,7 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>PKCS7_sign_ex() and PKCS7_sign() return either a valid PKCS7 structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
+<p>PKCS7_sign_ex() and PKCS7_sign() return either a valid <b>PKCS7</b> structure or NULL if an error occurred. The error can be obtained from ERR_get_error(3).</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -98,7 +99,7 @@ PKCS7 *PKCS7_sign(X509 *signcert, EVP_PKEY *pkey, STACK_OF(X509) *certs,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

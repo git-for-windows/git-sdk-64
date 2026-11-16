@@ -1,0 +1,194 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_MD-ML-DSA-MU</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Identities">Identities</a></li>
+      <li><a href="#Parameters">Parameters</a></li>
+      <li><a href="#Gettable-Parameters">Gettable Parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_MD-ML-DSA-MU - The ML-DSA-MU EVP_MD implementation</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Support for computing the value of external mu for ML-DSA using the <b>EVP_MD</b> API.</p>
+
+<p>Normally the value of <code>mu</code> is calculated internally as part of an ML-DSA sign or verify operation. <code>mu</code> is defined as: mu = SHAKE256(tr || M&#39;, 64)</p>
+
+<p>Where <b>tr</b> is the hash of the encoded public key, and, for Pure (ML-DSA): M&#39; = 0x00 || ctx_len || ctx || message</p>
+
+<p>In cases where prehashing the message is required, FIPS 204 allows the <code>mu</code> calculation to be done externally and then <code>mu</code> can be passed to ML-DSA sign or verify operations.</p>
+
+<p>PreHash (HASH-ML-DSA) is also supported and uses: M&#39; = 0x01 || ctx_len || ctx || OID || HashedMessage</p>
+
+<p>The output <code>mu</code> value can then be supplied as an input to <a href="../man7/EVP_SIGNATURE-ML-DSA.html">EVP_SIGNATURE-ML-DSA(7)</a> using the ML-DSA Signature Parameter <b>OSSL_SIGNATURE_PARAM_MU</b> (i.e. <code>mu</code>). This allows larger messages to be hashed (or hidden) before they are passed to pure ML-DSA sign or verify operations.</p>
+
+<h2 id="Identities">Identities</h2>
+
+<p>This implementation is available with the FIPS provider as well as the default provider, and is identified with the name &quot;ML-DSA-MU&quot;.</p>
+
+<h2 id="Parameters">Parameters</h2>
+
+<p>This implementation supports the following settable <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> parameters:</p>
+
+<dl>
+
+<dt id="pub-OSSL_DIGEST_PARAM_MU_PUB_KEY-octet-string">&quot;pub&quot; (<b>OSSL_DIGEST_PARAM_MU_PUB_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>A <b>ML-DSA</b> encoded public key value of size 1312, 1952 or 2592 bytes depending on the respective key type of <b>ML-DSA-44</b>, <b>ML-DSA-65</b> or <b>ML-DSA-87</b>. This can be retrieved from a <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a> key by calling EVP_PKEY_get_octet_string_param(key, OSSL_PKEY_PARAM_PUB_KEY, pub, sizeof(pub), &amp;publen) This parameter MUST be set or an error will occur.</p>
+
+</dd>
+<dt id="context-string-OSSL_DIGEST_PARAM_MU_CONTEXT_STRING-octet-string">&quot;context-string&quot; (<b>OSSL_DIGEST_PARAM_MU_CONTEXT_STRING</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>An optional string of octets with length at most 255. By default it is the empty string.</p>
+
+</dd>
+<dt id="digest-OSSL_DIGEST_PARAM_MU_DIGEST-utf8-string">&quot;digest&quot; (<b>OSSL_DIGEST_PARAM_MU_DIGEST</b>) &lt;utf8 string&gt;</dt>
+<dd>
+
+<p>An optional parameter related to &quot;HASH-ML-DSA&quot;. If used it determines the OID in the definition of PreHash M&#39; above.</p>
+
+<p>When this parameter is not specified, pure ML-DSA <code>mu</code> is computed, and the input data is expected to be the full message, otherwise the input data must be the result of prehashing the message with the corresponding digest algorithm.</p>
+
+<p>The HASH-ML-DSA variant is available to enable specialised use-cases, in which signing the full message with pure ML-DSA is not practical, and the external-mu API is a viable alternative. HASH-ML-DSA is not used in protocols such as X509 &amp; CMS (See RFC 9981 and 9982), and is not presently implemented as an independent OpenSSL signature algorithm.</p>
+
+<p>It is the users responsibility to chose a digest that has the minimum required security strength. To match the security category for <b>ML-DSA-44</b>, <b>ML-DSA-65</b> and <b>ML-DSA-87</b> the user should chose a digest that has a security strength of at least 128 bits, 192 bits and 256 bits respectively.</p>
+
+<p>OpenSSL accepts the following digest names:</p>
+
+<dl>
+
+<dt id="SHA-224-and-SHA3-224">&quot;SHA-224&quot; and &quot;SHA3-224&quot;</dt>
+<dd>
+
+<p>These digests have a security strength of 112 bits.</p>
+
+</dd>
+<dt id="SHA-256-and-SHA3-256">&quot;SHA-256&quot; and &quot;SHA3-256&quot;</dt>
+<dd>
+
+<p>These digests have a security strength of 128 bits.</p>
+
+</dd>
+<dt id="SHA-384-and-SHA3-384">&quot;SHA-384&quot; and &quot;SHA3-384&quot;</dt>
+<dd>
+
+<p>These digests have a security strength of 192 bits.</p>
+
+</dd>
+<dt id="SHA-512-and-SHA3-512">&quot;SHA-512&quot; and &quot;SHA3-512&quot;</dt>
+<dd>
+
+<p>These digests have a security strength of 256 bits.</p>
+
+</dd>
+<dt id="SHAKE-128-and-SHAKE-256">&quot;SHAKE-128&quot; and &quot;SHAKE-256&quot;</dt>
+<dd>
+
+<p>For SHAKE-128 and SHAKE-256 the expected XOF digest lengths are 32 and 64 respectively which correspond to a security strength of 128 and 256 bits respectively.</p>
+
+</dd>
+</dl>
+
+<p>The total size of the <code>HashedMessage</code> passed to EVP_DigestUpdate() MUST match the size of the digest.</p>
+
+</dd>
+<dt id="properties-OSSL_DIGEST_PARAM_MU_PROPERTIES-utf8-string">&quot;properties&quot; (<b>OSSL_DIGEST_PARAM_MU_PROPERTIES</b>) &lt;utf8 string&gt;</dt>
+<dd>
+
+<p>Sets the properties to be queried when trying to fetch the underlying digest.</p>
+
+</dd>
+</dl>
+
+<h2 id="Gettable-Parameters">Gettable Parameters</h2>
+
+<p>This implementation supports the common gettable parameters described in <a href="../man7/EVP_MD-common.html">EVP_MD-common(7)</a>.</p>
+
+<h1 id="CONFORMING-TO">CONFORMING TO</h1>
+
+<p>FIPS 204 and https://csrc.nist.gov/csrc/media/Projects/post-quantum-cryptography/documents/faq/fips204-sec6-03192025.pdf</p>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>To generate external &#39;mu&#39; given an existing ML-DSA key and a large message:</p>
+
+<pre><code>calculate_mu(EVP_PKEY *pkey, const unsigned char *msg, size_t msglen,
+             const unsigned char *ctx, size_t ctxlen, unsigned char mu[64])
+{
+    unsigned char pub[2592];
+    size_t publen = 0, chunk;
+    OSSL_PARAM params[4], *p = params;
+
+    /* Retrieve the ML-DSA encoded public key */
+    EVP_PKEY_get_octet_string_param(pkey, OSSL_PKEY_PARAM_PUB_KEY,
+                                    pub, sizeof(pub), &amp;publen);
+
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_DIGEST_PARAM_MU_PUB_KEY, pub, publen);
+    /* This is an optional parameter */
+    if (ctx != NULL &amp;&amp; ctxlen != 0)
+        *p++ = OSSL_PARAM_construct_octet_string(OSSL_DIGEST_PARAM_MU_CONTEXT_STRING, ctx, ctxlen);
+    /*
+     * Optionally we could also set the digest name for HASH-ML-DSA
+     * *p++ = OSSL_PARAM_construct_utf8_string(OSSL_DIGEST_PARAM_MU_DIGEST, &quot;SHA-512&quot;, 0);
+     */
+    *p = OSSL_PARAM_construct_end();
+
+    mdctx = EVP_MD_CTX_new();
+    md = EVP_MD_fetch(libctx, &quot;ML-DSA-MU&quot;, NULL);
+    EVP_DigestInit_ex2(mdctx, md, params);
+    /* Call EVP_DigestUpdate() multiple times to stream the message */
+    while (msglen != 0) {
+        /* Account for the last chunk being less than 64 */
+        chunk = (msglen &gt;= 64) ? 64 : msglen;
+        EVP_DigestUpdate(mdctx, msg, chunk);
+        msg += chunk;
+        msglen -= chunk;
+    }
+    EVP_DigestFinalXOF(mdctx, mu, sizeof(mu))
+}</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/EVP_SIGNATURE-ML-DSA.html">EVP_SIGNATURE-ML-DSA(7)</a>, <a href="../man7/EVP_PKEY-ML-DSA.html">EVP_PKEY-ML-DSA(7)</a>, <a href="../man7/provider-digest.html">provider-digest(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The <b>ML-DSA-MU</b> pseudo-digest was added in OpenSSL 4.0.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

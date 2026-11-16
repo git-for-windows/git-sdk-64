@@ -25,28 +25,29 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_set1_groups, SSL_CTX_set1_groups_list, SSL_set1_groups, SSL_set1_groups_list, SSL_get1_groups, SSL_get0_iana_groups, SSL_get_shared_group, SSL_get_negotiated_group, SSL_CTX_set1_curves, SSL_CTX_set1_curves_list, SSL_set1_curves, SSL_set1_curves_list, SSL_get1_curves, SSL_get_shared_curve, SSL_CTX_get0_implemented_groups - EC supported curve functions</p>
+<p>SSL_CTX_set1_groups, SSL_CTX_set1_groups_list, SSL_set1_groups, SSL_set1_groups_list, SSL_get1_groups, SSL_get0_iana_groups, SSL_get0_ec_point_formats, SSL_get_shared_group, SSL_get_negotiated_group, SSL_CTX_set1_curves, SSL_CTX_set1_curves_list, SSL_set1_curves, SSL_set1_curves_list, SSL_get1_curves, SSL_get_shared_curve, SSL_CTX_get0_implemented_groups - EC supported curve functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/ssl.h&gt;
 
-int SSL_CTX_set1_groups(SSL_CTX *ctx, int *glist, int glistlen);
-int SSL_CTX_set1_groups_list(SSL_CTX *ctx, char *list);
+int SSL_CTX_set1_groups(SSL_CTX *ctx, const int *glist, int glistlen);
+int SSL_CTX_set1_groups_list(SSL_CTX *ctx, const char *list);
 
-int SSL_set1_groups(SSL *ssl, int *glist, int glistlen);
-int SSL_set1_groups_list(SSL *ssl, char *list);
+int SSL_set1_groups(SSL *ssl, const int *glist, int glistlen);
+int SSL_set1_groups_list(SSL *ssl, const char *list);
 
 int SSL_get1_groups(SSL *ssl, int *groups);
 int SSL_get0_iana_groups(SSL *ssl, uint16_t **out);
+int SSL_get0_ec_point_formats(SSL *ssl, const unsigned char **plst);
 int SSL_get_shared_group(SSL *s, int n);
 int SSL_get_negotiated_group(SSL *s);
 
-int SSL_CTX_set1_curves(SSL_CTX *ctx, int *clist, int clistlen);
-int SSL_CTX_set1_curves_list(SSL_CTX *ctx, char *list);
+int SSL_CTX_set1_curves(SSL_CTX *ctx, const int *clist, int clistlen);
+int SSL_CTX_set1_curves_list(SSL_CTX *ctx, const char *list);
 
-int SSL_set1_curves(SSL *ssl, int *clist, int clistlen);
-int SSL_set1_curves_list(SSL *ssl, char *list);
+int SSL_set1_curves(SSL *ssl, const int *clist, int clistlen);
+int SSL_set1_curves_list(SSL *ssl, const char *list);
 
 int SSL_get1_curves(SSL *ssl, int *curves);
 int SSL_get_shared_curve(SSL *s, int n);
@@ -77,7 +78,7 @@ $ openssl list -tls1_3 -tls-groups</code></pre>
 
 <p>Each group can be either the <b>NIST</b> name (e.g. <b>P-256</b>), some other commonly used name where applicable (e.g. <b>X25519</b>, <b>ffdhe2048</b>) or an OpenSSL OID name (e.g. <b>prime256v1</b>). Group names are case-insensitive in OpenSSL 3.5 and later. The preferred group names are those defined by <a href="https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8">IANA</a>.</p>
 
-<p>The <i>list</i> can be used to define several group tuples of comparable security levels, and can specify which predicted key shares should be sent by a client. Group tuples are used by OpenSSL TLS servers to decide whether to request a stronger keyshare than those predicted by sending a Hello Retry Request (<b>HRR</b>) even if some of the predicted groups are supported. OpenSSL clients ignore tuple boundaries, and pay attention only to the overall order of <i>list</i> elements and which groups are selected as predicted keyshares as described below.</p>
+<p>The <i>list</i> can be used to define several group tuples of comparable security levels, and can specify which predicted key shares should be sent by a client. Group tuples are used by OpenSSL TLS servers to decide whether to request a stronger keyshare than those predicted by sending a Hello Retry Request (<b>HRR</b>) even if some of the predicted groups are supported. OpenSSL clients largely ignore tuple boundaries, and pay attention only to the overall order of <i>list</i> elements and which groups are selected as predicted keyshares as described below. Tuple boundaries do however affect the behaviour of keyshare predictions that <code>float</code> from an unsupported or deleted tuple element to the first remaining element of the same tuple, when no other elements of that tuple are marked as predicted keyshares.</p>
 
 <p>The specified list elements can optionally be ignored if not implemented (listing unknown groups otherwise results in error). It is also possible to specify the built-in default set of groups, and to explicitly remove a group from that list.</p>
 
@@ -131,6 +132,10 @@ with : SH:  Server hello with current group
 
 <p>SSL_get0_iana_groups() retrieves the list of groups sent by the client in the supported_groups extension. The <b>*out</b> array of bytes is populated with the host-byte-order representation of the uint16_t group identifiers, as assigned by IANA. The group list is returned in the same order that was received in the ClientHello. The return value is the number of groups, not the number of bytes written.</p>
 
+<p>SSL_get0_ec_point_formats() retrieves the peer&#39;s <b>ec_point_formats</b> extension as a byte array of <b>TLSEXT_ECPOINTFORMAT_*</b> values in the order received. If the peer sent the extension, <b>*plst</b> is set to an internal buffer holding the list and its length is returned; otherwise the return value is 0 and <b>*plst</b> is left unchanged. The returned pointer is owned by the <b>SSL</b> connection and must not be freed. The point format no longer affects certificate selection or acceptance.</p>
+
+<p>The <b>ec_point_formats</b> extension applies only to TLS 1.2 and below, but the peer&#39;s list is recorded even when TLS 1.3 is ultimately negotiated, since a TLS 1.3 <b>ClientHello</b> may still carry the extension for backward compatibility.</p>
+
 <p>SSL_get_shared_group() returns the NID of the shared group <b>n</b> for a server-side SSL <b>ssl</b>. If <b>n</b> is -1 then the total number of shared groups is returned, which may be zero. Other than for diagnostic purposes, most applications will only be interested in the first shared group so <b>n</b> is normally set to zero. If the value <b>n</b> is out of range, NID_undef is returned. If the NID for the shared group is unknown then the value is set to the bitwise OR of TLSEXT_nid_unknown (0x1000000) and the id of the group.</p>
 
 <p>SSL_get_negotiated_group() returns the NID of the negotiated group used for the handshake key exchange process. For TLSv1.3 connections this typically reflects the state of the current connection, though in the case of PSK-only resumption, the returned value will be from a previous connection. For earlier TLS versions, when a session has been resumed, it always reflects the group used for key exchange during the initial handshake (otherwise it is from the current, non-resumption, connection). This can be called by either client or server. If the NID for the shared group is unknown then the value is set to the bitwise OR of TLSEXT_nid_unknown (0x1000000) and the id of the group. See also <a href="../man3/SSL_get0_group_name.html">SSL_get0_group_name(3)</a> which returns the name of the negotiated group directly and is generally preferred over SSL_get_negotiated_group().</p>
@@ -152,6 +157,8 @@ with : SH:  Server hello with current group
 <p>SSL_get1_groups() returns the number of groups, which may be zero.</p>
 
 <p>SSL_get0_iana_groups() returns the number of (uint16_t) groups, which may be zero.</p>
+
+<p>SSL_get0_ec_point_formats() returns the number of point formats sent by the peer in its <b>ec_point_formats</b> extension, or 0 if no such extension was received.</p>
 
 <p>SSL_get_shared_group() returns the NID of shared group <b>n</b> or NID_undef if there is no shared group <b>n</b>; or the total number of shared groups if <b>n</b> is -1.</p>
 
@@ -201,7 +208,9 @@ with : SH:  Server hello with current group
 
 <p>OpenSSL 3.5 also introduced support for group tuples, the <code>*</code> keyshare prediction prefix, the <code>/</code> tuple separator, the <code>DEFAULT</code> pseudo-group, and the <code>-</code> prefix.</p>
 
-<p>OpenSSL 3.5 also introduces support for three <i>hybrid</i> ECDH PQ key exchange TLS groups: <b>X25519MLKEM768</b>, <b>SecP256r1MLKEM768</b> and <b>SecP384r1MLKEM1024</b>. They offer CPU performance comparable to the associated ECDH group, though at the cost of significantly larger key exchange messages. The third group, <b>SecP384r1MLKEM1024</b> is substantially more CPU-intensive, largely as a result of the high CPU cost of ECDH for the underlying <b>P-384</b> group. Also its key exchange messages at close to 1700 bytes are larger than the roughly 1200 bytes for the first two groups.</p>
+<p>OpenSSL 3.5 also introduced support for three <i>hybrid</i> ECDH PQ key exchange TLS groups: <b>X25519MLKEM768</b>, <b>SecP256r1MLKEM768</b> and <b>SecP384r1MLKEM1024</b>. They offer CPU performance comparable to the associated ECDH group, though at the cost of significantly larger key exchange messages. The third group, <b>SecP384r1MLKEM1024</b> is substantially more CPU-intensive, largely as a result of the high CPU cost of ECDH for the underlying <b>P-384</b> group. Also its key exchange messages at close to 1700 bytes are larger than the roughly 1200 bytes for the first two groups.</p>
+
+<p>OpenSSL 4.0 introduced the <b>curveSM2</b> (also known as <code>ECDHE over SM2</code>) key exchange group as specified in RFC8998, and <b>curveSM2MLKEM768</b>, which is a hybrid of the <b>curveSM2</b> group with <b>ML-KEM-768</b>.</p>
 
 <p>As of OpenSSL 3.5 key exchange group names are case-insensitive.</p>
 

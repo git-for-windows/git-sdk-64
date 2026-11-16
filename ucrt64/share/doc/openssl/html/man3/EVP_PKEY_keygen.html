@@ -66,6 +66,8 @@ void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);</code></pre>
 
 <p>EVP_PKEY_generate() performs the generation operation, the resulting key parameters or key are written to <i>*ppkey</i>. If <i>*ppkey</i> is NULL when this function is called, it will be allocated, and should be freed by the caller when no longer useful, using <a href="../man3/EVP_PKEY_free.html">EVP_PKEY_free(3)</a>.</p>
 
+<p>When a key is generated, EVP_PKEY_generate() does not associate it with <i>ctx</i> or change <i>ctx</i> into a context for operations using that key. To use the generated key, create a new context with <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>, passing <i>*ppkey</i>. The generation context can be reused for further generation operations or freed.</p>
+
 <p>EVP_PKEY_paramgen() and EVP_PKEY_keygen() do exactly the same thing as EVP_PKEY_generate(), after checking that the corresponding EVP_PKEY_paramgen_init() or EVP_PKEY_keygen_init() was used to initialize <i>ctx</i>. These are older functions that are kept for backward compatibility. It is safe to use EVP_PKEY_generate() instead.</p>
 
 <p>The function EVP_PKEY_set_cb() sets the key or parameter generation callback to <i>cb</i>. The function EVP_PKEY_CTX_get_cb() returns the key or parameter generation callback.</p>
@@ -100,7 +102,7 @@ void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);</code></pre>
 
 <h1 id="EXAMPLES">EXAMPLES</h1>
 
-<p>Generate a 2048 bit RSA key:</p>
+<p>Generate a 2048 bit RSA key, then initialize a context for encryption:</p>
 
 <pre><code>#include &lt;openssl/evp.h&gt;
 #include &lt;openssl/rsa.h&gt;
@@ -108,7 +110,7 @@ void *EVP_PKEY_CTX_get_app_data(EVP_PKEY_CTX *ctx);</code></pre>
 EVP_PKEY_CTX *ctx;
 EVP_PKEY *pkey = NULL;
 
-ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+ctx = EVP_PKEY_CTX_new_from_name(NULL, &quot;RSA&quot;, NULL);
 if (!ctx)
     /* Error occurred */
 if (EVP_PKEY_keygen_init(ctx) &lt;= 0)
@@ -117,7 +119,15 @@ if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048) &lt;= 0)
     /* Error */
 
 /* Generate key */
-if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
+if (EVP_PKEY_generate(ctx, &amp;pkey) &lt;= 0)
+    /* Error */
+
+/* ctx is still a generation context; pkey contains the generated key */
+EVP_PKEY_CTX_free(ctx);
+ctx = EVP_PKEY_CTX_new_from_pkey(NULL, pkey, NULL);
+if (!ctx)
+    /* Error occurred */
+if (EVP_PKEY_encrypt_init(ctx) &lt;= 0)
     /* Error */</code></pre>
 
 <p>Generate a key from a set of parameters:</p>
@@ -126,11 +136,10 @@ if (EVP_PKEY_keygen(ctx, &amp;pkey) &lt;= 0)
 #include &lt;openssl/rsa.h&gt;
 
 EVP_PKEY_CTX *ctx;
-ENGINE *eng;
 EVP_PKEY *pkey = NULL, *param;
 
-/* Assumed param, eng are set up already */
-ctx = EVP_PKEY_CTX_new(param, eng);
+/* Assumed param is set up already */
+ctx = EVP_PKEY_CTX_new(param, NULL);
 if (!ctx)
     /* Error occurred */
 if (EVP_PKEY_keygen_init(ctx) &lt;= 0)

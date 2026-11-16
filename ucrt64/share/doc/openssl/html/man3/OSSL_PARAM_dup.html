@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_PARAM_dup, OSSL_PARAM_merge, OSSL_PARAM_free - OSSL_PARAM array copy functions</p>
+<p>OSSL_PARAM_dup, OSSL_PARAM_merge, OSSL_PARAM_free, OSSL_PARAM_clear_free - OSSL_PARAM array copy functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -31,7 +31,8 @@
 
 OSSL_PARAM *OSSL_PARAM_dup(const OSSL_PARAM *params);
 OSSL_PARAM *OSSL_PARAM_merge(const OSSL_PARAM *params, const OSSL_PARAM *params1);
-void OSSL_PARAM_free(OSSL_PARAM *params);</code></pre>
+void OSSL_PARAM_free(OSSL_PARAM *params);
+void OSSL_PARAM_clear_free(OSSL_PARAM *params);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -43,6 +44,8 @@ void OSSL_PARAM_free(OSSL_PARAM *params);</code></pre>
 
 <p>OSSL_PARAM_free() frees the parameter array <i>params</i> that was created using OSSL_PARAM_dup(), OSSL_PARAM_merge() or OSSL_PARAM_BLD_to_param(). If the argument to OSSL_PARAM_free() is NULL, nothing is done.</p>
 
+<p>OSSL_PARAM_clear_free() performs the same function as OSSL_PARAM_free() but additionally calls OPENSSL_cleanse() on the contents copied in. Note: only params built via the OSSL_PARAM_dup() or OSSL_PARAM_BLD_to_param() functions will be effectively cleared, parameters built any other way will still be freed but no cleanse operation will be performed.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>The functions OSSL_PARAM_dup() and OSSL_PARAM_merge() return a newly allocated <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array, or NULL if there was an error. If both parameters are NULL then NULL is returned.</p>
@@ -53,7 +56,7 @@ void OSSL_PARAM_free(OSSL_PARAM *params);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions were added in OpenSSL 3.0.</p>
+<p>The OSSL_PARAM_dup, OSSL_PARAM_merge and OSSL_PARAM_free functions were added in OpenSSL 3.0. OSSL_PARAM_clear_free was added in OpenSSL 4.0.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

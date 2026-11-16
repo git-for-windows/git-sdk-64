@@ -107,15 +107,27 @@ ossl_ssize_t (*BIO_meth_get_recvmmsg(const BIO_METHOD *biom))(BIO *,
 
 <p>BIO_meth_free() destroys a <b>BIO_METHOD</b> structure and frees up any memory associated with it. If the argument is NULL, nothing is done.</p>
 
-<p>BIO_meth_get_write_ex() and BIO_meth_set_write_ex() get and set the function used for writing arbitrary length data to the BIO respectively. This function will be called in response to the application calling BIO_write_ex() or BIO_write(). The parameters for the function have the same meaning as for BIO_write_ex(). Older code may call BIO_meth_get_write() and BIO_meth_set_write() instead. Applications should not call both BIO_meth_set_write_ex() and BIO_meth_set_write() or call BIO_meth_get_write() when the function was set with BIO_meth_set_write_ex().</p>
+<p>BIO_meth_get_write_ex() and BIO_meth_set_write_ex() get and set the function used for writing arbitrary length data to the BIO respectively. This function will be called in response to the application calling BIO_write_ex() or BIO_write(). The parameters for the function have the same meaning as for BIO_write_ex() and it must return values as described for BIO_write_ex().</p>
 
-<p>BIO_meth_get_read_ex() and BIO_meth_set_read_ex() get and set the function used for reading arbitrary length data from the BIO respectively. This function will be called in response to the application calling BIO_read_ex() or BIO_read(). The parameters for the function have the same meaning as for BIO_read_ex(). Older code may call BIO_meth_get_read() and BIO_meth_set_read() instead. Applications should not call both BIO_meth_set_read_ex() and BIO_meth_set_read() or call BIO_meth_get_read() when the function was set with BIO_meth_set_read_ex().</p>
+<p>Older code may call BIO_meth_get_write() and BIO_meth_set_write() instead to set an old-style write function. The parameters for the function have the same meaning as for BIO_write() and it must return values as described for BIO_write().</p>
+
+<p>Functions set by BIO_meth_set_write_ex() and BIO_meth_set_write() must call BIO_set_flags() to set the BIO_FLAGS_SHOULD_RETRY flag in relevant situations.</p>
+
+<p>Applications should not call both BIO_meth_set_write_ex() and BIO_meth_set_write() or call BIO_meth_get_write() when the function was set with BIO_meth_set_write_ex().</p>
+
+<p>BIO_meth_get_read_ex() and BIO_meth_set_read_ex() get and set the function used for reading arbitrary length data from the BIO respectively. This function will be called in response to the application calling BIO_read_ex() or BIO_read(). The parameters for the function have the same meaning as for BIO_read_ex() and it must return values as described for BIO_read_ex(). The function must handle the end-of-file condition (if applicable) and return 0 in this case.</p>
+
+<p>Older code may call BIO_meth_get_read() and BIO_meth_set_read() instead to set an old-style read function. The parameters for the function have the same meaning as for BIO_read() and it must return values as described for BIO_read().</p>
+
+<p>Functions set by BIO_meth_set_read_ex() and BIO_meth_set_read() must call BIO_set_flags() to set the BIO_FLAGS_SHOULD_RETRY flag in relevant situations.</p>
+
+<p>Applications should not call both BIO_meth_set_read_ex() and BIO_meth_set_read() or call BIO_meth_get_read() when the function was set with BIO_meth_set_read_ex().</p>
 
 <p>BIO_meth_get_puts() and BIO_meth_set_puts() get and set the function used for writing a NULL terminated string to the BIO respectively. This function will be called in response to the application calling BIO_puts(). The parameters for the function have the same meaning as for BIO_puts().</p>
 
 <p>BIO_meth_get_gets() and BIO_meth_set_gets() get and set the function typically used for reading a line of data from the BIO respectively (see the <a href="../man3/BIO_gets.html">BIO_gets(3)</a> page for more information). This function will be called in response to the application calling BIO_gets(). The parameters for the function have the same meaning as for BIO_gets().</p>
 
-<p>BIO_meth_get_ctrl() and BIO_meth_set_ctrl() get and set the function used for processing ctrl messages in the BIO respectively. See the <a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a> page for more information. This function will be called in response to the application calling BIO_ctrl(). The parameters for the function have the same meaning as for BIO_ctrl().</p>
+<p>BIO_meth_get_ctrl() and BIO_meth_set_ctrl() get and set the function used for processing ctrl messages in the BIO respectively. See the <a href="../man3/BIO_ctrl.html">BIO_ctrl(3)</a> page for more information. This function will be called in response to the application calling BIO_ctrl(). The parameters for the function have the same meaning as for BIO_ctrl(). If the concept of end-of-file is meaningful for a BIO and the read method is set using BIO_meth_set_read_ex(), the ctrl function must handle the BIO_CTRL_EOF command and return an appropriate value (1 if EOF has been reached, 0 if not, or a negative value on failure), at least immediately after a read operation. If the read method is set using BIO_meth_set_read(), handling of the BIO_CTRL_EOF command is not mandatory; however, if such handling is implemented, it must return 1 if the read function returned 0 when attempting to read a nonzero number of bytes.</p>
 
 <p>BIO_meth_get_create() and BIO_meth_set_create() get and set the function used for creating a new instance of the BIO respectively. This function will be called in response to the application calling BIO_new() and passing in a pointer to the current BIO_METHOD. The BIO_new() function will allocate the memory for the new BIO, and a pointer to this newly allocated structure will be passed as a parameter to the function. If a create function is set, BIO_new() will not mark the BIO as initialised on allocation. <a href="../man3/BIO_set_init.html">BIO_set_init(3)</a> must then be called either by the create function, or later, by a BIO ctrl function, once BIO initialisation is complete.</p>
 
@@ -155,7 +167,7 @@ ossl_ssize_t (*BIO_meth_get_recvmmsg(const BIO_METHOD *biom))(BIO *,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

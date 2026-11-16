@@ -38,15 +38,15 @@ int SSL_get_async_status(SSL *s, int *status);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_async_callback() sets an asynchronous callback function. All <b>SSL</b> objects generated based on this <b>SSL_CTX</b> will get this callback. If an engine supports the callback mechanism, it will be automatically called if <b>SSL_MODE_ASYNC</b> has been set and an asynchronous capable engine completes a cryptography operation to notify the application to resume the paused work flow.</p>
+<p>SSL_CTX_set_async_callback() sets an asynchronous callback function. All <b>SSL</b> objects generated based on this <b>SSL_CTX</b> will get this callback. If a provider supports the callback mechanism, it will be automatically called if <b>SSL_MODE_ASYNC</b> has been set and the provider completes a cryptography operation to notify the application to resume the paused work flow.</p>
 
 <p>SSL_CTX_set_async_callback_arg() sets the callback argument.</p>
 
-<p>SSL_set_async_callback() allows an application to set a callback in an asynchronous <b>SSL</b> object, so that when an engine completes a cryptography operation, the callback will be called to notify the application to resume the paused work flow.</p>
+<p>SSL_set_async_callback() allows an application to set a callback in an asynchronous <b>SSL</b> object, so that when an provider completes a cryptography operation, the callback will be called to notify the application to resume the paused work flow.</p>
 
 <p>SSL_set_async_callback_arg() sets an argument for the <b>SSL</b> object when the above callback is called.</p>
 
-<p>SSL_get_async_status() returns the engine status. This function facilitates the communication from the engine to the application. During an SSL session, cryptographic operations are dispatched to an engine. The engine status is very useful for an application to know if the operation has been successfully dispatched. If the engine does not support this additional callback method, <b>ASYNC_STATUS_UNSUPPORTED</b> will be returned. See ASYNC_WAIT_CTX_set_status() for a description of all of the status values.</p>
+<p>SSL_get_async_status() returns the provider status. This function facilitates the communication from the provider to the application. During an SSL session, cryptographic operations are dispatched to a provider. The provider status is very useful for an application to know if the operation has been successfully dispatched. If the provider does not support this additional callback method, <b>ASYNC_STATUS_UNSUPPORTED</b> will be returned. See ASYNC_WAIT_CTX_set_status() for a description of all of the status values.</p>
 
 <p>An example of the above functions would be the following:</p>
 
@@ -55,19 +55,19 @@ int SSL_get_async_status(SSL *s, int *status);</code></pre>
 <li><p>Application sets the async callback and callback data on an SSL connection by calling SSL_set_async_callback().</p>
 
 </li>
-<li><p>Application sets <b>SSL_MODE_ASYNC</b> and makes an asynchronous SSL call</p>
+<li><p>Application sets <b>SSL_MODE_ASYNC</b> and makes an asynchronous SSL call.</p>
 
 </li>
-<li><p>OpenSSL submits the asynchronous request to the engine. If a retry occurs at this point then the status within the <b>ASYNC_WAIT_CTX</b> would be set and the async callback function would be called (goto Step 7).</p>
+<li><p>OpenSSL submits the asynchronous request to the provider. If a retry occurs at this point then the status within the <b>ASYNC_WAIT_CTX</b> would be set and the async callback function would be called (goto Step 7).</p>
 
 </li>
-<li><p>The OpenSSL engine pauses the current job and returns, so that the application can continue processing other connections.</p>
+<li><p>The OpenSSL provider pauses the current job and returns, so that the application can continue processing other connections.</p>
 
 </li>
-<li><p>At a future point in time (probably via a polling mechanism or via an interrupt) the engine will become aware that the asynchronous request has finished processing.</p>
+<li><p>At a future point in time (probably via a polling mechanism or via an interrupt) the provider will become aware that the asynchronous request has finished processing.</p>
 
 </li>
-<li><p>The engine will call the application&#39;s callback passing the callback data as a parameter.</p>
+<li><p>The provider will call the application&#39;s callback passing the callback data as a parameter.</p>
 
 </li>
 <li><p>The callback function should then run. Note: it is a requirement that the callback function is small and nonblocking as it will be run in the context of a polling mechanism or an interrupt.</p>
@@ -95,7 +95,7 @@ int SSL_get_async_status(SSL *s, int *status);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

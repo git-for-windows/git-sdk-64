@@ -34,7 +34,7 @@ long SSL_CTX_set_tlsext_servername_callback(SSL_CTX *ctx,
                                   int (*cb)(SSL *s, int *al, void *arg));
 long SSL_CTX_set_tlsext_servername_arg(SSL_CTX *ctx, void *arg);
 
-const char *SSL_get_servername(const SSL *s, const int type);
+const char *SSL_get_servername(const SSL *s, int type);
 int SSL_get_servername_type(const SSL *s);
 
 int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
@@ -43,7 +43,7 @@ int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
 
 <p>The functionality provided by the servername callback is mostly superseded by the ClientHello callback, which can be set using SSL_CTX_set_client_hello_cb(). However, even where the ClientHello callback is used, the servername callback is still necessary in order to acknowledge the servername requested by the client.</p>
 
-<p>SSL_CTX_set_tlsext_servername_callback() sets the application callback <b>cb</b> used by a server to perform any actions or configuration required based on the servername extension received in the incoming connection. When <b>cb</b> is NULL, SNI is not used. Note that this callback occurs late in the processing of the ClientHello message. In particular it happens after session resumption has occurred, and so typically this callback should not call functions such as <a href="../man3/SSL_set_session_id_context.html">SSL_set_session_id_context(3)</a> since it is too late to affect the session resumption for the current handshake.</p>
+<p>SSL_CTX_set_tlsext_servername_callback() sets the application callback <i>cb</i> used by a server to perform any actions or configuration required based on the <b>servername</b> extension received in the incoming connection. When <i>cb</i> is NULL, SNI is not used. Note that this callback occurs late in the processing of the ClientHello message. In particular it happens after session resumption has occurred, and so typically this callback should not call functions such as <a href="../man3/SSL_set_session_id_context.html">SSL_set_session_id_context(3)</a> since it is too late to affect the session resumption for the current handshake.</p>
 
 <p>The servername callback should return one of the following values:</p>
 
@@ -58,13 +58,13 @@ int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
 <dt id="SSL_TLSEXT_ERR_ALERT_FATAL">SSL_TLSEXT_ERR_ALERT_FATAL</dt>
 <dd>
 
-<p>In this case the servername requested by the client is not accepted and the handshake will be aborted. The value of the alert to be used should be stored in the location pointed to by the <b>al</b> parameter to the callback. By default this value is initialised to SSL_AD_UNRECOGNIZED_NAME.</p>
+<p>In this case the servername requested by the client is not accepted and the handshake will be aborted. The value of the alert to be used should be stored in the location pointed to by the <i>al</i> parameter to the callback. By default this value is initialised to SSL_AD_UNRECOGNIZED_NAME.</p>
 
 </dd>
 <dt id="SSL_TLSEXT_ERR_ALERT_WARNING">SSL_TLSEXT_ERR_ALERT_WARNING</dt>
 <dd>
 
-<p>If this value is returned then the servername is not accepted by the server. However, the handshake will continue and send a warning alert instead. The value of the alert should be stored in the location pointed to by the <b>al</b> parameter as for SSL_TLSEXT_ERR_ALERT_FATAL above. Note that TLSv1.3 does not support warning alerts, so if TLSv1.3 has been negotiated then this return value is treated the same way as SSL_TLSEXT_ERR_NOACK.</p>
+<p>If this value is returned then the servername is not accepted by the server. However, the handshake will continue and send a warning alert instead. The value of the alert should be stored in the location pointed to by the <i>al</i> parameter as for SSL_TLSEXT_ERR_ALERT_FATAL above. Note that TLSv1.3 does not support warning alerts, so if TLSv1.3 has been negotiated then this return value is treated the same way as SSL_TLSEXT_ERR_NOACK.</p>
 
 </dd>
 <dt id="SSL_TLSEXT_ERR_NOACK">SSL_TLSEXT_ERR_NOACK</dt>
@@ -75,7 +75,7 @@ int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
 </dd>
 </dl>
 
-<p>SSL_CTX_set_tlsext_servername_arg() sets a context-specific argument to be passed into the callback (via the <b>arg</b> parameter) for this <b>SSL_CTX</b>.</p>
+<p>SSL_CTX_set_tlsext_servername_arg() sets a context-specific argument to be passed into the callback (via the <i>arg</i> parameter) for this <b>SSL_CTX</b>.</p>
 
 <p>The behaviour of SSL_get_servername() depends on a number of different factors. In particular note that in TLSv1.3 the servername is negotiated in every handshake. In TLSv1.2 the servername is only negotiated on initial handshakes and not on resumption handshakes.</p>
 
@@ -127,15 +127,17 @@ int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
 
 <p>Note that the ClientHello callback occurs before a servername extension from the client is processed. The servername, certificate and ALPN callbacks occur after a servername extension from the client is processed.</p>
 
-<p>SSL_get_servername_type() returns the servername type or -1 if no servername is present. Currently the only supported type (defined in RFC3546) is <b>TLSEXT_NAMETYPE_host_name</b>.</p>
+<p>SSL_get_servername_type() returns the servername type or -1 if no servername is present. The only type defined in RFC 3546 and supported here is <b>TLSEXT_NAMETYPE_host_name</b>.</p>
 
-<p>SSL_set_tlsext_host_name() sets the server name indication ClientHello extension to contain the value <b>name</b>. The type of server name indication extension is set to <b>TLSEXT_NAMETYPE_host_name</b> (defined in RFC3546).</p>
+<p>SSL_set_tlsext_host_name() sets the Server Name Indication (SNI) ClientHello extension defined in RFC 3546 section 3.1 to contain the value <i>name</i> of type <b>TLSEXT_NAMETYPE_host_name</b>. If <i>name</i> is NULL, it clears the SNI extension.</p>
+
+<p>Using this function may also be important for correct routing of connection requests. TLS clients should call this function alongside <a href="../man3/SSL_set1_dnsname.html">SSL_set1_dnsname(3)</a> or <a href="../man3/SSL_add1_dnsname.html">SSL_add1_dnsname(3)</a> to set the expected server hostname(s) for certificate validation.</p>
+
+<p>The SSL_set_tlsext_host_name() function should only be called on SSL objects that will act as clients; otherwise, the configured <i>name</i> will be ignored. In the future, calling this function on the server side may result in an error.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
 <p>Several callbacks are executed during ClientHello processing, including the ClientHello, ALPN, and servername callbacks. The ClientHello callback is executed first, then the servername callback, followed by the ALPN callback.</p>
-
-<p>The SSL_set_tlsext_host_name() function should only be called on SSL objects that will act as clients; otherwise the configured <b>name</b> will be ignored.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -143,7 +145,7 @@ int SSL_set_tlsext_host_name(const SSL *s, const char *name);</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_alpn_select_cb.html">SSL_CTX_set_alpn_select_cb(3)</a>, <a href="../man3/SSL_get0_alpn_selected.html">SSL_get0_alpn_selected(3)</a>, <a href="../man3/SSL_CTX_set_client_hello_cb.html">SSL_CTX_set_client_hello_cb(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_alpn_select_cb.html">SSL_CTX_set_alpn_select_cb(3)</a>, <a href="../man3/SSL_get0_alpn_selected.html">SSL_get0_alpn_selected(3)</a>, <a href="../man3/SSL_CTX_set_client_hello_cb.html">SSL_CTX_set_client_hello_cb(3)</a>, <a href="../man3/SSL_set1_dnsname.html">SSL_set1_dnsname(3)</a>, <a href="../man3/SSL_add1_dnsname.html">SSL_add1_dnsname(3)</a>, <a href="../man3/X509_VERIFY_PARAM_set1_host.html">X509_VERIFY_PARAM_set1_host(3)</a>, <a href="../man3/X509_VERIFY_PARAM_add1_host.html">X509_VERIFY_PARAM_add1_host(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

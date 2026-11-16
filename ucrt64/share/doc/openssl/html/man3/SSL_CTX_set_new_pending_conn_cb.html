@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>SSL_CTX_set_new_pending_conn_cb, SSL_set_new_pending_conn_cb_fn - callback function to report creation of QUIC connection SSL objects</p>
+<p>SSL_CTX_set_new_pending_conn_cb, SSL_set_new_pending_conn_cb_fn - callback function to report creation of QUIC or DTLS listener connection SSL objects</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -36,27 +36,27 @@ void SSL_CTX_set_new_pending_conn_cb(SSL_CTX *c,
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_new_pending_conn_cb() sets the new_pending_conn callback function and associated application data argument <i>arg</i>. When using the QUIC transport, TLS handshake processing may occur independently from the thread which accepts the connection that the handshake is establishing. As such, <b>SSL</b> objects representing the connection may be allocated and initialized prior to a call to SSL_accept_connection(). This registered callback may be used to decorate the preallocated <b>SSL</b> object or create other associations with its parent <b>SSL</b> prior to a call to SSL_accept_connection().</p>
+<p>SSL_CTX_set_new_pending_conn_cb() sets the new_pending_conn callback function and associated application data argument <i>arg</i>. When using the QUIC transport, or a DTLS listener created by <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, handshake processing may occur independently from the thread which accepts the connection that the handshake is establishing. As such, <b>SSL</b> objects representing the connection may be allocated and initialized prior to a call to SSL_accept_connection(). This registered callback may be used to decorate the preallocated <b>SSL</b> object or create other associations with its parent <b>SSL</b> prior to a call to SSL_accept_connection().</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_CTX_set_new_pending_conn_cb() returns no value.</p>
 
-<p>SSL_set_new_pending_conn_cb_fn() returns an integer value. A return value of 0 indicates that the QUIC stack must discard this newly created <b>SSL</b> object, implying that the associated new connection will not be available for handling on a subsequent call to SSL_accept_connection(). A nonzero return value is treated as success, allowing the new connection to be enqueued to the accept queue.</p>
+<p>SSL_set_new_pending_conn_cb_fn() returns an integer value. A return value of 0 indicates that the QUIC or DTLS stack must discard this newly created <b>SSL</b> object, implying that the associated new connection will not be available for handling on a subsequent call to SSL_accept_connection(). A nonzero return value is treated as success, allowing the new connection to be enqueued to the accept queue.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/SSL_set_ex_data.html">SSL_set_ex_data(3)</a></p>
+<p><a href="../man3/SSL_set_ex_data.html">SSL_set_ex_data(3)</a>, <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a></p>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>Callbacks in QUIC connections have some limitations to them that should be taken into consideration when writing an application.</p>
+<p>Callbacks for QUIC and DTLS listener connections have some limitations to them that should be taken into consideration when writing an application.</p>
 
 <ul>
 
-<p>QUIC connections may begin processing prior to when an application calls SSL_accept_connection() on them. As such, it may occur that callbacks are delivered to applications&#39; registered TLS callbacks prior to those SSL objects being returned in SSL_accept_connection(). Applications should expect this possibility.</p>
+<p>QUIC and DTLS connections may begin processing prior to when an application calls SSL_accept_connection() on them. As such, it may occur that callbacks are delivered to applications&#39; registered TLS callbacks prior to those SSL objects being returned in SSL_accept_connection(). Applications should expect this possibility.</p>
 
-<p>In particular no references should be held on SSL objects passed to callbacks for QUIC connections until such time as they are returned through a call to SSL_accept_connection.</p>
+<p>In particular no references should be held on SSL objects passed to these callbacks until such time as they are returned through a call to SSL_accept_connection.</p>
 
 </ul>
 
@@ -64,9 +64,11 @@ void SSL_CTX_set_new_pending_conn_cb(SSL_CTX *c,
 
 <p>SSL_CTX_set_new_pending_conn_cb() was added in OpenSSL 3.5</p>
 
+<p>Support for reporting DTLS listener pending connections, created by <a href="../man3/SSL_new_listener.html">SSL_new_listener(3)</a>, through this callback was added in OpenSSL 4.1.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

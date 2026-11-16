@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_SIGNATURE, EVP_SIGNATURE_fetch, EVP_SIGNATURE_free, EVP_SIGNATURE_up_ref, EVP_SIGNATURE_is_a, EVP_SIGNATURE_get0_provider, EVP_SIGNATURE_do_all_provided, EVP_SIGNATURE_names_do_all, EVP_SIGNATURE_get0_name, EVP_SIGNATURE_get0_description, EVP_SIGNATURE_gettable_ctx_params, EVP_SIGNATURE_settable_ctx_params - Functions to manage EVP_SIGNATURE algorithm objects</p>
+<p>EVP_SIGNATURE, EVP_SIGNATURE_fetch, EVP_SIGNATURE_free, EVP_SIGNATURE_up_ref, EVP_SIGNATURE_is_a, EVP_SIGNATURE_get0_provider, EVP_SIGNATURE_do_all_provided, EVP_SIGNATURE_names_do_all, EVP_SIGNATURE_get0_name, EVP_SIGNATURE_get0_description, EVP_SIGNATURE_gettable_ctx_params, EVP_SIGNATURE_settable_ctx_params, EVP_SIGNATURE_has_message_update - Functions to manage EVP_SIGNATURE algorithm objects</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -48,7 +48,8 @@ int EVP_SIGNATURE_names_do_all(const EVP_SIGNATURE *signature,
 const char *EVP_SIGNATURE_get0_name(const EVP_SIGNATURE *signature);
 const char *EVP_SIGNATURE_get0_description(const EVP_SIGNATURE *signature);
 const OSSL_PARAM *EVP_SIGNATURE_gettable_ctx_params(const EVP_SIGNATURE *sig);
-const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);</code></pre>
+const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);
+int EVP_SIGNATURE_has_message_update(const EVP_SIGNATURE *sig);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -74,6 +75,8 @@ const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);</
 
 <p>EVP_SIGNATURE_gettable_ctx_params() and EVP_SIGNATURE_settable_ctx_params() return a constant <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that describes the names and types of key parameters that can be retrieved or set by a signature algorithm using <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a> and <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>.</p>
 
+<p>EVP_SIGNATURE_has_message_update() checks whether EVP_PKEY_sign_message_update() and EVP_PKEY_verify_message_update() are both supported.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>EVP_SIGNATURE_fetch() returns a pointer to an <b>EVP_SIGNATURE</b> for success or <b>NULL</b> for failure.</p>
@@ -84,13 +87,15 @@ const OSSL_PARAM *EVP_SIGNATURE_settable_ctx_params(const EVP_SIGNATURE *sig);</
 
 <p>EVP_SIGNATURE_gettable_ctx_params() and EVP_SIGNATURE_settable_ctx_params() return a constant <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array or NULL on error.</p>
 
+<p>EVP_SIGNATURE_has_message_update() returns 1 if EVP_PKEY_sign_message_update() and EVP_PKEY_verify_message_update() are both supported, 0 otherwise.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/crypto.html">&quot;ALGORITHM FETCHING&quot; in crypto(7)</a>, <a href="../man3/OSSL_PROVIDER.html">OSSL_PROVIDER(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions described here were added in OpenSSL 3.0.</p>
+<p>Most functions described here were added in OpenSSL 3.0, except for EVP_PKEY_verify_message_update(), which was added in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

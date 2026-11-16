@@ -44,10 +44,10 @@ int OCSP_RESPID_match_ex(OCSP_RESPID *respid, X509 *cert, OSSL_LIB_CTX *libctx,
 int OCSP_RESPID_match(OCSP_RESPID *respid, X509 *cert);
 
 int OCSP_basic_sign(OCSP_BASICRESP *brsp, X509 *signer, EVP_PKEY *key,
-                    const EVP_MD *dgst, STACK_OF(X509) *certs,
+                    const EVP_MD *dgst, const STACK_OF(X509) *certs,
                     unsigned long flags);
 int OCSP_basic_sign_ctx(OCSP_BASICRESP *brsp, X509 *signer, EVP_MD_CTX *ctx,
-                        STACK_OF(X509) *certs, unsigned long flags);</code></pre>
+                        const STACK_OF(X509) *certs, unsigned long flags);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -103,7 +103,7 @@ int OCSP_basic_sign_ctx(OCSP_BASICRESP *brsp, X509 *signer, EVP_MD_CTX *ctx,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -1,0 +1,273 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_PKEY-MLX-KEM</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Keygen-Parameters">Keygen Parameters</a></li>
+      <li><a href="#Common-parameters">Common parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_PKEY-MLX-KEM, EVP_KEYMGMT-MLX-KEM - Hybrid ML-KEM key support for TLS 1.3</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>These hybrid ML_KEM algorithms derive the session secret from both a ECDH (classical) algorithm (such as X25519, or P-256) and a post-quantum algorithm (ML_KEM), ensuring that key agreement remains secure unless both schemes are broken.</p>
+
+<p>The algorithms supported here are specifically for use in TLS 1.3 and are not suitable for other purposes. There is no encoder/decoder support, and EVP_PKEY_CTX_new_id() is also not supported as there are no associated EVP_PKEY type identifiers.</p>
+
+<p>The following names can be used by EVP_PKEY_CTX_new_from_name() using OpenSSL&#39;s default and FIPS providers.</p>
+
+<dl>
+
+<dt id="X25519MLKEM768"><b>X25519MLKEM768</b></dt>
+<dd>
+
+<p>The shared secret is the concatenation of a 32 byte <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> shared secret followed by a 32 byte <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a> shared secret. X25519 is not an approved FIPS algorithm, but this combination is still allowed by FIPS 140-3 since ML-KEM is FIPS approved.</p>
+
+</dd>
+<dt id="X448MLKEM1024"><b>X448MLKEM1024</b></dt>
+<dd>
+
+<p>Similar to <b>X25519MLKEM768</b> with a higher security strength, the shared secret is the concatenation of a 32 byte <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> shared secret followed by a 56 byte <a href="../man7/EVP_PKEY-X448.html">EVP_PKEY-X448(7)</a> shared secret.</p>
+
+</dd>
+<dt id="SecP256r1MLKEM768"><b>SecP256r1MLKEM768</b></dt>
+<dd>
+
+<p>The shared secret is the concatenation of a 32 byte <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a> shared secret followed by a 32 byte <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> shared secret. Both algorithms used are FIPS approved.</p>
+
+</dd>
+<dt id="SecP384r1MLKEM1024"><b>SecP384r1MLKEM1024</b></dt>
+<dd>
+
+<p>Similar to <b>SecP256r1MLKEM768</b> with a higher security strength, the shared secret is the concatenation of a 48 byte <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a> shared secret followed by a 32 byte <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> shared secret.</p>
+
+</dd>
+</dl>
+
+<p>The following name is supported only in OpenSSL&#39;s default provider.</p>
+
+<dl>
+
+<dt id="curveSM2MLKEM768"><b>curveSM2MLKEM768</b></dt>
+<dd>
+
+<p>The shared secret is the concatenation of a 32 byte <a href="../man7/EVP_PKEY-SM2.html">EVP_PKEY-SM2(7)</a> shared secret followed by a 32 byte <a href="../man7/EVP_PKEY-ML-KEM.html">EVP_PKEY-ML-KEM(7)</a> shared secret.</p>
+
+</dd>
+</dl>
+
+<h2 id="Keygen-Parameters">Keygen Parameters</h2>
+
+<p>No mandatory parameters are required for generating a key pair. To set the optional parameter, use <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a> after calling <a href="../man3/EVP_PKEY_keygen_init.html">EVP_PKEY_keygen_init(3)</a>.</p>
+
+<dl>
+
+<dt id="properties-OSSL_PKEY_PARAM_PROPERTIES-UTF8-string">&quot;properties&quot; (<b>OSSL_PKEY_PARAM_PROPERTIES</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>Sets properties to be used when fetching algorithm implementations used for the <b>ML-KEM</b>, <b>ECDH</b> or <b>SM2</b> algorithms.</p>
+
+</dd>
+</dl>
+
+<p>The OpenSSL FIPS provider makes the following parameter available from both key generation and KEM operation contexts:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-or-OSSL_KEM_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b> or <b>OSSL_KEM_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Returns 0 for X448MLKEM1024, which is advertised with <code>fips=no</code>, and 1 for X25519MLKEM768, SecP256r1MLKEM768 and SecP384r1MLKEM1024. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
+<h2 id="Common-parameters">Common parameters</h2>
+
+<p>See <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a>) for common information related to parameters.</p>
+
+<p>The following common gettables can be retrieved using <a href="../man3/EVP_PKEY_get_int_param.html">EVP_PKEY_get_int_param(3)</a>, they retrieve information related to the ML-KEM algorithm.</p>
+
+<dl>
+
+<dt id="bits-OSSL_PKEY_PARAM_BITS-integer">&#39;bits&#39; (<b>OSSL_PKEY_PARAM_BITS</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="security-bits-OSSL_PKEY_PARAM_SECURITY_BITS-integer">&quot;security-bits&quot; (<b>OSSL_PKEY_PARAM_SECURITY_BITS</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="security-category-OSSL_PKEY_PARAM_SECURITY_CATEGORY-integer">&quot;security-category&quot; (<b>OSSL_PKEY_PARAM_SECURITY_CATEGORY</b>) &lt;integer&gt;</dt>
+<dd>
+
+</dd>
+<dt id="max-size-OSSL_PKEY_PARAM_MAX_SIZE-integer">&quot;max-size&quot; (<b>OSSL_PKEY_PARAM_MAX_SIZE</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>This value is the combined size of the 2 shared secrets as described above.</p>
+
+</dd>
+</dl>
+
+<p>The following parameters are also handled.</p>
+
+<dl>
+
+<dt id="encoded-pub-key-OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY-octet-string">&quot;encoded-pub-key&quot; (<b>OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>Used for getting and setting the encoding of concatenated public keys. The public keys can not be modified once they are set.</p>
+
+<p>The format of the public keys for the different algorithms is:</p>
+
+<dl>
+
+<dt id="SecP256r1MLKEM7681"><b>SecP256r1MLKEM768</b></dt>
+<dd>
+
+<p>A 65 byte EC public key followed by a 1184 byte ML-KEM-768 public key.</p>
+
+</dd>
+<dt id="SecP384r1MLKEM10241"><b>SecP384r1MLKEM1024</b></dt>
+<dd>
+
+<p>A 97 byte EC public key followed by a 1568 byte ML-KEM-1024 public key.</p>
+
+</dd>
+<dt id="X25519MLKEM7681"><b>X25519MLKEM768</b></dt>
+<dd>
+
+<p>A 1184 byte ML-KEM-768 public key followed by a 32 byte X25519 public key.</p>
+
+</dd>
+<dt id="X448MLKEM10241"><b>X448MLKEM1024</b></dt>
+<dd>
+
+<p>A 1568 byte ML-KEM-1024 public key followed by a 56 byte X448 public key.</p>
+
+</dd>
+<dt id="curveSM2MLKEM7681"><b>curveSM2MLKEM768</b></dt>
+<dd>
+
+<p>A 65 byte SM2 public key followed by a 1184 byte ML-KEM-768 public key.</p>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="pub-OSSL_PKEY_PARAM_PUB_KEY-octet-string">&quot;pub&quot; (<b>OSSL_PKEY_PARAM_PUB_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>The public key value.</p>
+
+<p>This parameter is only used when importing or exporting the public key value with the EVP_PKEY_fromdata() and EVP_PKEY_todata() functions. The public key format is the same as &quot;encoded-pub-key&quot;.</p>
+
+</dd>
+<dt id="priv-OSSL_PKEY_PARAM_PRIV_KEY-octet-string">&quot;priv&quot; (<b>OSSL_PKEY_PARAM_PRIV_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>The private key value which is the concatenation of 2 internal private keys.</p>
+
+<p>This parameter can be used when importing or exporting the private key value using the EVP_PKEY_fromdata() and EVP_PKEY_todata() functions. Initial import aside, this parameter is otherwise only gettable.</p>
+
+<p>The format of the private keys for the different algorithms is:</p>
+
+<dl>
+
+<dt id="SecP256r1MLKEM7682"><b>SecP256r1MLKEM768</b></dt>
+<dd>
+
+<p>32 byte EC private key followed by a 2400 byte ML-KEM-768 private key.</p>
+
+</dd>
+<dt id="SecP384r1MLKEM10242"><b>SecP384r1MLKEM1024</b></dt>
+<dd>
+
+<p>48 byte EC private key followed by a 3168 byte ML-KEM-1024 private key.</p>
+
+</dd>
+<dt id="X25519MLKEM7682"><b>X25519MLKEM768</b></dt>
+<dd>
+
+<p>2400 byte ML-KEM-768 private key followed by a 32 byte X25519 private key.</p>
+
+</dd>
+<dt id="X448MLKEM10242"><b>X448MLKEM1024</b></dt>
+<dd>
+
+<p>3168 byte ML-KEM-1024 private key followed by a 56 byte X448 private key.</p>
+
+</dd>
+<dt id="curveSM2MLKEM7682"><b>curveSM2MLKEM768</b></dt>
+<dd>
+
+<p>32 byte SM2 private key followed by a 2400 byte ML-KEM-768 private key.</p>
+
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+<h1 id="CONFORMING-TO">CONFORMING TO</h1>
+
+<dl>
+
+<dt id="https:-datatracker.ietf.org-doc-draft-ietf-tls-ecdhe-mlkem">https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/</dt>
+<dd>
+
+<p>Note that <b>X448MLKEM1024</b> is not defined by this document.</p>
+
+</dd>
+<dt id="SP800-227">SP800-227</dt>
+<dd>
+
+<p>The general notation used in this document says that outputs are combined/processed in order of the names. <b>X25519MLKEM768</b> and <b>X448MLKEM768</b> however use the reverse order since X25519 and X448 are not FIPS approved algorithms. Even though they are not FIPS approved the hybrid combination is still allowed since MLKEM is FIPS approved.</p>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/EVP_KEM-ML-KEM.html">EVP_KEM-ML-KEM(7)</a>, <a href="../man7/EVP_PKEY-X25519.html">EVP_PKEY-X25519(7)</a>, <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a>, <a href="../man7/EVP_PKEY-SM2.html">EVP_PKEY-SM2(7)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This functionality was added in OpenSSL 3.5.</p>
+
+<p>Support for <b>curveSM2MLKEM768</b> was added in OpenSSL 4.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

@@ -47,11 +47,13 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>ciphers</b> [<b>-help</b>] [<b>-s</b>] [<b>-v</b>] [<b>-V</b>] [<b>-ssl3</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-psk</b>] [<b>-srp</b>] [<b>-stdname</b>] [<b>-convert</b> <i>name</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<i>cipherlist</i>]</p>
+<p><b>openssl</b> <b>ciphers</b> [<b>-help</b>] [<b>-s</b>] [<b>-v</b>] [<b>-V</b>] [<b>-tls1</b>] [<b>-tls1_1</b>] [<b>-tls1_2</b>] [<b>-tls1_3</b>] [<b>-psk</b>] [<b>-srp</b>] [<b>-stdname</b>] [<b>-convert</b> <i>name</i>] [<b>-ciphersuites</b> <i>val</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>] [<i>cipherlist</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>This command converts textual OpenSSL cipher lists into ordered SSL cipher preference lists. It can be used to determine the appropriate cipherlist.</p>
+
+<p>As of OpenSSL 4.0 the list of TLS 1.3 ciphersuites <i>val</i> and TLS 1.2 ciphers <i>cipherlist</i> are processed case-insensitively.</p>
 
 <h1 id="OPTIONS">OPTIONS</h1>
 
@@ -119,7 +121,7 @@
 <p>Like <b>-v</b>, but include the official cipher suite values in hex.</p>
 
 </dd>
-<dt id="tls1_3--tls1_2--tls1_1--tls1--ssl3"><b>-tls1_3</b>, <b>-tls1_2</b>, <b>-tls1_1</b>, <b>-tls1</b>, <b>-ssl3</b></dt>
+<dt id="tls1_3--tls1_2--tls1_1--tls1"><b>-tls1_3</b>, <b>-tls1_2</b>, <b>-tls1_1</b>, <b>-tls1</b></dt>
 <dd>
 
 <p>In combination with the <b>-s</b> option, list the ciphers which could be used if the specified protocol were negotiated. Note that not all protocols and flags may be available, depending on how OpenSSL was built.</p>
@@ -227,12 +229,6 @@
 <p>&quot;Low&quot; encryption cipher suites, currently those using 64 or 56 bit encryption algorithms but excluding export cipher suites. All these cipher suites have been removed as of OpenSSL 1.1.0.</p>
 
 </dd>
-<dt id="FIPS"><b>FIPS</b></dt>
-<dd>
-
-<p>Cipher suites permitted in FIPS mode.</p>
-
-</dd>
 <dt id="eNULL-NULL"><b>eNULL</b>, <b>NULL</b></dt>
 <dd>
 
@@ -299,10 +295,10 @@
 <p>Cipher suites using ECDSA authentication, i.e. the certificates carry ECDSA keys.</p>
 
 </dd>
-<dt id="TLSv1.2-TLSv1.0-SSLv3"><b>TLSv1.2</b>, <b>TLSv1.0</b>, <b>SSLv3</b></dt>
+<dt id="TLSv1.2-TLSv1.0"><b>TLSv1.2</b>, <b>TLSv1.0</b></dt>
 <dd>
 
-<p>Lists cipher suites introduced in TLS v1.2, TLS v1.0 or SSL v3.0 respectively. Note: there are no cipher suites specific to TLS v1.1. Since this is only the minimum version, if, for example, TLSv1.0 is negotiated then both TLSv1.0 and SSLv3.0 cipher suites are available.</p>
+<p>Lists cipher suites introduced in TLS v1.2 or TLS v1.0 respectively. Note: there are no cipher suites specific to TLS v1.1. Since this is only the minimum version, if, for example, TLSv1.2 is negotiated then both TLSv1.2 and TLSv1.0 cipher suites are available.</p>
 
 <p>Note: these cipher strings <b>do not</b> change the negotiated version of SSL or TLS, they only affect the list of available cipher suites.</p>
 
@@ -406,7 +402,7 @@
 <dt id="aGOST"><b>aGOST</b></dt>
 <dd>
 
-<p>Cipher suites using GOST R 34.10 (either 2001 or 2012) for authentication (needs an engine supporting GOST algorithms).</p>
+<p>Cipher suites using GOST R 34.10 (either 2001 or 2012) for authentication (needs a provider that supports GOST algorithms).</p>
 
 </dd>
 <dt id="aGOST01"><b>aGOST01</b></dt>
@@ -666,7 +662,7 @@ TLS_RSA_WITH_SEED_CBC_SHA                      SEED-SHA</code></pre>
 
 <h2 id="GOST-cipher-suites-for-TLS-v1.2">GOST cipher suites for TLS v1.2</h2>
 
-<p>Note: these ciphers require an engine which including GOST cryptographic algorithms, such as the <b>gost</b> engine, which isn&#39;t part of the OpenSSL distribution.</p>
+<p>Note: these ciphers require a provider that supports GOST cryptographic algorithms, such as the <b>gostprov</b> provider, which isn&#39;t part of the OpenSSL distribution.</p>
 
 <pre><code>TLS_GOSTR341001_WITH_28147_CNT_IMIT         GOST2001-GOST89-GOST89
 TLS_GOSTR341001_WITH_NULL_GOSTR3411         GOST2001-NULL-GOST94
@@ -910,7 +906,9 @@ TLS_DH_anon_WITH_3DES_EDE_CBC_SHA              ADH-DES-CBC3-SHA</code></pre>
 TLS_AES_256_GCM_SHA384                     TLS_AES_256_GCM_SHA384
 TLS_CHACHA20_POLY1305_SHA256               TLS_CHACHA20_POLY1305_SHA256
 TLS_AES_128_CCM_SHA256                     TLS_AES_128_CCM_SHA256
-TLS_AES_128_CCM_8_SHA256                   TLS_AES_128_CCM_8_SHA256</code></pre>
+TLS_AES_128_CCM_8_SHA256                   TLS_AES_128_CCM_8_SHA256
+TLS_SM4_GCM_SM3                            TLS_SM4_GCM_SM3
+TLS_SM4_CCM_SM3                            TLS_SM4_CCM_SM3</code></pre>
 
 <h2 id="TLS-v1.3-integrity-only-cipher-suites-according-to-RFC-9150">TLS v1.3 integrity-only cipher suites according to RFC 9150</h2>
 
@@ -971,6 +969,8 @@ EDH-DSS-DES-CBC3-SHA - alias of DHE-DSS-DES-CBC3-SHA</code></pre>
 <p>Support for standard IANA names in cipher lists was added in OpenSSL 3.2.0.</p>
 
 <p>The support for TLS v1.3 integrity-only cipher suites was added in OpenSSL 3.4.</p>
+
+<p>The list of TLS 1.3 ciphersuites <i>val</i> and TLS 1.2 ciphers <i>cipherlist</i> were case-sensitive prior to OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

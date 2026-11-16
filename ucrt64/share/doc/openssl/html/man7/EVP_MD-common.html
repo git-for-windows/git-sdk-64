@@ -51,9 +51,51 @@
 <dt id="flags-OSSL_DIGEST_PARAM_FLAGS-unsigned-integer">&quot;flags&quot; (<b>OSSL_DIGEST_PARAM_FLAGS</b>) &lt;unsigned integer&gt;</dt>
 <dd>
 
-<p>Diverse flags that describe exceptional behaviour for the digest. These flags are described in <a href="../man3/EVP_MD_meth_set_flags.html">&quot;DESCRIPTION&quot; in EVP_MD_meth_set_flags(3)</a>.</p>
+<p>Diverse flags that describe exceptional behaviour for the digest.</p>
 
 <p>The length of the &quot;flags&quot; parameter should equal that of an <b>unsigned long int</b>.</p>
+
+<p>Several flags can be or&#39;d together. The available flags are:</p>
+
+<dl>
+
+<dt id="EVP_MD_FLAG_ONESHOT">EVP_MD_FLAG_ONESHOT</dt>
+<dd>
+
+<p>This digest method can only handle one block of input.</p>
+
+</dd>
+<dt id="EVP_MD_FLAG_XOF">EVP_MD_FLAG_XOF</dt>
+<dd>
+
+<p>This digest method is an extensible-output function (XOF) and supports the <b>EVP_MD_CTRL_XOF_LEN</b> control.</p>
+
+</dd>
+<dt id="EVP_MD_FLAG_DIGALGID_NULL">EVP_MD_FLAG_DIGALGID_NULL</dt>
+<dd>
+
+<p>When setting up a DigestAlgorithmIdentifier, this flag will have the parameter set to NULL by default. Use this for PKCS#1. <i>Note: if combined with EVP_MD_FLAG_DIGALGID_ABSENT, the latter will override.</i></p>
+
+</dd>
+<dt id="EVP_MD_FLAG_DIGALGID_ABSENT">EVP_MD_FLAG_DIGALGID_ABSENT</dt>
+<dd>
+
+<p>When setting up a DigestAlgorithmIdentifier, this flag will have the parameter be left absent by default. <i>Note: if combined with EVP_MD_FLAG_DIGALGID_NULL, the latter will be overridden.</i></p>
+
+</dd>
+<dt id="EVP_MD_FLAG_DIGALGID_CUSTOM">EVP_MD_FLAG_DIGALGID_CUSTOM</dt>
+<dd>
+
+<p>Custom DigestAlgorithmIdentifier handling via ctrl, with <b>EVP_MD_FLAG_DIGALGID_ABSENT</b> as default. <i>Note: if combined with EVP_MD_FLAG_DIGALGID_NULL, the latter will be overridden.</i> Currently unused.</p>
+
+</dd>
+<dt id="EVP_MD_FLAG_FIPS">EVP_MD_FLAG_FIPS</dt>
+<dd>
+
+<p>This digest method is suitable for use in FIPS mode. Currently unused.</p>
+
+</dd>
+</dl>
 
 <p>This value can also be retrieved with <a href="../man3/EVP_MD_get_flags.html">EVP_MD_get_flags(3)</a>.</p>
 

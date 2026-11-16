@@ -23,7 +23,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>BIO_get_ex_new_index, BIO_set_ex_data, BIO_get_ex_data, BIO_set_app_data, BIO_get_app_data, DH_get_ex_new_index, DH_set_ex_data, DH_get_ex_data, DSA_get_ex_new_index, DSA_set_ex_data, DSA_get_ex_data, EC_KEY_get_ex_new_index, EC_KEY_set_ex_data, EC_KEY_get_ex_data, ENGINE_get_ex_new_index, ENGINE_set_ex_data, ENGINE_get_ex_data, EVP_PKEY_get_ex_new_index, EVP_PKEY_set_ex_data, EVP_PKEY_get_ex_data, RSA_get_ex_new_index, RSA_set_ex_data, RSA_get_ex_data, RSA_set_app_data, RSA_get_app_data, SSL_get_ex_new_index, SSL_set_ex_data, SSL_get_ex_data, SSL_set_app_data, SSL_get_app_data, SSL_CTX_get_ex_new_index, SSL_CTX_set_ex_data, SSL_CTX_get_ex_data, SSL_CTX_set_app_data, SSL_CTX_get_app_data, SSL_SESSION_get_ex_new_index, SSL_SESSION_set_ex_data, SSL_SESSION_get_ex_data, SSL_SESSION_set_app_data, SSL_SESSION_get_app_data, UI_get_ex_new_index, UI_set_ex_data, UI_get_ex_data, UI_set_app_data, UI_get_app_data, X509_STORE_CTX_get_ex_new_index, X509_STORE_CTX_set_ex_data, X509_STORE_CTX_get_ex_data, X509_STORE_CTX_set_app_data, X509_STORE_CTX_get_app_data, X509_STORE_get_ex_new_index, X509_STORE_set_ex_data, X509_STORE_get_ex_data, X509_get_ex_new_index, X509_set_ex_data, X509_get_ex_data - application-specific data</p>
+<p>BIO_get_ex_new_index, BIO_set_ex_data, BIO_get_ex_data, BIO_set_app_data, BIO_get_app_data, DH_get_ex_new_index, DH_set_ex_data, DH_get_ex_data, DSA_get_ex_new_index, DSA_set_ex_data, DSA_get_ex_data, EC_KEY_get_ex_new_index, EC_KEY_set_ex_data, EC_KEY_get_ex_data, EVP_PKEY_get_ex_new_index, EVP_PKEY_set_ex_data, EVP_PKEY_get_ex_data, RSA_get_ex_new_index, RSA_set_ex_data, RSA_get_ex_data, RSA_set_app_data, RSA_get_app_data, SSL_get_ex_new_index, SSL_set_ex_data, SSL_get_ex_data, SSL_set_app_data, SSL_get_app_data, SSL_CTX_get_ex_new_index, SSL_CTX_set_ex_data, SSL_CTX_get_ex_data, SSL_CTX_set_app_data, SSL_CTX_get_app_data, SSL_SESSION_get_ex_new_index, SSL_SESSION_set_ex_data, SSL_SESSION_get_ex_data, SSL_SESSION_set_app_data, SSL_SESSION_get_app_data, UI_get_ex_new_index, UI_set_ex_data, UI_get_ex_data, UI_set_app_data, UI_get_app_data, X509_STORE_CTX_get_ex_new_index, X509_STORE_CTX_set_ex_data, X509_STORE_CTX_get_ex_data, X509_STORE_CTX_set_app_data, X509_STORE_CTX_get_app_data, X509_STORE_get_ex_new_index, X509_STORE_set_ex_data, X509_STORE_get_ex_data, X509_get_ex_new_index, X509_set_ex_data, X509_get_ex_data - application-specific data</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -60,19 +60,13 @@ int RSA_get_ex_new_index(long argl, void *argp, CRYPTO_EX_new *new_func,
 int RSA_set_ex_data(RSA *type, int idx, void *arg);
 void *RSA_get_ex_data(RSA *type, int idx);
 int RSA_set_app_data(RSA *type, void *arg);
-void *RSA_get_app_data(RSA *type);
-int ENGINE_get_ex_new_index(long argl, void *argp, CRYPTO_EX_new *new_func,
-                            CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func);
-int ENGINE_set_ex_data(ENGINE *type, int idx, void *arg);
-void *ENGINE_get_ex_data(ENGINE *type, int idx);</code></pre>
+void *RSA_get_app_data(RSA *type);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>In the description here, <i>TYPE</i> is used a placeholder for any of the OpenSSL datatypes listed in <a href="../man3/CRYPTO_get_ex_new_index.html">CRYPTO_get_ex_new_index(3)</a>.</p>
 
 <p>All functions with a <i>TYPE</i> of <b>DH</b>, <b>DSA</b>, <b>RSA</b> and <b>EC_KEY</b> are deprecated. Applications should instead use EVP_PKEY_set_ex_data(), EVP_PKEY_get_ex_data() and EVP_PKEY_get_ex_new_index().</p>
-
-<p>All functions with a <i>TYPE</i> of <b>ENGINE</b> are deprecated. Applications using engines should be replaced by providers.</p>
 
 <p>These functions handle application-specific data for OpenSSL data structures.</p>
 
@@ -98,11 +92,11 @@ void *ENGINE_get_ex_data(ENGINE *type, int idx);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The functions DH_get_ex_new_index(), DH_set_ex_data(), DH_get_ex_data(), DSA_get_ex_new_index(), DSA_set_ex_data(), DSA_get_ex_data(), EC_KEY_get_ex_new_index(), EC_KEY_set_ex_data(), EC_KEY_get_ex_data(), ENGINE_get_ex_new_index(), ENGINE_set_ex_data(), ENGINE_get_ex_data(), RSA_get_ex_new_index(), RSA_set_ex_data(), RSA_get_ex_data(), RSA_set_app_data() and RSA_get_app_data() were deprecated in OpenSSL 3.0.</p>
+<p>The functions DH_get_ex_new_index(), DH_set_ex_data(), DH_get_ex_data(), DSA_get_ex_new_index(), DSA_set_ex_data(), DSA_get_ex_data(), EC_KEY_get_ex_new_index(), EC_KEY_set_ex_data(), EC_KEY_get_ex_data(), RSA_get_ex_new_index(), RSA_set_ex_data(), RSA_get_ex_data(), RSA_set_app_data() and RSA_get_app_data() were deprecated in OpenSSL 3.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

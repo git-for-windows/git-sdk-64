@@ -28,7 +28,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>ec</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-passin</b> <i>arg</i>] [<b>-out</b> <i>filename</i>] [<b>-passout</b> <i>arg</i>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-text</b>] [<b>-noout</b>] [<b>-param_out</b>] [<b>-pubin</b>] [<b>-pubout</b>] [<b>-conv_form</b> <i>arg</i>] [<b>-param_enc</b> <i>arg</i>] [<b>-no_public</b>] [<b>-check</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>ec</b> [<b>-help</b>] [<b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>] [<b>-outform</b> <b>DER</b>|<b>PEM</b>] [<b>-in</b> <i>filename</i>|<i>uri</i>] [<b>-passin</b> <i>arg</i>] [<b>-out</b> <i>filename</i>] [<b>-passout</b> <i>arg</i>] [<b>-des</b>] [<b>-des3</b>] [<b>-idea</b>] [<b>-text</b>] [<b>-noout</b>] [<b>-param_out</b>] [<b>-pubin</b>] [<b>-pubout</b>] [<b>-conv_form</b> <i>arg</i>] [<b>-param_enc</b> <i>arg</i>] [<b>-no_public</b>] [<b>-check</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -44,7 +44,7 @@
 <p>Print out a usage message.</p>
 
 </dd>
-<dt id="inform-DER-PEM-P12-ENGINE"><b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b>|<b>ENGINE</b></dt>
+<dt id="inform-DER-PEM-P12"><b>-inform</b> <b>DER</b>|<b>PEM</b>|<b>P12</b></dt>
 <dd>
 
 <p>The key input format; unspecified by default. See <a href="../man1/openssl-format-options.html">openssl-format-options(1)</a> for details.</p>
@@ -115,7 +115,7 @@
 <dt id="conv_form-arg"><b>-conv_form</b> <i>arg</i></dt>
 <dd>
 
-<p>This specifies how the points on the elliptic curve are converted into octet strings. Possible values are: <b>compressed</b>, <b>uncompressed</b> (the default value) and <b>hybrid</b>. For more information regarding the point conversion forms please read the X9.62 standard. <b>Note</b> Due to patent issues the <b>compressed</b> option is disabled by default for binary curves and can be enabled by defining the preprocessor macro <b>OPENSSL_EC_BIN_PT_COMP</b> at compile time.</p>
+<p>This specifies how the points on the elliptic curve are converted into octet strings. Possible values are: <b>compressed</b>, <b>uncompressed</b> (the default value) and <b>hybrid</b>. For more information regarding the point conversion forms please read the X9.62 standard.</p>
 
 </dd>
 <dt id="param_enc-arg"><b>-param_enc</b> <i>arg</i></dt>
@@ -134,12 +134,6 @@
 <dd>
 
 <p>This option checks the consistency of an EC private or public key.</p>
-
-</dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
 
 </dd>
 <dt id="provider-name"><b>-provider</b> <i>name</i></dt>
@@ -198,13 +192,13 @@
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
-
 <p>The <b>-conv_form</b> and <b>-no_public</b> options are no longer supported with keys loaded from an engine in OpenSSL 3.0.</p>
+
+<p>The <b>-engine</b> option was removed in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2003-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2003-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -66,6 +66,12 @@
 <p>The FIPS module normally enters an internal error mode if any self test fails. Once this error mode is active, no services or cryptographic algorithms are accessible from this point on. Continuous tests are a subset of the self tests (e.g., a key pair test during key generation, or the CRNG output test). Setting this value to <code>0</code> allows the error mode to not be triggered if any continuous test fails. The default value of <code>1</code> will trigger the error mode. Regardless of the value, the operation (e.g., key generation) that called the continuous test will return an error code if its continuous test fails. The operation may then be retried if the error mode has not been triggered.</p>
 
 </dd>
+<dt id="defer-tests"><b>defer-tests</b></dt>
+<dd>
+
+<p>If set to <code>1</code>, the module will not run the self tests during initialization. Instead, the self tests will be run on demand when a particular algorithm is used. The default value of <code>0</code> runs the self tests during initialization.</p>
+
+</dd>
 <dt id="module-mac"><b>module-mac</b></dt>
 <dd>
 
@@ -295,7 +301,7 @@ install-status = INSTALL_SELF_TEST_KATS_RUN</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

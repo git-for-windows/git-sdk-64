@@ -16,6 +16,7 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
+      <li><a href="#Metadata">Metadata</a></li>
       <li><a href="#Selections">Selections</a></li>
     </ul>
   </li>
@@ -28,7 +29,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_SKEY, EVP_SKEY_generate, EVP_SKEY_import, EVP_SKEY_import_raw_key, EVP_SKEY_import_SKEYMGMT, EVP_SKEY_up_ref, EVP_SKEY_export, EVP_SKEY_get0_raw_key, EVP_SKEY_get0_key_id, EVP_SKEY_get0_skeymgmt_name, EVP_SKEY_get0_provider_name, EVP_SKEY_free, EVP_SKEY_is_a, EVP_SKEY_to_provider - opaque symmetric key allocation and handling functions</p>
+<p>EVP_SKEY, EVP_SKEY_generate, EVP_SKEY_import, EVP_SKEY_import_raw_key, EVP_SKEY_import_SKEYMGMT, EVP_SKEY_up_ref, EVP_SKEY_export, EVP_SKEY_get0_raw_key, EVP_SKEY_get0_key_id, EVP_SKEY_get0_skeymgmt_name, EVP_SKEY_get0_provider_name, EVP_SKEY_free, EVP_SKEY_is_a, EVP_SKEY_to_provider, EVP_SKEY_get0_local_keyid, EVP_SKEY_get0_algorithm_id - opaque symmetric key allocation and handling functions</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -59,7 +60,14 @@ int EVP_SKEY_up_ref(EVP_SKEY *key);
 void EVP_SKEY_free(EVP_SKEY *key);
 int EVP_SKEY_is_a(const EVP_SKEY *skey, const char *name);
 EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
-                               OSSL_PROVIDER *prov, const char *propquery);</code></pre>
+                               OSSL_PROVIDER *prov, const char *propquery);
+
+int EVP_SKEY_get0_local_keyid(const EVP_SKEY *skey,
+                              const unsigned char **id, size_t *len);
+int EVP_SKEY_get0_algorithm_id(const EVP_SKEY *skey,
+                                const unsigned char **oid, size_t *oid_len,
+                                const unsigned char **params,
+                                size_t *params_len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -90,6 +98,20 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 <p>EVP_SKEY_is_a() checks if the key type of <i>skey</i> is <i>name</i>.</p>
 
 <p>EVP_SKEY_to_provider() simplifies the task of importing a <i>skey</i> into a different provider identified by <i>prov</i>. If <i>prov</i> is NULL, the default provider for the key type identified via <i>skey</i> is used.</p>
+
+<h2 id="Metadata">Metadata</h2>
+
+<p>An <b>EVP_SKEY</b> object can carry optional metadata alongside the cryptographic key material. This metadata is managed by the provider through the <b>EVP_SKEYMGMT</b> import/export mechanism and stored in the provider-side key data.</p>
+
+<p>The friendly name (alias) is accessible via EVP_SKEY_get0_key_id(), which dispatches to the provider&#39;s <b>OSSL_FUNC_skeymgmt_get_key_id</b> function. The built-in providers return the value of <b>OSSL_SKEY_PARAM_ALIAS</b> if it was set during import.</p>
+
+<p>EVP_SKEY_get0_local_keyid() retrieves the local key identifier from <i>skey</i>. On success, <i>*id</i> is set to a pointer to the identifier bytes and <i>*len</i> is set to the length. The returned pointer is valid for the lifetime of <i>skey</i>. Returns 1 on success, 0 on error.</p>
+
+<p>EVP_SKEY_get0_algorithm_id() retrieves the algorithm identifier from <i>skey</i>. It can return both the DER-encoded algorithm OID (via <i>oid</i> and <i>oid_len</i>) and the DER-encoded algorithm parameters (via <i>params</i> and <i>params_len</i>). Either output pair may be NULL if the caller does not need that part. The returned pointers are valid for the lifetime of <i>skey</i>. Returns 1 on success, 0 on error.</p>
+
+<p>These metadata fields are populated on obtaining the key object (e.g. when parsing PKCS#12 files). For PKCS#12 files the friendly name and local key ID correspond to PKCS#12 bag attributes (<b>NID_friendlyName</b> and <b>NID_localKeyID</b>), while the algorithm OID and parameters are extracted from the PKCS8 <b>AlgorithmIdentifier</b>.</p>
+
+<p>The implementation is in general provider-dependent. If the corresponding callback is not implemented for the EVP_SKEYMGMT, 0 is returned. However, as metadata is completely optional, the success doesn&#39;t indicate that the data is available.</p>
 
 <h2 id="Selections">Selections</h2>
 
@@ -139,6 +161,8 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 
 <p>EVP_SKEY_to_provider() returns a new <b>EVP_SKEY</b> suitable for operations with the <i>prov</i> provider or NULL in case of failure.</p>
 
+<p>EVP_SKEY_get0_local_keyid() and EVP_SKEY_get0_algorithm_id() return 1 on success or 0 on error.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/EVP_SKEYMGMT.html">EVP_SKEYMGMT(3)</a>, <a href="../man7/provider.html">provider(7)</a>, <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a></p>
@@ -148,6 +172,8 @@ EVP_SKEY *EVP_SKEY_to_provider(EVP_SKEY *skey, OSSL_LIB_CTX *libctx,
 <p>The <b>EVP_SKEY</b> API and functions EVP_SKEY_export(), EVP_SKEY_free(), EVP_SKEY_get0_raw_key(), EVP_SKEY_import(), EVP_SKEY_import_raw_key(), EVP_SKEY_up_ref(), EVP_SKEY_generate(), EVP_SKEY_get0_key_id(), EVP_SKEY_get0_provider_name(), EVP_SKEY_get0_skeymgmt_name(), EVP_SKEY_is_a(), EVP_SKEY_to_provider() were introduced in OpenSSL 3.5.</p>
 
 <p>The EVP_SKEY_import_SKEYMGMT() function was introduced in OpenSSL 4.0.</p>
+
+<p>The EVP_SKEY_get0_local_keyid() and EVP_SKEY_get0_algorithm_id() functions were added in OpenSSL 4.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

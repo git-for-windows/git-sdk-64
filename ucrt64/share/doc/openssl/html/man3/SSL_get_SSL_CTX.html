@@ -36,7 +36,7 @@ SSL_CTX *SSL_get_SSL_CTX(const SSL *ssl);</code></pre>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>The pointer to the SSL_CTX object is returned.</p>
+<p>The pointer to the SSL_CTX object is returned. This is an internal pointer and the reference count is not incremented. The returned pointer should not be freed. If the caller needs to retain the SSL_CTX for longer than the SSL object, it should call <a href="../man3/SSL_CTX_up_ref.html">SSL_CTX_up_ref(3)</a> to increment the reference count.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
@@ -44,7 +44,7 @@ SSL_CTX *SSL_get_SSL_CTX(const SSL *ssl);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2001-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

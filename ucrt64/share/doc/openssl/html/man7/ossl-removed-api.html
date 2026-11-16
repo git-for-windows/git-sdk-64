@@ -1,0 +1,628 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>ossl-removed-api</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPENSSL-4.0">OPENSSL 4.0</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>ASN1_STRING_data, BIO_f_reliable, DTLSv1_method, DTLSv1_server_method, DTLSv1_client_method, DTLSv1_2_method, DTLSv1_2_server_method, DTLSv1_2_client_method, ERR_get_state, ERR_remove_state, ERR_remove_thread_state, EVP_CIPHER_meth_new, EVP_CIPHER_meth_dup, EVP_CIPHER_meth_free, EVP_CIPHER_meth_set_iv_length, EVP_CIPHER_meth_set_flags, EVP_CIPHER_meth_set_impl_ctx_size, EVP_CIPHER_meth_set_init, EVP_CIPHER_meth_set_do_cipher, EVP_CIPHER_meth_set_cleanup, EVP_CIPHER_meth_set_set_asn1_params, EVP_CIPHER_meth_set_get_asn1_params, EVP_CIPHER_meth_set_ctrl, EVP_CIPHER_meth_get_init, EVP_CIPHER_meth_get_do_cipher, EVP_CIPHER_meth_get_cleanup, EVP_CIPHER_meth_get_set_asn1_params, EVP_CIPHER_meth_get_get_asn1_params, EVP_CIPHER_meth_get_ctrl, EVP_MD_meth_new, EVP_MD_meth_dup, EVP_MD_meth_free, EVP_MD_meth_set_input_blocksize, EVP_MD_meth_set_result_size, EVP_MD_meth_set_app_datasize, EVP_MD_meth_set_flags, EVP_MD_meth_set_init, EVP_MD_meth_set_update, EVP_MD_meth_set_final, EVP_MD_meth_set_copy, EVP_MD_meth_set_cleanup, EVP_MD_meth_set_ctrl, EVP_MD_meth_get_input_blocksize, EVP_MD_meth_get_result_size, EVP_MD_meth_get_app_datasize, EVP_MD_meth_get_flags, EVP_MD_meth_get_init, EVP_MD_meth_get_update, EVP_MD_meth_get_final, EVP_MD_meth_get_copy, EVP_MD_meth_get_cleanup, EVP_MD_meth_get_ctrl, EVP_PKEY_meth_find, EVP_PKEY_meth_new, EVP_PKEY_meth_get0_info, EVP_PKEY_meth_copy, EVP_PKEY_meth_free, EVP_PKEY_meth_add0, EVP_PKEY_meth_remove, EVP_PKEY_meth_get_count, EVP_PKEY_meth_get0, EVP_PKEY_meth_set_init, EVP_PKEY_meth_set_copy, EVP_PKEY_meth_set_cleanup, EVP_PKEY_meth_set_paramgen, EVP_PKEY_meth_set_keygen, EVP_PKEY_meth_set_sign, EVP_PKEY_meth_set_verify, EVP_PKEY_meth_set_verify_recover, EVP_PKEY_meth_set_signctx, EVP_PKEY_meth_set_verifyctx, EVP_PKEY_meth_set_encrypt, EVP_PKEY_meth_set_decrypt, EVP_PKEY_meth_set_derive, EVP_PKEY_meth_set_ctrl, EVP_PKEY_meth_set_digestsign, EVP_PKEY_meth_set_digestverify, EVP_PKEY_meth_set_check, EVP_PKEY_meth_set_public_check, EVP_PKEY_meth_set_param_check, EVP_PKEY_meth_set_digest_custom, EVP_PKEY_meth_get_init, EVP_PKEY_meth_get_copy, EVP_PKEY_meth_get_cleanup, EVP_PKEY_meth_get_paramgen, EVP_PKEY_meth_get_keygen, EVP_PKEY_meth_get_sign, EVP_PKEY_meth_get_verify, EVP_PKEY_meth_get_verify_recover, EVP_PKEY_meth_get_signctx, EVP_PKEY_meth_get_verifyctx, EVP_PKEY_meth_get_encrypt, EVP_PKEY_meth_get_decrypt, EVP_PKEY_meth_get_derive, EVP_PKEY_meth_get_ctrl, EVP_PKEY_meth_get_digestsign, EVP_PKEY_meth_get_digestverify, EVP_PKEY_meth_get_check, EVP_PKEY_meth_get_public_check, EVP_PKEY_meth_get_param_check, EVP_PKEY_meth_get_digest_custom, EVP_MD_CTX_update_fn, EVP_MD_CTX_set_update_fn, EVP_PKEY_asn1_add0, EVP_PKEY_asn1_add_alias, EVP_PKEY_asn1_get_count, EVP_PKEY_asn1_get0, EVP_PKEY_asn1_find, EVP_PKEY_asn1_find_str, EVP_PKEY_asn1_get0_info, EVP_PKEY_get0_asn1, EVP_PKEY_asn1_new, EVP_PKEY_asn1_copy, EVP_PKEY_asn1_free, EVP_PKEY_asn1_set_public, EVP_PKEY_asn1_set_private, EVP_PKEY_asn1_set_param, EVP_PKEY_asn1_set_free, EVP_PKEY_asn1_set_ctrl, EVP_PKEY_asn1_set_item, EVP_PKEY_asn1_set_siginf, EVP_PKEY_asn1_set_check, EVP_PKEY_asn1_set_public_check, EVP_PKEY_asn1_set_param_check, EVP_PKEY_asn1_set_set_priv_key, EVP_PKEY_asn1_set_set_pub_key, EVP_PKEY_asn1_set_get_priv_key, EVP_PKEY_asn1_set_get_pub_key, EVP_PKEY_asn1_set_security_bits, OPENSSL_atexit, SSLv3_method, SSLv3_server_method, SSLv3_client_method, TLSv1_method, TLSv1_server_method, TLSv1_client_method, TLSv1_1_method, TLSv1_1_server_method, TLSv1_1_client_method, TLSv1_2_method, TLSv1_2_server_method, TLSv1_2_client_method, ossl-removed-api - API that has been removed from OpenSSL</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p>This page lists API that has been removed from OpenSSL, and when it was removed.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This page documents a list of API that has been removed from OpenSSL. Functions are not removed until they have been deprecated for some time (Normally at least one major OpenSSL release, if not more). This means that during at least one previous major release of OpenSSL, deprecation warnings would have been emitted at compile time when using this function, and the documentation would have contained information on how to move away from the deprecated API.</p>
+
+<p>Once a deprecated function is removed, The documentation for that function will also be removed in order to keep the documentation relevant to the current release. Normally, you should consult a previous major release of OpenSSL where this function still existed, and make changes to your code to no longer use the function as documented in that release.</p>
+
+<p>This includes consulting the <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a> documentation.</p>
+
+<h1 id="OPENSSL-4.0">OPENSSL 4.0</h1>
+
+<dl>
+
+<dt id="ASN1_STRING_data-Deprecated-in-1.1.1---see-ASN1_STRING_get0_data-3">ASN1_STRING_data (Deprecated in 1.1.1) - see <a href="../man3/ASN1_STRING_get0_data.html">ASN1_STRING_get0_data(3)</a></dt>
+<dd>
+
+</dd>
+<dt id="BIO_f_reliable-Broken-since-3.0.0---removed-without-replacement">BIO_f_reliable (Broken since 3.0.0) - removed without replacement</dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_2_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_2_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_2_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_2_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="DTLSv1_2_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">DTLSv1_2_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="ERR_get_state-Deprecated-in-3.0.0---removed-no-use-with-opaque-ERR_STATE">ERR_get_state (Deprecated in 3.0.0) - removed, no use with opaque ERR_STATE</dt>
+<dd>
+
+</dd>
+<dt id="ERR_remove_state-Deprecated-in-1.0.0---removed-no-op">ERR_remove_state (Deprecated in 1.0.0) - removed, no-op</dt>
+<dd>
+
+</dd>
+<dt id="ERR_remove_thread_state-Deprecated-in-1.1.0---removed-no-op">ERR_remove_thread_state (Deprecated in 1.1.0) - removed, no-op</dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_new-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_new (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_dup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_dup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_free-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_free (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_iv_length-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_iv_length (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_flags-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_flags (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_impl_ctx_size-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_impl_ctx_size (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_do_cipher-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_do_cipher (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_set_asn1_params-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_set_asn1_params (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_get_asn1_params-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_get_asn1_params (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_set_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_set_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_do_cipher-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_do_cipher (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_set_asn1_params-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_set_asn1_params (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_get_asn1_params-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_get_asn1_params (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_CIPHER_meth_get_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_CIPHER_meth_get_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_new-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_new (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_dup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_dup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_free-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_free (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_input_blocksize-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_input_blocksize (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_result_size-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_result_size (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_app_datasize-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_app_datasize (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_flags-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_flags (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_update-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_update (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_final-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_final (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_copy-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_copy (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_set_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_set_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_input_blocksize-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_input_blocksize (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_result_size-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_result_size (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_app_datasize-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_app_datasize (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_flags-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_flags (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_update-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_update (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_final-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_final (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_copy-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_copy (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_meth_get_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_meth_get_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_find-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_find (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_new-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_new (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get0_info-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get0_info (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_copy-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_copy (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_free-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_free (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_add0-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_add0 (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_remove-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_remove (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_count-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_count (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get0-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get0 (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_copy-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_copy (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_paramgen-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_paramgen (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_keygen-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_keygen (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_sign-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_sign (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_verify-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_verify (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_verify_recover-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_verify_recover (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_signctx-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_signctx (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_verifyctx-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_verifyctx (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_encrypt-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_encrypt (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_decrypt-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_decrypt (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_derive-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_derive (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_digestsign-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_digestsign (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_digestverify-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_digestverify (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_public_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_public_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_param_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_param_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_set_digest_custom-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_set_digest_custom (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_init-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_init (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_copy-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_copy (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_cleanup-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_cleanup (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_paramgen-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_paramgen (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_keygen-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_keygen (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_sign-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_sign (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_verify-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_verify (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_verify_recover-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_verify_recover (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_signctx-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_signctx (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_verifyctx-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_verifyctx (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_encrypt-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_encrypt (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_decrypt-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_decrypt (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_derive-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_derive (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_ctrl-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_ctrl (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_digestsign-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_digestsign (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_digestverify-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_digestverify (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_public_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_public_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_param_check-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_param_check (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_meth_get_digest_custom-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_PKEY_meth_get_digest_custom (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_CTX_update_fn-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_CTX_update_fn (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_MD_CTX_set_update_fn-Deprecated-in-3.0.0---consult-ossl-guide-migration-7">EVP_MD_CTX_set_update_fn (Deprecated in 3.0.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_add0-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_add0 (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_add_alias-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_add_alias (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_get_count-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_get_count (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_get0-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_get0 (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_find-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_find (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_find_str-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_find_str (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_get0_info-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_get0_info (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_get0_asn1-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_get0_asn1 (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_new-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_new (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_copy-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_copy (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_free-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_free (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_public-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_public (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_private-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_private (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_param-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_param (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_free-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_free (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_ctrl-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_ctrl (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_item-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_item (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_siginf-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_siginf (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_check-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_check (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_public_check-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_public_check (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_param_check-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_param_check (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_set_priv_key-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_set_priv_key (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_set_pub_key-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_set_pub_key (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_get_priv_key-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_get_priv_key (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_get_pub_key-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_get_pub_key (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="EVP_PKEY_asn1_set_security_bits-Deprecated-in-3.6.0---consult-ossl-guide-migration-7">EVP_PKEY_asn1_set_security_bits (Deprecated in 3.6.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="OPENSSL_atexit---No-longer-used-use-libc-atexit-if-you-must-use-this">OPENSSL_atexit - No longer used, use libc atexit() if you must use this.</dt>
+<dd>
+
+</dd>
+<dt id="SSLv3_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">SSLv3_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="SSLv3_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">SSLv3_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="SSLv3_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">SSLv3_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_1_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_1_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_1_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_1_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_1_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_1_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_2_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_2_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_2_server_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_2_server_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+<dt id="TLSv1_2_client_method-Deprecated-in-1.1.0---consult-ossl-guide-migration-7">TLSv1_2_client_method (Deprecated in 1.1.0) - consult <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

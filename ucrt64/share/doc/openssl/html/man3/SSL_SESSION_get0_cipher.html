@@ -38,7 +38,7 @@ int SSL_SESSION_set_cipher(SSL_SESSION *s, const SSL_CIPHER *cipher);</code></pr
 
 <p>The value returned is a pointer to an object maintained within <b>s</b> and should not be released.</p>
 
-<p>SSL_SESSION_set_cipher() can be used to set the ciphersuite associated with the SSL_SESSION <b>s</b> to <b>cipher</b>. For example, this could be used to set up a session based PSK (see <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a>).</p>
+<p>SSL_SESSION_set_cipher() can be used to set the ciphersuite associated with the SSL_SESSION <b>s</b> to <b>cipher</b>. For example, this could be used to set up a session based PSK (see <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a>). For a PSK the cipher pins the handshake digest and, when the PSK is used for early data (0-RTT), the ciphersuite that protects that early data; see <a href="../man3/SSL_read_early_data.html">SSL_read_early_data(3)</a>.</p>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
@@ -48,7 +48,7 @@ int SSL_SESSION_set_cipher(SSL_SESSION *s, const SSL_CIPHER *cipher);</code></pr
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/d2i_SSL_SESSION.html">d2i_SSL_SESSION(3)</a>, <a href="../man3/SSL_SESSION_get_time.html">SSL_SESSION_get_time(3)</a>, <a href="../man3/SSL_SESSION_get0_hostname.html">SSL_SESSION_get0_hostname(3)</a>, <a href="../man3/SSL_SESSION_free.html">SSL_SESSION_free(3)</a>, <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/d2i_SSL_SESSION.html">d2i_SSL_SESSION(3)</a>, <a href="../man3/SSL_SESSION_get_time.html">SSL_SESSION_get_time(3)</a>, <a href="../man3/SSL_SESSION_get0_hostname.html">SSL_SESSION_get0_hostname(3)</a>, <a href="../man3/SSL_SESSION_free.html">SSL_SESSION_free(3)</a>, <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a>, <a href="../man3/SSL_read_early_data.html">SSL_read_early_data(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -56,7 +56,7 @@ int SSL_SESSION_set_cipher(SSL_SESSION *s, const SSL_CIPHER *cipher);</code></pr
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2016-2017 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2016-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

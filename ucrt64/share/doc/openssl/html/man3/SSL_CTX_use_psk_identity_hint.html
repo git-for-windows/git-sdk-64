@@ -57,7 +57,9 @@ void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb);</code></p
 
 <p>The callback function is given a pointer to the SSL connection in <b>ssl</b> and an identity in <b>identity</b> of length <b>identity_len</b>. The callback function should identify an SSL_SESSION object that provides the PSK details and store it in <b>*sess</b>. The SSL_SESSION object should, as a minimum, set the master key, the ciphersuite and the protocol version. See <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a> for details.</p>
 
-<p>It is also possible for the callback to succeed but not supply a PSK. In this case no PSK will be used but the handshake will continue. To do this the callback should return successfully and ensure that <b>*sess</b> is NULL.</p>
+<p>The server accepts early data (0-RTT) on a resumed PSK only if it selects the PSK&#39;s ciphersuite and the negotiated ALPN protocol matches; otherwise the early data is skipped and an ordinary 1-RTT handshake proceeds. See <a href="../man3/SSL_read_early_data.html">SSL_read_early_data(3)</a>.</p>
+
+<p>It is also possible for the callback to succeed but not supply a PSK. To do this the callback should return successfully and ensure that <b>*sess</b> is NULL. In this case no PSK will be used and, if a certificate has also been configured, then the handshake will continue. If no certificate has been configured then the handshake will fail with a &quot;decrypt_error&quot; alert. This alert is the same one that is used in the event that a valid PSK identity is found but the TLSv1.3 &quot;binder&quot; fails to verify. It is used to prevent an attacker from being able to determine whether a PSK identity is valid or not based on the alert received (see Appendix E.6 of RFC8446). Note that this is not a constant time check and so timing side channels may still exist.</p>
 
 <p>Identity hints are not relevant for TLSv1.3. A server application wishing to use PSK ciphersuites for TLSv1.2 and below may call SSL_CTX_use_psk_identity_hint() to set the given <b>NUL</b>-terminated PSK identity hint <b>hint</b> for SSL context object <b>ctx</b>. SSL_use_psk_identity_hint() sets the given <b>NUL</b>-terminated PSK identity hint <b>hint</b> for the SSL connection object <b>ssl</b>. If <b>hint</b> is <b>NULL</b> the current hint from <b>ctx</b> or <b>ssl</b> is deleted.</p>
 
@@ -103,7 +105,7 @@ void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb);</code></p
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a>, <a href="../man3/SSL_set_psk_use_session_callback.html">SSL_set_psk_use_session_callback(3)</a></p>
+<p><a href="../man7/ssl.html">ssl(7)</a>, <a href="../man3/SSL_CTX_set_psk_use_session_callback.html">SSL_CTX_set_psk_use_session_callback(3)</a>, <a href="../man3/SSL_set_psk_use_session_callback.html">SSL_set_psk_use_session_callback(3)</a>, <a href="../man3/SSL_read_early_data.html">SSL_read_early_data(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -111,7 +113,7 @@ void SSL_set_psk_server_callback(SSL *ssl, SSL_psk_server_cb_func cb);</code></p
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

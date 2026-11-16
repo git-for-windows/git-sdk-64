@@ -26,6 +26,7 @@
   <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -36,6 +37,26 @@
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>The <b>RSA</b> keytype is implemented in OpenSSL&#39;s default and FIPS providers. That implementation supports the basic RSA keys, containing the modulus <i>n</i>, the public exponent <i>e</i>, the private exponent <i>d</i>, and a collection of prime factors, exponents and coefficient for CRT calculations, of which the first few are known as <i>p</i> and <i>q</i>, <i>dP</i> and <i>dQ</i>, and <i>qInv</i>.</p>
+
+<p>RSA key generation uses FIPS 186-5 Section A.1.6 &quot;Generation of Probable Primes with Conditions Based on Auxiliary Probable Primes&quot; for the OpenSSL FIPS provider. It is also used for the OpenSSL default provider when the generation parameters satisfy the following conditions:</p>
+
+<dl>
+
+<dt id="There-are-2-primes-p-q">There are 2 &quot;primes&quot; (p, q)</dt>
+<dd>
+
+</dd>
+<dt id="The-exponent-e-65537-and-is-odd">The exponent &quot;e&quot; &gt;= 65537 and is odd</dt>
+<dd>
+
+</dd>
+<dt id="The-cryptographic-length-bits-2048">The cryptographic length &quot;bits&quot; &gt;= 2048</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>Otherwise the OpenSSL default provider uses an older general multi-prime key generator.</p>
 
 <h2 id="Common-RSA-parameters">Common RSA parameters</h2>
 
@@ -215,6 +236,18 @@
 <p>Indicate that missing parameters not passed in the parameter list should be derived if not provided. Setting a nonzero value will cause all needed exponents and coefficients to be derived if not available. Setting this option requires at least OSSL_PARAM_RSA_FACTOR1, OSSL_PARAM_RSA_FACTOR2, and OSSL_PARAM_RSA_N to be provided. This option is ignored if OSSL_KEYMGMT_SELECT_PRIVATE_KEY is not set in the selection parameter.</p>
 
 </dd>
+<dt id="rsa-a-OSSL_PKEY_PARAM_RSA_A-unsigned-integer">&quot;rsa-a&quot; (<b>OSSL_PKEY_PARAM_RSA_A</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>Setting this value to one of 1, 3, 5 or 7 applies an additional constraint requiring that the computed prime p is congruent to this value mod 8. If this value is zero then it is ignored. An error will occur if the value is not set to one of the above values.</p>
+
+</dd>
+<dt id="rsa-b-OSSL_PKEY_PARAM_RSA_B-unsigned-integer">&quot;rsa-b&quot; (<b>OSSL_PKEY_PARAM_RSA_B</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>Setting this value to one of 1, 3, 5 or 7 applies an additional constraint requiring that the computed prime q is congruent to this value mod 8. If this value is zero then it is ignored. An error will occur if the value is not set to one of the above values.</p>
+
+</dd>
 </dl>
 
 <h2 id="RSA-key-generation-FIPS-indicator">RSA key generation FIPS indicator</h2>
@@ -309,10 +342,10 @@
 
 <dl>
 
-<dt id="FIPS186-4">FIPS186-4</dt>
+<dt id="FIPS186-5">FIPS186-5</dt>
 <dd>
 
-<p>Section B.3.6 Generation of Probable Primes with Conditions Based on Auxiliary Probable Primes</p>
+<p>Section A.1.6 Generation of Probable Primes with Conditions Based on Auxiliary Probable Primes</p>
 
 </dd>
 <dt id="RFC-8017-excluding-RSA-PSS-and-RSA-OAEP">RFC 8017, excluding RSA-PSS and RSA-OAEP</dt>
@@ -364,6 +397,10 @@ EVP_PKEY_CTX_free(pctx);</code></pre>
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man3/EVP_RSA_gen.html">EVP_RSA_gen(3)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The RSA key generation parameters &quot;a&quot; and &quot;b&quot; were added in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

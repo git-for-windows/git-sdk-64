@@ -141,23 +141,7 @@ void OSSL_trace_set_callback(int category, OSSL_trace_cb cb, void  *data);</code
 <dt id="OSSL_TRACE_CATEGORY_CONF"><b>OSSL_TRACE_CATEGORY_CONF</b></dt>
 <dd>
 
-<p>Traces details about the provider and engine configuration.</p>
-
-</dd>
-<dt id="OSSL_TRACE_CATEGORY_ENGINE_TABLE"><b>OSSL_TRACE_CATEGORY_ENGINE_TABLE</b></dt>
-<dd>
-
-<p>Traces the ENGINE algorithm table selection.</p>
-
-<p>More precisely, functions like ENGINE_get_pkey_asn1_meth_engine(), ENGINE_get_pkey_meth_engine(), ENGINE_get_cipher_engine(), ENGINE_get_digest_engine(), will generate trace summaries of the handling of internal tables.</p>
-
-</dd>
-<dt id="OSSL_TRACE_CATEGORY_ENGINE_REF_COUNT"><b>OSSL_TRACE_CATEGORY_ENGINE_REF_COUNT</b></dt>
-<dd>
-
-<p>Traces the ENGINE reference counting.</p>
-
-<p>More precisely, both reference counts in the ENGINE structure will be monitored with a line of trace output generated for each change.</p>
+<p>Traces details about the provider configuration.</p>
 
 </dd>
 <dt id="OSSL_TRACE_CATEGORY_PKCS5V2"><b>OSSL_TRACE_CATEGORY_PKCS5V2</b></dt>
@@ -335,6 +319,8 @@ END TRACE[TLS]:7f9eb0193b80</code></pre>
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>OSSL_trace_set_channel(), OSSL_trace_set_prefix(), OSSL_trace_set_suffix(), and OSSL_trace_set_callback() were all added in OpenSSL 3.0.</p>
+
+<p>The <b>OSSL_TRACE_CATEGORY_ENGINE_TABLE</b> and <b>OSSL_TRACE_CATEGORY_ENGINE_REF_COUNT</b> tracing categories were removed in OpenSSL 4.0. For details please see <a href="../man7/ossl-guide-migration.html">ossl-guide-migration(7)</a></p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

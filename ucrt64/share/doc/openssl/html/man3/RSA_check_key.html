@@ -16,7 +16,6 @@
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#HISTORY">HISTORY</a></li>
@@ -54,10 +53,6 @@ int RSA_check_key(const RSA *rsa);</code></pre>
 <p>RSA_check_key_ex() and RSA_check_key() return 1 if <b>rsa</b> is a valid RSA key, and 0 otherwise. They return -1 if an error occurs while checking the key.</p>
 
 <p>If the key is invalid or an error occurred, the reason code can be obtained using <a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>.</p>
-
-<h1 id="NOTES">NOTES</h1>
-
-<p>Unlike most other RSA functions, this function does <b>not</b> work transparently with any underlying ENGINE implementation because it uses the key data in the RSA structure directly. An ENGINE implementation can override the way key data is stored and handled, and can even provide support for HSM keys - in which case the RSA structure may contain <b>no</b> key data at all! If the ENGINE in question is only being used for acceleration or analysis purposes, then in all likelihood the RSA key data is complete and untouched, but this can&#39;t be assumed in the general case.</p>
 
 <h1 id="BUGS">BUGS</h1>
 

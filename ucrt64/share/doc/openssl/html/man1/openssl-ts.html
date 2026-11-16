@@ -46,7 +46,7 @@
 
 <p><b>openssl</b> <b>ts</b> <b>-query</b> [<b>-config</b> <i>configfile</i>] [<b>-data</b> <i>file_to_hash</i>] [<b>-digest</b> <i>digest_bytes</i>] [<b>-<i>digest</i></b>] [<b>-tspolicy</b> <i>object_id</i>] [<b>-no_nonce</b>] [<b>-cert</b>] [<b>-in</b> <i>request.tsq</i>] [<b>-out</b> <i>request.tsq</i>] [<b>-text</b>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
-<p><b>openssl</b> <b>ts</b> <b>-reply</b> [<b>-config</b> <i>configfile</i>] [<b>-section</b> <i>tsa_section</i>] [<b>-queryfile</b> <i>request.tsq</i>] [<b>-passin</b> <i>password_src</i>] [<b>-signer</b> <i>tsa_cert.pem</i>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-<i>digest</i></b>] [<b>-chain</b> <i>certs_file.pem</i>] [<b>-tspolicy</b> <i>object_id</i>] [<b>-in</b> <i>response.tsr</i>] [<b>-token_in</b>] [<b>-out</b> <i>response.tsr</i>] [<b>-token_out</b>] [<b>-text</b>] [<b>-engine</b> <i>id</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>ts</b> <b>-reply</b> [<b>-config</b> <i>configfile</i>] [<b>-section</b> <i>tsa_section</i>] [<b>-queryfile</b> <i>request.tsq</i>] [<b>-passin</b> <i>password_src</i>] [<b>-signer</b> <i>tsa_cert.pem</i>] [<b>-inkey</b> <i>filename</i>|<i>uri</i>] [<b>-<i>digest</i></b>] [<b>-chain</b> <i>certs_file.pem</i>] [<b>-tspolicy</b> <i>object_id</i>] [<b>-in</b> <i>response.tsr</i>] [<b>-token_in</b>] [<b>-out</b> <i>response.tsr</i>] [<b>-token_out</b>] [<b>-text</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p><b>openssl</b> <b>ts</b> <b>-verify</b> [<b>-data</b> <i>file_to_hash</i>] [<b>-digest</b> <i>digest_bytes</i>] [<b>-queryfile</b> <i>request.tsq</i>] [<b>-in</b> <i>response.tsr</i>] [<b>-token_in</b>] [<b>-untrusted</b> <i>files</i>|<i>uris</i>] [<b>-CAfile</b> <i>file</i>] [<b>-CApath</b> <i>dir</i>] [<b>-CAstore</b> <i>uri</i>] [<b>-allow_proxy_certs</b>] [<b>-attime</b> <i>timestamp</i>] [<b>-no_check_time</b>] [<b>-check_ss_sig</b>] [<b>-crl_check</b>] [<b>-crl_check_all</b>] [<b>-explicit_policy</b>] [<b>-extended_crl</b>] [<b>-ignore_critical</b>] [<b>-inhibit_any</b>] [<b>-inhibit_map</b>] [<b>-partial_chain</b>] [<b>-policy</b> <i>arg</i>] [<b>-policy_check</b>] [<b>-policy_print</b>] [<b>-purpose</b> <i>purpose</i>] [<b>-suiteB_128</b>] [<b>-suiteB_128_only</b>] [<b>-suiteB_192</b>] [<b>-trusted_first</b>] [<b>-no_alt_chains</b>] [<b>-use_deltas</b>] [<b>-auth_level</b> <i>num</i>] [<b>-verify_depth</b> <i>num</i>] [<b>-verify_email</b> <i>email</i>] [<b>-verify_hostname</b> <i>hostname</i>] [<b>-verify_ip</b> <i>ip</i>] [<b>-verify_name</b> <i>name</i>] [<b>-x509_strict</b>] [<b>-issuer_checks</b>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
@@ -265,12 +265,6 @@
 <p>If this option is specified the output is human-readable text format instead of DER. (Optional)</p>
 
 </dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
-
-</dd>
 <dt id="provider-name"><b>-provider</b> <i>name</i></dt>
 <dd>
 
@@ -387,12 +381,6 @@
 <dd>
 
 <p>The name of the file containing the hexadecimal serial number of the last timestamp response created. This number is incremented by 1 for each response. If the file does not exist at the time of response generation a new file is created with serial number 1. (Mandatory)</p>
-
-</dd>
-<dt id="crypto_device"><b>crypto_device</b></dt>
-<dd>
-
-<p>Specifies the OpenSSL engine that will be set as the default for all available algorithms. The default value is built-in, you can specify any other engines supported by OpenSSL (e.g. use chil for the NCipher HSM). (Optional)</p>
 
 </dd>
 <dt id="signer_cert"><b>signer_cert</b></dt>
@@ -586,7 +574,7 @@
 
 <p>OpenSSL 1.1.1 introduced a new random generator (CSPRNG) with an improved seeding mechanism. The new seeding mechanism makes it unnecessary to define a RANDFILE for saving and restoring randomness. This option is retained mainly for compatibility reasons.</p>
 
-<p>The <b>-engine</b> option was deprecated in OpenSSL 3.0.</p>
+<p>The <b>-engine</b> option and <b>crypto_device</b> configuration option were removed in OpenSSL 4.0.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

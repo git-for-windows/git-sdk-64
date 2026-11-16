@@ -1,15 +1,14 @@
 prefix=/ucrt64
-# 
+# This file provides configuration information for OpenSSL
 prefix=${prefix}
 exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
-includedir=${prefix}/include 
-enginesdir=${libdir}/engines-3
+includedir=${prefix}/include
 modulesdir=${libdir}/ossl-modules
 
 Name: OpenSSL-libcrypto
 Description: OpenSSL cryptography library
-Version: 3.6.5
+Version: 4.1.0
 Libs: -L${libdir} -lcrypto
-Libs.private: -lws2_32 -lgdi32 -lcrypt32
+Libs.private: -lws2_32 -lgdi32 -lcrypt32 -lbcrypt
 Cflags: -I${includedir}

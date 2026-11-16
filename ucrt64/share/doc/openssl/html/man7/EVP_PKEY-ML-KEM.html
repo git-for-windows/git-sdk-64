@@ -16,6 +16,7 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a>
     <ul>
       <li><a href="#Keygen-Parameters">Keygen Parameters</a></li>
+      <li><a href="#Encoder-Parameters">Encoder Parameters</a></li>
       <li><a href="#Common-parameters">Common parameters</a></li>
       <li><a href="#Provider-configuration-parameters">Provider configuration parameters</a></li>
     </ul>
@@ -61,9 +62,33 @@
 </dd>
 </dl>
 
+<p>The following key generation parameter can be retrieved with <a href="../man3/EVP_PKEY_CTX_get_params.html">EVP_PKEY_CTX_get_params(3)</a> from the OpenSSL FIPS provider:</p>
+
+<dl>
+
+<dt id="fips-indicator-OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_PKEY_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>Returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
+<h2 id="Encoder-Parameters">Encoder Parameters</h2>
+
+<dl>
+
+<dt id="output_formats-OSSL_PKEY_PARAM_OUTPUT_FORMATS-UTF8-string">&quot;output_formats&quot; (<b>OSSL_PKEY_PARAM_OUTPUT_FORMATS</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>This parameter can be used with <a href="../man3/OSSL_ENCODER_CTX_new_for_pkey.html">OSSL_ENCODER_CTX_new_for_pkey(3)</a> and <a href="../man3/OSSL_ENCODER_CTX_set_params.html">OSSL_ENCODER_CTX_set_params(3)</a> to select the preferred <b>PKCS#8</b> output formats of a private key. When this parameter is either not specified or empty, the behaviour is determined by the provider configuration parameters described below. Otherwise, it has the same syntax and behaviour as the provider configuration <b>ml-kem.output_formats</b> parameter, except that the <b>ml-kem.retain-seed</b> parameter is then ignored, i.e. the <code>seed-only</code> and <code>seed-priv</code> formats remain available so long as the seed was initially known, regardless of any setting of <b>ml-kem.retain-seed</b>.</p>
+
+</dd>
+</dl>
+
 <h2 id="Common-parameters">Common parameters</h2>
 
-<p>In addition to the common parameters that all keytypes should support (see <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a>), <b>ML-KEM</b> keys keys support the parameters listed below. These are gettable using <a href="../man3/EVP_PKEY_get_octet_string_param.html">EVP_PKEY_get_octet_string_param(3)</a> or <a href="../man3/EVP_PKEY_get_params.html">EVP_PKEY_get_params(3)</a>. They can be initialised via <a href="../man3/EVP_PKEY_fromdata.html">EVP_PKEY_fromdata(3)</a>, and are returned by <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a> given a suitable <i>selection</i>. Once a public or private key is configured, it can no longer be modified, nor can another key component be added.</p>
+<p>In addition to the common parameters that all keytypes should support (see <a href="../man7/provider-keymgmt.html">&quot;Common Information Parameters&quot; in provider-keymgmt(7)</a>), <b>ML-KEM</b> keys support the parameters listed below. These are gettable using <a href="../man3/EVP_PKEY_get_octet_string_param.html">EVP_PKEY_get_octet_string_param(3)</a> or <a href="../man3/EVP_PKEY_get_params.html">EVP_PKEY_get_params(3)</a>. They can be initialised via <a href="../man3/EVP_PKEY_fromdata.html">EVP_PKEY_fromdata(3)</a>, and are returned by <a href="../man3/EVP_PKEY_todata.html">EVP_PKEY_todata(3)</a> given a suitable <i>selection</i>. Once a public or private key is configured, it can no longer be modified, nor can another key component be added.</p>
 
 <dl>
 
@@ -89,6 +114,12 @@
 <p>Used for getting and setting the encoding of a public key. The key format is that of <b>ek</b> in FIPS 203, Algorithm 16: <b>ML-KEM.KeyGen_internal</b>. Updates of the public and private key components are only allowed on keys that are empty. Once a public or private key component is set, no further changes are allowed. This parameter is gettable and settable (once only).</p>
 
 </dd>
+<dt id="properties-OSSL_PKEY_PARAM_PROPERTIES-UTF8-string1">&quot;properties&quot; (<b>OSSL_PKEY_PARAM_PROPERTIES</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>Can be used when importing raw keys using <a href="../man3/EVP_PKEY_fromdata.html">EVP_PKEY_fromdata(3)</a>, to fetch internal digest algorithms.</p>
+
+</dd>
 </dl>
 
 <h2 id="Provider-configuration-parameters">Provider configuration parameters</h2>
@@ -106,7 +137,7 @@
 <dt id="ml-kem.retain_seed-OSSL_PKEY_PARAM_ML_KEM_RETAIN_SEED-UTF8-string"><code>ml-kem.retain_seed</code> (<b>OSSL_PKEY_PARAM_ML_KEM_RETAIN_SEED</b>) &lt;UTF8 string&gt;</dt>
 <dd>
 
-<p>When set to a string representing a false boolean value (see <a href="../man3/OSSL_PROVIDER_conf_get_bool.html">OSSL_PROVIDER_conf_get_bool(3)</a>), the seed will not be retained after key generation or key import from a seed value. If the resulting key is then written to a PKCS#8 object, it will contain only the FIPS 203 <code>dk</code> key.</p>
+<p>When set to a string representing a false boolean value (see <a href="../man3/OSSL_PROVIDER_conf_get_bool.html">OSSL_PROVIDER_conf_get_bool(3)</a>), the seed will not be included when keys are encoded to <b>PKCS#8</b> form, unless the <code>output_formats</code> encoder parameter is set to a nonempty value, as described above. The output <b>PKCS#8</b> object will contain only the FIPS 203 <code>dk</code> key.</p>
 
 </dd>
 <dt id="ml-kem.prefer_seed-OSSL_PKEY_PARAM_ML_KEM_PREFER_SEED-UTF8-string"><code>ml-kem.prefer_seed</code> (<b>OSSL_PKEY_PARAM_ML_KEM_PREFER_SEED</b>) &lt;UTF8 string&gt;</dt>
@@ -160,13 +191,13 @@
 <dt id="bare-seed"><code>bare-seed</code>:</dt>
 <dd>
 
-<p>This format represents <b>PKCS#8</b> objects in which the private key contains the 64-byte FIPS 204 seed <b>(d, z)</b> without any ASN.1 encapsulation. If the <code>bare-seed</code> format is not included in the list, this format will not be recognised on input.</p>
+<p>This format represents <b>PKCS#8</b> objects in which the private key contains the 64-byte FIPS 203 seed <b>(d, z)</b> without any ASN.1 encapsulation. If the <code>bare-seed</code> format is not included in the list, this format will not be recognised on input.</p>
 
 </dd>
 <dt id="bare-priv"><code>bare-priv</code>:</dt>
 <dd>
 
-<p>This format represents <b>PKCS#8</b> objects in which the private key contains the FIPS 204 decapsulation key <b>dk</b> without any ASN.1 encapsulation. If the <code>bare-priv</code> format is not included in the list, this format will not be recognised on input.</p>
+<p>This format represents <b>PKCS#8</b> objects in which the private key contains the FIPS 203 decapsulation key <b>dk</b> without any ASN.1 encapsulation. If the <code>bare-priv</code> format is not included in the list, this format will not be recognised on input.</p>
 
 </dd>
 </dl>
@@ -247,15 +278,15 @@ ml-kem = ml_kem_sect</code></pre>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-pkey.html">openssl-pkey(1)</a>, <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man3/EVP_PKEY_get_raw_private_key.html">EVP_PKEY_get_raw_private_key(3)</a>, <a href="../man3/EVP_PKEY_get_raw_public_key.html">EVP_PKEY_get_raw_public_key(3)</a>, <a href="../man3/EVP_PKEY_get1_encoded_public_key.html">EVP_PKEY_get1_encoded_public_key(3)</a>, <a href="../man3/OSSL_PROVIDER_add_conf_parameter.html">OSSL_PROVIDER_add_conf_parameter(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man7/EVP_KEM-ML-KEM.html">EVP_KEM-ML-KEM(7)</a></p>
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-pkey.html">openssl-pkey(1)</a>, <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a>, <a href="../man3/EVP_KEYMGMT.html">EVP_KEYMGMT(3)</a>, <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man3/EVP_PKEY_get_raw_private_key.html">EVP_PKEY_get_raw_private_key(3)</a>, <a href="../man3/EVP_PKEY_get_raw_public_key.html">EVP_PKEY_get_raw_public_key(3)</a>, <a href="../man3/EVP_PKEY_get1_encoded_public_key.html">EVP_PKEY_get1_encoded_public_key(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_new_for_pkey.html">OSSL_ENCODER_CTX_new_for_pkey(3)</a>, <a href="../man3/OSSL_ENCODER_CTX_set_params.html">OSSL_ENCODER_CTX_set_params(3)</a>, <a href="../man3/OSSL_PROVIDER_add_conf_parameter.html">OSSL_PROVIDER_add_conf_parameter(3)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man7/EVP_KEM-ML-KEM.html">EVP_KEM-ML-KEM(7)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>This functionality was added in OpenSSL 3.5.</p>
+<p>This functionality was added in OpenSSL 3.5. The <code>output_formats</code> <b>OSSL_ENCODER_CTX</b> parameter was added in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

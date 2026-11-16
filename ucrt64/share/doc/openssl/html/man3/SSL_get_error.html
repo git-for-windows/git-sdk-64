@@ -34,9 +34,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_get_error() returns a result code (suitable for the C &quot;switch&quot; statement) for a preceding call to SSL_connect(), SSL_accept(), SSL_do_handshake(), SSL_read_ex(), SSL_read(), SSL_peek_ex(), SSL_peek(), SSL_shutdown(), SSL_write_ex() or SSL_write() on <b>ssl</b>. The value returned by that TLS/SSL I/O function must be passed to SSL_get_error() in parameter <b>ret</b>.</p>
-
-<p>In addition to <b>ssl</b> and <b>ret</b>, SSL_get_error() inspects the current thread&#39;s OpenSSL error queue. Thus, SSL_get_error() must be used in the same thread that performed the TLS/SSL I/O operation, and no other OpenSSL function calls should appear in between. The current thread&#39;s error queue must be empty before the TLS/SSL I/O operation is attempted, or SSL_get_error() will not work reliably. Emptying the current thread&#39;s error queue is done with <a href="../man3/ERR_clear_error.html">ERR_clear_error(3)</a>.</p>
+<p>SSL_get_error() returns a result code (suitable for the C &quot;switch&quot; statement) for a preceding call to SSL_connect(), SSL_accept(), SSL_do_handshake(), SSL_read_ex(), SSL_read(), SSL_read_early_data(), SSL_peek_ex(), SSL_peek(), SSL_write_ex(), SSL_write(), SSL_write_early_data(), SSL_sendfile() or SSL_shutdown() on <b>ssl</b>. The value returned by that TLS/SSL I/O function must be passed to SSL_get_error() in parameter <b>ret</b>.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -101,7 +99,7 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 <dt id="SSL_ERROR_WANT_ASYNC">SSL_ERROR_WANT_ASYNC</dt>
 <dd>
 
-<p>The operation did not complete because an asynchronous engine is still processing data. This will only occur if the mode has been set to SSL_MODE_ASYNC using <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a> or <a href="../man3/SSL_set_mode.html">SSL_set_mode(3)</a> and an asynchronous capable engine is being used. An application can determine whether the engine has completed its processing using select() or poll() on the asynchronous wait file descriptor. This file descriptor is available by calling <a href="../man3/SSL_get_all_async_fds.html">SSL_get_all_async_fds(3)</a> or <a href="../man3/SSL_get_changed_async_fds.html">SSL_get_changed_async_fds(3)</a>. The TLS/SSL I/O function should be called again later. The function <b>must</b> be called from the same thread that the original call was made from.</p>
+<p>The job did not complete because an asynchronous provider is still processing data. This will only occur if the mode has been set to SSL_MODE_ASYNC using <a href="../man3/SSL_CTX_set_mode.html">SSL_CTX_set_mode(3)</a> or <a href="../man3/SSL_set_mode.html">SSL_set_mode(3)</a> and an asynchronous capable provider is being used. An application can determine whether the job has completed its processing using select() or poll() on the asynchronous wait file descriptor. This file descriptor is available by calling <a href="../man3/SSL_get_all_async_fds.html">SSL_get_all_async_fds(3)</a> or <a href="../man3/SSL_get_changed_async_fds.html">SSL_get_changed_async_fds(3)</a>. The TLS/SSL I/O function should be called again later. The function <b>must</b> be called from the same thread that the original call was made from.</p>
 
 </dd>
 <dt id="SSL_ERROR_WANT_ASYNC_JOB">SSL_ERROR_WANT_ASYNC_JOB</dt>
@@ -142,9 +140,11 @@ int SSL_get_error(const SSL *ssl, int ret);</code></pre>
 
 <p>The SSL_ERROR_WANT_ASYNC error code was added in OpenSSL 1.1.0. The SSL_ERROR_WANT_CLIENT_HELLO_CB error code was added in OpenSSL 1.1.1.</p>
 
+<p>Since OpenSSL 4.0 SSL_get_error() no longer depends on the state of the error stack, so it is no longer necessary to empty the error queue before the TLS/SSL I/O operations.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

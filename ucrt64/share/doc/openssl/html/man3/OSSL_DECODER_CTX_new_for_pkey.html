@@ -65,9 +65,11 @@ int OSSL_DECODER_CTX_set_passphrase_cb(OSSL_DECODER_CTX *ctx,
 
 <p>The search of decoder implementations can also be limited with <i>keytype</i> and <i>selection</i>, which specifies the expected resulting keytype and contents. NULL and zero are valid and signify that the decoder implementations will find out the keytype and key contents on their own from the input they get.</p>
 
-<p>If no suitable decoder implementation is found, OSSL_DECODER_CTX_new_for_pkey() still creates a <b>OSSL_DECODER_CTX</b>, but with no associated decoder (<a href="../man3/OSSL_DECODER_CTX_get_num_decoders.html">OSSL_DECODER_CTX_get_num_decoders(3)</a> returns zero). This helps the caller to distinguish between an error when creating the <b>OSSL_ENCODER_CTX</b> and missing encoder implementation, and allows it to act accordingly.</p>
+<p>If no suitable decoder implementation is found, OSSL_DECODER_CTX_new_for_pkey() still creates a <b>OSSL_DECODER_CTX</b>, but with no associated decoder (<a href="../man3/OSSL_DECODER_CTX_get_num_decoders.html">OSSL_DECODER_CTX_get_num_decoders(3)</a> returns zero). This helps the caller to distinguish between an error when creating the <b>OSSL_DECODER_CTX</b> and missing decoder implementation, and allows it to act accordingly.</p>
 
-<p>Note that OSSL_DECODER_CTX_new_for_pkey() finalises the OSSL_DECODER_CTX; after that the OSSL_DECODER_CTX_set_* and OSSL_DECODER_CTX_add_* functions described in <a href="../man3/OSSL_DECODER_CTX.html">OSSL_DECODER_CTX(3)</a> shouldn&#39;t be called.</p>
+<p>and OSSL_DECODER_CTX_set_selection(),</p>
+
+<p>Note that OSSL_DECODER_CTX_new_for_pkey() freezes some fields of the OSSL_DECODER_CTX, and as a result the functions <a href="../man3/OSSL_DECODER_CTX_add_decoder.html">OSSL_DECODER_CTX_add_decoder(3)</a>, <a href="../man3/OSSL_DECODER_CTX_add_extra.html">OSSL_DECODER_CTX_add_extra(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_cleanup.html">OSSL_DECODER_CTX_set_cleanup(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_construct.html">OSSL_DECODER_CTX_set_construct(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_construct_data.html">OSSL_DECODER_CTX_set_construct_data(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_input_structure.html">OSSL_DECODER_CTX_set_input_structure(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_input_type.html">OSSL_DECODER_CTX_set_input_type(3)</a> and <a href="../man3/OSSL_DECODER_CTX_set_selection.html">OSSL_DECODER_CTX_set_selection(3)</a> return an error if called on the resulting context. Note that <a href="../man3/OSSL_DECODER_CTX_set_params.html">OSSL_DECODER_CTX_set_params(3)</a> remains available to set decoder parameters.</p>
 
 <p>OSSL_DECODER_CTX_set_passphrase() gives the implementation a pass phrase to use when decrypting the encoded private key. Alternatively, a pass phrase callback may be specified with the following functions.</p>
 
@@ -101,7 +103,7 @@ int OSSL_DECODER_CTX_set_passphrase_cb(OSSL_DECODER_CTX *ctx,
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man3/OSSL_DECODER.html">OSSL_DECODER(3)</a>, <a href="../man3/OSSL_DECODER_CTX.html">OSSL_DECODER_CTX(3)</a></p>
+<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man3/OSSL_DECODER.html">OSSL_DECODER(3)</a>, <a href="../man3/OSSL_DECODER_CTX.html">OSSL_DECODER_CTX(3)</a>, <a href="../man3/OSSL_DECODER_CTX_set_params.html">OSSL_DECODER_CTX_set_params(3)</a>.</p>
 
 <h1 id="HISTORY">HISTORY</h1>
 

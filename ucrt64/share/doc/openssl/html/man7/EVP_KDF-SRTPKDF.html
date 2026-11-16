@@ -1,0 +1,249 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_KDF-SRTPKDF</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#Identity">Identity</a></li>
+      <li><a href="#Supported-parameters">Supported parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#CONFORMING-TO">CONFORMING TO</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_KDF-SRTPKDF - The SRTP EVP_KDF implementation</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Support for computing the <b>SRTP</b> KDF through the <b>EVP_KDF</b> API.</p>
+
+<p>The EVP_KDF-SRTP algorithm implements the SRTP key derivation function. SRTP follows the specification in RFC 3711 Section 4.3.3, where various cryptographic keys (encryption, authentication, and salt keys) are derived from a master key and master salt using AES encryption with specific labels.</p>
+
+<p>The output keys are used for SRTP and SRTCP packet protection.</p>
+
+<h2 id="Identity">Identity</h2>
+
+<p>&quot;SRTP&quot; is the name for this implementation; it can be used with the EVP_KDF_fetch() function.</p>
+
+<h2 id="Supported-parameters">Supported parameters</h2>
+
+<p>The supported parameters are:</p>
+
+<dl>
+
+<dt id="properties-OSSL_KDF_PARAM_PROPERTIES-UTF8-string">&quot;properties&quot; (<b>OSSL_KDF_PARAM_PROPERTIES</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+</dd>
+<dt id="cipher-OSSL_KDF_PARAM_CIPHER-UTF8-string">&quot;cipher&quot; (<b>OSSL_KDF_PARAM_CIPHER</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>This parameter sets the cipher to be used for the key derivation. It must be set to one of &quot;AES-128-CTR&quot;, &quot;AES-192-CTR&quot; or &quot;AES-256-CTR&quot;.</p>
+
+</dd>
+<dt id="key-OSSL_KDF_PARAM_KEY-octet-string">&quot;key&quot; (<b>OSSL_KDF_PARAM_KEY</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the master key value. This must be 16 bytes for AES-128, 24 bytes for AES-192 or 32 bytes for AES-256.</p>
+
+</dd>
+<dt id="salt-OSSL_KDF_PARAM_SALT-octet-string">&quot;salt&quot; (<b>OSSL_KDF_PARAM_SALT</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the master salt value. The must be at least 14 bytes. Note that larger salts are truncated.</p>
+
+</dd>
+<dt id="kdr-OSSL_KDF_PARAM_SRTPKDF_KDR-unsigned-integer">&quot;kdr&quot; (<b>OSSL_KDF_PARAM_SRTPKDF_KDR</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>This parameter sets the key derivation rate (KDR). The KDR controls how often keys are rederived. If not set or set to zero, no key rederivation is performed. The KDR value is power of 2 in the range 2^0 to 2^24.</p>
+
+</dd>
+<dt id="index-OSSL_KDF_PARAM_SRTPKDF_INDEX-octet-string">&quot;index&quot; (<b>OSSL_KDF_PARAM_SRTPKDF_INDEX</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This parameter sets the index value used in key derivation. The length must be at least 6 bytes for RTP packets, or at least 4 bytes for RTCP packets. Note that larger index values are truncated. If it is not set, or it has zero length, no key rederivation is performed.</p>
+
+</dd>
+<dt id="label-OSSL_KDF_PARAM_SRTPKDF_LABEL-unsigned-integer">&quot;label&quot; (<b>OSSL_KDF_PARAM_SRTPKDF_LABEL</b>) &lt;unsigned integer&gt;</dt>
+<dd>
+
+<p>This parameter sets the label that identifies the type of key to derive. Valid values are:</p>
+
+<dl>
+
+<dt id="SRTP-encryption-key">0 - SRTP encryption key</dt>
+<dd>
+
+</dd>
+<dt id="SRTP-authentication-key">1 - SRTP authentication key</dt>
+<dd>
+
+</dd>
+<dt id="SRTP-salt-key">2 - SRTP salt key</dt>
+<dd>
+
+</dd>
+<dt id="SRTCP-encryption-key">3 - SRTCP encryption key</dt>
+<dd>
+
+</dd>
+<dt id="SRTCP-authentication-key">4 - SRTCP authentication key</dt>
+<dd>
+
+</dd>
+<dt id="SRTCP-salt-key">5 - SRTCP salt key</dt>
+<dd>
+
+</dd>
+<dt id="SRTP-encryption-key-alternative">6 - SRTP encryption key (alternative)</dt>
+<dd>
+
+</dd>
+<dt id="SRTP-salt-key-alternative">7 - SRTP salt key (alternative)</dt>
+<dd>
+
+</dd>
+</dl>
+
+</dd>
+<dt id="fips-indicator-OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR-integer">&quot;fips-indicator&quot; (<b>OSSL_KDF_PARAM_FIPS_APPROVED_INDICATOR</b>) &lt;integer&gt;</dt>
+<dd>
+
+<p>The OpenSSL FIPS provider returns 1 if the operation is FIPS approved, or 0 otherwise. See <a href="../man7/fips_module.html">&quot;FIPS indicators&quot; in fips_module(7)</a> for more information.</p>
+
+</dd>
+</dl>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>A context for SRTP can be obtained by calling:</p>
+
+<pre><code>EVP_KDF *kdf = EVP_KDF_fetch(NULL, &quot;SRTP&quot;, NULL);
+EVP_KDF_CTX *kctx = EVP_KDF_CTX_new(kdf);</code></pre>
+
+<p>The output length of the SRTP KDF derive operation is determined by the label:</p>
+
+<dl>
+
+<dt id="Labels-0-3-6:-Output-length-equals-the-cipher-key-length">Labels 0, 3, 6: Output length equals the cipher key length</dt>
+<dd>
+
+</dd>
+<dt id="Labels-1-4:-Output-length-is-20-bytes-160-bits">Labels 1, 4: Output length is 20 bytes (160 bits)</dt>
+<dd>
+
+</dd>
+<dt id="Labels-2-5-7:-Output-length-is-14-bytes-112-bits">Labels 2, 5, 7: Output length is 14 bytes (112 bits)</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>This example derives an SRTP encryption key (label 0) using AES-128-CTR with a 16-byte master key and 14-byte master salt:</p>
+
+<pre><code>EVP_KDF *kdf;
+EVP_KDF_CTX *kctx;
+unsigned char out[16];
+unsigned char master_key[16] = { /* master key bytes */ };
+unsigned char master_salt[14] = { /* master salt bytes */ };
+uint32_t label = 0;
+OSSL_PARAM params[5], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;SRTP&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+EVP_KDF_free(kdf);
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_CIPHER,
+                                        &quot;AES-128-CTR&quot;, 0);
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_KEY,
+                                         master_key, sizeof(master_key));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT,
+                                         master_salt, sizeof(master_salt));
+*p++ = OSSL_PARAM_construct_uint32(OSSL_KDF_PARAM_SRTPKDF_LABEL, &amp;label);
+*p = OSSL_PARAM_construct_end();
+
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    error(&quot;EVP_KDF_derive&quot;);
+}
+
+EVP_KDF_CTX_free(kctx);</code></pre>
+
+<p>This example derives an SRTP authentication key (label 1) with key derivation rate and index:</p>
+
+<pre><code>EVP_KDF *kdf;
+EVP_KDF_CTX *kctx;
+unsigned char out[20];
+unsigned char master_key[16] = { /* master key bytes */ };
+unsigned char master_salt[14] = { /* master salt bytes */ };
+uint32_t kdr = 0x1000; /* KDR */
+unsigned char index[6] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 }; /* index */
+uint32_t label = 1;
+OSSL_PARAM params[7], *p = params;
+
+kdf = EVP_KDF_fetch(NULL, &quot;SRTP&quot;, NULL);
+kctx = EVP_KDF_CTX_new(kdf);
+EVP_KDF_free(kdf);
+
+*p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_CIPHER,
+                                        &quot;AES-128-CTR&quot;, 0);
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_KEY,
+                                         master_key, sizeof(master_key));
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SALT,
+                                         master_salt, sizeof(master_salt));
+*p++ = OSSL_PARAM_construct_uint32(OSSL_KDF_PARAM_SRTPKDF_KDR, &amp;kdr);
+*p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SRTPKDF_INDEX,
+                                         index, sizeof(index));
+*p++ = OSSL_PARAM_construct_uint32(OSSL_KDF_PARAM_SRTPKDF_LABEL, &amp;label);
+*p = OSSL_PARAM_construct_end();
+
+if (EVP_KDF_derive(kctx, out, sizeof(out), params) &lt;= 0) {
+    error(&quot;EVP_KDF_derive&quot;);
+}
+
+EVP_KDF_CTX_free(kctx);</code></pre>
+
+<h1 id="CONFORMING-TO">CONFORMING TO</h1>
+
+<p>RFC 3711 Section 4.3.3 (SRTP Key Derivation)</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/EVP_KDF.html">EVP_KDF(3)</a>, <a href="../man3/EVP_KDF_CTX_new.html">EVP_KDF_CTX_new(3)</a>, <a href="../man3/EVP_KDF_CTX_free.html">EVP_KDF_CTX_free(3)</a>, <a href="../man3/EVP_KDF_CTX_set_params.html">EVP_KDF_CTX_set_params(3)</a>, <a href="../man3/EVP_KDF_derive.html">EVP_KDF_derive(3)</a>, <a href="../man3/EVP_KDF.html">&quot;PARAMETERS&quot; in EVP_KDF(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The SRTPKDF was added in OpenSSL 4.0.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

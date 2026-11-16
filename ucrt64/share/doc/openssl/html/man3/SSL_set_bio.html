@@ -74,6 +74,10 @@ void SSL_set0_wbio(SSL *s, BIO *wbio);</code></pre>
 
 <p>Where a new BIO is set on a QUIC connection SSL object, blocking mode will be disabled on that SSL object if the BIO cannot support blocking mode. If another BIO is subsequently set on the SSL object which can support blocking mode, blocking mode will not be automatically re-enabled. For more information, see <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a>.</p>
 
+<p>When <b>ssl</b> is a DTLS listener object, the BIO is configured for nonblocking operation, since a listener demultiplexes one socket to many connections and so cannot allow a read for one of them to block. Blocking behaviour is provided by waiting for readiness of the socket instead; see <a href="../man3/SSL_set_blocking_mode.html">SSL_set_blocking_mode(3)</a>.</p>
+
+<p>When <b>ssl</b> is a DTLS listener object, these functions must not be called concurrently with any other operations on the listener or its connections. This includes <a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>, <a href="../man3/SSL_poll.html">SSL_poll(3)</a>, <a href="../man3/SSL_handle_events.html">SSL_handle_events(3)</a>, and any I/O operations on connections created from the listener. The BIO should typically be configured once before calling <a href="../man3/SSL_listen.html">SSL_listen(3)</a> and not modified afterward while the listener is in use. If the listener was created with the <b>SSL_LISTENER_FLAG_SINGLE_THREAD</b> flag, all operations including BIO changes must be performed from a single thread.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>SSL_set_bio(), SSL_set0_rbio() and SSL_set0_wbio() cannot fail.</p>
@@ -88,7 +92,7 @@ void SSL_set0_wbio(SSL *s, BIO *wbio);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

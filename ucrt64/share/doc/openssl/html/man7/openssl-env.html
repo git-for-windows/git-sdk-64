@@ -92,14 +92,6 @@
 <p>This variable is not considered security-sensitive.</p>
 
 </dd>
-<dt id="OPENSSL_ENGINES"><b>OPENSSL_ENGINES</b></dt>
-<dd>
-
-<p>Specifies the directory from which dynamic engines are loaded. See <a href="../man1/openssl-engine.html">openssl-engine(1)</a>.</p>
-
-<p>This variable is considered a security-sensitive environment variable.</p>
-
-</dd>
 <dt id="OPENSSL_MALLOC_FAILURES-OPENSSL_MALLOC_FD-OPENSSL_MALLOC_SEED"><b>OPENSSL_MALLOC_FAILURES</b>, <b>OPENSSL_MALLOC_FD</b>, <b>OPENSSL_MALLOC_SEED</b></dt>
 <dd>
 
@@ -114,6 +106,16 @@
 <p>Specifies the directory from which cryptographic providers are loaded. Equivalently, the generic <b>-provider-path</b> command-line option may be used.</p>
 
 <p>This variable is considered a security-sensitive environment variable.</p>
+
+</dd>
+<dt id="OPENSSL_RUNNING_UNIT_TESTS"><b>OPENSSL_RUNNING_UNIT_TESTS</b></dt>
+<dd>
+
+<p>This environment variable is used to flag the fact that unit tests are being run (i.e. <code>make test</code>). It is used to detect when OpenSSL should behave in a special manner during unit tests (i.e. when unit tests are being run on fuzzing builds). It should generally not be set by users.</p>
+
+<p>This variable is available only when OpenSSL is built with <code>-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION</code>.</p>
+
+<p>This variable is not considered security-sensitive.</p>
 
 </dd>
 <dt id="OPENSSL_SEC_MEM"><b>OPENSSL_SEC_MEM</b></dt>
@@ -149,12 +151,6 @@
 
 <p>The value of this environment variable is a comma-separated list of names, with the following available:</p>
 
-</dd>
-<dt id="OPENSSL_RUNNING_UNIT_TESTS"><b>OPENSSL_RUNNING_UNIT_TESTS</b></dt>
-<dd>
-
-<p>This environment variable is used to flag the fact that unit tests are being run (i.e. `make test`). It is used to detect when the OpenSSL should behave in a special manner during unit tests (i.e. when unit tests are being run on fuzzing builds). It should generally not be set by users.</p>
-
 <dl>
 
 <dt id="ALL"><b>ALL</b></dt>
@@ -178,7 +174,7 @@
 <dt id="CONF"><b>CONF</b></dt>
 <dd>
 
-<p>Show details about provider and engine configuration.</p>
+<p>Show details about provider configuration.</p>
 
 </dd>
 <dt id="DECODER"><b>DECODER</b></dt>
@@ -191,18 +187,6 @@
 <dd>
 
 <p>Traces encoder operations.</p>
-
-</dd>
-<dt id="ENGINE_REF_COUNT"><b>ENGINE_REF_COUNT</b></dt>
-<dd>
-
-<p>Reference counts in the ENGINE structure will be monitored with a line of generated for each change.</p>
-
-</dd>
-<dt id="ENGINE_TABLE"><b>ENGINE_TABLE</b></dt>
-<dd>
-
-<p>The function that is used by RSA, DSA (etc) code to select registered ENGINEs, cache defaults and functional references (etc), will generate debugging summaries.</p>
 
 </dd>
 <dt id="HTTP"><b>HTTP</b></dt>
@@ -372,6 +356,12 @@
 <p>This environment variable, existed in OpenSSL versions from 1.1.1 up to 3.5, allowed specification of a prefix prepended to each line sent to the <i>stdout</i> by <a href="../man1/openssl.html">openssl(1)</a>, used by the test harness to avoid commingling the command under test output with the output for the TAP consumer.</p>
 
 <p>This variable was not considered security-sensitive.</p>
+
+</dd>
+<dt id="OPENSSL_ENGINES"><b>OPENSSL_ENGINES</b></dt>
+<dd>
+
+<p>This variable, support for which was removed in OpenSSL 4.0, specified the directory from which dynamic engines were loaded.</p>
 
 </dd>
 </dl>

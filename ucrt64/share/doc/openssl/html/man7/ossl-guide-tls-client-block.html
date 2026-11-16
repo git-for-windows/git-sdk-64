@@ -41,7 +41,7 @@
 
 <h1 id="SIMPLE-BLOCKING-TLS-CLIENT-EXAMPLE">SIMPLE BLOCKING TLS CLIENT EXAMPLE</h1>
 
-<p>This page will present various source code samples demonstrating how to write a simple TLS client application which connects to a server, sends an HTTP/1.0 request to it, and reads back the response.</p>
+<p>This page will present various source code samples demonstrating how to write a simple TLS client application which connects to a server, sends an HTTP/1.1 request to it, and reads back the response.</p>
 
 <p>We use a blocking socket for the purposes of this example. This means that attempting to read data from a socket that has no data available on it to read will block (and the function will not return), until data becomes available. For example, this can happen if we have sent our request, but we are still waiting for the server&#39;s response. Similarly any attempts to write to a socket that is not able to write at the moment will block until writing is possible.</p>
 
@@ -276,7 +276,7 @@ if (SSL_connect(ssl) &lt; 1) {
 <p>To send data to the server we use the <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> function and to receive data from the server we use the <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> function. In HTTP 1.0 the client always writes data first. Our HTTP request will include the hostname that we are connecting to. For simplicity, we write the HTTP request in three chunks. First we write the start of the request. Secondly we write the hostname we are sending the request to. Finally we send the end of the request.</p>
 
 <pre><code>size_t written;
-const char *request_start = &quot;GET / HTTP/1.0\r\nConnection: close\r\nHost: &quot;;
+const char *request_start = &quot;GET / HTTP/1.1\r\nConnection: close\r\nHost: &quot;;
 const char *request_end = &quot;\r\n\r\n&quot;;
 
 /* Write an HTTP GET request to the peer */

@@ -49,15 +49,15 @@ int EVP_PKEY_CTX_is_a(EVP_PKEY_CTX *ctx, const char *keytype);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The EVP_PKEY_CTX_new() function allocates public key algorithm context using the <i>pkey</i> key type and ENGINE <i>e</i>.</p>
+<p>The EVP_PKEY_CTX_new() function allocates public key algorithm context using the <i>pkey</i> key type. <i>e</i> <b>must</b> be NULL.</p>
 
-<p>The EVP_PKEY_CTX_new_id() function allocates public key algorithm context using the key type specified by <i>id</i> and ENGINE <i>e</i>.</p>
+<p>The EVP_PKEY_CTX_new_id() function allocates public key algorithm context using the key type specified by <i>id</i>. <i>e</i> <b>must</b> be NULL.</p>
 
 <p>The EVP_PKEY_CTX_new_from_name() function allocates a public key algorithm context using the library context <i>libctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>), the key type specified by <i>name</i> and the property query <i>propquery</i>. None of the arguments are duplicated, so they must remain unchanged for the lifetime of the returned <b>EVP_PKEY_CTX</b> or of any of its duplicates. Read further about the possible names in <a href="#NOTES">&quot;NOTES&quot;</a> below.</p>
 
 <p>The EVP_PKEY_CTX_new_from_pkey() function allocates a public key algorithm context using the library context <i>libctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>) and the algorithm specified by <i>pkey</i> and the property query <i>propquery</i>. None of the arguments are duplicated, so they must remain unchanged for the lifetime of the returned <b>EVP_PKEY_CTX</b> or any of its duplicates.</p>
 
-<p>EVP_PKEY_CTX_new_id() and EVP_PKEY_CTX_new_from_name() are normally used when no <b>EVP_PKEY</b> structure is associated with the operations, for example during parameter generation or key generation for some algorithms.</p>
+<p>EVP_PKEY_CTX_new_id() and EVP_PKEY_CTX_new_from_name() are normally used when no <b>EVP_PKEY</b> structure is associated with the operations, for example during parameter generation or key generation for some algorithms. The key returned by <a href="../man3/EVP_PKEY_generate.html">EVP_PKEY_generate(3)</a> is not associated with the generation context. To perform operations using that key, create a new context with <a href="../man3/EVP_PKEY_CTX_new_from_pkey.html">EVP_PKEY_CTX_new_from_pkey(3)</a>.</p>
 
 <p>EVP_PKEY_CTX_dup() duplicates the context <i>ctx</i>. It is not supported for a keygen operation. It is however possible to duplicate a context freshly created via any of the above <code>new</code> functions, provided <a href="../man3/EVP_PKEY_keygen_init.html">EVP_PKEY_keygen_init(3)</a> has not yet been called on the source context, and then use the copy for key generation.</p>
 
@@ -119,7 +119,7 @@ int EVP_PKEY_CTX_is_a(EVP_PKEY_CTX *ctx, const char *keytype);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2006-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2006-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -102,7 +102,7 @@ int X509_LOOKUP_by_alias(X509_LOOKUP *ctx, X509_LOOKUP_TYPE type,
 
 <p>X509_LOOKUP_add_dir() passes a directory specification from which certificates and CRLs are loaded on demand into the associated <b>X509_STORE</b>. <i>type</i> indicates what type of object is expected. This can only be used with a lookup using the implementation <a href="../man3/X509_LOOKUP_hash_dir.html">X509_LOOKUP_hash_dir(3)</a>.</p>
 
-<p>X509_LOOKUP_add_store_ex() passes a URI for a directory-like structure from which containers with certificates and CRLs are loaded on demand into the associated <b>X509_STORE</b>. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers.</p>
+<p>X509_LOOKUP_add_store_ex() passes a URI for a directory-like or file-like structure from which containers with certificates and CRLs are loaded on demand into the associated <b>X509_STORE</b>. The library context <i>libctx</i> and property query <i>propq</i> are used when fetching algorithms from providers. If <i>uri</i> is not NULL, it must be a URI to a store, which may represent a single container or a whole catalogue of containers. If <i>uri</i> starts with the scheme <code>file:</code>, it is treated like a local file or directory. See also ossl_store-file(7).</p>
 
 <p>X509_LOOKUP_add_store() is similar to X509_LOOKUP_add_store_ex() but uses NULL for the library context <i>libctx</i> and property query <i>propq</i>.</p>
 
@@ -174,7 +174,7 @@ int X509_LOOKUP_by_alias(X509_LOOKUP *ctx, X509_LOOKUP_TYPE type,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

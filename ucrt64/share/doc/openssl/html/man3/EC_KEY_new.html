@@ -23,13 +23,11 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>EVP_EC_gen, EC_KEY_get_method, EC_KEY_set_method, EC_KEY_new_ex, EC_KEY_new, EC_KEY_get_flags, EC_KEY_set_flags, EC_KEY_clear_flags, EC_KEY_new_by_curve_name_ex, EC_KEY_new_by_curve_name, EC_KEY_free, EC_KEY_copy, EC_KEY_dup, EC_KEY_up_ref, EC_KEY_get0_engine, EC_KEY_get0_group, EC_KEY_set_group, EC_KEY_get0_private_key, EC_KEY_set_private_key, EC_KEY_get0_public_key, EC_KEY_set_public_key, EC_KEY_get_conv_form, EC_KEY_set_conv_form, EC_KEY_set_asn1_flag, EC_KEY_decoded_from_explicit_params, EC_KEY_precompute_mult, EC_KEY_generate_key, EC_KEY_check_key, EC_KEY_set_public_key_affine_coordinates, EC_KEY_oct2key, EC_KEY_key2buf, EC_KEY_oct2priv, EC_KEY_priv2oct, EC_KEY_priv2buf - Functions for creating, destroying and manipulating EC_KEY objects</p>
+<p>EC_KEY_get_method, EC_KEY_set_method, EC_KEY_new_ex, EC_KEY_new, EC_KEY_get_flags, EC_KEY_set_flags, EC_KEY_clear_flags, EC_KEY_new_by_curve_name_ex, EC_KEY_new_by_curve_name, EC_KEY_free, EC_KEY_copy, EC_KEY_dup, EC_KEY_up_ref, EC_KEY_get0_group, EC_KEY_set_group, EC_KEY_get0_private_key, EC_KEY_set_private_key, EC_KEY_get0_public_key, EC_KEY_set_public_key, EC_KEY_get_conv_form, EC_KEY_set_conv_form, EC_KEY_set_asn1_flag, EC_KEY_decoded_from_explicit_params, EC_KEY_precompute_mult, EC_KEY_generate_key, EC_KEY_check_key, EC_KEY_set_public_key_affine_coordinates, EC_KEY_oct2key, EC_KEY_key2buf, EC_KEY_oct2priv, EC_KEY_priv2oct, EC_KEY_priv2buf - Functions for creating, destroying and manipulating EC_KEY objects</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<pre><code>#include &lt;openssl/ec.h&gt;
-
-EVP_PKEY *EVP_EC_gen(const char *curve);</code></pre>
+<pre><code>#include &lt;openssl/ec.h&gt;</code></pre>
 
 <p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
@@ -45,7 +43,6 @@ void EC_KEY_free(EC_KEY *key);
 EC_KEY *EC_KEY_copy(EC_KEY *dst, const EC_KEY *src);
 EC_KEY *EC_KEY_dup(const EC_KEY *src);
 int EC_KEY_up_ref(EC_KEY *key);
-ENGINE *EC_KEY_get0_engine(const EC_KEY *eckey);
 const EC_GROUP *EC_KEY_get0_group(const EC_KEY *key);
 int EC_KEY_set_group(EC_KEY *key, const EC_GROUP *group);
 const BIGNUM *EC_KEY_get0_private_key(const EC_KEY *key);
@@ -74,8 +71,6 @@ int EC_KEY_precompute_mult(EC_KEY *key, BN_CTX *ctx);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>EVP_EC_gen() generates a new EC key pair on the given <i>curve</i>.</p>
-
 <p>All of the functions described below are deprecated. Applications should instead use EVP_EC_gen(), <a href="../man3/EVP_PKEY_Q_keygen.html">EVP_PKEY_Q_keygen(3)</a>, or <a href="../man3/EVP_PKEY_keygen_init.html">EVP_PKEY_keygen_init(3)</a> and <a href="../man3/EVP_PKEY_keygen.html">EVP_PKEY_keygen(3)</a>.</p>
 
 <p>An EC_KEY represents a public key and, optionally, the associated private key. A new EC_KEY with no associated curve can be constructed by calling EC_KEY_new_ex() and specifying the associated library context in <i>ctx</i> (see <a href="../man3/OSSL_LIB_CTX.html">OSSL_LIB_CTX(3)</a>) and property query string <i>propq</i>. The <i>ctx</i> parameter may be NULL in which case the default library context is used. The reference count for the newly created EC_KEY is initially set to 1. A curve can be associated with the EC_KEY by calling EC_KEY_set_group().</p>
@@ -93,8 +88,6 @@ int EC_KEY_precompute_mult(EC_KEY *key, BN_CTX *ctx);</code></pre>
 <p>EC_KEY_dup() creates a new EC_KEY object and copies <i>ec_key</i> into it.</p>
 
 <p>EC_KEY_up_ref() increments the reference count associated with the EC_KEY object.</p>
-
-<p>EC_KEY_get0_engine() returns a handle to the ENGINE that has been set for this EC_KEY object.</p>
 
 <p>EC_KEY_generate_key() generates a new public and private key for the supplied <i>eckey</i> object. <i>eckey</i> must have an EC_GROUP object associated with it before calling this function. The private key is a random integer (0 &lt; priv_key &lt; order, where <i>order</i> is the order of the EC_GROUP object). The public key is an EC_POINT on the curve calculated by multiplying the generator for the curve by the private key.</p>
 
@@ -132,8 +125,6 @@ int EC_KEY_precompute_mult(EC_KEY *key, BN_CTX *ctx);</code></pre>
 
 <p>EC_KEY_copy() returns a pointer to the destination key, or NULL on error.</p>
 
-<p>EC_KEY_get0_engine() returns a pointer to an ENGINE, or NULL if it wasn&#39;t set.</p>
-
 <p>EC_KEY_up_ref(), EC_KEY_set_group(), EC_KEY_set_public_key(), EC_KEY_precompute_mult(), EC_KEY_generate_key(), EC_KEY_check_key(), EC_KEY_set_public_key_affine_coordinates(), EC_KEY_oct2key() and EC_KEY_oct2priv() return 1 on success or 0 on error.</p>
 
 <p>EC_KEY_set_private_key() returns 1 on success or 0 on error except when the priv_key argument is NULL, in that case it returns 0, for legacy compatibility, and should not be treated as an error.</p>
@@ -152,11 +143,13 @@ int EC_KEY_precompute_mult(EC_KEY *key, BN_CTX *ctx);</code></pre>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>EVP_EC_gen() was added in OpenSSL 3.0. All other functions described here were deprecated in OpenSSL 3.0. For replacement see <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a>.</p>
+<p>All the functions described here were deprecated in OpenSSL 3.0. For replacement see <a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a>.</p>
+
+<p>The EC_KEY_get0_engine() was removed in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2013-2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2013-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

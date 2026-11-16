@@ -101,12 +101,24 @@ int  BIO_get_retry_flags(BIO *b);</code></pre>
 <p>Set if the last I/O operation on the <b>BIO</b> should be retried at a later time. If this bit is not set then the condition is treated as an error. This flag is normally set by the <b>BIO</b> implementation.</p>
 
 </dd>
+</dl>
+
+<p>The following flag can be used only with the <b>base64 encoding BIO</b>. The result of using this flag with other BIOs is unpredictable.</p>
+
+<dl>
+
 <dt id="BIO_FLAGS_BASE64_NO_NL"><b>BIO_FLAGS_BASE64_NO_NL</b></dt>
 <dd>
 
 <p>When set on a base64 filter <b>BIO</b> this flag disables the generation of newline characters in the encoded output and causes newlines to be ignored in the input. See also <a href="../man3/BIO_f_base64.html">BIO_f_base64(3)</a>. The flag has no effect on any other built-in <b>BIO</b> types.</p>
 
 </dd>
+</dl>
+
+<p>The following flags can be used only with the <b>memory buffer BIO</b> and <b>secure memory buffer BIO</b>. The result of using these flags with other BIOs is unpredictable.</p>
+
+<dl>
+
 <dt id="BIO_FLAGS_MEM_RDONLY"><b>BIO_FLAGS_MEM_RDONLY</b></dt>
 <dd>
 
@@ -122,7 +134,7 @@ int  BIO_get_retry_flags(BIO *b);</code></pre>
 <dt id="BIO_FLAGS_IN_EOF"><b>BIO_FLAGS_IN_EOF</b></dt>
 <dd>
 
-<p>This flag may be used by a <b>BIO</b> implementation to indicate that the end of the input stream has been reached. However, <b>BIO</b> types are not required to use this flag to signal end-of-file conditions; they may rely on other mechanisms such as system calls or by querying the next <b>BIO</b> in a chain. Applications must therefore not test this flag directly to determine whether EOF has been reached, and must use BIO_eof() instead.</p>
+<p>This flag is for internal use only. It should not be used outside BIO implementations.</p>
 
 </dd>
 </dl>
@@ -153,7 +165,7 @@ int  BIO_get_retry_flags(BIO *b);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2025-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

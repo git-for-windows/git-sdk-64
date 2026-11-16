@@ -91,7 +91,7 @@
 
 <h1 id="SIMPLE-MULTI-STREAM-QUIC-CLIENT-EXAMPLE">SIMPLE MULTI-STREAM QUIC CLIENT EXAMPLE</h1>
 
-<p>This section will present various source code samples demonstrating how to write a simple multi-stream QUIC client application which connects to a server, send some HTTP/1.0 requests to it, and read back the responses. Note that HTTP/1.0 over QUIC is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
+<p>This section will present various source code samples demonstrating how to write a simple multi-stream QUIC client application which connects to a server, send some HTTP/1.1 requests to it, and read back the responses. Note that HTTP/1.1 over QUIC is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
 
 <p>We will build on the example code for the simple blocking QUIC client that is covered on the <a href="../man7/ossl-guide-quic-client-block.html">ossl-guide-quic-client-block(7)</a> page and we assume that you are familiar with it. We will only describe the differences between the simple blocking QUIC client and the multi-stream QUIC client. Although the example code uses blocking <b>SSL</b> objects, you can equally use nonblocking <b>SSL</b> objects. See <a href="../man7/ossl-guide-quic-client-non-block.html">ossl-guide-quic-client-non-block(7)</a> for more information about writing a nonblocking QUIC client.</p>
 
@@ -231,7 +231,7 @@ default:
 <p>Our <b>stream2</b> object that we created above was a uni-directional stream so it cannot be used to receive data from the server. In this hypothetical example we assume that the server initiates a new stream to send us back the data that we requested. To do that we call <a href="../man3/SSL_accept_stream.html">SSL_accept_stream(3)</a>. Since this is a blocking application this will wait indefinitely until the new stream has arrived and is available for us to accept. In the event of an error it will return <b>NULL</b>.</p>
 
 <pre><code>/*
- * In our hypothetical HTTP/1.0 over QUIC protocol that we are using we
+ * In our hypothetical HTTP/1.1 over QUIC protocol that we are using we
  * assume that the server will respond with a server initiated stream
  * containing the data requested in our uni-directional stream. This doesn&#39;t
  * really make sense to do in a real protocol, but its just for
@@ -265,7 +265,7 @@ SSL_free(stream3);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2023-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

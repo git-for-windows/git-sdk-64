@@ -57,6 +57,8 @@ long SSL_CTX_get_session_cache_mode(SSL_CTX *ctx);</code></pre>
 
 <p>No session caching for client or server takes place.</p>
 
+<p>For a server, setting <b>SSL_SESS_CACHE_OFF</b> together with the <b>SSL_OP_NO_TICKET</b> option (see <a href="../man3/SSL_CTX_set_options.html">SSL_CTX_set_options(3)</a>) suppresses the issuance of <b>NewSessionTicket</b> messages. The combination indicates a clear intent to disable session resumption, so no stateful or stateless tickets are sent to the client.</p>
+
 </dd>
 <dt id="SSL_SESS_CACHE_CLIENT">SSL_SESS_CACHE_CLIENT</dt>
 <dd>

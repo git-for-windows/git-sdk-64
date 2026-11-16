@@ -231,6 +231,12 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <p>Invoked in order to obtain the property query string associated with an <b>ASN1_VALUE</b> if any. A pointer to the property query string should be stored in <i>*exarg</i> if such a value exists.</p>
 
 </dd>
+<dt id="ASN1_OP_GET0_STREAM_CONTENT"><b>ASN1_OP_GET0_STREAM_CONTENT</b></dt>
+<dd>
+
+<p>Invoked while setting up indefinite length streaming, after <b>ASN1_OP_STREAM_PRE</b>, in order to obtain the content octet string of the <b>ASN1_VALUE</b> being streamed. A pointer to the <b>ASN1_STRING</b> should be stored in <i>*exarg</i> if such a value exists. The caller marks that string for indefinite length encoding and records the position of the content in it on every encoding pass, so it must remain valid for as long as the streaming <b>BIO</b> is in use.</p>
+
+</dd>
 </dl>
 
 <p>An <b>ASN1_PRINT_ARG</b> object is used during processing of <b>ASN1_OP_PRINT_PRE</b> and <b>ASN1_OP_PRINT_POST</b> callback operations. It contains the following information.</p>
@@ -276,7 +282,7 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <dt id="boundary"><i>boundary</i></dt>
 <dd>
 
-<p>The streaming I/O boundary.</p>
+<p>The streaming I/O boundary. This field is no longer used: the position of the content is taken from the content octet string obtained with <b>ASN1_OP_GET0_STREAM_CONTENT</b>.</p>
 
 </dd>
 </dl>
@@ -311,6 +317,8 @@ typedef int ASN1_aux_const_cb(int operation, const ASN1_VALUE **in,
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The ASN1_aux_const_cb() callback and the <b>ASN1_OP_GET0_LIBCTX</b> and <b>ASN1_OP_GET0_PROPQ</b> operation types were added in OpenSSL 3.0.</p>
+
+<p>The <b>ASN1_OP_GET0_STREAM_CONTENT</b> operation type was added in OpenSSL 4.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

@@ -33,7 +33,6 @@
       <li><a href="#Certificate-Verification-Options">Certificate Verification Options</a></li>
       <li><a href="#Name-Format-Options">Name Format Options</a></li>
       <li><a href="#TLS-Version-Options">TLS Version Options</a></li>
-      <li><a href="#Engine-Options">Engine Options</a></li>
       <li><a href="#Provider-Options">Provider Options</a></li>
     </ul>
   </li>
@@ -154,6 +153,12 @@ o  Timestamp requests, generation and verification</code></pre>
 <p>EC (Elliptic curve) key processing.</p>
 
 </dd>
+<dt id="ech"><b>ech</b></dt>
+<dd>
+
+<p>Encrypted Client Hello (ECH) admin. See <a href="../man1/openssl-ech.html">openssl-ech(1)</a>.</p>
+
+</dd>
 <dt id="ecparam"><b>ecparam</b></dt>
 <dd>
 
@@ -164,12 +169,6 @@ o  Timestamp requests, generation and verification</code></pre>
 <dd>
 
 <p>Encryption, decryption, and encoding.</p>
-
-</dd>
-<dt id="engine"><b>engine</b></dt>
-<dd>
-
-<p>Engine (loadable module) information and manipulation.</p>
 
 </dd>
 <dt id="errstr"><b>errstr</b></dt>
@@ -778,47 +777,19 @@ o  Timestamp requests, generation and verification</code></pre>
 
 <dl>
 
-<dt id="ssl3--tls1--tls1_1--tls1_2--tls1_3--no_ssl3--no_tls1--no_tls1_1--no_tls1_2--no_tls1_3"><b>-ssl3</b>, <b>-tls1</b>, <b>-tls1_1</b>, <b>-tls1_2</b>, <b>-tls1_3</b>, <b>-no_ssl3</b>, <b>-no_tls1</b>, <b>-no_tls1_1</b>, <b>-no_tls1_2</b>, <b>-no_tls1_3</b></dt>
+<dt id="tls1--tls1_1--tls1_2--tls1_3--no_ssl3--no_tls1--no_tls1_1--no_tls1_2--no_tls1_3"><b>-tls1</b>, <b>-tls1_1</b>, <b>-tls1_2</b>, <b>-tls1_3</b>, <b>-no_ssl3</b>, <b>-no_tls1</b>, <b>-no_tls1_1</b>, <b>-no_tls1_2</b>, <b>-no_tls1_3</b></dt>
 <dd>
 
 <p>These options require or disable the use of the specified SSL or TLS protocols. When a specific TLS version is required, only that version will be offered or accepted. Only one specific protocol can be given and it cannot be combined with any of the <b>no_</b> options. The <b>no_*</b> options do not work with <b>s_time</b> and <b>ciphers</b> commands but work with <b>s_client</b> and <b>s_server</b> commands.</p>
 
 </dd>
-<dt id="dtls--dtls1--dtls1_2"><b>-dtls</b>, <b>-dtls1</b>, <b>-dtls1_2</b></dt>
+<dt id="dtls--dtls1--dtls1_2--dtls1_3"><b>-dtls</b>, <b>-dtls1</b>, <b>-dtls1_2</b>, <b>-dtls1_3</b></dt>
 <dd>
 
-<p>These options specify to use DTLS instead of TLS. With <b>-dtls</b>, clients will negotiate any supported DTLS protocol version. Use the <b>-dtls1</b> or <b>-dtls1_2</b> options to support only DTLS1.0 or DTLS1.2, respectively.</p>
+<p>These options specify to use DTLS instead of TLS. With <b>-dtls</b>, clients will negotiate any supported DTLS protocol version. Use the <b>-dtls1</b>, <b>-dtls1_2</b> or <b>-dtls1_3</b> options to support only DTLS1.0, DTLS1.2 or DTLS1.3 respectively.</p>
 
 </dd>
 </dl>
-
-<h2 id="Engine-Options">Engine Options</h2>
-
-<dl>
-
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>Load the engine identified by <i>id</i> and use all the methods it implements (algorithms, key storage, etc.), unless specified otherwise in the command-specific documentation or it is configured to do so, as described in <a href="../man5/config.html">&quot;Engine Configuration&quot; in config(5)</a>.</p>
-
-<p>The engine will be used for key ids specified with <b>-key</b> and similar options when an option like <b>-keyform engine</b> is given.</p>
-
-<p>A special case is the <code>loader_attic</code> engine, which is meant just for internal OpenSSL testing purposes and supports loading keys, parameters, certificates, and CRLs from files. When this engine is used, files with such credentials are read via this engine. Using the <code>file:</code> schema is optional; a plain file (path) name will do.</p>
-
-</dd>
-</dl>
-
-<p>Options specifying keys, like <b>-key</b> and similar, can use the generic OpenSSL engine key loading URI scheme <code>org.openssl.engine:</code> to retrieve private keys and public keys. The URI syntax is as follows, in simplified form:</p>
-
-<pre><code>org.openssl.engine:{engineid}:{keyid}</code></pre>
-
-<p>Where <code>{engineid}</code> is the identity/name of the engine, and <code>{keyid}</code> is a key identifier that&#39;s acceptable by that engine. For example, when using an engine that interfaces against a PKCS#11 implementation, the generic key URI would be something like this (this happens to be an example for the PKCS#11 engine that&#39;s part of OpenSC):</p>
-
-<pre><code>-key org.openssl.engine:pkcs11:label_some-private-key</code></pre>
-
-<p>As a third possibility, for engines and providers that have implemented their own <a href="../man3/OSSL_STORE_LOADER.html">OSSL_STORE_LOADER(3)</a>, <code>org.openssl.engine:</code> should not be necessary. For a PKCS#11 implementation that has implemented such a loader, the PKCS#11 URI as defined in RFC 7512 should be possible to use directly:</p>
-
-<pre><code>-key pkcs11:object=some-private-key;pin-value=1234</code></pre>
 
 <h2 id="Provider-Options">Provider Options</h2>
 
@@ -858,13 +829,13 @@ o  Timestamp requests, generation and verification</code></pre>
 
 <p>For information about the use of environment variables in configuration, see <a href="../man5/config.html">&quot;ENVIRONMENT&quot; in config(5)</a>.</p>
 
-<p>For information about specific commands, see <a href="../man1/openssl-engine.html">openssl-engine(1)</a>, <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>, and <a href="../man1/tsget.html">tsget(1)</a>.</p>
+<p>For information about specific commands, see <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a> and <a href="../man1/tsget.html">tsget(1)</a>.</p>
 
 <p>For information about querying or specifying CPU architecture flags, see <a href="../man3/OPENSSL_armcap.html">OPENSSL_armcap(3)</a>, <a href="../man3/OPENSSL_ia32cap.html">OPENSSL_ia32cap(3)</a>, <a href="../man3/OPENSSL_ppccap.html">OPENSSL_ppccap(3)</a>, <a href="../man3/OPENSSL_s390xcap.html">OPENSSL_s390xcap(3)</a> and <a href="../man3/OPENSSL_riscvcap.html">OPENSSL_riscvcap(3)</a>.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl-asn1parse.html">openssl-asn1parse(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-ciphers.html">openssl-ciphers(1)</a>, <a href="../man1/openssl-cms.html">openssl-cms(1)</a>, <a href="../man1/openssl-crl.html">openssl-crl(1)</a>, <a href="../man1/openssl-crl2pkcs7.html">openssl-crl2pkcs7(1)</a>, <a href="../man1/openssl-dgst.html">openssl-dgst(1)</a>, <a href="../man1/openssl-dhparam.html">openssl-dhparam(1)</a>, <a href="../man1/openssl-dsa.html">openssl-dsa(1)</a>, <a href="../man1/openssl-dsaparam.html">openssl-dsaparam(1)</a>, <a href="../man1/openssl-ec.html">openssl-ec(1)</a>, <a href="../man1/openssl-ecparam.html">openssl-ecparam(1)</a>, <a href="../man1/openssl-enc.html">openssl-enc(1)</a>, <a href="../man1/openssl-engine.html">openssl-engine(1)</a>, <a href="../man1/openssl-errstr.html">openssl-errstr(1)</a>, <a href="../man1/openssl-gendsa.html">openssl-gendsa(1)</a>, <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a>, <a href="../man1/openssl-genrsa.html">openssl-genrsa(1)</a>, <a href="../man1/openssl-kdf.html">openssl-kdf(1)</a>, <a href="../man1/openssl-list.html">openssl-list(1)</a>, <a href="../man1/openssl-mac.html">openssl-mac(1)</a>, <a href="../man1/openssl-nseq.html">openssl-nseq(1)</a>, <a href="../man1/openssl-ocsp.html">openssl-ocsp(1)</a>, <a href="../man1/openssl-passwd.html">openssl-passwd(1)</a>, <a href="../man1/openssl-pkcs12.html">openssl-pkcs12(1)</a>, <a href="../man1/openssl-pkcs7.html">openssl-pkcs7(1)</a>, <a href="../man1/openssl-pkcs8.html">openssl-pkcs8(1)</a>, <a href="../man1/openssl-pkey.html">openssl-pkey(1)</a>, <a href="../man1/openssl-pkeyparam.html">openssl-pkeyparam(1)</a>, <a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a>, <a href="../man1/openssl-prime.html">openssl-prime(1)</a>, <a href="../man1/openssl-rand.html">openssl-rand(1)</a>, <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-rsa.html">openssl-rsa(1)</a>, <a href="../man1/openssl-rsautl.html">openssl-rsautl(1)</a>, <a href="../man1/openssl-s_client.html">openssl-s_client(1)</a>, <a href="../man1/openssl-s_server.html">openssl-s_server(1)</a>, <a href="../man1/openssl-s_time.html">openssl-s_time(1)</a>, <a href="../man1/openssl-sess_id.html">openssl-sess_id(1)</a>, <a href="../man1/openssl-smime.html">openssl-smime(1)</a>, <a href="../man1/openssl-speed.html">openssl-speed(1)</a>, <a href="../man1/openssl-spkac.html">openssl-spkac(1)</a>, <a href="../man1/openssl-srp.html">openssl-srp(1)</a>, <a href="../man1/openssl-storeutl.html">openssl-storeutl(1)</a>, <a href="../man1/openssl-ts.html">openssl-ts(1)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a>, <a href="../man1/openssl-version.html">openssl-version(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man7/openssl-env.html">openssl-env(7)</a>. <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man5/x509v3_config.html">x509v3_config(5)</a></p>
+<p><a href="../man1/openssl-asn1parse.html">openssl-asn1parse(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-ciphers.html">openssl-ciphers(1)</a>, <a href="../man1/openssl-cms.html">openssl-cms(1)</a>, <a href="../man1/openssl-crl.html">openssl-crl(1)</a>, <a href="../man1/openssl-crl2pkcs7.html">openssl-crl2pkcs7(1)</a>, <a href="../man1/openssl-dgst.html">openssl-dgst(1)</a>, <a href="../man1/openssl-dhparam.html">openssl-dhparam(1)</a>, <a href="../man1/openssl-dsa.html">openssl-dsa(1)</a>, <a href="../man1/openssl-dsaparam.html">openssl-dsaparam(1)</a>, <a href="../man1/openssl-ec.html">openssl-ec(1)</a>, <a href="../man1/openssl-ecparam.html">openssl-ecparam(1)</a>, <a href="../man1/openssl-enc.html">openssl-enc(1)</a>, <a href="../man1/openssl-errstr.html">openssl-errstr(1)</a>, <a href="../man1/openssl-gendsa.html">openssl-gendsa(1)</a>, <a href="../man1/openssl-genpkey.html">openssl-genpkey(1)</a>, <a href="../man1/openssl-genrsa.html">openssl-genrsa(1)</a>, <a href="../man1/openssl-kdf.html">openssl-kdf(1)</a>, <a href="../man1/openssl-list.html">openssl-list(1)</a>, <a href="../man1/openssl-mac.html">openssl-mac(1)</a>, <a href="../man1/openssl-nseq.html">openssl-nseq(1)</a>, <a href="../man1/openssl-ocsp.html">openssl-ocsp(1)</a>, <a href="../man1/openssl-passwd.html">openssl-passwd(1)</a>, <a href="../man1/openssl-pkcs12.html">openssl-pkcs12(1)</a>, <a href="../man1/openssl-pkcs7.html">openssl-pkcs7(1)</a>, <a href="../man1/openssl-pkcs8.html">openssl-pkcs8(1)</a>, <a href="../man1/openssl-pkey.html">openssl-pkey(1)</a>, <a href="../man1/openssl-pkeyparam.html">openssl-pkeyparam(1)</a>, <a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a>, <a href="../man1/openssl-prime.html">openssl-prime(1)</a>, <a href="../man1/openssl-rand.html">openssl-rand(1)</a>, <a href="../man1/openssl-rehash.html">openssl-rehash(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-rsa.html">openssl-rsa(1)</a>, <a href="../man1/openssl-rsautl.html">openssl-rsautl(1)</a>, <a href="../man1/openssl-s_client.html">openssl-s_client(1)</a>, <a href="../man1/openssl-s_server.html">openssl-s_server(1)</a>, <a href="../man1/openssl-s_time.html">openssl-s_time(1)</a>, <a href="../man1/openssl-sess_id.html">openssl-sess_id(1)</a>, <a href="../man1/openssl-smime.html">openssl-smime(1)</a>, <a href="../man1/openssl-speed.html">openssl-speed(1)</a>, <a href="../man1/openssl-spkac.html">openssl-spkac(1)</a>, <a href="../man1/openssl-srp.html">openssl-srp(1)</a>, <a href="../man1/openssl-storeutl.html">openssl-storeutl(1)</a>, <a href="../man1/openssl-ts.html">openssl-ts(1)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a>, <a href="../man1/openssl-version.html">openssl-version(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man5/config.html">config(5)</a>, <a href="../man7/crypto.html">crypto(7)</a>, <a href="../man7/openssl-env.html">openssl-env(7)</a>. <a href="../man7/ssl.html">ssl(7)</a>, <a href="../man5/x509v3_config.html">x509v3_config(5)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -875,6 +846,8 @@ o  Timestamp requests, generation and verification</code></pre>
 <p>The <b>-xcertform</b> and <b>-xkeyform</b> options are obsolete since OpenSSL 3.0 and have no effect.</p>
 
 <p>The interactive mode, which could be invoked by running <code>openssl</code> with no further arguments, was removed in OpenSSL 3.0, and running that program with no arguments is now equivalent to <code>openssl help</code>.</p>
+
+<p>The <b>engine</b> command, the whole engine support together with the <code>org.openssl.engine</code> URI scheme was removed in OpenSSL 4.0; use providers as a replacement.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

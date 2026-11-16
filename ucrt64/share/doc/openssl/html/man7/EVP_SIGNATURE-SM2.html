@@ -1,0 +1,111 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_SIGNATURE-SM2</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a>
+    <ul>
+      <li><a href="#SM2-Signature-Parameters">SM2 Signature Parameters</a></li>
+    </ul>
+  </li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_SIGNATURE-SM2 - The EVP_PKEY SM2 signature implementation.</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Support for computing SM2 signatures. See <a href="../man7/EVP_PKEY-SM2.html">EVP_PKEY-SM2(7)</a> for information related to SM2 keys.</p>
+
+<p>This signature algorithm can be explicitly fetched with <a href="../man3/EVP_PKEY_sign_init_ex2.html">EVP_PKEY_sign_init_ex2(3)</a>, and implicitly fetched (through <a href="../man7/EVP_PKEY-SM2.html">SM2 keys</a>) with <a href="../man3/EVP_DigestSignInit_ex.html">EVP_DigestSignInit_ex(3)</a> and <a href="../man3/EVP_DigestVerifyInit_ex.html">EVP_DigestVerifyInit_ex(3)</a>.</p>
+
+<h2 id="SM2-Signature-Parameters">SM2 Signature Parameters</h2>
+
+<p>The following signature parameters can be set using <a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>, <a href="../man3/EVP_DigestSignInit_ex.html">EVP_DigestSignInit_ex(3)</a> or <a href="../man3/EVP_DigestVerifyInit_ex.html">EVP_DigestVerifyInit_ex(3)</a>.</p>
+
+<dl>
+
+<dt id="digest-OSSL_SIGNATURE_PARAM_DIGEST-UTF8-string">&quot;digest&quot; (<b>OSSL_SIGNATURE_PARAM_DIGEST</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>This defaults to the <code>SM3</code> digest if not explicitly specified.</p>
+
+</dd>
+<dt id="digest-size-OSSL_SIGNATURE_PARAM_DIGEST-size_t">&quot;digest-size&quot; (<b>OSSL_SIGNATURE_PARAM_DIGEST</b>) &lt;size_t&gt;</dt>
+<dd>
+
+<p>This defaults to 32 bytes if not explicitly specified. Digests of a different size are not supported with <b>SM2</b>.</p>
+
+</dd>
+<dt id="distid-OSSL_PKEY_PARAM_DIST_ID-UTF8-string">&quot;distid&quot; (<b>OSSL_PKEY_PARAM_DIST_ID</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The <i>distinguishing identifier</i> defaults to <code>1234567812345678</code> if not explicitly specified.</p>
+
+<p>An explicit empty distinguishing identifier value may need to be used to verify or create signatures that are compatible with versions of OpenSSL prior to 4.0. With the commandline tools an empty value can be specified with the use of either the <b>-pkeyopt</b> (<a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a>) or <b>-sigopt</b> (<a href="../man1/openssl-dgst.html">openssl-dgst(1)</a>) option with a value of <code>distid:</code>.</p>
+
+</dd>
+<dt id="tls-version-OSSL_SIGNATURE_PARAM_TLS_VERSION-uint">&quot;tls-version&quot; (<b>OSSL_SIGNATURE_PARAM_TLS_VERSION</b>) &lt;uint&gt;</dt>
+<dd>
+
+<p>The OpenSSL 4.0 or later TLS protocol engine passes this parameter to the underlying signature algorithm when signing or verifying TLS <b>CertificateVerify</b> messages. When the protocol version is TLS 1.3 (0x0304), the SM2 signature algorithm will use the RFC8998 <i>distinguished identifier</i> instead of the default value noted above.</p>
+
+</dd>
+</dl>
+
+<p>The following signature parameters can be retrieved using EVP_PKEY_CTX_get_params().</p>
+
+<dl>
+
+<dt id="algorithm-id-OSSL_SIGNATURE_PARAM_ALGORITHM_ID-octet-string">&quot;algorithm-id&quot; (<b>OSSL_SIGNATURE_PARAM_ALGORITHM_ID</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>This returns the DER encoding of the <b>SM2-with-SM3</b> signature OID.</p>
+
+</dd>
+<dt id="digest-OSSL_SIGNATURE_PARAM_DIGEST-UTF8-string1">&quot;digest&quot; (<b>OSSL_SIGNATURE_PARAM_DIGEST</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+</dd>
+<dt id="digest-size-OSSL_SIGNATURE_PARAM_DIGEST-size_t1">&quot;digest-size&quot; (<b>OSSL_SIGNATURE_PARAM_DIGEST</b>) &lt;size_t&gt;</dt>
+<dd>
+
+</dd>
+</dl>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/EVP_PKEY_CTX_set_params.html">EVP_PKEY_CTX_set_params(3)</a>, <a href="../man3/EVP_PKEY_sign.html">EVP_PKEY_sign(3)</a>, <a href="../man3/EVP_PKEY_verify.html">EVP_PKEY_verify(3)</a>, <a href="../man3/EVP_DigestSignInit_ex.html">EVP_DigestSignInit_ex(3)</a>, <a href="../man3/EVP_DigestVerifyInit_ex.html">EVP_DigestVerifyInit_ex(3)</a>, <a href="../man7/provider-signature.html">provider-signature(7)</a>,</p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>The default value of the SM2 distinguishing identifier changed from empty to <code>1234567812345678</code> as of OpenSSL 4.0.</p>
+
+<p>Support for the <b>OSSL_SIGNATURE_PARAM_TLS_VERSION</b> parameter was added in OpenSSL 4.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

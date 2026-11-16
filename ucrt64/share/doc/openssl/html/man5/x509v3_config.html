@@ -43,6 +43,7 @@
   <li><a href="#ARBITRARY-EXTENSIONS">ARBITRARY EXTENSIONS</a></li>
   <li><a href="#WARNINGS">WARNINGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -184,7 +185,7 @@ extendedKeyUsage = serverAuth, clientAuth</code></pre>
 
 <h2 id="Subject-Key-Identifier">Subject Key Identifier</h2>
 
-<p>The SKID extension specification has a value with three choices.</p>
+<p>The Subject Key Identifier (SKID) extension takes three possible forms:</p>
 
 <dl>
 
@@ -203,12 +204,12 @@ extendedKeyUsage = serverAuth, clientAuth</code></pre>
 <dt id="A-hex-string-possibly-with-:-separating-bytes">A hex string (possibly with <code>:</code> separating bytes)</dt>
 <dd>
 
-<p>The provided value is output directly. This choice is strongly discouraged.</p>
+<p>The specified value is used directly. This choice is strongly discouraged.</p>
 
 </dd>
 </dl>
 
-<p>By default the <b>x509</b>, <b>req</b>, and <b>ca</b> apps behave as if <b>hash</b> was given.</p>
+<p>See <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, and <a href="../man1/openssl-ca.html">openssl-ca(1)</a> documentation for further details relevant to each of the command-line utilities.</p>
 
 <p>Example:</p>
 
@@ -216,19 +217,37 @@ extendedKeyUsage = serverAuth, clientAuth</code></pre>
 
 <h2 id="Authority-Key-Identifier">Authority Key Identifier</h2>
 
-<p>The AKID extension specification may have the value <b>none</b> indicating that no AKID shall be included. Otherwise it may have the value <b>keyid</b> or <b>issuer</b> or both of them, separated by <code>,</code>. Either or both can have the option <b>always</b>, indicated by putting a colon <code>:</code> between the value and this option. For self-signed certificates the AKID is suppressed unless <b>always</b> is present.</p>
+<p>The Authority Key Identifier (SKID) extension takes two different forms.</p>
 
-<p>By default the <b>x509</b>, <b>req</b>, and <b>ca</b> apps behave as if <b>none</b> was given for self-signed certificates and <b>keyid</b><code>,</code> <b>issuer</b> otherwise.</p>
+<p>The value <b>none</b> indicates that no AKID shall be included.</p>
 
-<p>If <b>keyid</b> is present, an attempt is made to copy the subject key identifier (SKID) from the issuer certificate except if the issuer certificate is the same as the current one and it is not self-signed. The hash of the public key related to the signing key is taken as fallback if the issuer certificate is the same as the current certificate. If <b>always</b> is present but no value can be obtained, an error is returned.</p>
+<p>Otherwise, the value syntax is that of a comma-separated list of either or both of the <b>keyid</b> or <b>issuer</b> keywords.</p>
 
-<p>If <b>issuer</b> is present, and in addition it has the option <b>always</b> specified or <b>keyid</b> is not present, then the issuer DN and serial number are copied from the issuer certificate. If this fails, an error is returned.</p>
+<p>The <b>keyid</b> keyword asks that the AKID include the issuer&#39;s subject key identifier.</p>
+
+<p>The <b>issuer</b> keyword asks that the AKID include the serial number and issuer distinguished name (grandparent name of subject certificate) of the issuer certificate. Unless qualified with <code>always</code> (as described below), these are added only as a fallback if the <b>keyid</b> is not requested, or no SKID was available in the issuer certificate.</p>
+
+<p>Either or both keywords can be suffixed with an optional qualifier, which can be either <code>always</code> or <code>nonss</code>. If the qualifier is present, it is separated from the keyword by a colon (<code>:</code>).</p>
+
+<p>The <code>always</code> qualifier makes that AKID element mandatory, an error is raised if that element cannot be included. The <b>issuer</b> certificate&#39;s issuer name and serial number are no longer a fallback when the <b>always</b> qualifier is used. The <code>nonss</code> qualifier makes that AKID element further conditional on the certificate not being self-signed.</p>
+
+<p>When creating a self-signed certificate, be sure to specify a SKID extension if you want to have a mandatory (<code>always</code> qualified) <b>keyid</b> in the AKID extension.</p>
+
+<p>See <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man1/openssl-req.html">openssl-req(1)</a>, and <a href="../man1/openssl-ca.html">openssl-ca(1)</a> for further details relevant to that specific command-line utility.</p>
 
 <p>Examples:</p>
 
-<pre><code>authorityKeyIdentifier = keyid, issuer
+<pre><code># Keyid preferred, otherwise issuer name &amp; serial
+authorityKeyIdentifier = keyid, issuer
 
-authorityKeyIdentifier = keyid, issuer:always</code></pre>
+# As above, but skip the extension entirely if self-signed
+authorityKeyIdentifier = keyid:nonss, issuer:nonss
+
+# Keyid when possible, issuer name &amp; serial always
+authorityKeyIdentifier = keyid, issuer:always
+
+# Keyid when possible, issuer as fallback when not self-signed
+authorityKeyIdentifier = keyid, issuer:nonss</code></pre>
 
 <h2 id="Subject-Alternative-Name">Subject Alternative Name</h2>
 
@@ -528,9 +547,13 @@ field2 = UTF8:field2</code></pre>
 
 <p><a href="../man1/openssl-req.html">openssl-req(1)</a>, <a href="../man1/openssl-ca.html">openssl-ca(1)</a>, <a href="../man1/openssl-x509.html">openssl-x509(1)</a>, <a href="../man3/ASN1_generate_nconf.html">ASN1_generate_nconf(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>OpenSSL 4.0 updated the syntax of the <b>subjectKeyIdentifier</b> (SKID) and <b>authorityKeyIdentifier</b> (AKID) extensions, described above, to introduce the <code>nonss</code> qualifier for the <b>keyid</b> and <b>issuer</b> keywords. The command-line utilities no longer have specialised built-in logic to add these extensions, they are handled through configuration files and command-line options just like any other extension.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2004-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2004-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

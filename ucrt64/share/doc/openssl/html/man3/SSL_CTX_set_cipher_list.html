@@ -41,11 +41,11 @@ const char *OSSL_default_ciphersuites(void);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>SSL_CTX_set_cipher_list() sets the list of available ciphers (TLSv1.2 and below) for <b>ctx</b> using the control string <b>str</b>. The format of the string is described in <a href="../man1/openssl-ciphers.html">openssl-ciphers(1)</a>. The list of ciphers is inherited by all <b>ssl</b> objects created from <b>ctx</b>. This function does not impact TLSv1.3 ciphersuites. Use SSL_CTX_set_ciphersuites() to configure those. <b>ctx</b> <b>MUST NOT</b> be NULL.</p>
+<p>SSL_CTX_set_cipher_list() sets the list of available ciphers (TLSv1.2 and below) for <b>ctx</b> using the control string <b>str</b>. The format of the string is described in <a href="../man1/openssl-ciphers.html">openssl-ciphers(1)</a>. As of OpenSSL 4.0, <b>str</b> is processed case-insensitively. The list of ciphers is inherited by all <b>ssl</b> objects created from <b>ctx</b>. This function does not affect TLSv1.3 ciphersuites. Use SSL_CTX_set_ciphersuites() to configure those. <b>ctx</b> <b>MUST NOT</b> be NULL.</p>
 
 <p>SSL_set_cipher_list() sets the list of ciphers (TLSv1.2 and below) only for <b>ssl</b>.</p>
 
-<p>SSL_CTX_set_ciphersuites() is used to configure the available TLSv1.3 ciphersuites for <b>ctx</b>. This is a simple colon (&quot;:&quot;) separated list of TLSv1.3 ciphersuite names in order of preference. Valid TLSv1.3 ciphersuite names are:</p>
+<p>SSL_CTX_set_ciphersuites() is used to configure the available TLSv1.3 ciphersuites for <b>ctx</b>. This is a simple colon (&quot;:&quot;) separated list of TLSv1.3 ciphersuite names in order of preference. As of OpenSSL 4.0, <b>str</b> is processed case-insensitively. Valid TLSv1.3 ciphersuite names are:</p>
 
 <dl>
 
@@ -66,6 +66,14 @@ const char *OSSL_default_ciphersuites(void);</code></pre>
 
 </dd>
 <dt id="TLS_AES_128_CCM_8_SHA256">TLS_AES_128_CCM_8_SHA256</dt>
+<dd>
+
+</dd>
+<dt id="TLS_SM4_GCM_SM3">TLS_SM4_GCM_SM3</dt>
+<dd>
+
+</dd>
+<dt id="TLS_SM4_CCM_SM3">TLS_SM4_CCM_SM3</dt>
 <dd>
 
 </dd>
@@ -115,9 +123,11 @@ const char *OSSL_default_ciphersuites(void);</code></pre>
 
 <p>OSSL_default_cipher_list() and OSSL_default_ciphersites() are new in 3.0.</p>
 
+<p>Cipher names were case-sensitive prior to OpenSSL 4.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

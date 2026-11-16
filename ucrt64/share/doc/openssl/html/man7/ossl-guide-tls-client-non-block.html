@@ -109,7 +109,7 @@ if (!BIO_socket_nbio(sock, 1)) {
 
 <p>An application that uses a nonblocking socket will need to be prepared to handle errors returned from OpenSSL I/O functions such as <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> or <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a>. Errors may be fatal (for example because the underlying connection has failed), or non-fatal (for example because we are trying to read from the underlying socket but the data has not yet arrived from the peer).</p>
 
-<p><a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> and <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> will return 0 to indicate an error and <a href="../man3/SSL_read.html">SSL_read(3)</a> and <a href="../man3/SSL_write.html">SSL_write(3)</a> will return 0 or a negative value to indicate an error. <a href="../man3/SSL_shutdown.html">SSL_shutdown(3)</a> will return a negative value to incidate an error.</p>
+<p><a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> and <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> will return 0 to indicate an error and <a href="../man3/SSL_read.html">SSL_read(3)</a> and <a href="../man3/SSL_write.html">SSL_write(3)</a> will return 0 or a negative value to indicate an error. <a href="../man3/SSL_shutdown.html">SSL_shutdown(3)</a> will return a negative value to indicate an error.</p>
 
 <p>In the event of an error an application should call <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> to find out what type of error has occurred. If the error is non-fatal and can be retried then <a href="../man3/SSL_get_error.html">SSL_get_error(3)</a> will return <b>SSL_ERROR_WANT_READ</b> or <b>SSL_ERROR_WANT_WRITE</b> depending on whether OpenSSL wanted to read to or write from the socket but was unable to. Note that a call to <a href="../man3/SSL_read_ex.html">SSL_read_ex(3)</a> or <a href="../man3/SSL_read.html">SSL_read(3)</a> can still generate <b>SSL_ERROR_WANT_WRITE</b> because OpenSSL may need to write protocol messages (such as to update cryptographic keys) even if the application is only trying to read data. Similarly calls to <a href="../man3/SSL_write_ex.html">SSL_write_ex(3)</a> or <a href="../man3/SSL_write.html">SSL_write(3)</a> might generate <b>SSL_ERROR_WANT_READ</b>.</p>
 
@@ -274,7 +274,7 @@ while ((ret = SSL_shutdown(ssl)) != 1) {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2023 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2023-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

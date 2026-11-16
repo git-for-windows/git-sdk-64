@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>EVP_EC_gen</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>EVP_EC_gen, EVP_EC_affine2oct - EVP routines for EC keys</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/evp.h&gt;
+
+EVP_PKEY *EVP_EC_gen(const char *curve);
+int EVP_EC_affine2oct(const BIGNUM *x, const BIGNUM *y, size_t field_len,
+                      unsigned char **pbuf, size_t *pbsize);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>EVP_EC_gen() generates a new EC key pair on the given <i>curve</i>.</p>
+
+<p>EVP_EC_affine2oct() converts affine coordinates <i>x</i> and <i>y</i> of an EC point to an octet string conforming to Sec. 2.3.4 of the SECG SEC 1 (&quot;Elliptic Curve Cryptography&quot;) standard. This octet string can further be passed to OSSL_PARAM_BLD_push_octet_string(). The length of the field degree representation (in bytes) must be passed to <i>field_len</i>. The function allocates a buffer for octet string and places a pointer to <i>*pbuf</i>. It&#39;s the caller&#39;s responsibility to free this buffer with OPENSSL_free().</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>EVP_EC_gen() returns the EC key pair generated or NULL on error.</p>
+
+<p>EVP_EC_affine2oct() returns 1 on success or 0 on error.</p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>EVP_EC_gen() was added in OpenSSL 3.0.</p>
+
+<p>EVP_EC_affine2oct() was added in OpenSSL 4.1.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2013-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

@@ -79,7 +79,7 @@ size_t HMAC_size(const HMAC_CTX *e);</code></pre>
 
 <p>The following functions may be used if the message is not completely stored in memory:</p>
 
-<p>HMAC_Init_ex() initializes or reuses a <b>HMAC_CTX</b> structure to use the hash function <i>evp_md</i> and key <i>key</i>. If both are NULL, or if <i>key</i> is NULL and <i>evp_md</i> is the same as the previous call, then the existing key is reused. <i>ctx</i> must have been created with HMAC_CTX_new() before the first use of an <b>HMAC_CTX</b> in this function.</p>
+<p>HMAC_Init_ex() initializes or reuses a <b>HMAC_CTX</b> structure to use the hash function <i>evp_md</i> and key <i>key</i>. If both are NULL, or if <i>key</i> is NULL and <i>evp_md</i> is the same as the previous call, then the existing key is reused. <i>ctx</i> must have been created with HMAC_CTX_new() before the first use of an <b>HMAC_CTX</b> in this function. <i>impl</i> <b>must</b> be NULL.</p>
 
 <p>If HMAC_Init_ex() is called with <i>key</i> NULL and <i>evp_md</i> is not the same as the previous digest used by <i>ctx</i> then an error is returned because reuse of an existing key with a different digest is not supported.</p>
 
@@ -87,7 +87,7 @@ size_t HMAC_size(const HMAC_CTX *e);</code></pre>
 
 <p>HMAC_Update() can be called repeatedly with chunks of the message to be authenticated (<i>len</i> bytes at <i>data</i>).</p>
 
-<p>HMAC_Final() places the message authentication code in <i>md</i>, which must have space for the hash function output.</p>
+<p>HMAC_Final() places the message authentication code in <i>md</i>, which must have space for the hash function output. After calling HMAC_Final() no calls to HMAC_Update() or HMAC_Final() can be made, but HMAC_Init_ex() can be called to initialize a new HMAC operation.</p>
 
 <p>HMAC_CTX_copy() copies all of the internal state from <i>sctx</i> into <i>dctx</i>.</p>
 
@@ -131,7 +131,7 @@ size_t HMAC_size(const HMAC_CTX *e);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

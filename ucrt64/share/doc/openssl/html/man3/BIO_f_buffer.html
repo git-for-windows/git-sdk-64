@@ -15,7 +15,11 @@
   <li><a href="#NAME">NAME</a></li>
   <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
-  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#NOTES">NOTES</a>
+    <ul>
+      <li><a href="#BIO_sendmmsg-behaviour">BIO_sendmmsg() behaviour</a></li>
+    </ul>
+  </li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
@@ -61,6 +65,16 @@ long BIO_set_buffer_read_data(BIO *b, void *buf, long num);</code></pre>
 
 <p>Data is only written to the next BIO in the chain when the write buffer fills or when BIO_flush() is called. It is therefore important to call BIO_flush() whenever any pending data should be written such as when removing a buffering BIO using BIO_pop(). BIO_flush() may need to be retried if the ultimate source/sink BIO is non blocking.</p>
 
+<h2 id="BIO_sendmmsg-behaviour">BIO_sendmmsg() behaviour</h2>
+
+<p>The buffering BIO provides an implementation of BIO_sendmmsg() with behaviour that differs significantly from the general BIO_sendmmsg() contract described in <a href="../man3/BIO_sendmmsg.html">BIO_sendmmsg(3)</a>.</p>
+
+<p><b>Coalescing, not buffering.</b> Unlike a caller that might expect N individually buffered messages to be replayed as N separate messages on flush, the buffering BIO <i>concatenates</i> the payload bytes of all messages into its single write buffer. When the buffer is flushed (either because it is full or because BIO_flush() is called), all accumulated bytes are delivered to the next BIO as a single datagram via BIO_sendmmsg(). The same applies within a single call: if <b>num_msg</b> is greater than 1, the payload data of every message in the array is appended to the write buffer in order, and they will all be emitted together in the next flush. Callers should take care that the total coalesced size does not exceed the maximum datagram size of the underlying transport.</p>
+
+<p><b>Peer address.</b> The destination address is taken from the peer field of the first message of the first call after a flush. It remains fixed for the entire flush cycle and is cleared automatically after each successful flush so that subsequent calls may supply a new peer address.</p>
+
+<p><b>Thread safety.</b> The general BIO_sendmmsg() documentation states that concurrent readers and writers on the same BIO are permitted. That guarantee does <b>not</b> apply to the buffering BIO implementation. BIO_sendmmsg() on a buffering BIO is <b>not</b> thread-safe; callers must not invoke it concurrently on the same BIO object.</p>
+
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
 <p>BIO_f_buffer() returns the buffering BIO method.</p>
@@ -77,7 +91,7 @@ long BIO_set_buffer_read_data(BIO *b, void *buf, long num);</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

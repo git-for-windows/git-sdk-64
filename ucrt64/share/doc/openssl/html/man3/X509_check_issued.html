@@ -17,34 +17,55 @@
   <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
 <h1 id="NAME">NAME</h1>
 
-<p>X509_check_issued - checks if certificate is apparently issued by another certificate</p>
+<p>X509_check_issued, X509_check_akid - helper functions to check whether one certificate is a potential issuer of another certificate</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
 <pre><code>#include &lt;openssl/x509v3.h&gt;
 
-int X509_check_issued(X509 *issuer, X509 *subject);</code></pre>
+int X509_check_issued(const X509 *issuer, const X509 *subject);
+int X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>X509_check_issued() checks if certificate <i>subject</i> was apparently issued using (CA) certificate <i>issuer</i>. This function takes into account not only matching of the issuer field of <i>subject</i> with the subject field of <i>issuer</i>, but also compares all sub-fields of the <b>authorityKeyIdentifier</b> extension of <i>subject</i>, as far as present, with the respective <b>subjectKeyIdentifier</b>, serial number, and issuer fields of <i>issuer</i>, as far as present. It also checks if the <b>keyUsage</b> field (if present) of <i>issuer</i> allows certificate signing. It does not actually check the certificate signature. An error is returned if the <i>issuer</i> or the <i>subject</i> are incomplete certificates.</p>
+<p>X509_check_issued() checks if certificate <i>subject</i> was apparently issued using (CA) certificate <i>issuer</i>. It checks if the issuer field of <i>subject</i> equals the subject field of <i>issuer</i>. Moreover, it compares using X509_check_akid() all sub-fields of the <b>authorityKeyIdentifier</b> extension of <i>subject</i>, as far as present, with the respective <b>subjectKeyIdentifier</b>, serial number, and issuer fields of <i>issuer</i>, as far as present. It also checks if the <i>subject</i> signature algorithm matches the <i>issuer</i> public key algorithm and if any <b>keyUsage</b> field given in <i>issuer</i> allows certificate signing. It does not actually check the certificate signature. An error is returned if the <i>issuer</i> or the <i>subject</i> are incomplete certificates.</p>
+
+<p>X509_check_akid() is a more low-level function. It assumes that various internal fields of <i>issuer</i> have already been filled in, for instance by calling <a href="../man3/X509_check_purpose.html">X509_check_purpose(3)</a> with its <i>id</i> parameter being -1. It checks whether the fields of the subject certificate&#39;s authority key identifier <i>akid</i>, match the corresponding fields of the <i>issuer</i> certificate. In more detail: It returns <b>X509_V_OK</b> if <i>akid</i> is NULL (because this means no restriction) or all the following conditions are met:</p>
+
+<ul>
+
+<li><p>if <i>akid</i> has the <code>keyIdentifier</code> field, its value matches the <b>subjectKeyIdentifier</b> (SKID) extension of <i>issuer</i> if present,</p>
+
+</li>
+<li><p>if <i>akid</i> has the <code>authorityCertSerialNumber</code> field, its value equals the serial number of the <i>issuer</i> certificate, and</p>
+
+</li>
+<li><p>if <i>akid</i> has the <code>authorityCertIssuer</code> field and its <code>GeneralNames</code> include at least one <code>directoryName</code>, the first such name equals the <code>issuer</code> field of the <i>issuer</i> certificate.</p>
+
+</li>
+</ul>
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>X509_check_issued() returns <b>X509_V_OK</b> if all checks are successful or some <b>X509_V_ERR*</b> constant to indicate an error.</p>
+<p>X509_check_issued() and X509_check_akid() return <b>X509_V_OK</b> if all checks are successful or some <b>X509_V_ERR*</b> constant indicating why the issuer does not match.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a>, <a href="../man3/X509_verify.html">X509_verify(3)</a>, <a href="../man3/X509_check_ca.html">X509_check_ca(3)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a>, <a href="../man3/X509_self_signed.html">X509_self_signed(3)</a></p>
+<p><a href="../man3/X509_verify_cert.html">X509_verify_cert(3)</a>, <a href="../man3/X509_verify.html">X509_verify(3)</a>, <a href="../man3/X509_check_ca.html">X509_check_ca(3)</a>, <a href="../man1/openssl-verify.html">openssl-verify(1)</a>, <a href="../man3/X509_self_signed.html">X509_self_signed(3)</a>, <a href="../man3/X509_check_purpose.html">X509_check_purpose(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>X509_check_issued() has had its arguments altered to be const in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2015-2021 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2015-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

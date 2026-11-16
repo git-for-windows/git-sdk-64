@@ -157,12 +157,6 @@ unsigned long OpenSSL_version_num();</code></pre>
 <p>The <b>OPENSSLDIR</b> setting of the library build in the form <code>OPENSSLDIR: &quot;...&quot;</code> if available, or <code>OPENSSLDIR: N/A</code> otherwise.</p>
 
 </dd>
-<dt id="OPENSSL_ENGINES_DIR">OPENSSL_ENGINES_DIR</dt>
-<dd>
-
-<p>The <b>ENGINESDIR</b> setting of the library build in the form <code>ENGINESDIR: &quot;...&quot;</code> if available, or <code>ENGINESDIR: N/A</code> otherwise. This option is deprecated in OpenSSL 3.0.</p>
-
-</dd>
 <dt id="OPENSSL_MODULES_DIR">OPENSSL_MODULES_DIR</dt>
 <dd>
 
@@ -195,16 +189,10 @@ unsigned long OpenSSL_version_num();</code></pre>
 <p>The configured <code>OPENSSLDIR</code>, which is the default location for OpenSSL configuration files.</p>
 
 </dd>
-<dt id="OPENSSL_INFO_ENGINES_DIR">OPENSSL_INFO_ENGINES_DIR</dt>
-<dd>
-
-<p>The configured <code>ENGINESDIR</code>, which is the default location for OpenSSL engines.</p>
-
-</dd>
 <dt id="OPENSSL_INFO_MODULES_DIR">OPENSSL_INFO_MODULES_DIR</dt>
 <dd>
 
-<p>The configured <code>MODULESDIR</code>, which is the default location for dynamically loadable OpenSSL modules other than engines.</p>
+<p>The configured <code>MODULESDIR</code>, which is the default location for dynamically loadable OpenSSL modules.</p>
 
 </dd>
 <dt id="OPENSSL_INFO_DSO_EXTENSION">OPENSSL_INFO_DSO_EXTENSION</dt>
@@ -258,6 +246,12 @@ unsigned long OpenSSL_version_num();</code></pre>
 <h1 id="HISTORY">HISTORY</h1>
 
 <p>The macros and functions described here were added in OpenSSL 3.0, except for OPENSSL_VERSION_NUMBER and OpenSSL_version_num().</p>
+
+<p>The <b>OPENSSL_ENGINES_DIR</b> and <b>OPENSSL_INFO_ENGINES_DIR</b> strings are no longer supported and, for compatibility reasons, will always return values indicating that engine support was disabled.</p>
+
+<p>The <b>OPENSSL_ENGINES_DIR</b> and <b>OPENSSL_INFO_ENGINES_DIR</b> strings were removed since OpenSSL 4.0.</p>
+
+<p>The <b>ENGINESDIR</b> setting of the library is no longer supported since OpenSSL 4.0.</p>
 
 <h1 id="BUGS">BUGS</h1>
 

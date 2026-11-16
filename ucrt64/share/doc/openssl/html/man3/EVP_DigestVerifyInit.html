@@ -112,7 +112,7 @@ int EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sig,
 
 <p>If RSA-PSS is used and restrictions apply then the digest must match.</p>
 
-<p>EVP_DigestVerifyInit() works in the same way as EVP_DigestVerifyInit_ex() except that the <b>mdname</b> parameter will be inferred from the supplied digest <b>type</b>, and <b>props</b> will be NULL. Where supplied the ENGINE <b>e</b> will be used for the signature verification and digest algorithm implementations. <b>e</b> may be NULL.</p>
+<p>EVP_DigestVerifyInit() works in the same way as EVP_DigestVerifyInit_ex() except that the <b>mdname</b> parameter will be inferred from the supplied digest <b>type</b>, and <b>props</b> will be NULL. <b>e</b> <b>must</b> be NULL.</p>
 
 <p>EVP_DigestVerifyUpdate() hashes <b>cnt</b> bytes of data at <b>d</b> into the verification context <b>ctx</b>. This function can be called several times on the same <b>ctx</b> to include additional data.</p>
 

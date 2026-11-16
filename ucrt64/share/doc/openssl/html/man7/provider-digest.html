@@ -18,6 +18,7 @@
     <ul>
       <li><a href="#Context-Management-Functions">Context Management Functions</a></li>
       <li><a href="#Digest-Generation-Functions">Digest Generation Functions</a></li>
+      <li><a href="#Digest-State-Serialization-Functions">Digest State Serialization Functions</a></li>
       <li><a href="#Digest-Parameters">Digest Parameters</a></li>
       <li><a href="#Digest-Context-Parameters">Digest Context Parameters</a></li>
     </ul>
@@ -56,6 +57,10 @@ int OSSL_FUNC_digest_final(void *dctx, unsigned char *out, size_t *outl,
                            size_t outsz);
 int OSSL_FUNC_digest_digest(void *provctx, const unsigned char *in, size_t inl,
                             unsigned char *out, size_t *outl, size_t outsz);
+
+/* Digest state serialization */
+int OSSL_FUNC_digest_serialize(void *dctx, unsigned char *out, size_t *outl);
+int OSSL_FUNC_digest_deserialize(void *dctx, const unsigned char *in, size_t inl);
 
 /* Digest parameter descriptors */
 const OSSL_PARAM *OSSL_FUNC_digest_gettable_params(void *provctx);
@@ -99,6 +104,9 @@ OSSL_FUNC_digest_update               OSSL_FUNC_DIGEST_UPDATE
 OSSL_FUNC_digest_final                OSSL_FUNC_DIGEST_FINAL
 OSSL_FUNC_digest_digest               OSSL_FUNC_DIGEST_DIGEST
 
+OSSL_FUNC_digest_serialize            OSSL_FUNC_DIGEST_SERIALIZE
+OSSL_FUNC_digest_deserialize          OSSL_FUNC_DIGEST_DESERIALIZE
+
 OSSL_FUNC_digest_get_params           OSSL_FUNC_DIGEST_GET_PARAMS
 OSSL_FUNC_digest_get_ctx_params       OSSL_FUNC_DIGEST_GET_CTX_PARAMS
 OSSL_FUNC_digest_set_ctx_params       OSSL_FUNC_DIGEST_SET_CTX_PARAMS
@@ -128,6 +136,14 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 <p>OSSL_FUNC_digest_final() generates a digest started through previous OSSL_FUNC_digest_init() and OSSL_FUNC_digest_update() calls. The <i>dctx</i> parameter contains a pointer to the provider side context. The digest should be written to <i>*out</i> and the length of the digest to <i>*outl</i>. The digest should not exceed <i>outsz</i> bytes.</p>
 
 <p>OSSL_FUNC_digest_digest() is a &quot;oneshot&quot; digest function. No provider side digest context is used. Instead the provider context that was created during provider initialisation is passed in the <i>provctx</i> parameter (see <a href="../man7/provider.html">provider(7)</a>). <i>inl</i> bytes at <i>in</i> should be digested and the result should be stored at <i>out</i>. The length of the digest should be stored in <i>*outl</i> which should not exceed <i>outsz</i> bytes.</p>
+
+<h2 id="Digest-State-Serialization-Functions">Digest State Serialization Functions</h2>
+
+<p>OSSL_FUNC_digest_serialize() serializes the state of the digest context <i>dctx</i>. If <i>out</i> is NULL, then the maximum necessary size for the output buffer is written to <i>*outl</i>. If <i>out</i> is not NULL, then <i>*outl</i> is assumed to contain the length of the <i>out</i> buffer. If the call is successful, the serialized data is written to <i>out</i> and the amount of data written is stored in <i>*outl</i>.</p>
+
+<p>OSSL_FUNC_digest_deserialize() deserializes the data from <i>in</i> of size <i>inlen</i> into the digest context <i>dctx</i>. The context <i>dctx</i> should be initialized before calling this function. After a successful deserialization, the context is ready to be used for any subsequent digest operations.</p>
+
+<p>The content of the state and its validity (over time, process lifetime, etc) are completely in control of the provider. The documentation for each provider should state what guarantees it can offer in terms of recovering the state of a serialized blob.</p>
 
 <h2 id="Digest-Parameters">Digest Parameters</h2>
 
@@ -225,7 +241,7 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 
 <p>OSSL_FUNC_digest_newctx() and OSSL_FUNC_digest_dupctx() should return the newly created provider side digest context, or NULL on failure.</p>
 
-<p>OSSL_FUNC_digest_init(), OSSL_FUNC_digest_update(), OSSL_FUNC_digest_final(), OSSL_FUNC_digest_digest(), OSSL_FUNC_digest_set_params() and OSSL_FUNC_digest_get_params() should return 1 for success or 0 on error.</p>
+<p>OSSL_FUNC_digest_init(), OSSL_FUNC_digest_update(), OSSL_FUNC_digest_final(), OSSL_FUNC_digest_digest(), OSSL_FUNC_digest_get_params(), OSSL_FUNC_digest_set_ctx_params(), OSSL_FUNC_digest_get_ctx_params(), OSSL_FUNC_digest_serialize(), and OSSL_FUNC_digest_deserialize() should return 1 for success or 0 on error.</p>
 
 <p>OSSL_FUNC_digest_size() should return the digest size.</p>
 
@@ -237,11 +253,11 @@ OSSL_FUNC_digest_settable_ctx_params  OSSL_FUNC_DIGEST_SETTABLE_CTX_PARAMS</code
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-legacy.html">OSSL_PROVIDER-legacy(7)</a>, <a href="../man7/EVP_MD-common.html">EVP_MD-common(7)</a>, <a href="../man7/EVP_MD-BLAKE2.html">EVP_MD-BLAKE2(7)</a>, <a href="../man7/EVP_MD-MD2.html">EVP_MD-MD2(7)</a>, <a href="../man7/EVP_MD-MD4.html">EVP_MD-MD4(7)</a>, <a href="../man7/EVP_MD-MD5.html">EVP_MD-MD5(7)</a>, <a href="../man7/EVP_MD-MD5-SHA1.html">EVP_MD-MD5-SHA1(7)</a>, <a href="../man7/EVP_MD-MDC2.html">EVP_MD-MDC2(7)</a>, <a href="../man7/EVP_MD-RIPEMD160.html">EVP_MD-RIPEMD160(7)</a>, <a href="../man7/EVP_MD-SHA1.html">EVP_MD-SHA1(7)</a>, <a href="../man7/EVP_MD-SHA2.html">EVP_MD-SHA2(7)</a>, <a href="../man7/EVP_MD-SHA3.html">EVP_MD-SHA3(7)</a>, <a href="../man7/EVP_MD-KECCAK.html">EVP_MD-KECCAK(7)</a> <a href="../man7/EVP_MD-SHAKE.html">EVP_MD-SHAKE(7)</a>, <a href="../man7/EVP_MD-SM3.html">EVP_MD-SM3(7)</a>, <a href="../man7/EVP_MD-WHIRLPOOL.html">EVP_MD-WHIRLPOOL(7)</a>, <a href="../man7/EVP_MD-NULL.html">EVP_MD-NULL(7)</a>, <a href="../man7/life_cycle-digest.html">life_cycle-digest(7)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a></p>
+<p><a href="../man7/provider.html">provider(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-legacy.html">OSSL_PROVIDER-legacy(7)</a>, <a href="../man7/EVP_MD-common.html">EVP_MD-common(7)</a>, <a href="../man7/EVP_MD-BLAKE2.html">EVP_MD-BLAKE2(7)</a>, <a href="../man7/EVP_MD-MD2.html">EVP_MD-MD2(7)</a>, <a href="../man7/EVP_MD-MD4.html">EVP_MD-MD4(7)</a>, <a href="../man7/EVP_MD-MD5.html">EVP_MD-MD5(7)</a>, <a href="../man7/EVP_MD-MD5-SHA1.html">EVP_MD-MD5-SHA1(7)</a>, <a href="../man7/EVP_MD-MDC2.html">EVP_MD-MDC2(7)</a>, <a href="../man7/EVP_MD-RIPEMD160.html">EVP_MD-RIPEMD160(7)</a>, <a href="../man7/EVP_MD-SHA1.html">EVP_MD-SHA1(7)</a>, <a href="../man7/EVP_MD-SHA2.html">EVP_MD-SHA2(7)</a>, <a href="../man7/EVP_MD-SHA3.html">EVP_MD-SHA3(7)</a>, <a href="../man7/EVP_MD-KECCAK.html">EVP_MD-KECCAK(7)</a> <a href="../man7/EVP_MD-SHAKE.html">EVP_MD-SHAKE(7)</a>, <a href="../man7/EVP_MD-SM3.html">EVP_MD-SM3(7)</a>, <a href="../man7/EVP_MD-WHIRLPOOL.html">EVP_MD-WHIRLPOOL(7)</a>, <a href="../man7/EVP_MD-NULL.html">EVP_MD-NULL(7)</a>, <a href="../man7/EVP_MD-ML-DSA-MU.html">EVP_MD-ML-DSA-MU(7)</a>, <a href="../man7/life_cycle-digest.html">life_cycle-digest(7)</a>, <a href="../man3/EVP_DigestInit.html">EVP_DigestInit(3)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
-<p>The provider DIGEST interface was introduced in OpenSSL 3.0. OSSL_FUNC_digest_copyctx() was added in 3.5 version. The &quot;fips-indicator&quot; context parameter was added in OpenSSL 3.6.</p>
+<p>The provider DIGEST interface was introduced in OpenSSL 3.0. OSSL_FUNC_digest_copyctx() was added in 3.5 version. The &quot;fips-indicator&quot; context parameter was added in OpenSSL 4.1.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

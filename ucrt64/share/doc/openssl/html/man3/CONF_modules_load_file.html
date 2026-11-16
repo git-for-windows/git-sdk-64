@@ -18,6 +18,7 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -42,9 +43,9 @@ int CONF_modules_load(const CONF *cnf, const char *appname,
 
 <p>The function CONF_get1_default_config_file() determines the default configuration file pathname as follows. If the <b>OPENSSL_CONF</b> environment variable is set its value is returned. Else the function returns the path obtained using <a href="../man3/X509_get_default_cert_area.html">X509_get_default_cert_area(3)</a> with the filename <code>&quot;openssl.cnf&quot;</code> appended. The caller is responsible for freeing any string returned.</p>
 
-<p>The function CONF_modules_load_file_ex() configures OpenSSL using library context <b>libctx</b> file <b>filename</b> and application name <b>appname</b>. If <b>filename</b> is NULL the standard OpenSSL configuration file is used as determined by calling CONF_get1_default_config_file(). If <b>appname</b> is NULL the standard OpenSSL application name <b>openssl_conf</b> is used. The behaviour can be customized using <b>flags</b>. Note that, the error suppressing can be overridden by <b>config_diagnostics</b> as described in <a href="../man5/config.html">config(5)</a>.</p>
+<p>The function CONF_modules_load_file_ex() configures OpenSSL using library context <b>libctx</b> file <b>filename</b> and application name <b>appname</b>. If <b>filename</b> is NULL the standard OpenSSL configuration file is used as determined by calling CONF_get1_default_config_file(). If <b>appname</b> is NULL the standard OpenSSL application name <b>openssl_conf</b> is used. The behaviour can be customized using <b>flags</b>. Note that error handling can be customised via the configuration file&#39;s default section <b>config_diagnostics</b> parameter as described in <a href="../man5/config.html">config(5)</a>.</p>
 
-<p>CONF_modules_load_file() is the same as CONF_modules_load_file_ex() but has a NULL library context.</p>
+<p>CONF_modules_load_file() is the same as CONF_modules_load_file_ex() but has a NULL library context. The global (NULL) library context is typically initialised just once at application startup. Library initialisation is typically implicit, but explicit initialisation is also supported by calling <a href="../man3/OPENSSL_init_crypto.html">OPENSSL_init_crypto(3)</a> or <a href="../man3/OPENSSL_init_ssl.html">OPENSSL_init_ssl(3)</a>, sufficiently early in the main program, before implicit OpenSSL library initialisation has taken place as a side-effect of other OpenSSL function calls.</p>
 
 <p>CONF_modules_load() is identical to CONF_modules_load_file() except it reads configuration information from <b>cnf</b>.</p>
 
@@ -125,6 +126,10 @@ if (fp == NULL) {
     fclose(fp);
     NCONF_free(cnf);
 }</code></pre>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>In OpenSSL 3.x the CONF_modules_load_file_ex() and CONF_modules_load_file() functions affect some shared global state other than the specified library context. Therefore, even if used with a freshly created library context, the function is not thread safe, and should not be used except as part of early application initialisation. The <a href="../man3/SSL_CTX_config.html">SSL_CTX_config(3)</a> and <a href="../man3/SSL_config.html">SSL_config(3)</a> functions can be used to perform late customisation of SSL contexts and connection handles. Here <i>late</i> means that the chosen section&#39;s settings are applied in addition to any initial settings from the <b>ssl</b> module&#39;s <b>system_default</b> section that are used during initial construction of the SSL context. This sort of fine-tuning does not involve a separate configuration file or library context.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

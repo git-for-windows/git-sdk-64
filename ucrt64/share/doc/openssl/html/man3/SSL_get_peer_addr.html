@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SSL_get_peer_addr</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>SSL_get_peer_addr - obtain the peer address of a QUIC connection</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/ssl.h&gt;
+
+int SSL_get_peer_addr(SSL *ssl, BIO_ADDR *peer_addr);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>SSL_get_peer_addr() retrieves the peer address of a QUIC connection and stores it into the <b>BIO_ADDR</b> structure pointed to by <i>peer_addr</i>. The caller must supply a valid <b>BIO_ADDR</b> object which will be filled in on success.</p>
+
+<p>This function is only meaningful when called on an SSL object which represents a QUIC connection or stream. It is not valid for non-QUIC SSL objects.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>The peer address identifies the remote endpoint of a QUIC connection. For UDP sockets used by QUIC, the kernel does not maintain a connected peer in the same sense as for TCP. Instead, the peer address is tracked in the QUIC connection state. SSL_get_peer_addr() provides a way to obtain this address information from OpenSSL.</p>
+
+<p>The <b>BIO_ADDR</b> type is an OpenSSL abstraction which can represent both IPv4 and IPv6 socket addresses. Applications can get the address family via the <a href="../man3/BIO_ADDR.html">BIO_ADDR(3)</a> API.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>SSL_get_peer_addr() returns 1 on success. On failure, or if called on an SSL object which is not a QUIC SSL object, 0 is returned and <i>peer_addr</i> is left unchanged.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/SSL_accept_connection.html">SSL_accept_connection(3)</a>, <a href="../man3/SSL_accept_stream.html">SSL_accept_stream(3)</a>, <a href="../man3/BIO_ADDR.html">BIO_ADDR(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This function was added in OpenSSL 4.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

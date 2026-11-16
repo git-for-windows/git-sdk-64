@@ -21,6 +21,7 @@
   <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -30,9 +31,11 @@
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
-<p>The <b>SM2</b> algorithm was first defined by the Chinese national standard GM/T 0003-2012 and was later standardized by ISO as ISO/IEC 14888. <b>SM2</b> is actually an elliptic curve based algorithm. The current implementation in OpenSSL supports both signature and encryption schemes via the EVP interface.</p>
+<p>The <b>SM2</b> algorithm was first defined by the Chinese national standard <code>GM/T 0003-2012</code> and was later standardized by ISO as ISO/IEC 14888. <b>SM2</b> is an elliptic curve-based algorithm. Its implementation in OpenSSL supports both signature and encryption schemes via the EVP interface. Under the name <code>curveSM2</code> it also supports <code>ECDH over SM2</code> as described in <a href="../man7/EVP_KEYEXCH-ECDH.html">EVP_KEYEXCH-ECDH(7)</a>.</p>
 
-<p>When doing the <b>SM2</b> signature algorithm, it requires a distinguishing identifier to form the message prefix which is hashed before the real message is hashed.</p>
+<p>The <b>SM2</b> signature algorithm takes an optional <i>distinguishing identifier</i> parameter (<b>OSSL_PKEY_PARAM_DIST_ID</b>), which is used as part of a message prefix before hashing with <b>SM3</b>. As specified in <a href="https://www.rfc-editor.org/rfc/rfc8998.html">RFC 8998</a>, when <b>SM2</b> is used as part of the <b>sm2sig_sm3</b> TLS signature scheme, this identifier must be set to the constant string <code>TLSv1.3+GM+Cipher+Suite</code>. The OpenSSL TLS stack passes a protocol version parameter (<b>OSSL_SIGNATURE_PARAM_TLS_VERSION</b>) to the signature algorithm, which then in the case of <b>SM2</b> internally sets the distinguishing identifier to the expected constant. When <b>SM2</b> is used for other purposes (e.g. in certificate signing or verification), and no explicit value of the distinguishing identifier is specified, a default value of <code>1234567812345678</code> is used.</p>
+
+<p>An explicit empty distinguishing identifier value may need to be used to verify or create signatures that are compatible with versions of OpenSSL prior to 4.0. With the commandline tools an empty value can be specified with the use of either the <b>-pkeyopt</b> (<a href="../man1/openssl-pkeyutl.html">openssl-pkeyutl(1)</a>) or <b>-sigopt</b> (<a href="../man1/openssl-dgst.html">openssl-dgst(1)</a>) option with a value of <code>distid:</code>.</p>
 
 <h2 id="Common-SM2-parameters">Common SM2 parameters</h2>
 
@@ -91,9 +94,15 @@ EVP_DigestVerifyFinal(mctx, sig, sig_len)</code></pre>
 
 <p><a href="../man3/EVP_PKEY_CTX_new.html">EVP_PKEY_CTX_new(3)</a>, <a href="../man3/EVP_DigestSignInit.html">EVP_DigestSignInit(3)</a>, <a href="../man3/EVP_DigestVerifyInit.html">EVP_DigestVerifyInit(3)</a>, <a href="../man3/EVP_PKEY_CTX_set1_id.html">EVP_PKEY_CTX_set1_id(3)</a>, <a href="../man3/EVP_MD_CTX_set_pkey_ctx.html">EVP_MD_CTX_set_pkey_ctx(3)</a></p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Support for the <b>sm2sig_sm3</b> TLS signature scheme was added in OpenSSL 4.0.</p>
+
+<p>The default value of the SM2 distinguishing identifier changed from empty to <code>1234567812345678</code> as of OpenSSL 4.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2018-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2018-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>i2d_ASN1_bio_stream</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#RETURN-VALUES">RETURN VALUES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>i2d_ASN1_bio_stream, i2d_CMS_bio_stream, i2d_PKCS7_bio_stream - output ASN.1 structures in BER format</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>#include &lt;openssl/asn1.h&gt;
+
+int i2d_ASN1_bio_stream(BIO *out, ASN1_VALUE *val, BIO *in, int flags,
+                        const ASN1_ITEM *it);
+
+#include &lt;openssl/cms.h&gt;
+
+int i2d_CMS_bio_stream(BIO *out, CMS_ContentInfo *cms, BIO *data, int flags);
+
+#include &lt;openssl/pkcs7.h&gt;
+
+int i2d_PKCS7_bio_stream(BIO *out, PKCS7 *p7, BIO *data, int flags);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>i2d_ASN1_bio_stream() outputs an ASN1_VALUE structure in BER format. The <i>it</i> parameter specifies the <b>ASN1_ITEM</b> that describes the structure type. If the <b>SMIME_STREAM</b> flag is set in <i>flags</i>, streaming mode is used where content from BIO <i>in</i> is processed through an encoding BIO chain for structures that support indefinite length encoding. If <b>SMIME_STREAM</b> is not set, <i>in</i> is ignored and the structure is written directly to <i>out</i>.</p>
+
+<p>i2d_CMS_bio_stream() outputs a CMS_ContentInfo structure in BER format. It is otherwise identical to the function SMIME_write_CMS().</p>
+
+<p>i2d_PKCS7_bio_stream() outputs a PKCS7 structure in BER format. It is otherwise identical to the function SMIME_write_PKCS7().</p>
+
+<p>Both i2d_CMS_bio_stream() and i2d_PKCS7_bio_stream() are implemented using i2d_ASN1_bio_stream() internally.</p>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>These functions are effectively versions of the corresponding i2d functions that support streaming.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>The prefix &quot;i2d&quot; is arguably wrong because these functions output BER format.</p>
+
+<h1 id="RETURN-VALUES">RETURN VALUES</h1>
+
+<p>These functions return 1 for success or 0 for failure.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man3/ERR_get_error.html">ERR_get_error(3)</a>, <a href="../man3/CMS_sign.html">CMS_sign(3)</a>, <a href="../man3/CMS_verify.html">CMS_verify(3)</a>, <a href="../man3/CMS_encrypt.html">CMS_encrypt(3)</a>, <a href="../man3/CMS_decrypt.html">CMS_decrypt(3)</a>, <a href="../man3/PKCS7_sign.html">PKCS7_sign(3)</a>, <a href="../man3/PKCS7_verify.html">PKCS7_verify(3)</a>, <a href="../man3/PKCS7_encrypt.html">PKCS7_encrypt(3)</a>, <a href="../man3/PKCS7_decrypt.html">PKCS7_decrypt(3)</a>, <a href="../man3/SMIME_write_CMS.html">SMIME_write_CMS(3)</a>, <a href="../man3/SMIME_write_PKCS7.html">SMIME_write_PKCS7(3)</a>, <a href="../man3/PEM_write_bio_CMS_stream.html">PEM_write_bio_CMS_stream(3)</a>, <a href="../man3/PEM_write_bio_PKCS7_stream.html">PEM_write_bio_PKCS7_stream(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>i2d_ASN1_bio_stream(), i2d_CMS_bio_stream() and i2d_PKCS7_bio_stream() were added in OpenSSL 1.0.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2008-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

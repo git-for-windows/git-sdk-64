@@ -19,6 +19,7 @@
       <li><a href="#Parameters">Parameters</a></li>
     </ul>
   </li>
+  <li><a href="#NOTES">NOTES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
@@ -107,13 +108,19 @@
 
 <p>This implementation supports the parameters described in <a href="../man3/EVP_EncryptInit.html">&quot;PARAMETERS&quot; in EVP_EncryptInit(3)</a> including &quot;encrypt-check&quot; and &quot;fips-indicator&quot;.</p>
 
+<h1 id="NOTES">NOTES</h1>
+
+<p>The DES3-WRAP implementation does not support streaming. That means to obtain correct results there can be only one <a href="../man3/EVP_EncryptUpdate.html">EVP_EncryptUpdate(3)</a> or <a href="../man3/EVP_DecryptUpdate.html">EVP_DecryptUpdate(3)</a> call after the initialization of the context.</p>
+
+<p>When wrapping (encrypting) with DES3-WRAP, the output buffer must be at least <i>input_length</i> + 16 bytes. The extra 16 bytes accommodate an 8-byte IV and an 8-byte integrity check value (ICV) prepended and appended by the algorithm.</p>
+
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
 <p><a href="../man7/provider-cipher.html">provider-cipher(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-legacy.html">OSSL_PROVIDER-legacy(7)</a>,</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

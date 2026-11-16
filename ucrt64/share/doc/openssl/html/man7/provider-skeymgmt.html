@@ -56,7 +56,15 @@ void *OSSL_FUNC_skeymgmt_generate(void *provctx,
                                   const OSSL_PARAM params[]);
 const OSSL_PARAM *OSSL_FUNC_skeymgmt_gen_settable_params(void *provctx);
 const OSSL_PARAM *OSSL_FUNC_skeymgmt_imp_settable_params(void *provctx);
-const char *OSSL_FUNC_skeymgmt_get_key_id(void *keydata);</code></pre>
+const char *OSSL_FUNC_skeymgmt_get_key_id(void *keydata);
+int OSSL_FUNC_skeymgmt_get_local_keyid(void *keydata,
+                                        const unsigned char **id,
+                                        size_t *len);
+int OSSL_FUNC_skeymgmt_get_algorithm_id(void *keydata,
+                                         const unsigned char **oid,
+                                         size_t *oid_len,
+                                         const unsigned char **params,
+                                         size_t *params_len);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
@@ -80,6 +88,8 @@ OSSL_FUNC_skeymgmt_export               OSSL_FUNC_SKEYMGMT_EXPORT
 OSSL_FUNC_skeymgmt_generate             OSSL_FUNC_SKEYMGMT_GENERATE
 
 OSSL_FUNC_skeymgmt_get_key_id           OSSL_FUNC_SKEYMGMT_GET_KEY_ID
+OSSL_FUNC_skeymgmt_get_local_keyid      OSSL_FUNC_SKEYMGMT_GET_LOCAL_KEYID
+OSSL_FUNC_skeymgmt_get_algorithm_id     OSSL_FUNC_SKEYMGMT_GET_ALGORITHM_ID
 OSSL_FUNC_skeymgmt_imp_settable_params  OSSL_FUNC_SKEYMGMT_IMP_SETTABLE_PARAMS
 OSSL_FUNC_skeymgmt_gen_settable_params  OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS</code></pre>
 
@@ -143,7 +153,11 @@ OSSL_FUNC_skeymgmt_gen_settable_params  OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS</
 
 <h2 id="Key-Object-Information-functions">Key Object Information functions</h2>
 
-<p>OSSL_FUNC_skeymgmt_get_key_id() returns a NUL-terminated string identifying the particular key. The returned string will be freed by a call to EVP_SKEY_free() so callers need to copy it themselves if they want to preserve the value past the key lifetime. The purpose of this function is providing a printable string that can help users to access the specific key. The content of this string is provider-specific.</p>
+<p>OSSL_FUNC_skeymgmt_get_key_id() returns a NUL-terminated string identifying the particular key. The returned string will be freed by a call to EVP_SKEY_free() so callers need to copy it themselves if they want to preserve the value past the key lifetime. The purpose of this function is providing a printable string that can help users to access the specific key. The content of this string is provider-specific. The built-in implementations return the value of <b>OSSL_SKEY_PARAM_ALIAS</b> if it was set during import.</p>
+
+<p>OSSL_FUNC_skeymgmt_get_local_keyid() retrieves the local key ID from <i>keydata</i>. On success, it sets <i>*id</i> to point to the key ID bytes and <i>*len</i> to their length, and returns 1 on success and 0 on error. As metadata is optional, the resulting value still can be NULL and 0 correspondingly.</p>
+
+<p>OSSL_FUNC_skeymgmt_get_algorithm_id() retrieves the algorithm identifier from <i>keydata</i>. On success, it sets <i>*oid</i> and <i>*oid_len</i> to point to the DER-encoded algorithm OID, and <i>*params</i> and <i>*params_len</i> to point to the DER-encoded algorithm parameters. Either output pointer pair may be NULL if the caller does not need that part. Returns 1 if the requested data is set successfully and 0 otherwise. As metadata is optional, the resulting value still can be NULL and 0 correspondingly.</p>
 
 <h2 id="Common-Import-and-Export-Parameters">Common Import and Export Parameters</h2>
 
@@ -153,16 +167,40 @@ OSSL_FUNC_skeymgmt_gen_settable_params  OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS</
 
 <dl>
 
-<dt id="raw-bytes-SKEY_PARAM_RAW_BYTES-octet-string">&quot;raw-bytes&quot; (<b>SKEY_PARAM_RAW_BYTES</b>) &lt;octet string&gt;</dt>
+<dt id="raw-bytes-OSSL_SKEY_PARAM_RAW_BYTES-octet-string">&quot;raw-bytes&quot; (<b>OSSL_SKEY_PARAM_RAW_BYTES</b>) &lt;octet string&gt;</dt>
 <dd>
 
 <p>The value represents symmetric key as a byte array.</p>
 
 </dd>
-<dt id="key-length-SKEY_PARAM_KEY_LENGTH-integer">&quot;key-length&quot; (<b>SKEY_PARAM_KEY_LENGTH</b>) &lt;integer&gt;</dt>
+<dt id="key-length-OSSL_SKEY_PARAM_KEY_LENGTH-integer">&quot;key-length&quot; (<b>OSSL_SKEY_PARAM_KEY_LENGTH</b>) &lt;integer&gt;</dt>
 <dd>
 
 <p>The value is the byte length of the given key.</p>
+
+</dd>
+<dt id="skey-alias-OSSL_SKEY_PARAM_ALIAS-UTF8-string">&quot;skey-alias&quot; (<b>OSSL_SKEY_PARAM_ALIAS</b>) &lt;UTF8 string&gt;</dt>
+<dd>
+
+<p>The friendly name (alias) for the key. This is used as the return value from OSSL_FUNC_skeymgmt_get_key_id(). May be NULL.</p>
+
+</dd>
+<dt id="skey-local-keyid-OSSL_SKEY_PARAM_LOCAL_KEYID-octet-string">&quot;skey-local-keyid&quot; (<b>OSSL_SKEY_PARAM_LOCAL_KEYID</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>The local key ID, typically originating from PKCS#12 bag attributes. Represented as a byte array with an associated length. May be NULL.</p>
+
+</dd>
+<dt id="skey-algorithm-oid-OSSL_SKEY_PARAM_ALGORITHM_OID-octet-string">&quot;skey-algorithm-oid&quot; (<b>OSSL_SKEY_PARAM_ALGORITHM_OID</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>The DER-encoded algorithm OID from the AlgorithmIdentifier. May be NULL.</p>
+
+</dd>
+<dt id="skey-algorithm-params-OSSL_SKEY_PARAM_ALGORITHM_PARAMS-octet-string">&quot;skey-algorithm-params&quot; (<b>OSSL_SKEY_PARAM_ALGORITHM_PARAMS</b>) &lt;octet string&gt;</dt>
+<dd>
+
+<p>The DER-encoded algorithm parameters from the AlgorithmIdentifier. May be NULL.</p>
 
 </dd>
 </dl>
@@ -174,6 +212,8 @@ OSSL_FUNC_skeymgmt_gen_settable_params  OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS</
 <p>OSSL_FUNC_skeymgmt_export() returns 1 for success or 0 on error.</p>
 
 <p>OSSL_FUNC_skeymgmt_get_key_id() returns a pointer to a 0-terminated string or NULL.</p>
+
+<p>OSSL_FUNC_skeymgmt_get_local_keyid() and OSSL_FUNC_skeymgmt_get_algorithm_id() return 1 on success or 0 on error.</p>
 
 <p>OSSL_FUNC_skeymgmt_gen_settable_params() and OSSL_FUNC_skeymgmt_imp_settable_params() return references to an array of <b>OSSL_PARAM</b> which can be NULL if there are no settable parameters.</p>
 
@@ -187,7 +227,7 @@ OSSL_FUNC_skeymgmt_gen_settable_params  OSSL_FUNC_SKEYMGMT_GEN_SETTABLE_PARAMS</
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2024-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

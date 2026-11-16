@@ -27,7 +27,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>OSSL_STORE_LOADER, OSSL_STORE_LOADER_fetch, OSSL_STORE_LOADER_up_ref, OSSL_STORE_LOADER_free, OSSL_STORE_LOADER_get0_provider, OSSL_STORE_LOADER_get0_properties, OSSL_STORE_LOADER_is_a, OSSL_STORE_LOADER_get0_description, OSSL_STORE_LOADER_do_all_provided, OSSL_STORE_LOADER_names_do_all, OSSL_STORE_LOADER_CTX, OSSL_STORE_LOADER_new, OSSL_STORE_LOADER_get0_engine, OSSL_STORE_LOADER_get0_scheme, OSSL_STORE_LOADER_set_open, OSSL_STORE_LOADER_set_open_ex, OSSL_STORE_LOADER_set_attach, OSSL_STORE_LOADER_set_ctrl, OSSL_STORE_LOADER_set_expect, OSSL_STORE_LOADER_set_find, OSSL_STORE_LOADER_set_load, OSSL_STORE_LOADER_set_eof, OSSL_STORE_LOADER_set_error, OSSL_STORE_LOADER_set_close, OSSL_STORE_LOADER_settable_ctx_params, OSSL_STORE_register_loader, OSSL_STORE_unregister_loader, OSSL_STORE_open_fn, OSSL_STORE_open_ex_fn, OSSL_STORE_attach_fn, OSSL_STORE_ctrl_fn, OSSL_STORE_expect_fn, OSSL_STORE_find_fn, OSSL_STORE_load_fn, OSSL_STORE_eof_fn, OSSL_STORE_error_fn, OSSL_STORE_close_fn - Types and functions to manipulate, register and unregister STORE loaders for different URI schemes</p>
+<p>OSSL_STORE_LOADER, OSSL_STORE_LOADER_fetch, OSSL_STORE_LOADER_up_ref, OSSL_STORE_LOADER_free, OSSL_STORE_LOADER_get0_provider, OSSL_STORE_LOADER_get0_properties, OSSL_STORE_LOADER_is_a, OSSL_STORE_LOADER_get0_description, OSSL_STORE_LOADER_do_all_provided, OSSL_STORE_LOADER_names_do_all, OSSL_STORE_LOADER_CTX, OSSL_STORE_LOADER_new, OSSL_STORE_LOADER_get0_scheme, OSSL_STORE_LOADER_set_open, OSSL_STORE_LOADER_set_open_ex, OSSL_STORE_LOADER_set_attach, OSSL_STORE_LOADER_set_ctrl, OSSL_STORE_LOADER_set_expect, OSSL_STORE_LOADER_set_find, OSSL_STORE_LOADER_set_load, OSSL_STORE_LOADER_set_eof, OSSL_STORE_LOADER_set_error, OSSL_STORE_LOADER_set_close, OSSL_STORE_LOADER_settable_ctx_params, OSSL_STORE_register_loader, OSSL_STORE_unregister_loader, OSSL_STORE_open_fn, OSSL_STORE_open_ex_fn, OSSL_STORE_attach_fn, OSSL_STORE_ctrl_fn, OSSL_STORE_expect_fn, OSSL_STORE_find_fn, OSSL_STORE_load_fn, OSSL_STORE_eof_fn, OSSL_STORE_error_fn, OSSL_STORE_close_fn - Types and functions to manipulate, register and unregister STORE loaders for different URI schemes</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -59,8 +59,6 @@ OSSL_STORE_LOADER_settable_ctx_params(const OSSL_STORE_LOADER *loader);</code></
 <p>The following functions have been deprecated since OpenSSL 3.0, and can be hidden entirely by defining <b>OPENSSL_API_COMPAT</b> with a suitable version value, see <a href="../man7/openssl_user_macros.html">openssl_user_macros(7)</a>:</p>
 
 <pre><code>OSSL_STORE_LOADER *OSSL_STORE_LOADER_new(ENGINE *e, const char *scheme);
-const ENGINE *OSSL_STORE_LOADER_get0_engine(const OSSL_STORE_LOADER
-                                            *store_loader);
 const char *OSSL_STORE_LOADER_get0_scheme(const OSSL_STORE_LOADER
                                           *store_loader);
 
@@ -137,7 +135,7 @@ OSSL_STORE_LOADER *OSSL_STORE_unregister_loader(const char *scheme);</code></pre
 
 <h2 id="Legacy-Types-and-Functions-deprecated">Legacy Types and Functions (deprecated)</h2>
 
-<p>These functions help applications and engines to create loaders for schemes they support. These are all deprecated and discouraged in favour of provider implementations, see <a href="../man7/provider-storemgmt.html">provider-storemgmt(7)</a>.</p>
+<p>These functions help applications to create loaders for schemes they support. These are all deprecated and discouraged in favour of provider implementations, see <a href="../man7/provider-storemgmt.html">provider-storemgmt(7)</a>.</p>
 
 <p><b>OSSL_STORE_LOADER_CTX</b> is a type template, to be defined by each loader using <code>struct ossl_store_loader_ctx_st { ... }</code>.</p>
 
@@ -215,9 +213,9 @@ OSSL_STORE_LOADER *OSSL_STORE_unregister_loader(const char *scheme);</code></pre
 </dd>
 </dl>
 
-<p>OSSL_STORE_LOADER_new() creates a new <b>OSSL_STORE_LOADER</b>. It takes an <b>ENGINE</b> <i>e</i> and a string <i>scheme</i>. <i>scheme</i> must <i>always</i> be set. Both <i>e</i> and <i>scheme</i> are used as is and must therefore be alive as long as the created loader is.</p>
+<p>OSSL_STORE_LOADER_new() creates a new <b>OSSL_STORE_LOADER</b>. It takes a string <i>scheme</i>. <i>scheme</i> must <i>always</i> be set. <i>e</i> <b>must</b> be NULL. <i>scheme</i> is used as is and must therefore be alive as long as the created loader is.</p>
 
-<p>OSSL_STORE_LOADER_get0_engine() returns the engine of the <i>store_loader</i>. OSSL_STORE_LOADER_get0_scheme() returns the scheme of the <i>store_loader</i>.</p>
+<p>OSSL_STORE_LOADER_get0_scheme() returns the scheme of the <i>store_loader</i>.</p>
 
 <p>OSSL_STORE_LOADER_set_open() sets the opener function for the <i>store_loader</i>.</p>
 
@@ -284,6 +282,8 @@ OSSL_STORE_LOADER *OSSL_STORE_unregister_loader(const char *scheme);</code></pre
 <p><b>OSSL_STORE_LOADER_CTX</b>, OSSL_STORE_LOADER_new(), OSSL_STORE_LOADER_set0_scheme(), OSSL_STORE_LOADER_get0_scheme(), OSSL_STORE_LOADER_get0_engine(), OSSL_STORE_LOADER_set_expect(), OSSL_STORE_LOADER_set_find(), OSSL_STORE_LOADER_set_attach(), OSSL_STORE_LOADER_set_open_ex(), OSSL_STORE_LOADER_set_open(), OSSL_STORE_LOADER_set_ctrl(), OSSL_STORE_LOADER_set_load(), OSSL_STORE_LOADER_set_eof(), OSSL_STORE_LOADER_set_close(), OSSL_STORE_register_loader(), OSSL_STORE_LOADER_set_error(), OSSL_STORE_unregister_loader(), OSSL_STORE_open_fn(), OSSL_STORE_ctrl_fn(), OSSL_STORE_load_fn(), OSSL_STORE_eof_fn() and OSSL_STORE_close_fn() were added in OpenSSL 1.1.1, and became deprecated in OpenSSL 3.0.</p>
 
 <p>OSSL_STORE_LOADER_settable_ctx_params() was added in OpenSSL 3.6.</p>
+
+<p>The OSSL_STORE_LOADER_get0_engine() was removed in OpenSSL 4.0.</p>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 

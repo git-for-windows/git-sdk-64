@@ -31,7 +31,7 @@
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
-<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-saltlen</b> <i>size</i>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-skeymgmt</b> <i>skeymgmt</i>] [<b>-skeyopt</b> <i>opt</i>:<i>value</i>] [<b>-engine</b> <i>id</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
+<p><b>openssl</b> <b>enc</b>|<i>cipher</i> [<b>-<i>cipher</i></b>] [<b>-help</b>] [<b>-list</b>] [<b>-ciphers</b>] [<b>-in</b> <i>filename</i>] [<b>-out</b> <i>filename</i>] [<b>-pass</b> <i>arg</i>] [<b>-e</b>] [<b>-d</b>] [<b>-a</b>] [<b>-base64</b>] [<b>-A</b>] [<b>-k</b> <i>password</i>] [<b>-kfile</b> <i>filename</i>] [<b>-K</b> <i>key</i>] [<b>-iv</b> <i>IV</i>] [<b>-S</b> <i>salt</i>] [<b>-salt</b>] [<b>-nosalt</b>] [<b>-z</b>] [<b>-md</b> <i>digest</i>] [<b>-iter</b> <i>count</i>] [<b>-pbkdf2</b>] [<b>-saltlen</b> <i>size</i>] [<b>-p</b>] [<b>-P</b>] [<b>-bufsize</b> <i>number</i>] [<b>-nopad</b>] [<b>-v</b>] [<b>-debug</b>] [<b>-none</b>] [<b>-skeymgmt</b> <i>skeymgmt</i>] [<b>-skeyopt</b> <i>opt</i>:<i>value</i>] [<b>-skeyuri</b> <i>uri</i>] [<b>-storepass</b> <i>arg</i>] [<b>-rand</b> <i>files</i>] [<b>-writerand</b> <i>file</i>] [<b>-provider</b> <i>name</i>] [<b>-provider-path</b> <i>path</i>] [<b>-provparam</b> <i>[name:]key=value</i>] [<b>-propquery</b> <i>propq</i>]</p>
 
 <p><b>openssl</b> <i>cipher</i> [<b>...</b>]</p>
 
@@ -46,7 +46,7 @@
 <dt id="cipher"><b>-<i>cipher</i></b></dt>
 <dd>
 
-<p>The cipher to use.</p>
+<p>The cipher to use. This option is specified by prepending a hyphen to the cipher name (e.g., <b>-aes-256-cbc</b>), not as an argument to a <code>-cipher</code> flag. Use <code>openssl list -cipher-algorithms</code> to see the available ciphers.</p>
 
 </dd>
 <dt id="help"><b>-help</b></dt>
@@ -195,10 +195,10 @@
 <p>Print out the key and IV used then immediately exit: don&#39;t do any encryption or decryption.</p>
 
 </dd>
-<dt id="bufsize-number"><b>-bufsize</b> <i>number</i></dt>
+<dt id="bufsize-number-k"><b>-bufsize</b> <i>number</i>[<b>k</b>]</dt>
 <dd>
 
-<p>Set the buffer size for I/O.</p>
+<p>Set the buffer size for I/O. The maximum size that can be specified is <b>2^31-1</b> (2147483647) bytes. The <b>k</b> suffix can be specified to indicate that <i>number</i> is provided in kibibytes (multiples of 1024 bytes).</p>
 
 </dd>
 <dt id="nopad"><b>-nopad</b></dt>
@@ -245,6 +245,18 @@
 <p>To obtain an existing opaque symmetric key or generate a new one, key options are specified as opt:value. These options can&#39;t be used together with any options implying raw key directly or indirectly.</p>
 
 </dd>
+<dt id="skeyuri-uri"><b>-skeyuri</b> <i>uri</i></dt>
+<dd>
+
+<p>The URI identifying the symmetric key object to be used for encryption. This option can&#39;t be used together with any options implying raw key directly or indirectly. The <b>-skeymgmt</b> option is ignored. If both <b>-skeyuri</b> and <b>-skeyopt</b> options are provided, <b>-skeyuri</b> is ignored.</p>
+
+</dd>
+<dt id="storepass-arg"><b>-storepass</b> <i>arg</i></dt>
+<dd>
+
+<p>The input URI password source. For more information about the format of <i>arg</i> see <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a>.</p>
+
+</dd>
 <dt id="rand-files--writerand-file"><b>-rand</b> <i>files</i>, <b>-writerand</b> <i>file</i></dt>
 <dd>
 
@@ -269,21 +281,13 @@
 <p>See <a href="../man1/openssl.html">&quot;Provider Options&quot; in openssl(1)</a>, <a href="../man7/provider.html">provider(7)</a>, and <a href="../man7/property.html">property(7)</a>.</p>
 
 </dd>
-<dt id="engine-id"><b>-engine</b> <i>id</i></dt>
-<dd>
-
-<p>See <a href="../man1/openssl.html">&quot;Engine Options&quot; in openssl(1)</a>. This option is deprecated.</p>
-
-</dd>
 </dl>
 
 <h1 id="NOTES">NOTES</h1>
 
-<p>The program can be called either as <code>openssl <i>cipher</i></code> or <code>openssl enc -<i>cipher</i></code>. The first form doesn&#39;t work with engine-provided ciphers, because this form is processed before the configuration file is read and any ENGINEs loaded. Use the <a href="../man1/openssl-list.html">openssl-list(1)</a> command to get a list of supported ciphers.</p>
+<p>The program can be called either as <code>openssl <i>cipher</i></code> or <code>openssl enc -<i>cipher</i></code>. Use the <a href="../man1/openssl-list.html">openssl-list(1)</a> command to get a list of supported ciphers.</p>
 
-<p>Engines which provide entirely new encryption algorithms (such as the ccgost engine which provides gost89 algorithm) should be configured in the configuration file. Engines specified on the command line using <b>-engine</b> option can only be used for hardware-assisted implementations of ciphers which are supported by the OpenSSL core or another engine specified in the configuration file.</p>
-
-<p>When the enc command lists supported ciphers, ciphers provided by engines, specified in the configuration files are listed too.</p>
+<p>When the enc command lists supported ciphers, ciphers provided by providers, specified in the configuration files are listed too.</p>
 
 <p>A password will be prompted for to derive the key and IV if necessary.</p>
 
@@ -309,7 +313,7 @@
 
 <h1 id="SUPPORTED-CIPHERS">SUPPORTED CIPHERS</h1>
 
-<p>Note that some of these ciphers can be disabled at compile time and some are available only if an appropriate engine is configured in the configuration file. The output when invoking this command with the <b>-list</b> option (that is <code>openssl enc -list</code>) is a list of ciphers, supported by your version of OpenSSL, including ones provided by configured engines.</p>
+<p>Note that some of these ciphers can be disabled at compile time and some are available only if an appropriate provider is configured in the configuration file. The output when invoking this command with the <b>-list</b> option (that is <code>openssl enc -list</code>) is a list of ciphers, supported by your version of OpenSSL, including ones provided by configured providers.</p>
 
 <p>This command does not support authenticated encryption modes like CCM and GCM, and will not support such modes in the future. This is due to having to begin streaming output (e.g., to standard output when <b>-out</b> is not used) before the authentication tag could be validated. When this command is used in a pipeline, the receiving end will not be able to roll back upon authentication failure. The AEAD modes currently in common use also suffer from catastrophic failure of confidentiality and/or integrity upon reuse of key/iv/nonce, and since <b>openssl enc</b> places the entire burden of key/iv/nonce management upon the user, the risk of exposing AEAD modes is too great to allow. These key/iv/nonce management issues also affect other modes currently exposed in this command, but the failure modes are less extreme in these cases, and the functionality cannot be removed with a stable release branch. For bulk encryption of data, whether using authenticated encryption modes or other modes, <a href="../man1/openssl-cms.html">openssl-cms(1)</a> is recommended, as it provides a standard data format and performs the needed key/iv/nonce management.</p>
 
@@ -351,9 +355,6 @@ des-ede3-cfb       Three key triple DES EDE CFB mode
 des-ede3-ofb       Three key triple DES EDE in OFB mode
 
 desx               DESX algorithm.
-
-gost89             GOST 28147-89 in CFB mode (provided by ccgost engine)
-gost89-cnt         GOST 28147-89 in CNT mode (provided by ccgost engine)
 
 idea-cbc           IDEA algorithm in CBC mode
 idea               same as idea-cbc
@@ -464,7 +465,7 @@ or
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 
-<p><a href="../man1/openssl-list.html">openssl-list(1)</a>, <a href="../man3/EVP_SKEY.html">EVP_SKEY(3)</a></p>
+<p><a href="../man1/openssl-list.html">openssl-list(1)</a>, <a href="../man3/EVP_SKEY.html">EVP_SKEY(3)</a>, <a href="../man1/openssl-passphrase-options.html">openssl-passphrase-options(1)</a></p>
 
 <h1 id="HISTORY">HISTORY</h1>
 
@@ -472,15 +473,19 @@ or
 
 <p>The <b>-list</b> option was added in OpenSSL 1.1.1e.</p>
 
-<p>The <b>-ciphers</b> and <b>-engine</b> options were deprecated in OpenSSL 3.0.</p>
+<p>The <b>-ciphers</b> option was deprecated in OpenSSL 3.0.</p>
 
 <p>The <b>-saltlen</b> option was added in OpenSSL 3.2.</p>
 
 <p>The <b>-skeymgmt</b> and <b>-skeyopt</b> options were added in OpenSSL 3.5.</p>
 
+<p>The <b>-engine</b> option was removed in OpenSSL 4.0.</p>
+
+<p>The <b>-skeyuri</b> and <b>-storepass</b> options were added in OpenSSL 4.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2000-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2000-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

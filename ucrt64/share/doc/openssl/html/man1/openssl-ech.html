@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>openssl-ech</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#OPTIONS">OPTIONS</a></li>
+  <li><a href="#NOTES">NOTES</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>openssl-ech - ECH key generation</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<p><b>openssl</b> <b>ech</b> [<b>-help</b>] [<b>-verbose</b>] [<b>-in</b> <i>files</i>] [<b>-out</b> <i>file</i>] [<b>-public_name</b> <i>name</i>] [<b>-max_name_len</b> <i>len</i>] [<b>-suite</b> <i>suite_str</i>] [<b>-ech_version</b> <i>version</i>] [<b>-select</b> <i>number</i>] [<b>-text</b>]</p>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The <a href="../man1/openssl-ech.html">openssl-ech(1)</a> command generates Encrypted Client Hello (ECH) key pairs in the ECHConfig PEM file format as specified in <a href="https://datatracker.ietf.org/doc/rfc9934">https://datatracker.ietf.org/doc/rfc9934</a>.</p>
+
+<p>That format consists of an optional private key in PKCS#8 format and a base64 encoded ECHConfigList containing an entry with a matching public value (and possibly other entries as well).</p>
+
+<h1 id="OPTIONS">OPTIONS</h1>
+
+<p>The following options are supported:</p>
+
+<dl>
+
+<dt id="help"><b>-help</b></dt>
+<dd>
+
+<p>Print out a usage message.</p>
+
+</dd>
+<dt id="verbose"><b>-verbose</b></dt>
+<dd>
+
+<p>Print more verbosely.</p>
+
+</dd>
+<dt id="in"><b>-in</b></dt>
+<dd>
+
+<p>Provide an input ECH PEM file for printing or merging. Up to five input files can be provided via use of multiple <b>in</b> arguments.</p>
+
+</dd>
+<dt id="out-file"><b>-out</b> <i>file</i></dt>
+<dd>
+
+<p>Name of output ECHConfig PEM file. If a new key pair was generated the output file will contain the private key and encoded ECHConfigList. If one or more input files was provided the output file will contain a set of ECHConfigList values with public keys from the inputs, and no private key(s).</p>
+
+</dd>
+<dt id="text"><b>-text</b></dt>
+<dd>
+
+<p>Provide human-readable text output.</p>
+
+</dd>
+<dt id="public_name-name"><b>-public_name</b> <i>name</i></dt>
+<dd>
+
+<p>The DNS name to use in the &quot;public_name&quot; field of the ECHConfig.</p>
+
+</dd>
+<dt id="max_name_len-num"><b>-max_name_len</b> <i>num</i></dt>
+<dd>
+
+<p>Maximum name length field value to use in the ECHConfig.</p>
+
+</dd>
+<dt id="suite-str"><b>-suite</b> <i>str</i></dt>
+<dd>
+
+<p>HPKE suite to use in the ECHConfig.</p>
+
+</dd>
+<dt id="ech_version-version"><b>-ech_version</b> <i>version</i></dt>
+<dd>
+
+<p>The ECH version to use in the ECHConfig. Only 0xfe0d is supported in this version.</p>
+
+</dd>
+<dt id="select-number"><b>-select</b> <i>number</i></dt>
+<dd>
+
+<p>Select the N-th ECHConfig/public key from the set of input ECH PEM files and output that.</p>
+
+</dd>
+</dl>
+
+<h1 id="NOTES">NOTES</h1>
+
+<p>Ciphersuites are specified using a comma-separated list of IANA-registered codes/numbers e.g. &quot;-c 0x20,1,3&quot; or a comma-separated list of strings from: - KEMs: p256, p384, p521, x25519, x448 - KDFs: hkdf-sha256, hkdf-sha384, hkdf-sha512 - AEADs: aes128gcm, aes256gcm, chachapoly1305</p>
+
+<p>For example the default is: x25519, hkdf-sha256, aes128gcm See <a href="../man3/OSSL_HPKE_CTX_new.html">OSSL_HPKE_CTX_new(3)</a> for details.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="../man1/openssl.html">openssl(1)</a>, <a href="../man1/openssl-s_client.html">openssl-s_client(1)</a>, <a href="../man1/openssl-s_server.html">openssl-s_server(1)</a>, <a href="../man3/SSL_set1_echstore.html">SSL_set1_echstore(3)</a></p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>This functionality described here was added in OpenSSL 4.0.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright 2024-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
+
+<p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
+
+
+</body>
+
+</html>
+
+

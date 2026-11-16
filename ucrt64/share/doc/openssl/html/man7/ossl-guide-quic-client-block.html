@@ -35,7 +35,7 @@
 
 <h1 id="SIMPLE-BLOCKING-QUIC-CLIENT-EXAMPLE">SIMPLE BLOCKING QUIC CLIENT EXAMPLE</h1>
 
-<p>This page will present various source code samples demonstrating how to write a simple blocking QUIC client application which connects to a server, sends an HTTP/1.0 request to it, and reads back the response. Note that HTTP/1.0 over QUIC is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
+<p>This page will present various source code samples demonstrating how to write a simple blocking QUIC client application which connects to a server, sends an HTTP/1.1 request to it, and reads back the response. Note that HTTP/1.1 over QUIC is non-standard and will not be supported by real world servers. This is for demonstration purposes only.</p>
 
 <p>We assume that you already have OpenSSL installed on your system; that you already have some fundamental understanding of OpenSSL concepts, TLS and QUIC (see <a href="../man7/ossl-guide-libraries-introduction.html">ossl-guide-libraries-introduction(7)</a>, <a href="../man7/ossl-guide-tls-introduction.html">ossl-guide-tls-introduction(7)</a> and <a href="../man7/ossl-guide-quic-introduction.html">ossl-guide-quic-introduction(7)</a>); and that you know how to write and build C code and link it against the libcrypto and libssl libraries that are provided by OpenSSL. It also assumes that you have a basic understanding of UDP/IP and sockets. The example code that we build in this tutorial will amend the blocking TLS client example that is covered in <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a>. Only the differences between that client and this one will be discussed so we also assume that you have run through and understand that tutorial.</p>
 
@@ -159,7 +159,7 @@ BIO_set_fd(bio, sock, BIO_CLOSE);</code></pre>
 
 <p>ALPN (Application-Layer Protocol Negotiation) is a feature of TLS that enables the application to negotiate which protocol will be used over the connection. For example, if you intend to use HTTP/3 over the connection then the ALPN value for that is &quot;h3&quot; (see <a href="https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xml#alpn-protocol-ids">https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xml#alpn-protocol-ids</a>). OpenSSL provides the ability for a client to specify the ALPN to use via the <a href="../man3/SSL_set_alpn_protos.html">SSL_set_alpn_protos(3)</a> function. This is optional for a TLS client and so our simple client that we developed in <a href="../man7/ossl-guide-tls-client-block.html">ossl-guide-tls-client-block(7)</a> did not use it. However QUIC mandates that the TLS handshake used in establishing a QUIC connection must use ALPN.</p>
 
-<pre><code>unsigned char alpn[] = { 8, &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;0&#39; };
+<pre><code>unsigned char alpn[] = { 8, &#39;h&#39;, &#39;t&#39;, &#39;t&#39;, &#39;p&#39;, &#39;/&#39;, &#39;1&#39;, &#39;.&#39;, &#39;1&#39; };
 
 /* SSL_set_alpn_protos returns 0 for success! */
 if (SSL_set_alpn_protos(ssl, alpn, sizeof(alpn)) != 0) {
@@ -167,7 +167,7 @@ if (SSL_set_alpn_protos(ssl, alpn, sizeof(alpn)) != 0) {
     goto end;
 }</code></pre>
 
-<p>The ALPN is specified using a length prefixed array of unsigned chars (it is not a NUL terminated string). Our original TLS blocking client demo was using HTTP/1.0. We will use the same for this example. Unlike most OpenSSL functions <a href="../man3/SSL_set_alpn_protos.html">SSL_set_alpn_protos(3)</a> returns zero for success and nonzero for failure.</p>
+<p>The ALPN is specified using a length prefixed array of unsigned chars (it is not a NUL terminated string). Our original TLS blocking client demo was using HTTP/1.1. We will use the same for this example. Unlike most OpenSSL functions <a href="../man3/SSL_set_alpn_protos.html">SSL_set_alpn_protos(3)</a> returns zero for success and nonzero for failure.</p>
 
 <h2 id="Setting-the-peer-address">Setting the peer address</h2>
 
@@ -302,7 +302,7 @@ do {
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2023-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2023-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

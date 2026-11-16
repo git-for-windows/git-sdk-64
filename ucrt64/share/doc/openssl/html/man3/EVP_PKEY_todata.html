@@ -38,7 +38,7 @@ int EVP_PKEY_export(const EVP_PKEY *pkey, int selection,
 
 <p>The functions described here are used to extract <b>EVP_PKEY</b> key values as an array of <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a>.</p>
 
-<p>EVP_PKEY_todata() extracts values from a key <i>pkey</i> using the <i>selection</i>. <i>selection</i> is described in <a href="../man3/EVP_PKEY_fromdata.html">&quot;Selections&quot; in EVP_PKEY_fromdata(3)</a>. <a href="../man3/OSSL_PARAM_free.html">OSSL_PARAM_free(3)</a> should be used to free the returned parameters in <i>*params</i>.</p>
+<p>EVP_PKEY_todata() extracts values from a key <i>pkey</i> using the <i>selection</i>. <i>selection</i> is described in <a href="../man3/EVP_PKEY_fromdata.html">&quot;Selections&quot; in EVP_PKEY_fromdata(3)</a>. <a href="../man3/OSSL_PARAM_free.html">OSSL_PARAM_free(3)</a> or <a href="../man3/OSSL_PARAM_clear_free.html">OSSL_PARAM_clear_free(3)</a> should be used to free the returned parameters in <i>*params</i>.</p>
 
 <p>EVP_PKEY_export() is similar to EVP_PKEY_todata() but uses a callback <i>export_cb</i> that gets passed the value of <i>export_cbarg</i>. See <a href="../man7/openssl-core.h.html">openssl-core.h(7)</a> for more information about the callback. Note that the <a href="../man3/OSSL_PARAM.html">OSSL_PARAM(3)</a> array that is passed to the callback is not persistent after the callback returns. The user must preserve the items of interest, or use EVP_PKEY_todata() if persistence is required.</p>
 
@@ -66,7 +66,7 @@ int EVP_PKEY_export(const EVP_PKEY *pkey, int selection,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2021-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2021-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

@@ -47,6 +47,7 @@
 
 /* Key object (keydata) creation and destruction */
 void *OSSL_FUNC_keymgmt_new(void *provctx);
+void *OSSL_FUNC_keymgmt_new_ex(void *provctx, const OSSL_PARAM params[]);
 void OSSL_FUNC_keymgmt_free(void *keydata);
 
 /* Generation, a more complex constructor */
@@ -218,7 +219,7 @@ OSSL_FUNC_keymgmt_dup                  OSSL_FUNC_KEYMGMT_DUP</code></pre>
 
 <h2 id="Constructing-and-Destructing-Functions">Constructing and Destructing Functions</h2>
 
-<p>OSSL_FUNC_keymgmt_new() should create a provider side key object. The provider context <i>provctx</i> is passed and may be incorporated in the key object, but that is not mandatory.</p>
+<p>OSSL_FUNC_keymgmt_new() should create a provider side key object. The provider context <i>provctx</i> is passed and may be incorporated in the key object, but that is not mandatory. OSSL_FUNC_keymgmt_new_ex() may optionally be defined and does the same as OSSL_FUNC_keymgmt_new(), but also accepts an array of parameters. Currently no parameters are defined for this function.</p>
 
 <p>OSSL_FUNC_keymgmt_free() should free the passed <i>keydata</i>.</p>
 
@@ -418,7 +419,7 @@ OSSL_FUNC_keymgmt_dup                  OSSL_FUNC_KEYMGMT_DUP</code></pre>
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2019-2025 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2019-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

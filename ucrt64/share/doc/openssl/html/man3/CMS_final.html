@@ -24,7 +24,7 @@
 
 <h1 id="NAME">NAME</h1>
 
-<p>CMS_final, CMS_final_digest - finalise a CMS_ContentInfo structure</p>
+<p>CMS_final, CMS_final_digest, CMS_dataFinal, CMS_dataFinal_ex - finalise a CMS_ContentInfo structure</p>
 
 <h1 id="SYNOPSIS">SYNOPSIS</h1>
 
@@ -32,13 +32,19 @@
 
 int CMS_final(CMS_ContentInfo *cms, BIO *data, BIO *dcont, unsigned int flags);
 int CMS_final_digest(CMS_ContentInfo *cms, const unsigned char *md,
-                     unsigned int mdlen, BIO *dcont, unsigned int flags);</code></pre>
+                     unsigned int mdlen, BIO *dcont, unsigned int flags);
+int CMS_dataFinal(CMS_ContentInfo *cms, BIO *cmsbio);
+int CMS_dataFinal_ex(CMS_ContentInfo *cms, BIO *cmsbio, BIO *data);</code></pre>
 
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>CMS_final() finalises the structure <b>cms</b>. Its purpose is to perform any operations necessary on <b>cms</b> (digest computation for example) and set the appropriate fields. The parameter <b>data</b> contains the content to be processed. The <b>dcont</b> parameter contains a BIO to write content to after processing: this is only used with detached data and will usually be set to NULL.</p>
 
 <p>CMS_final_digest() finalises the structure <b>cms</b> using a pre-computed digest, rather than computing the digest from the original data.</p>
+
+<p>CMS_dataFinal() finalises the structure <b>cms</b> using the data provided by the <b>cmsbio</b> BIO for hash-based signing schemes. This BIO can be set up using CMS_dataInit() and SMIME_ctrl_copy().</p>
+
+<p>CMS_dataFinal_ex() finalises the structure <b>cms</b>. This function must be used if hash-less signing schemes, such as ML-DSA, SLH-DSA, or EdDSA, are used since they require access to the raw (non-hashed) data. The raw data must be provided by the <b>data</b> BIO. Note that this BIO must support the seek() function so that its data stream can be read multiple times, once for each signature created by a hash-less signing scheme.</p>
 
 <h1 id="NOTES">NOTES</h1>
 
@@ -48,7 +54,7 @@ int CMS_final_digest(CMS_ContentInfo *cms, const unsigned char *md,
 
 <h1 id="RETURN-VALUES">RETURN VALUES</h1>
 
-<p>CMS_final() and CMS_final_digest() return 1 for success or 0 for failure.</p>
+<p>CMS_final(), CMS_final_digest(), CMS_dataFinal(), and CMS_dataFinal_ex() return 1 for success or 0 for failure.</p>
 
 <h1 id="SEE-ALSO">SEE ALSO</h1>
 

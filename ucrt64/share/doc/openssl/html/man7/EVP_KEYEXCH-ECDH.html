@@ -20,6 +20,7 @@
   </li>
   <li><a href="#EXAMPLES">EXAMPLES</a></li>
   <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
   <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
 </ul>
 
@@ -30,6 +31,12 @@
 <h1 id="DESCRIPTION">DESCRIPTION</h1>
 
 <p>Key exchange support for the <b>ECDH</b> key type.</p>
+
+<p>This algorithm supports <b>ECDH</b> key agreement for general elliptic curves. Specialised support for the <b>X25519</b> and <b>X448</b> curves is documented in <a href="../man7/EVP_KEYEXCH-X25519.html">EVP_KEYEXCH-X25519(7)</a> and <a href="../man7/EVP_KEYEXCH-X448.html">EVP_KEYEXCH-X448(7)</a>.</p>
+
+<p>As specified in <a href="https://www.rfc-editor.org/rfc/rfc8998.html">RFC 8998</a>, when <b>curveSM2</b> is the negotiated key agreement group in TLS, <b>ECDH</b> shared secret derivation is used instead of the normal key agreement protocol (KAP) specified in the <code>GB/T 32918.3-2016</code> standard for the <b>SM2</b> elliptic curve. This <b>SM2</b> key agreement variant is also sometimes called <code>ECDH over SM2</code>. When a <b>curveSM2</b> key is generated or imported, the EC group name parameter to specify remains <code>SM2</code>. The resulting <b>curveSM2</b> key can only be used for <code>ECDH over SM2</code> key agreement. <code>ECDH over SM2</code> is TLS-specific, it should not be used in other protocols, absent a specification of its use in the protocol in question.</p>
+
+<p>The <b>curveSM2MLKEM768</b> hybrid post-quantum key exchange algorithm uses <code>ECDH over SM2</code> for its <code>classical</code> component.</p>
 
 <h2 id="ECDH-Key-Exchange-parameters">ECDH Key Exchange parameters</h2>
 
@@ -143,9 +150,13 @@ void derive_secret(EVP_PKEY *host_key, EVP_PKEY *peer_key,
 
 <p><a href="../man7/EVP_PKEY-EC.html">EVP_PKEY-EC(7)</a> <a href="../man3/EVP_PKEY.html">EVP_PKEY(3)</a>, <a href="../man7/provider-keyexch.html">provider-keyexch(7)</a>, <a href="../man7/provider-keymgmt.html">provider-keymgmt(7)</a>, <a href="../man7/OSSL_PROVIDER-default.html">OSSL_PROVIDER-default(7)</a>, <a href="../man7/OSSL_PROVIDER-FIPS.html">OSSL_PROVIDER-FIPS(7)</a>,</p>
 
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Support for <code>ECDH over SM2</code> via <b>curveSM2</b> was added in OpenSSL 4.0.</p>
+
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2020-2024 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2020-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

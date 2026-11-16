@@ -45,6 +45,8 @@ int PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert,
 
 <p>The <b>friendlyName</b> and <b>localKeyID</b> attributes (if present) on each certificate will be stored in the <b>alias</b> and <b>keyid</b> attributes of the <b>X509</b> structure.</p>
 
+<p>If parsing fails <b>*pkey</b>, <b>*cert</b> are set to NULL and if <b>ca</b> is non-NULL then <b>*ca</b> is left unchanged.</p>
+
 <p>The parameter <b>pass</b> is interpreted as a string in the UTF-8 encoding. If it is not valid UTF-8, then it is assumed to be ISO8859-1 instead.</p>
 
 <p>In particular, this means that passwords in the locale character set (or code page on Windows) must potentially be converted to UTF-8 before use. This may include passwords from local text files, or input from the terminal or command line. Refer to the documentation of <a href="../man3/UI_OpenSSL.html">UI_OpenSSL(3)</a>, for example.</p>
@@ -69,7 +71,7 @@ int PKCS12_parse(PKCS12 *p12, const char *pass, EVP_PKEY **pkey, X509 **cert,
 
 <h1 id="COPYRIGHT">COPYRIGHT</h1>
 
-<p>Copyright 2002-2020 The OpenSSL Project Authors. All Rights Reserved.</p>
+<p>Copyright 2002-2026 The OpenSSL Project Authors. All Rights Reserved.</p>
 
 <p>Licensed under the Apache License 2.0 (the &quot;License&quot;). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at <a href="https://www.openssl.org/source/license.html">https://www.openssl.org/source/license.html</a>.</p>
 

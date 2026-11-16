@@ -44,7 +44,7 @@ void EVP_SignInit(EVP_MD_CTX *ctx, const EVP_MD *type);</code></pre>
 
 <p>The EVP signature routines are a high-level interface to digital signatures.</p>
 
-<p>EVP_SignInit_ex() sets up signing context <i>ctx</i> to use digest <i>type</i> from <b>ENGINE</b> <i>impl</i>. <i>ctx</i> must be created with EVP_MD_CTX_new() before calling this function.</p>
+<p>EVP_SignInit_ex() sets up signing context <i>ctx</i> to use digest <i>type</i>. <i>impl</i> <b>must</b> be NULL. <i>ctx</i> must be created with EVP_MD_CTX_new() before calling this function.</p>
 
 <p>EVP_SignUpdate() hashes <i>cnt</i> bytes of data at <i>d</i> into the signature context <i>ctx</i>. This function can be called several times on the same <i>ctx</i> to include additional data.</p>
 

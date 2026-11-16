@@ -131,6 +131,36 @@
 </dd>
 </dl>
 
+<p>Some additional options can be used only as command-line parameters. They are not passed to the MAC algorithm, but translated into key and hexkey parameters instead:</p>
+
+<dl>
+
+<dt id="keyenv:var"><b>keyenv:</b><i>var</i></dt>
+<dd>
+
+<p>Read the MAC key as an alphanumeric string from the environment variable (use if the key contains printable characters only). The the key length must conform to any restrictions of the MAC algorithm. A key must be specified for every MAC algorithm.</p>
+
+</dd>
+<dt id="keyenvhex:var"><b>keyenvhex:</b><i>var</i></dt>
+<dd>
+
+<p>Read the MAC key in hexadecimal form (two hex digits per byte) from the environment variable. The key length must conform to any restrictions of the MAC algorithm. A key must be specified for every MAC algorithm.</p>
+
+</dd>
+<dt id="keyfile:filename"><b>keyfile:</b><i>filename</i></dt>
+<dd>
+
+<p>Read the MAC key from the specified file. The key is read as binary data. The key length must conform to any restrictions of the MAC algorithm. A key must be specified for every MAC algorithm.</p>
+
+</dd>
+<dt id="keystdin"><b>keystdin</b></dt>
+<dd>
+
+<p>Read the MAC key from the standard input. Only the first line from stdin is read, and the \0 character also terminates the key. The key length must conform to any restrictions of the MAC algorithm. A key must be specified for every MAC algorithm.</p>
+
+</dd>
+</dl>
+
 </dd>
 <dt id="provider-name"><b>-provider</b> <i>name</i></dt>
 <dd>
