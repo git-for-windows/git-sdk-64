@@ -7,19 +7,32 @@
 
 # Example input and output (from the bash prompt):
 #
-# ./getopt-example.bash -a par1 'another arg' --c-long 'wow!*\?' -cmore -b " very long "
+# ./getopt-example.bash -a --a-long \
+#                       -barg_bs1 -b arg_bs2     --b-long=arg_bl1 --b-long arg_bl2 \
+#                       -carg_cs1 -c not_arg_cs1 --c-long=arg_cl1 --c-long not_arg_cl2 \
+#                       arg_p "string with quotes and space: '' \"\" "
 # Option a
+# Option a
+# Option b, argument 'arg_bs1'
+# Option b, argument 'arg_bs2'
+# Option b, argument 'arg_bl1'
+# Option b, argument 'arg_bl2'
+# Option c, argument 'arg_cs1'
 # Option c, no argument
-# Option c, argument 'more'
-# Option b, argument ' very long '
+# Option c, argument 'arg_cl1'
+# Option c, no argument
 # Remaining arguments:
-# --> 'par1'
-# --> 'another arg'
-# --> 'wow!*\?'
+# --> 'not_arg_cs1'
+# --> 'not_arg_cl2'
+# --> 'arg_p'
+# --> 'string with quotes and space: '' "" '
 
 # Note that we use "$@" to let each command-line parameter expand to a
 # separate word. The quotes around "$@" are essential!
 # We need TEMP as the 'eval set --' would nuke the return value of getopt.
+#
+# Note: We can use '--long' instead of '--longoptions', because getopt(3) 
+# allows unique abbreviations of long option names.
 TEMP=$(getopt -o 'ab:c::' --long 'a-long,b-long:,c-long::' -n 'example.bash' -- "$@")
 
 if [ $? -ne 0 ]; then

@@ -3,7 +3,8 @@ Description=Remove unused cached package files
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/paccache -r
+EnvironmentFile=/etc/conf.d/pacman-contrib
+ExecStart=/usr/bin/paccache -r $PACCACHE_ARGS
 # Lowering priority
 OOMScoreAdjust=1000
 Nice=19

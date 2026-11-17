@@ -18,7 +18,7 @@ syn case match
 " FIXME if '=' is in pkgname/pkgver, it highlights whole string, not just '='
 syn keyword pb_k_pkgname pkgname contained
 syn match pbValidPkgname /[[:alnum:]@._+-]{,32}/ contained contains=pbIllegalPkgname
-syn match pbIllegalPkgname /[[:upper:]]\|[^[:alnum:]=@._+-]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
+syn match pbIllegalPkgname /[[:upper:]]\|[^[:alnum:]=@._+-\ ()]\|=.*=\|=['"]\?.\{33,\}['"]\?/ contained
 syn match pbPkgnameGroup /^pkgname=.*/ contains=pbIllegalPkgname,pb_k_pkgname,shDoubleQuote,shSingleQuote
 
 " pkgbase
@@ -82,7 +82,7 @@ syn region pbBackupGroup start=/^backup=(/ end=/)/ contains=pb_k_backup,pbValidB
 
 " arch
 syn keyword pb_k_arch arch contained
-syn keyword pbArch i686 x86_64 x86_64_v3 ppc pentium4 armv7h aarch64 any contained
+syn keyword pbArch i686 x86_64 x86_64_v3 ppc pentium4 armv7h aarch64 loong64 any contained
 syn match pbIllegalArch /[^='"() ]/ contained contains=pbArch
 syn region pbArchGroup start=/^arch=(/ end=/)/ contains=pb_k_arch,pbArch,pbIllegalArch,pbComment
 
@@ -237,7 +237,7 @@ syn region pbValidPGPKeysGroup start=/^validpgpkeys=(/ end=/)/ contains=pb_k_val
 
 " options
 syn keyword pb_k_options options contained
-syn match pbOptions /\(no\)\?\(strip\|docs\|libtool\|emptydirs\|zipman\|purge\|distcc\|color\|ccache\|check\|sign\|makeflags\|buildflags\|lto\|debug\)/ contained
+syn match pbOptions /\(no\)\?\(strip\|docs\|libtool\|staticlibs\|emptydirs\|zipman\|purge\|distcc\|color\|ccache\|check\|sign\|makeflags\|buildflags\|lto\|debug\)/ contained
 syn match   pbOptionsNeg     /\!/ contained
 syn match   pbOptionsDeprec  /no/ contained
 syn region pbOptionsGroup start=/^options=(/ end=/)/ contains=pb_k_options,pbOptions,pbOptionsNeg,pbOptionsDeprec,pbIllegalOption,pbComment

@@ -5,11 +5,15 @@ _column_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-c'|'--output-width'|'-l'|'--table-columns-limit')
+		'-c'|'--output-width'|'-l'|'--table-columns-limit'|'-S'|'--use-spaces')
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
-		'-s'|'--separator'|'-o'|'--output-separator'|'-n'|'--table-name'|'-O')
+		'--color')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
+			return 0
+			;;
+		'-s'|'--separator'|'--input-separator'|'-o'|'--output-separator'|'-n'|'--table-name'|'-O')
 			COMPREPLY=( $(compgen -W "string" -- $cur) )
 			return 0
 			;;
@@ -29,13 +33,16 @@ _column_module()
 		-*)
 			OPTS="--columns
 				--table
+				--table-colorscheme
 				--table-name
 				--table-order
+				--table-column
 				--table-columns
 				--table-columns-limit
 				--table-noextreme
 				--table-noheadings
 				--table-maxout
+				--table-header-as-columns
 				--table-header-repeat
 				--table-hide
 				--table-right
@@ -48,8 +55,12 @@ _column_module()
 				--tree-parent
 				--output-width
 				--separator
+				--input-separator
 				--output-separator
+				--wrap-separator
 				--fillrows
+				--use-spaces
+				--color
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

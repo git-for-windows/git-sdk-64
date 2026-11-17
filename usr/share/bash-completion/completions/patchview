@@ -6,8 +6,12 @@ _patchutils_common_opts() {
     echo "--help --version"
 }
 
-_patchutils_filter_opts() {
-    echo "--exclude -x --exclude-from-file -X --include -i --include-from-file -I --hunks -# --lines --files -F --annotate --as-numbered-lines --format --remove-timestamps --clean --in-place --decompress -z --strip-match -p --strip --addprefix --addoldprefix --addnewprefix"
+_patchutils_shared_filter_opts() {
+    echo "--exclude -x --exclude-from-file -X --include -i --include-from-file -I --hunks -# --lines --files -F --decompress -z --strip-match -p --strip --addprefix --addoldprefix --addnewprefix --git-prefixes"
+}
+
+_patchutils_filterdiff_only_opts() {
+    echo "--annotate --as-numbered-lines --format --remove-timestamps --clean --in-place"
 }
 
 _patchutils_list_opts() {
@@ -35,7 +39,7 @@ _filterdiff() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) --verbose -v --filter --grep --list"
+    opts="$(_patchutils_common_opts) $(_patchutils_shared_filter_opts) $(_patchutils_filterdiff_only_opts) $(_patchutils_list_opts) --verbose -v --filter --grep --list"
 
     case "${prev}" in
         --exclude|-x|--include|-i)
@@ -74,6 +78,10 @@ _filterdiff() {
             # Prefix completion - no specific completion
             return 0
             ;;
+        --git-prefixes)
+            COMPREPLY=($(compgen -W "strip keep" -- "$cur"))
+            return 0
+            ;;
     esac
 
     if [[ ${cur} == -* ]]; then
@@ -91,7 +99,7 @@ _lsdiff() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) --verbose -v --filter --grep"
+    opts="$(_patchutils_common_opts) $(_patchutils_shared_filter_opts) $(_patchutils_list_opts) --verbose -v --filter --grep"
 
     case "${prev}" in
         --exclude|-x|--include|-i)
@@ -108,6 +116,10 @@ _lsdiff() {
             return 0
             ;;
         --addprefix|--addoldprefix|--addnewprefix)
+            return 0
+            ;;
+        --git-prefixes)
+            COMPREPLY=($(compgen -W "strip keep" -- "$cur"))
             return 0
             ;;
     esac
@@ -127,7 +139,7 @@ _grepdiff() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) $(_patchutils_list_opts) $(_patchutils_grep_opts) --verbose -v --filter --list"
+    opts="$(_patchutils_common_opts) $(_patchutils_shared_filter_opts) $(_patchutils_list_opts) $(_patchutils_grep_opts) --verbose -v --filter --list"
 
     case "${prev}" in
         --exclude|-x|--include|-i)
@@ -160,6 +172,10 @@ _grepdiff() {
             return 0
             ;;
         --addprefix|--addoldprefix|--addnewprefix)
+            return 0
+            ;;
+        --git-prefixes)
+            COMPREPLY=($(compgen -W "strip keep" -- "$cur"))
             return 0
             ;;
     esac
@@ -355,7 +371,7 @@ _patchview() {
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     # patchview is a wrapper around filterdiff, so use similar completion
-    opts="$(_patchutils_common_opts) $(_patchutils_filter_opts) --verbose -v --filter --grep"
+    opts="$(_patchutils_common_opts) $(_patchutils_shared_filter_opts) $(_patchutils_filterdiff_only_opts) --verbose -v --filter --grep"
 
     case "${prev}" in
         --exclude|-x|--include|-i)
@@ -374,6 +390,10 @@ _patchview() {
         --addprefix|--addoldprefix|--addnewprefix)
             return 0
             ;;
+        --git-prefixes)
+            COMPREPLY=($(compgen -W "strip keep" -- "$cur"))
+            return 0
+            ;;
     esac
 
     if [[ ${cur} == -* ]]; then
@@ -390,7 +410,7 @@ _gitdiff() {
     cur="${COMP_WORDS[COMP_CWORD]}"
 
     # These are wrappers that pass arguments to filterdiff
-    opts="$(_patchutils_filter_opts)"
+    opts="$(_patchutils_shared_filter_opts) $(_patchutils_filterdiff_only_opts)"
 
     if [[ ${cur} == -* ]]; then
         COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
@@ -432,3 +452,5 @@ complete -F _gitdiff gitdiff
 complete -F _svndiff svndiff
 complete -F _gitdiffview gitdiffview
 complete -F _svndiffview svndiffview
+complete -F _gitdiff gitshow
+complete -F _gitdiff gitshowview

@@ -1,28 +1,27 @@
 #!/usr/bin/bash
 #
-#   rankmirrors - read a list of mirrors from a file and rank them by speed
-#   Generated from rankmirrors.sh.in; do not edit by hand.
+# rankmirrors - Read a list of mirrors from a file and rank them by speed
 #
-#   Copyright (c) 2009 Matthew Bruenig <matthewbruenig@gmail.com>
+# Copyright (c) 2009 Matthew Bruenig <matthewbruenig@gmail.com>
 #
-#   This program is free software; you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; either version 3 of the License, or
-#   (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # traps interrupt key to spit out pre-interrupt info
 trap finaloutput INT
 
 declare -r myname='rankmirrors'
-declare -r myver='1.10.6'
+declare -r myver='1.13.1'
 
 usage() {
 	cat <<EOF
@@ -35,6 +34,7 @@ provided.
 Usage: ${myname} [options] <mirrorfile | url>
 
 Options:
+  -h, --help            display this help message and exit
   -n <num>              number of servers to output, 0 for all
   -m, --max-time <num>  specify a ranking operation timeout, can be decimal
                         number
@@ -45,7 +45,6 @@ Options:
   -u, --url             test a specific URL
   -v, --verbose         be verbose in output
   -w, --working-only    only output mirrors that respond within the timeout
-  -h, --help            display this help message and exit
   -V, --version         display version information and exit
 EOF
 	exit 0
@@ -138,32 +137,31 @@ finaloutput() {
 	exit 0
 }
 
-
 # Argument parsing
 [[ $1 ]] || usage
 while [[ $1 ]]; do
 	if [[ ${1:0:2} = -- ]]; then
 		case "${1:2}" in
+			help) usage ;;
 			max-time)
 				[[ $2 ]] || err "Must specify number.";
 				MAX_TIME="$2"
-				shift 2;;
-			parallel) PARALLEL=1 ; shift ;;
+				shift 2 ;;
+			parallel) PARALLEL=1; shift ;;
 			repo)
 				[[ $2 ]] || err "Must specify repository name.";
 				TARGETREPO="$2";
-				shift 2;;
-			times) TIMESONLY=1 ; shift ;;
+				shift 2 ;;
+			times) TIMESONLY=1; shift ;;
 			url)
 				CHECKURL=1;
 				[[ $2 ]] || err "Must specify URL.";
 				URL="$2";
-				shift 2;;
-			verbose) VERBOSE=1 ; shift ;;
-			working-only) WORKING_ONLY=1 ; shift ;;
-			help) usage ;;
+				shift 2 ;;
+			verbose) VERBOSE=1; shift ;;
 			version) version ;;
-			*) err "'$1' is an invalid argument."
+			working-only) WORKING_ONLY=1; shift ;;
+			*) err "'$1' is an invalid argument." ;;
 		esac
 	elif [[ ${1:0:1} = - ]]; then
 
@@ -176,31 +174,31 @@ while [[ $1 ]]; do
 			shift
 		else
 			snum=1
-			for ((i=1 ; i<${#1}; i++)); do
+			for ((i=1; i<${#1}; i++)); do
 				case ${1:$i:1} in
+					h) usage ;;
 					m)
 						[[ $2 ]] || err "Must specify number.";
 						MAX_TIME="$2"
-						snum=2;;
+						snum=2 ;;
 					n)
 						[[ $2 ]] || err "Must specify number.";
 						NUM="$2";
-						snum=2;;
+						snum=2 ;;
 					p) PARALLEL=1 ;;
 					r)
 						[[ $2 ]] || err "Must specify repository name.";
 						TARGETREPO="$2";
-						snum=2;;
+						snum=2 ;;
 					t) TIMESONLY=1 ;;
 					u)
 						CHECKURL=1;
 						[[ $2 ]] || err "Must specify URL.";
 						URL="$2";
-						snum=2;;
+						snum=2 ;;
 					v) VERBOSE=1 ;;
-					w) WORKING_ONLY=1 ;;
-					h) usage ;;
 					V) version ;;
+					w) WORKING_ONLY=1 ;;
 					*) err "'$1' is an invalid argument." ;;
 				esac
 			done

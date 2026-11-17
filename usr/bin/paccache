@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 #
-# paccache - flexible pacman cache cleaning
+# paccache - Flexible pacman cache cleaning
 #
 # Copyright (C) 2011 Dave Reisner <dreisner@archlinux.org>
 #
@@ -17,23 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 # Expand to nothing if there are no matches
 shopt -s nullglob
 shopt -s extglob
 
 declare -r myname='paccache'
-declare -r myver='1.10.6'
+declare -r myver='1.13.1'
+declare    LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
-LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
-
-declare -a cachedirs=() candidates=() cmdopts=() whitelist=() blacklist=()
-declare -i delete=0 dryrun=0 filecount=0 move=0 totalsaved=0 verbose=0
-declare -i min_atime=0 min_mtime=0
-declare    delim=$'\n' keep=3 movedir='' scanarch=''
-
-QUIET=0
-USE_COLOR='y'
+declare -a blacklist cachedirs candidates cmdopts whitelist
+declare -i delete=0 dryrun=0 filecount=0 keep=3 min_atime=0 min_mtime=0 move=0 totalsaved=0 verbose=0 QUIET=0 USE_COLOR=1
+declare    delim=$'\n' movedir scanarch
 
 # Import libmakepkg
 # shellcheck source=/dev/null
@@ -163,7 +157,7 @@ size_to_human() {
 }
 
 
-runcmd() {
+runasroot() {
 	"$@"
 }
 
@@ -221,6 +215,7 @@ Options:
   -c, --cachedir <dir>    scan "dir" for packages. can be used more than once
                           (default: read from /etc/pacman.conf)
   -f, --force             apply force to mv(1) and rm(1) operations
+  -h, --help              display this help message and exit
   -i, --ignore <pkgs>     ignore "pkgs", comma-separated. Alternatively, specify
                           "-" to read package names from stdin, newline-
                           delimited
@@ -237,7 +232,6 @@ Options:
   -q, --quiet             minimize output
   -u, --uninstalled       target uninstalled packages
   -v, --verbose           increase verbosity. specify up to 3 times
-  -h, --help              display this help message and exit
   -V, --version           display version information and exit
 EOF
 }
@@ -248,9 +242,9 @@ version() {
 }
 
 OPT_SHORT=':a:c:dfhi:k:m:qrsuVvz'
-OPT_LONG=('arch:' 'cachedir:' 'dryrun' 'force' 'help' 'ignore:' 'keep:' 'move:'
-          'nocolor' 'quiet' 'remove' 'uninstalled' 'version' 'verbose' 'null'
-          'min-atime:' 'min-mtime:')
+OPT_LONG=('arch:' 'cachedir:' 'dryrun' 'force' 'help' 'ignore:' 'keep:'
+	  'min-atime:' 'min-mtime:' 'move:' 'nocolor' 'null' 'quiet' 'remove'
+	  'uninstalled' 'verbose' 'version')
 
 if ! parseopts "$OPT_SHORT" "${OPT_LONG[@]}" -- "$@"; then
 	exit 1
@@ -270,6 +264,9 @@ while :; do
 			dryrun=1 ;;
 		-f|--force)
 			cmdopts=(-f) ;;
+		-h|--help)
+			usage
+			exit 0 ;;
 		-i|--ignore)
 			if [[ $2 = '-' ]]; then
 				[[ ! -t 0 ]] && IFS=$'\n' read -r -d '' -a ign
@@ -305,7 +302,7 @@ while :; do
 			move=1 movedir=$2
 			shift ;;
 		--nocolor)
-			USE_COLOR='n' ;;
+			USE_COLOR=0 ;;
 		-z|--null)
 			delim='\0' ;;
 		-q|--quiet)
@@ -320,9 +317,6 @@ while :; do
 			unset ign ;;
 		-v|--verbose)
 			(( ++verbose )) ;;
-		-h|--help)
-			usage
-			exit 0 ;;
 		-V|--version)
 			version
 			exit 0 ;;
@@ -334,7 +328,7 @@ while :; do
 done
 
 # check if messages are to be printed using color
-if [[ -t 2 && $USE_COLOR != "n" ]]; then
+if [[ -t 2 ]] && (( USE_COLOR )); then
 	colorize
 else
 	unset ALL_OFF BOLD BLUE GREEN RED YELLOW
@@ -415,9 +409,9 @@ set -o errexit
 # crush. kill. destroy.
 (( verbose )) && cmdopts+=(-v)
 if (( delete )); then
-	printf '%s\0' "${candidates[@]}" | runcmd xargs -0 rm "${cmdopts[@]}"
+	printf '%s\0' "${candidates[@]}" | runasroot xargs -0 rm "${cmdopts[@]}"
 elif (( move )); then
-	printf '%s\0' "${candidates[@]}" | runcmd xargs -0 mv "${cmdopts[@]}" -t "$movedir"
+	printf '%s\0' "${candidates[@]}" | runasroot xargs -0 mv "${cmdopts[@]}" -t "$movedir"
 fi
 
 summarize "$pkgcount" "${candidates[@]}"

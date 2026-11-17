@@ -1,38 +1,34 @@
 #!/usr/bin/bash
-#   pacdiff : a simple pacnew/pacsave updater
 #
-#   Copyright (c) 2007 Aaron Griffin <aaronmgriffin@gmail.com>
-#   Copyright (c) 2013-2016 Pacman Development Team <pacman-dev@archlinux.org>
+# pacdiff - pacnew/pacsave updater
 #
-#   This program is free software; you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; either version 2 of the License, or
-#   (at your option) any later version.
+# Copyright (c) 2007 Aaron Griffin <aaronmgriffin@gmail.com>
+# Copyright (c) 2013-2016 Pacman Development Team <pacman-dev@archlinux.org>
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 shopt -s extglob
 
 declare -r myname='pacdiff'
-declare -r myver='1.10.6'
+declare -r myver='1.13.1'
+declare    LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
-LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
-
-diffprog=${DIFFPROG:-'vim -d'}
-diffsearchpath=${DIFFSEARCHPATH:-/etc}
-mergeprog=${MERGEPROG:-'diff3 -m'}
-cachedirs=()
-USE_COLOR='y'
-SUDO=''
-declare -a oldsaves
-declare -i USE_FIND=0 USE_LOCATE=0 USE_PACDB=0 OUTPUTONLY=0 BACKUP=0 THREE_WAY_DIFF=0
+declare -a cachedirs oldsaves
+declare -i BACKUP=0 OUTPUTONLY=0 THREE_WAY_DIFF=0 USE_COLOR=1 USE_FIND=0 USE_LOCATE=0 USE_PACDB=0
+declare    diffsearchpath=${DIFFSEARCHPATH:-/etc}
+declare    mergeprog=${MERGEPROG:-'diff3 -m'}
+declare    diffprog SUDO
 
 # Import libmakepkg
 # shellcheck source=/dev/null
@@ -60,15 +56,16 @@ General Options:
   -b, --backup          when overwriting, save old files with .bak
   -c, --cachedir <dir>  scan "dir" for 3-way merge base candidates
                         (default: read from /etc/pacman.conf)
+  -h, --help            show this help message and exit
       --nocolor         do not colorize output
   -o, --output          print files instead of merging them
   -s, --sudo            use sudo and sudoedit to merge/remove files
   -3, --threeway        view diffs in 3-way fashion
-  -h, --help            show this help message and exit
   -V, --version         display version information and exit
 
 Environment Variables:
-  DIFFPROG        override the merge program (default: 'vim -d')
+  DIFFPROG        override the diff program (default: 'vim -d',
+                  or 'nvim -d' if EDITOR=nvim)
   DIFFSEARCHPATH  override the search path (only when using find)
                   (default: /etc)
   MERGEPROG       override the 3-way merge program (default: 'diff3 -m')
@@ -88,7 +85,7 @@ print_existing() {
 	[[ -f "$1" ]] && printf '%s\0' "$1"
 }
 
-print_existing_pacsave(){
+print_existing_pacsave() {
 	for f in "${1}"?(.+([0-9])); do
 		[[ -f $f ]] && printf '%s\0' "$f"
 	done
@@ -110,8 +107,19 @@ base_cache_tar() {
 	done
 }
 
+if [[ -n $DIFFPROG ]]; then
+	diffprog=$DIFFPROG
+else
+	case $EDITOR in
+		nvim)
+			diffprog='nvim -d' ;;
+		*)
+			diffprog='vim -d' ;;
+	esac
+fi
+
 diffprog_fn() {
-	if [[ -n "$SUDO" ]]; then
+	if [[ "$SUDO" ]]; then
 		SUDO_EDITOR="$diffprog" sudoedit "$@"
 	else
 		$diffprog "$@"
@@ -138,7 +146,7 @@ view_diff() {
 	if (( ! THREE_WAY_DIFF )); then
 		two_way_diff
 	elif [[ -z $base_tar ]]; then
-		msg2 "Unable to find a base package. falling back to 2-way diff."
+		msg2 "Unable to find an older package for 3-way diff. Falling back to 2-way diff."
 		two_way_diff
 	else
 		basename="$(basename "$file")"
@@ -146,8 +154,8 @@ view_diff() {
 		base="$(mktemp "$tempdir"/"$basename.base.XXX")"
 		merged="$(mktemp "$tempdir"/"$basename.merged.XXX")"
 
-		if ! bsdtar -xqOf "$base_tar" "${file#/}" >"$base"; then
-			msg2 "Unable to extract the previous version of this file. falling back to 2-way diff."
+		if ! /usr/bin/bsdtar -xqOf "$base_tar" "${file#/}" >"$base"; then
+			msg2 "Unable to extract the previous version of this file. Falling back to 2-way diff."
 			two_way_diff
 		else
 			three_way_diff
@@ -174,7 +182,7 @@ merge_file() {
 	base_tar="$(base_cache_tar "$package")"
 
 	if [[ -z $base_tar ]]; then
-		msg2 "Unable to find a base package."
+		msg2 "Unable to find an older package to base merge on."
 		return 1
 	fi
 
@@ -239,55 +247,55 @@ cmd() {
 	fi
 }
 
-while [[ -n "$1" ]]; do
+while [[ "$1" ]]; do
 	case "$1" in
-		-f|--find)
-			USE_FIND=1;;
-		-l|--locate)
-			USE_LOCATE=1;;
-		-p|--pacmandb)
-			USE_PACDB=1;;
 		-b|--backup)
-			BACKUP=1;;
+			BACKUP=1 ;;
 		-c|--cachedir)
-			cachedirs+=("$2"); shift;;
+			cachedirs+=("$2"); shift ;;
+		-f|--find)
+			USE_FIND=1 ;;
+		-h|--help)
+			usage; exit 0 ;;
+		-l|--locate)
+			USE_LOCATE=1 ;;
 		--nocolor)
-			USE_COLOR='n';;
+			USE_COLOR=0 ;;
 		-o|--output)
-			OUTPUTONLY=1;;
+			OUTPUTONLY=1 ;;
+		-p|--pacmandb)
+			USE_PACDB=1 ;;
 		-s|--sudo)
-			SUDO=sudo;;
+			SUDO=sudo ;;
 		-3|--threeway)
 			THREE_WAY_DIFF=1 ;;
 		-V|--version)
-			version; exit 0;;
-		-h|--help)
-			usage; exit 0;;
+			version; exit 0 ;;
 		*)
-			usage; exit 1;;
+			usage; exit 1 ;;
 	esac
 	shift
 done
 
 # check if messages are to be printed using color
-if [[ -t 2 && $USE_COLOR != "n" ]]; then
+if [[ -t 2 ]] && (( USE_COLOR )); then
 	colorize
 else
 	unset ALL_OFF BOLD BLUE GREEN RED YELLOW
 fi
 
-if ! type -p "${diffprog%% *}" >/dev/null && (( ! OUTPUTONLY )); then
-	die "Cannot find the $diffprog binary required for viewing differences."
-fi
-
-if ! type -p "${mergeprog%% *}" >/dev/null && (( ! OUTPUTONLY )); then
-	die "Cannot find the $mergeprog binary required for merging differences."
+if (( ! OUTPUTONLY )); then
+	if ! type -p "${diffprog%% *}" >/dev/null; then
+		die "Cannot find the ${diffprog%% *} binary required for viewing differences."
+	elif ! type -p "${mergeprog%% *}" >/dev/null; then
+		die "Cannot find the ${mergeprog%% *} binary required for merging differences."
+	fi
 fi
 
 case $(( USE_FIND + USE_LOCATE + USE_PACDB )) in
-	0) USE_PACDB=1;; # set the default search option
+	0) USE_PACDB=1 ;; # set the default search option
 	[^1]) error "Only one search option may be used at a time"
-	 	usage; exit 1;;
+		usage; exit 1 ;;
 esac
 
 if (( USE_PACDB )); then
@@ -337,7 +345,7 @@ while IFS= read -u 3 -r -d '' pacfile; do
 			ask "(V)iew, (M)erge, (S)kip, (R)emove %s, (O)verwrite with %s, (Q)uit: [v/m/s/r/o/q] " "$file_type" "$file_type"
 			read -r c || break
 			case $c in
-				q|Q) exit 0;;
+				q|Q) exit 0 ;;
 				r|R) $SUDO rm -v "$pacfile"; break ;;
 				o|O)
 					if (( BACKUP )); then

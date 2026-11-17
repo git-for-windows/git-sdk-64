@@ -9,6 +9,10 @@ _hardlink_module()
 			COMPREPLY=( $(compgen -W "regex" -- $cur) )
 			return 0
 			;;
+		'--exclude-subtree')
+			COMPREPLY=( $(compgen -W "regex" -- $cur) )
+			return 0
+			;;
 		'-i'|'--include')
 			COMPREPLY=( $(compgen -W "regex" -- $cur) )
 			return 0
@@ -45,19 +49,31 @@ _hardlink_module()
 		-*)
 		OPTS="
 			--content
+			--cache-size
+			--exclude
+			--exclude-subtree
 			--respect-dir
 			--respect-name
 			--maximize
 			--minimize
+			--minimum-size
+			--maximum-size
+			--mount
 			--dry-run
+			--io-size
+			--include
 			--ignore-owner
 			--keep-oldest
+			--list-duplicates
 			--ignore-mode
 			--quiet
+			--prioritize-trees
 			--ignore-time
+			--reflink
 			--verbose
 			--respect-xattrs
 			--skip-reflinks
+			--zero
 			--version
 			--help
 		"

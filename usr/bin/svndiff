@@ -1,20 +1,101 @@
-#!/bin/sh
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
-# Copyright (C) 2014-2019 Sérgio Basto <sergio@serjux.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
 #
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+# Copyright (C) 2015-2025 Sérgio Basto <sergio@serjux.com>
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+# for more details.
 #
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# patchview-wrapper - wrapper for Git/SVN commands (e.g., "git diff",
+# "git show", "svn diff") piped into patchview, optionally also piped into
+# an editor
 
-svn diff | patchview "$@"
+# Note: gitdiff, gitdiffview, gitshow, gitshowview, svndiff, svndiffview
+# are symbolic links pointing to this wrapper.
+# They are automatically created by Makefile.am.
+
+import os
+import sys
+import argparse
+from subprocess import Popen, PIPE
+
+enviro = os.environ
+workdir = '.'
+editor = os.environ.get("EDITOR", "vim")
+
+tools = ["git", "svn"]
+prog = os.path.basename(sys.argv[0])
+
+tool = None
+for t in tools:
+    if prog.startswith(t):
+        tool = t
+        break
+
+if tool is None:
+    sys.stderr.write(f"Error: program name must start with one of {tools} (got '{prog}')\n")
+    sys.exit(1)
+
+tool_cmd = prog[len(tool):]
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-v', '--debug',
+                    help='writes the commands that will be executed',
+                    action='store_true')
+parser.add_argument('tool_args', nargs='*', default=[])
+parser.add_argument('patchview_args', nargs=argparse.REMAINDER)
+args, unknown = parser.parse_known_args()
+tool_args = args.tool_args
+patchview_args = args.patchview_args + unknown
+
+pipetoview = tool_cmd.endswith("view")
+if pipetoview:
+    tool_cmd = tool_cmd[:-4]
+    patchview_cmd = ["filterdiff"] + patchview_args
+else:
+    patchview_cmd = ["patchview"] + patchview_args
+
+vcs_cmd = [tool, tool_cmd] + tool_args
+dest_cmd = [editor, "-R", "-"]
+
+if args.debug:
+    debug_str = "%s | %s" % (" ".join(vcs_cmd), " ".join(patchview_cmd))
+    if pipetoview:
+        debug_str += " | %s" % " ".join(dest_cmd)
+    sys.stderr.buffer.write((debug_str + "\n").encode())
+    sys.stderr.flush()
+
+p1 = Popen(vcs_cmd, stdout=PIPE, env=enviro, cwd=workdir)
+p2 = Popen(patchview_cmd, stdin=p1.stdout, stdout=PIPE, env=enviro, cwd=workdir)
+
+stdout2, _ = p2.communicate()
+ret2 = p2.returncode
+if ret2 != 0:
+    if stdout2:
+        sys.stdout.buffer.write(stdout2)
+    sys.exit(ret2)
+
+p1.wait()
+ret1 = p1.returncode
+if ret1 != 0:
+    sys.exit(ret1)
+
+if pipetoview:
+    p3 = Popen(dest_cmd, stdin=PIPE, env=enviro, cwd=workdir)
+    stdout3, _ = p3.communicate(stdout2)
+else:
+    sys.stdout.buffer.write(stdout2)
+

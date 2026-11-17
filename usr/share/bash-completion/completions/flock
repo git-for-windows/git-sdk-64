@@ -27,12 +27,18 @@ _flock_module()
 			OPTS="--shared
 				--exclusive
 				--unlock
-				--nonblock
+				--nb
+				--nonblocking
 				--timeout
 				--conflict-exit-code
 				--close
 				--command
 				--no-fork
+				--fcntl
+				--start
+				--length
+				--wait
+				--verbose
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

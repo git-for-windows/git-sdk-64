@@ -35,6 +35,7 @@ syn keyword srcInfoField
             \ source_ppc
             \ source_aarch64
             \ source_armv7h
+            \ source_loong64
             \ depends
             \ depends_x86_64
             \ depends_x86_64_v3
@@ -43,6 +44,7 @@ syn keyword srcInfoField
             \ depends_ppc
             \ depends_aarch64
             \ depends_armv7h
+            \ depends_loong64
             \ checkdepends
             \ checkdepends_x86_64
             \ checkdepends_x86_64_v3
@@ -51,6 +53,7 @@ syn keyword srcInfoField
             \ checkdepends_ppc
             \ checkdepends_aarch64
             \ checkdepends_armv7h
+            \ checkdepends_loong64
             \ makedepends
             \ makedepends_x86_64
             \ makedepends_x86_64_v3
@@ -59,6 +62,7 @@ syn keyword srcInfoField
             \ makedepends_ppc
             \ makedepends_aarch64
             \ makedepends_armv7h
+            \ makedepends_loong64
             \ optdepends
             \ optdepends_x86_64
             \ optdepends_x86_64_v3
@@ -67,6 +71,7 @@ syn keyword srcInfoField
             \ optdepends_ppc
             \ optdepends_aarch64
             \ optdepends_armv7h
+            \ optdepends_loong64
             \ provides
             \ provides_x86_64
             \ provides_x86_64_v3
@@ -75,6 +80,7 @@ syn keyword srcInfoField
             \ provides_ppc
             \ provides_aarch64
             \ provides_armv7h
+            \ provides_loong64
             \ conflicts
             \ conflicts_x86_64
             \ conflicts_x86_64_v3
@@ -83,6 +89,7 @@ syn keyword srcInfoField
             \ conflicts_ppc
             \ conflicts_aarch64
             \ conflicts_armv7h
+            \ conflicts_loong64
             \ replaces
             \ replaces_x86_64
             \ replaces_x86_64_v3
@@ -91,6 +98,7 @@ syn keyword srcInfoField
             \ replaces_ppc
             \ replaces_aarch64
             \ replaces_armv7h
+            \ replaces_loong64
             \ md5sums
             \ md5sums_x86_64
             \ md5sums_x86_64_v3
@@ -99,6 +107,7 @@ syn keyword srcInfoField
             \ md5sums_ppc
             \ md5sums_aarch64
             \ md5sums_armv7h
+            \ md5sums_loong64
             \ sha1sums
             \ sha1sums_x86_64
             \ sha1sums_x86_64_v3
@@ -107,6 +116,7 @@ syn keyword srcInfoField
             \ sha1sums_ppc
             \ sha1sums_aarch64
             \ sha1sums_armv7h
+            \ sha1sums_loong64
             \ sha224sums
             \ sha224sums_x86_64
             \ sha224sums_x86_64_v3
@@ -115,6 +125,7 @@ syn keyword srcInfoField
             \ sha224sums_ppc
             \ sha224sums_aarch64
             \ sha224sums_armv7h
+            \ sha224sums_loong64
             \ sha256sums
             \ sha256sums_x86_64
             \ sha256sums_x86_64_v3
@@ -123,6 +134,7 @@ syn keyword srcInfoField
             \ sha256sums_ppc
             \ sha256sums_aarch64
             \ sha256sums_armv7h
+            \ sha256sums_loong64
             \ sha384sums
             \ sha384sums_x86_64
             \ sha384sums_x86_64_v3
@@ -131,6 +143,7 @@ syn keyword srcInfoField
             \ sha384sums_ppc
             \ sha384sums_aarch64
             \ sha384sums_armv7h
+            \ sha384sums_loong64
             \ sha512sums
             \ sha512sums_x86_64
             \ sha512sums_x86_64_v3
@@ -139,6 +152,7 @@ syn keyword srcInfoField
             \ sha512sums_ppc
             \ sha512sums_aarch64
             \ sha512sums_armv7h
+            \ sha512sums_loong64
             \ b2sums
             \ b2sums_x86_64
             \ b2sums_x86_64_v3
@@ -147,6 +161,7 @@ syn keyword srcInfoField
             \ b2sums_ppc
             \ b2sums_aarch64
             \ b2sums_armv7h
+            \ b2sums_loong64
             \ skipwhite nextgroup=srcinfoSet
 syn match srcinfoSet '=' contained nextgroup=srcinfoValue
 syn match srcinfoValue /.\+$/ contained

@@ -1,31 +1,30 @@
 #!/usr/bin/bash
 #
-#   checkupdates: Safely print a list of pending updates.
+# checkupdates - Safely print a list of pending updates
 #
-#   Copyright (c) 2013 Kyle Keen <keenerd@gmail.com>
+# Copyright (c) 2013 Kyle Keen <keenerd@gmail.com>
 #
-#   This program is free software; you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation; either version 2 of the License, or
-#   (at your option) any later version.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
 #
-#   This program is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#   GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.
-#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 declare -r myname='checkupdates'
-declare -r myver='1.10.6'
+declare -r myver='1.13.1'
+declare    LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
 
-LIBRARY=${LIBRARY:-'/usr/share/makepkg'}
-
-DOWNLOAD_CACHE=0
-SYNC=1
-USE_COLOR=1
+declare -a PACMAN_COLOR
+declare -i DOWNLOAD_CACHE=0
+declare -i SYNC=1
+declare -i USE_COLOR=1
 
 # Import libmakepkg
 # shellcheck source=/dev/null
@@ -38,17 +37,8 @@ die() {
 	exit 1
 }
 
-runcmd() {
-	if (( EUID != 0 )); then
-		msg 'Escalating privileges using sudo'
-		if sudo -v &>/dev/null && sudo -l &>/dev/null; then
-			sudo "$@"
-		else
-			die 'Failed to escalate'
-		fi
-	else
-		"$@"
-	fi
+runasroot() {
+	"$@"
 }
 
 usage() {
@@ -62,10 +52,10 @@ Usage: ${myname} [options]
 Options:
   -c, --change    print only when available updates differ from the last --change run
   -d, --download  download pending updates to the pacman cache
+  -h, --help      display this help message and exit
       --nocolor   do not colorize output (listing color also dependent on Color
                   option in pacman.conf)
   -n, --nosync    do not sync the temporary database
-  -h, --help      display this help message and exit
   -V, --version   display version information and exit
 
 Environment Variables:
@@ -82,8 +72,8 @@ version() {
 	printf "%s %s\n" "$myname" "$myver"
 }
 
-OPT_SHORT='dnchV'
-OPT_LONG=('download' 'nocolor' 'nosync' 'change' 'help' 'version')
+OPT_SHORT='cdhnV'
+OPT_LONG=('change' 'download' 'help' 'nocolor' 'nosync' 'version')
 
 if ! parseopts "$OPT_SHORT" "${OPT_LONG[@]}" -- "$@"; then
 	exit 1
@@ -93,17 +83,17 @@ unset OPT_SHORT OPT_LONG OPTRET
 
 while :; do
 	case $1 in
+		-c|--change)
+			CHANGE=1 ;;
 		-d|--download)
 			DOWNLOAD_CACHE=1 ;;
+		-h|--help)
+			usage
+			exit 0 ;;
 		--nocolor)
 			USE_COLOR=0 ;;
 		-n|--nosync)
 			SYNC=0 ;;
-		-c|--change)
-			CHANGE=1 ;;
-		-h|--help)
-			usage
-			exit 0 ;;
 		-V|--version)
 			version
 			exit 0 ;;
@@ -120,7 +110,7 @@ if [[ -t 2 ]] && (( USE_COLOR )); then
 
 	# check if pacman colors are to be kept in the updates array
 	if pacman-conf | grep -q Color; then
-		PACMAN_COLOR=1
+		PACMAN_COLOR=(--color always)
 	fi
 else
 	unset ALL_OFF BOLD BLUE GREEN RED YELLOW
@@ -144,16 +134,12 @@ fi
 if (( SYNC )); then
 	mkdir -p "$CHECKUPDATES_DB"
 	ln -s "${DBPath}/local" "$CHECKUPDATES_DB" &> /dev/null
-	if ! pacman -Sy --dbpath "$CHECKUPDATES_DB" --logfile /dev/null &> /dev/null; then
+	if ! pacman -Sy --disable-sandbox-filesystem --dbpath "$CHECKUPDATES_DB" --logfile /dev/null &> /dev/null; then
 		die 'Cannot fetch updates'
 	fi
 fi
 
-if (( PACMAN_COLOR )); then
-	mapfile -t updates < <(pacman --color always -Qu --dbpath "$CHECKUPDATES_DB" 2> /dev/null | grep -v '\[.*\]')
-else
-	mapfile -t updates < <(pacman -Qu --dbpath "$CHECKUPDATES_DB" 2> /dev/null | grep -v '\[.*\]')
-fi
+mapfile -t updates < <(pacman -Qu --dbpath "$CHECKUPDATES_DB" "${PACMAN_COLOR[@]}" 2> /dev/null | grep -v '\[.*\]')
 
 if (( ${#updates[@]} )); then
 	if (( CHANGE )); then
@@ -168,10 +154,10 @@ if (( ${#updates[@]} )); then
 	else
 		printf '%s\n' "${updates[@]}"
 		if (( DOWNLOAD_CACHE )); then
-			if (( PACMAN_COLOR )); then
+			if (( "${#PACMAN_COLOR[@]}" )); then
 				updates=("${updates[@]#*m}")
 			fi
-			runcmd pacman -Sw --noconfirm "${updates[@]%% *}" --dbpath "$CHECKUPDATES_DB" --logfile /dev/null
+			runasroot pacman -Sw --noconfirm "${updates[@]%% *}" --dbpath "$CHECKUPDATES_DB" --logfile /dev/null
 		fi
 	fi
 else

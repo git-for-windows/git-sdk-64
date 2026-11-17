@@ -18,7 +18,7 @@ _mkswap_module()
 			return 0
 			;;
 		'-U'|'--uuid')
-			COMPREPLY=( $(compgen -W "$(uuidgen -r)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command uuidgen -r)" -- $cur) )
 			return 0
 			;;
 		'-o'|'--offset')
@@ -35,13 +35,27 @@ _mkswap_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--check --force --pagesize --lock --label --swapversion --uuid --offset --verbose --version --help --size --file"
+			OPTS="--check
+						--endianness
+						--quiet
+						--force
+						--pagesize
+						--lock
+						--label
+						--swapversion
+						--uuid
+						--offset
+						--verbose
+						--version
+						--help
+						--size
+						--file"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _mkswap_module mkswap
