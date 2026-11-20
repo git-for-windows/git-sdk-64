@@ -10,7 +10,7 @@
 
 module RbConfig
   RUBY_VERSION.start_with?("4.0.") or
-    raise "ruby lib version (4.0.9) doesn't match executable version (#{RUBY_VERSION})"
+    raise "ruby lib version (4.0.10) doesn't match executable version (#{RUBY_VERSION})"
 
   # Ruby installed directory.
   TOPDIR = File.dirname(__FILE__).chomp!("/lib/ruby/4.0.0/x64-mingw-ucrt")
@@ -21,7 +21,7 @@ module RbConfig
   CONFIG["DESTDIR"] = DESTDIR
   CONFIG["MAJOR"] = "4"
   CONFIG["MINOR"] = "0"
-  CONFIG["TEENY"] = "9"
+  CONFIG["TEENY"] = "10"
   CONFIG["PATCHLEVEL"] = "0"
   CONFIG["INSTALL"] = '/usr/bin/install -c'
   CONFIG["EXEEXT"] = ".exe"
@@ -151,8 +151,6 @@ module RbConfig
   CONFIG["ARCH_FLAG"] = ""
   CONFIG["DLDFLAGS"] = " -Wl,--enable-auto-image-base,--enable-auto-import"
   CONFIG["ALLOCA"] = ""
-  CONFIG["EGREP"] = "/usr/bin/grep -E"
-  CONFIG["GREP"] = "/usr/bin/grep"
   CONFIG["dsymutil"] = ""
   CONFIG["codesign"] = ""
   CONFIG["cleanlibs"] = ""
@@ -199,7 +197,7 @@ module RbConfig
   CONFIG["OBJCOPY"] = ":"
   CONFIG["NM"] = "gcc-nm"
   CONFIG["LD"] = "ld"
-  CONFIG["CXX"] = "g++"
+  CONFIG["CXX"] = "g++ -std=gnu++11"
   CONFIG["AS"] = "as"
   CONFIG["AR"] = "gcc-ar"
   CONFIG["CC"] = "gcc"

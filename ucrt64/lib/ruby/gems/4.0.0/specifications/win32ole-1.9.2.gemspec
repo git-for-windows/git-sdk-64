@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Masaki Suketa".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-10-23"
+  s.date = "2026-11-19"
   s.description = "Provides an interface for OLE Automation in Ruby".freeze
   s.email = ["suke@ruby-lang.org".freeze]
   s.extensions = ["ext/win32ole/extconf.rb".freeze]
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/ruby/win32ole".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
-  s.rubygems_version = "3.4.20".freeze
+  s.rubygems_version = "3.5.11".freeze
   s.summary = "Provides an interface for OLE Automation in Ruby".freeze
 
   s.installed_by_version = "4.0.20".freeze

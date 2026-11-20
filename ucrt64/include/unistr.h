@@ -95,8 +95,8 @@ extern const uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_check_template (T* s, size_t n);
+template <typename _T_>
+  _T_ * u8_check_template (_T_* s, size_t n);
 template <>
   inline uint8_t * u8_check_template (uint8_t *s, size_t n)
   { return const_cast<uint8_t *>(u8_check (s, n)); }
@@ -116,8 +116,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_check_template (T* s, size_t n);
+template <typename _T_>
+  _T_ * u16_check_template (_T_* s, size_t n);
 template <>
   inline uint16_t * u16_check_template (uint16_t *s, size_t n)
   { return const_cast<uint16_t *>(u16_check (s, n)); }
@@ -137,8 +137,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_check_template (T* s, size_t n);
+template <typename _T_>
+  _T_ * u32_check_template (_T_* s, size_t n);
 template <>
   inline uint32_t * u32_check_template (uint32_t *s, size_t n)
   { return const_cast<uint32_t *>(u32_check (s, n)); }
@@ -532,8 +532,8 @@ extern uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_chr_template (T* str, size_t n, ucs4_t uc);
+template <typename _T_>
+  _T_ * u8_chr_template (_T_* str, size_t n, ucs4_t uc);
 template <>
   inline uint8_t * u8_chr_template (uint8_t *str, size_t n, ucs4_t uc)
   { return u8_chr (str, n, uc); }
@@ -553,8 +553,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_chr_template (T* str, size_t n, ucs4_t uc);
+template <typename _T_>
+  _T_ * u16_chr_template (_T_* str, size_t n, ucs4_t uc);
 template <>
   inline uint16_t * u16_chr_template (uint16_t *str, size_t n, ucs4_t uc)
   { return u16_chr (str, n, uc); }
@@ -574,8 +574,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_chr_template (T* str, size_t n, ucs4_t uc);
+template <typename _T_>
+  _T_ * u32_chr_template (_T_* str, size_t n, ucs4_t uc);
 template <>
   inline uint32_t * u32_chr_template (uint32_t *str, size_t n, ucs4_t uc)
   { return u32_chr (str, n, uc); }
@@ -661,8 +661,8 @@ extern const uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_next_template (ucs4_t *puc, T* s);
+template <typename _T_>
+  _T_ * u8_next_template (ucs4_t *puc, _T_* s);
 template <>
   inline uint8_t * u8_next_template (ucs4_t *puc, uint8_t *s)
   { return const_cast<uint8_t *>(u8_next (puc, s)); }
@@ -682,8 +682,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_next_template (ucs4_t *puc, T* s);
+template <typename _T_>
+  _T_ * u16_next_template (ucs4_t *puc, _T_* s);
 template <>
   inline uint16_t * u16_next_template (ucs4_t *puc, uint16_t *s)
   { return const_cast<uint16_t *>(u16_next (puc, s)); }
@@ -703,8 +703,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_next_template (ucs4_t *puc, T* s);
+template <typename _T_>
+  _T_ * u32_next_template (ucs4_t *puc, _T_* s);
 template <>
   inline uint32_t * u32_next_template (ucs4_t *puc, uint32_t *s)
   { return const_cast<uint32_t *>(u32_next (puc, s)); }
@@ -744,8 +744,8 @@ extern const uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_prev_template (ucs4_t *puc, T* s, const uint8_t *start);
+template <typename _T_>
+  _T_ * u8_prev_template (ucs4_t *puc, _T_* s, const uint8_t *start);
 template <>
   inline uint8_t * u8_prev_template (ucs4_t *puc, uint8_t *s, const uint8_t *start)
   { return const_cast<uint8_t *>(u8_prev (puc, s, start)); }
@@ -765,8 +765,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_prev_template (ucs4_t *puc, T* s, const uint16_t *start);
+template <typename _T_>
+  _T_ * u16_prev_template (ucs4_t *puc, _T_* s, const uint16_t *start);
 template <>
   inline uint16_t * u16_prev_template (ucs4_t *puc, uint16_t *s, const uint16_t *start)
   { return const_cast<uint16_t *>(u16_prev (puc, s, start)); }
@@ -786,8 +786,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_prev_template (ucs4_t *puc, T* s, const uint32_t *start);
+template <typename _T_>
+  _T_ * u32_prev_template (ucs4_t *puc, _T_* s, const uint32_t *start);
 template <>
   inline uint32_t * u32_prev_template (ucs4_t *puc, uint32_t *s, const uint32_t *start)
   { return const_cast<uint32_t *>(u32_prev (puc, s, start)); }
@@ -963,8 +963,8 @@ extern uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_strchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u8_strchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint8_t * u8_strchr_template (uint8_t *str, ucs4_t uc)
   { return u8_strchr (str, uc); }
@@ -984,8 +984,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_strchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u16_strchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint16_t * u16_strchr_template (uint16_t *str, ucs4_t uc)
   { return u16_strchr (str, uc); }
@@ -1005,8 +1005,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_strchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u32_strchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint32_t * u32_strchr_template (uint32_t *str, ucs4_t uc)
   { return u32_strchr (str, uc); }
@@ -1048,8 +1048,8 @@ extern uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_strrchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u8_strrchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint8_t * u8_strrchr_template (uint8_t *str, ucs4_t uc)
   { return u8_strrchr (str, uc); }
@@ -1069,8 +1069,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_strrchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u16_strrchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint16_t * u16_strrchr_template (uint16_t *str, ucs4_t uc)
   { return u16_strrchr (str, uc); }
@@ -1090,8 +1090,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_strrchr_template (T* str, ucs4_t uc);
+template <typename _T_>
+  _T_ * u32_strrchr_template (_T_* str, ucs4_t uc);
 template <>
   inline uint32_t * u32_strrchr_template (uint32_t *str, ucs4_t uc)
   { return u32_strrchr (str, uc); }
@@ -1159,8 +1159,8 @@ extern uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_strpbrk_template (T* str, const uint8_t *accept);
+template <typename _T_>
+  _T_ * u8_strpbrk_template (_T_* str, const uint8_t *accept);
 template <>
   inline uint8_t * u8_strpbrk_template (uint8_t *str, const uint8_t *accept)
   { return u8_strpbrk (str, accept); }
@@ -1180,8 +1180,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_strpbrk_template (T* str, const uint16_t *accept);
+template <typename _T_>
+  _T_ * u16_strpbrk_template (_T_* str, const uint16_t *accept);
 template <>
   inline uint16_t * u16_strpbrk_template (uint16_t *str, const uint16_t *accept)
   { return u16_strpbrk (str, accept); }
@@ -1201,8 +1201,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_strpbrk_template (T* str, const uint32_t *accept);
+template <typename _T_>
+  _T_ * u32_strpbrk_template (_T_* str, const uint32_t *accept);
 template <>
   inline uint32_t * u32_strpbrk_template (uint32_t *str, const uint32_t *accept)
   { return u32_strpbrk (str, accept); }
@@ -1244,8 +1244,8 @@ extern uint32_t *
 /* Don't silently convert a 'const uintN_t *' to a 'uintN_t *'.  Programmers
    want compiler warnings for 'const' related mistakes.  */
 # ifdef __cplusplus
-template <typename T>
-  T * u8_strstr_template (T* haystack, const uint8_t *needle);
+template <typename _T_>
+  _T_ * u8_strstr_template (_T_* haystack, const uint8_t *needle);
 template <>
   inline uint8_t * u8_strstr_template (uint8_t *haystack, const uint8_t *needle)
   { return u8_strstr (haystack, needle); }
@@ -1265,8 +1265,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u16_strstr_template (T* haystack, const uint16_t *needle);
+template <typename _T_>
+  _T_ * u16_strstr_template (_T_* haystack, const uint16_t *needle);
 template <>
   inline uint16_t * u16_strstr_template (uint16_t *haystack, const uint16_t *needle)
   { return u16_strstr (haystack, needle); }
@@ -1286,8 +1286,8 @@ template <>
 #  endif
 # endif
 # ifdef __cplusplus
-template <typename T>
-  T * u32_strstr_template (T* haystack, const uint32_t *needle);
+template <typename _T_>
+  _T_ * u32_strstr_template (_T_* haystack, const uint32_t *needle);
 template <>
   inline uint32_t * u32_strstr_template (uint32_t *haystack, const uint32_t *needle)
   { return u32_strstr (haystack, needle); }

@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["U.Nakamura".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-10-23"
+  s.date = "2026-11-19"
   s.description = "Provides an interface to the Windows Registry in Ruby".freeze
   s.email = ["usa@garbagecollect.jp".freeze]
   s.files = ["lib/win32/registry.rb".freeze, "lib/win32/resolv.rb".freeze]

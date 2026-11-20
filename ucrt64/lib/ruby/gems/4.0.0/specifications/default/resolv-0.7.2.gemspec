@@ -11,11 +11,11 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib".freeze]
   s.authors = ["Tanaka Akira".freeze]
   s.bindir = "exe".freeze
-  s.date = "2026-10-23"
+  s.date = "2026-11-19"
   s.description = "Thread-aware DNS resolver library in Ruby.".freeze
   s.email = ["akr@fsij.org".freeze]
   s.extensions = ["ext/win32/resolv/extconf.rb".freeze]
-  s.files = ["ext/win32/resolv/extconf.rb".freeze, "lib/ext/win32/resolv/extconf.rb".freeze, "lib/resolv.rb".freeze]
+  s.files = ["ext/win32/resolv/extconf.rb".freeze, "lib/resolv.rb".freeze]
   s.homepage = "https://github.com/ruby/resolv".freeze
   s.licenses = ["Ruby".freeze, "BSD-2-Clause".freeze]
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0".freeze)
