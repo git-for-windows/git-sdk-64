@@ -152,7 +152,7 @@ $missing = @()
 
 foreach ($name in "cv2pdb", "curl-openssl-alternate", "git-credential-manager", "wintoast", "xpdf-tools") {
   $pkg = "mingw-w64-ucrt-x86_64-$name"
-  if (-not (Get-ChildItem -Path "var/lib/pacman/local" -Directory -Filter "$pkg-[0-9]*" -ErrorAction SilentlyContinue)) {
+  if (-not (Get-ChildItem -Path "var/lib/pacman/local" -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match "$pkg-[0-9].*" })) {
     $missing += $pkg
   }
 }
