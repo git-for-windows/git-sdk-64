@@ -63,14 +63,12 @@
         ++PL_sv_count;                                  \
     } STMT_END
 
-/* Perl_more_sv lives in sv.c, we don't want to inline it.
- * but the function declaration seems to be needed. */
-SV* Perl_more_sv(pTHX);
-
 /* new_SV(): return a new, empty SV head */
 PERL_STATIC_INLINE SV*
 Perl_new_sv(pTHX_ const char *file, int line, const char *func)
 {
+    PERL_ARGS_ASSERT_NEW_SV;
+
     SV* sv;
 #if !defined(DEBUG_LEAKING_SCALARS) || \
      (!defined(DEBUGGING) && !defined(PERL_MEM_LOG))
@@ -179,6 +177,14 @@ ALIGNED_TYPE(XPVOBJ);
 #define copy_length(type, last_member) \
         STRUCT_OFFSET(type, last_member) \
         + sizeof (((type*)SvANY((const SV *)0))->last_member)
+
+static const struct body_details fake_hv_with_aux =
+    /* The SVt_IV arena is used for (larger) PVHV bodies.  */
+    { sizeof(ALIGNED_TYPE_NAME(XPVHV_WITH_AUX)),
+      copy_length(XPVHV, xhv_max),
+      0,
+      SVt_PVHV, TRUE, NONV, HASARENA,
+      FIT_ARENA(0, sizeof(ALIGNED_TYPE_NAME(XPVHV_WITH_AUX))) };
 
 static const struct body_details bodies_by_type[] = {
     /* HEs use this offset for their arena.  */
@@ -299,6 +305,8 @@ static const struct body_details bodies_by_type[] = {
 #if !(NVSIZE <= IVSIZE)
 #  define new_XNV()    safemalloc(sizeof(XPVNV))
 #endif
+#define new_XPV()    safemalloc(sizeof(XPV))
+#define new_XPVIV()    safemalloc(sizeof(XPVIV))
 #define new_XPVNV()    safemalloc(sizeof(XPVNV))
 #define new_XPVMG()    safemalloc(sizeof(XPVMG))
 
@@ -309,6 +317,8 @@ static const struct body_details bodies_by_type[] = {
 #if !(NVSIZE <= IVSIZE)
 #  define new_XNV()    new_body_allocated(SVt_NV)
 #endif
+#define new_XPV()    new_body_allocated(SVt_PV)
+#define new_XPVIV()    new_body_allocated(SVt_PVIV)
 #define new_XPVNV()    new_body_allocated(SVt_PVNV)
 #define new_XPVMG()    new_body_allocated(SVt_PVMG)
 
@@ -328,13 +338,11 @@ static const struct body_details bodies_by_type[] = {
 #ifndef PURIFY
 
 /* grab a new thing from the arena's free list, allocating more if necessary. */
-#define new_body_from_arena(xpv, root_index, type_meta) \
+#define new_body_from_arena(xpv, root_index) \
     STMT_START { \
         void ** const r3wt = &PL_body_roots[root_index]; \
         xpv = (PTR_TBL_ENT_t*) (*((void **)(r3wt))      \
-          ? *((void **)(r3wt)) : Perl_more_bodies(aTHX_ root_index, \
-                                             type_meta.body_size,\
-                                             type_meta.arena_size)); \
+          ? *((void **)(r3wt)) : Perl_more_bodies(aTHX_ root_index)); \
         *(r3wt) = *(void**)(xpv); \
     } STMT_END
 
@@ -342,7 +350,7 @@ PERL_STATIC_INLINE void *
 S_new_body(pTHX_ const svtype sv_type)
 {
     void *xpv;
-    new_body_from_arena(xpv, sv_type, bodies_by_type[sv_type]);
+    new_body_from_arena(xpv, sv_type);
     return xpv;
 }
 
@@ -350,14 +358,6 @@ S_new_body(pTHX_ const svtype sv_type)
 
 static const struct body_details fake_rv =
     { 0, 0, 0, SVt_IV, FALSE, NONV, NOARENA, 0 };
-
-static const struct body_details fake_hv_with_aux =
-    /* The SVt_IV arena is used for (larger) PVHV bodies.  */
-    { sizeof(ALIGNED_TYPE_NAME(XPVHV_WITH_AUX)),
-      copy_length(XPVHV, xhv_max),
-      0,
-      SVt_PVHV, TRUE, NONV, HASARENA,
-      FIT_ARENA(0, sizeof(ALIGNED_TYPE_NAME(XPVHV_WITH_AUX))) };
 
 /*
 =for apidoc newSV_type
@@ -371,6 +371,8 @@ is set to 1.
 PERL_STATIC_INLINE SV *
 Perl_newSV_type(pTHX_ const svtype type)
 {
+    PERL_ARGS_ASSERT_NEWSV_TYPE;
+
     SV *sv;
     void*      new_body;
     const struct body_details *type_details;
@@ -500,7 +502,7 @@ Perl_newSV_type(pTHX_ const svtype type)
             SvOBJECT_on(io);
             /* Clear the stashcache because a new IO could overrule a package
                name */
-            DEBUG_o(Perl_deb(aTHX_ "sv_upgrade clearing PL_stashcache\n"));
+            DEBUG_o(deb("sv_upgrade clearing PL_stashcache\n"));
             hv_clear(PL_stashcache);
 
             SvSTASH_set(io, MUTABLE_HV(SvREFCNT_inc(GvHV(iogv))));
@@ -537,6 +539,8 @@ at some point in the future.)
 PERL_STATIC_INLINE SV *
 Perl_newSV_type_mortal(pTHX_ const svtype type)
 {
+    PERL_ARGS_ASSERT_NEWSV_TYPE_MORTAL;
+
     SV *sv = newSV_type(type);
     SSize_t ix = ++PL_tmps_ix;
     if (UNLIKELY(ix >= PL_tmps_max))
@@ -664,6 +668,8 @@ Perl_SvTRUE_common(pTHX_ SV * sv, const bool sv_2bool_is_fallback)
 PERL_STATIC_INLINE SV *
 Perl_SvREFCNT_inc(SV *sv)
 {
+    PERL_ARGS_ASSERT_SVREFCNT_INC;
+
     if (LIKELY(sv != NULL))
         SvREFCNT(sv)++;
     return sv;
@@ -681,6 +687,8 @@ Perl_SvREFCNT_inc_NN(SV *sv)
 PERL_STATIC_INLINE void
 Perl_SvREFCNT_inc_void(SV *sv)
 {
+    PERL_ARGS_ASSERT_SVREFCNT_INC_VOID;
+
     if (LIKELY(sv != NULL))
         SvREFCNT(sv)++;
 }
@@ -688,6 +696,8 @@ Perl_SvREFCNT_inc_void(SV *sv)
 PERL_STATIC_INLINE void
 Perl_SvREFCNT_dec(pTHX_ SV *sv)
 {
+    PERL_ARGS_ASSERT_SVREFCNT_DEC;
+
     if (LIKELY(sv != NULL)) {
         U32 rc = SvREFCNT(sv);
         if (LIKELY(rc > 1))
@@ -709,9 +719,9 @@ Perl_SvREFCNT_dec_ret_NULL(pTHX_ SV *sv)
 PERL_STATIC_INLINE void
 Perl_SvREFCNT_dec_NN(pTHX_ SV *sv)
 {
-    U32 rc = SvREFCNT(sv);
-
     PERL_ARGS_ASSERT_SVREFCNT_DEC_NN;
+
+    U32 rc = SvREFCNT(sv);
 
     if (LIKELY(rc > 1))
         SvREFCNT(sv) = rc - 1;
@@ -815,7 +825,8 @@ guaranteed to evaluate C<sv> only once.
 */
 
 PERL_STATIC_INLINE IV
-Perl_SvIV(pTHX_ SV *sv) {
+Perl_SvIV(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVIV;
 
     if (SvIOK_nog(sv))
@@ -824,7 +835,8 @@ Perl_SvIV(pTHX_ SV *sv) {
 }
 
 PERL_STATIC_INLINE UV
-Perl_SvUV(pTHX_ SV *sv) {
+Perl_SvUV(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVUV;
 
     if (SvUOK_nog(sv))
@@ -833,7 +845,8 @@ Perl_SvUV(pTHX_ SV *sv) {
 }
 
 PERL_STATIC_INLINE NV
-Perl_SvNV(pTHX_ SV *sv) {
+Perl_SvNV(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVNV;
 
     if (SvNOK_nog(sv))
@@ -842,7 +855,8 @@ Perl_SvNV(pTHX_ SV *sv) {
 }
 
 PERL_STATIC_INLINE IV
-Perl_SvIV_nomg(pTHX_ SV *sv) {
+Perl_SvIV_nomg(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVIV_NOMG;
 
     if (SvIOK(sv))
@@ -851,7 +865,8 @@ Perl_SvIV_nomg(pTHX_ SV *sv) {
 }
 
 PERL_STATIC_INLINE UV
-Perl_SvUV_nomg(pTHX_ SV *sv) {
+Perl_SvUV_nomg(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVUV_NOMG;
 
     if (SvUOK(sv))
@@ -860,7 +875,8 @@ Perl_SvUV_nomg(pTHX_ SV *sv) {
 }
 
 PERL_STATIC_INLINE NV
-Perl_SvNV_nomg(pTHX_ SV *sv) {
+Perl_SvNV_nomg(pTHX_ SV *sv)
+{
     PERL_ARGS_ASSERT_SVNV_NOMG;
 
     if (SvNOK(sv))
@@ -885,10 +901,11 @@ S_sv_or_pv_pos_u2b(pTHX_ SV *sv, const char *pv, STRLEN pos, STRLEN *lenp)
 PERL_STATIC_INLINE char *
 Perl_sv_pvutf8n_force_wrapper(pTHX_ SV * const sv, STRLEN * const lp, const U32 dummy)
 {
+    PERL_ARGS_ASSERT_SV_PVUTF8N_FORCE_WRAPPER;
+
     /* This is just so can be passed to Perl_SvPV_helper() as a function
      * pointer with the same signature as all the other such pointers, and
      * having hence an unused parameter */
-    PERL_ARGS_ASSERT_SV_PVUTF8N_FORCE_WRAPPER;
     PERL_UNUSED_ARG(dummy);
 
     return sv_pvutf8n_force(sv, lp);
@@ -897,10 +914,11 @@ Perl_sv_pvutf8n_force_wrapper(pTHX_ SV * const sv, STRLEN * const lp, const U32 
 PERL_STATIC_INLINE char *
 Perl_sv_pvbyten_force_wrapper(pTHX_ SV * const sv, STRLEN * const lp, const U32 dummy)
 {
+    PERL_ARGS_ASSERT_SV_PVBYTEN_FORCE_WRAPPER;
+
     /* This is just so can be passed to Perl_SvPV_helper() as a function
      * pointer with the same signature as all the other such pointers, and
      * having hence an unused parameter */
-    PERL_ARGS_ASSERT_SV_PVBYTEN_FORCE_WRAPPER;
     PERL_UNUSED_ARG(dummy);
 
     return sv_pvbyten_force(sv, lp);
@@ -917,6 +935,8 @@ Perl_SvPV_helper(pTHX_
                  const U32 return_flags
                 )
 {
+    PERL_ARGS_ASSERT_SVPV_HELPER;
+
     /* 'type' should be known at compile time, so this is reduced to a single
      * conditional at runtime */
     if (   (type == SvPVbyte_type_      && SvPOK_byte_nog(sv))
@@ -973,9 +993,9 @@ SV is B<not> incremented.
 PERL_STATIC_INLINE SV *
 Perl_newRV_noinc(pTHX_ SV *const tmpRef)
 {
-    SV *sv = newSV_type(SVt_IV);
-
     PERL_ARGS_ASSERT_NEWRV_NOINC;
+
+    SV *sv = newSV_type(SVt_IV);
 
     SvTEMP_off(tmpRef);
 
@@ -1001,6 +1021,32 @@ Perl_sv_setpv_freshbuf(pTHX_ SV *const sv)
                                    functions use it */
     SvTAINT(sv);
     return SvPVX(sv);
+}
+
+/*
+=for apidoc newSVsv
+=for apidoc_item newSVsv_flags
+=for apidoc_item newSVsv_nomg
+
+These create a new SV which is an exact duplicate of the original SV
+(using C<newSVsv_flags_NN>.)
+
+They differ only in that C<newSVsv> performs 'get' magic; C<newSVsv_nomg> skips
+any magic; and C<newSVsv_flags> allows you to explicitly set a C<flags>
+parameter.
+
+=cut
+*/
+
+PERL_STATIC_INLINE SV *
+Perl_newSVsv_flags(pTHX_ SV *const old, I32 flags)
+{
+    PERL_ARGS_ASSERT_NEWSVSV_FLAGS;
+
+    if (!old)
+        return NULL;
+
+    return newSVsv_flags_NN(old, flags);
 }
 
 /*

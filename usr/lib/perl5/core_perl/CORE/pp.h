@@ -43,13 +43,13 @@ rewritten to replace PUSHs() etc with rpp_push_1() etc.
 #ifdef PERL_RC_STACK
 #  define XSPP_wrapped(xsppw_name, xsppw_nargs, xsppw_nlists)  \
                                                                \
-STATIC OP* S_##xsppw_name##_norc(pTHX);                        \
+static OP* S_##xsppw_name##_norc(pTHX);                        \
 OP* xsppw_name(pTHX)                                           \
 {                                                              \
     return Perl_pp_wrap(aTHX_ S_##xsppw_name##_norc,           \
                         (xsppw_nargs), (xsppw_nlists));        \
 }                                                              \
-STATIC OP* S_##xsppw_name##_norc(pTHX)
+static OP* S_##xsppw_name##_norc(pTHX)
 
 #else
 #  define XSPP_wrapped(xsppw_name, xsppw_nargs, xsppw_nlists)  \
@@ -79,7 +79,7 @@ L<perlcall>.
 Declares a local copy of perl's stack pointer for the XSUB, available via
 the C<SP> macro.  See C<L</SP>>.
 
-=for apidoc m;||djSP
+=for apidoc mn;||djSP
 
 Declare Just C<SP>.  This is actually identical to C<dSP>, and declares
 a local copy of perl's stack pointer, available via the C<SP> macro.
@@ -397,33 +397,33 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
 #  define EXTEND_HWM_SET(p, n) NOOP
 #endif
 
-/* _EXTEND_SAFE_N(n): private helper macro for EXTEND().
+/* EXTEND_SAFE_N_(n): private helper macro for EXTEND().
  * Tests whether the value of n would be truncated when implicitly cast to
  * SSize_t as an arg to stack_grow(). If so, sets it to -1 instead to
  * trigger a panic. It will be constant folded on platforms where this
  * can't happen.
  */
 
-#define _EXTEND_SAFE_N(n) \
+#define EXTEND_SAFE_N_(n) \
         (sizeof(n) > sizeof(SSize_t) && ((SSize_t)(n) != (n)) ? -1 : (n))
 
 #ifdef STRESS_REALLOC
 # define EXTEND_SKIP(p, n) EXTEND_HWM_SET(p, n)
 
 # define EXTEND(p,n)   STMT_START {                                     \
-                           sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
+                           sp = stack_grow(sp,p,EXTEND_SAFE_N_(n));     \
                            PERL_UNUSED_VAR(sp);                         \
                        } STMT_END
 /* Same thing, but update mark register too. */
 # define MEXTEND(p,n)   STMT_START {                                    \
                             const SSize_t markoff = mark - PL_stack_base; \
-                            sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));    \
+                            sp = stack_grow(sp,p,EXTEND_SAFE_N_(n));    \
                             mark = PL_stack_base + markoff;             \
                             PERL_UNUSED_VAR(sp);                        \
                         } STMT_END
 #else
 
-/* _EXTEND_NEEDS_GROW(p,n): private helper macro for EXTEND().
+/* EXTEND_NEEDS_GROW_(p,n): private helper macro for EXTEND().
  * Tests to see whether n is too big and we need to grow the stack. Be
  * very careful if modifying this. There are many ways to get things wrong
  * (wrapping, truncating etc) that could cause a false negative and cause
@@ -439,7 +439,7 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
  * this just gives a safe false positive
  */
 
-#  define _EXTEND_NEEDS_GROW(p,n) ((n) < 0 || PL_stack_max - (p) < (n))
+#  define EXTEND_NEEDS_GROW_(p,n) ((n) < 0 || PL_stack_max - (p) < (n))
 
 
 /* EXTEND_SKIP(): used for where you would normally call EXTEND(), but
@@ -452,23 +452,23 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
 
 #  define EXTEND_SKIP(p, n) STMT_START {                                \
                                 EXTEND_HWM_SET(p, n);                   \
-                                assert(!_EXTEND_NEEDS_GROW(p,n));       \
+                                assert(!EXTEND_NEEDS_GROW_(p,n));       \
                             } STMT_END
 
 
 #  define EXTEND(p,n)   STMT_START {                                    \
                          EXTEND_HWM_SET(p, n);                          \
-                         if (UNLIKELY(_EXTEND_NEEDS_GROW(p,n))) {       \
-                           sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
+                         if (UNLIKELY(EXTEND_NEEDS_GROW_(p,n))) {       \
+                           sp = stack_grow(sp,p,EXTEND_SAFE_N_(n));     \
                            PERL_UNUSED_VAR(sp);                         \
                          }                                              \
                         } STMT_END
 /* Same thing, but update mark register too. */
 #  define MEXTEND(p,n)  STMT_START {                                    \
                          EXTEND_HWM_SET(p, n);                          \
-                         if (UNLIKELY(_EXTEND_NEEDS_GROW(p,n))) {       \
+                         if (UNLIKELY(EXTEND_NEEDS_GROW_(p,n))) {       \
                            const SSize_t markoff = mark - PL_stack_base;\
-                           sp = stack_grow(sp,p,_EXTEND_SAFE_N(n));     \
+                           sp = stack_grow(sp,p,EXTEND_SAFE_N_(n));     \
                            mark = PL_stack_base + markoff;              \
                            PERL_UNUSED_VAR(sp);                         \
                          }                                              \
@@ -653,14 +653,16 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
             (void)Perl_tmps_grow_p(aTHX_ eMiX);			\
     } STMT_END
 
-#define AMGf_noright	1
-#define AMGf_noleft	2
-#define AMGf_assign	4       /* op supports mutator variant, e.g. $x += 1 */
-#define AMGf_unary	8
-#define AMGf_numeric	0x10	/* for Perl_try_amagic_bin */
+#define AMGf_noright	  1
+#define AMGf_noleft	  2
+#define AMGf_assign	  4    /* op supports mutator variant, e.g. $x += 1 */
+#define AMGf_unary	  8
+#define AMGf_numeric	  0x0010   /* for Perl_try_amagic_bin */
 
-#define AMGf_want_list	0x40
-#define AMGf_numarg	0x80
+#define AMGf_want_list	  0x0040
+#define AMGf_numarg	  0x0080
+#define AMGf_force_scalar 0x0100
+#define AMGf_force_overload SV_FORCE_OVERLOAD /* ignore HINTS_NO_AMAGIC */
 
 
 /* do SvGETMAGIC on the stack args before checking for overload */
@@ -676,8 +678,22 @@ Does not use C<TARG>.  See also C<L</XPUSHu>>, C<L</mPUSHu>> and C<L</PUSHu>>.
             return NORMAL; \
     } STMT_END
 
+/*
+=for apidoc    Am|SV *|AMG_CALLunary|SV *sv|int meth
+=for apidoc_item |SV *|AMG_CALLunary_flags|SV *sv|int meth|int flags
+
+Macro wrappers around L</amagic_call> to call any unary magic.
+
+Sets the C<AMGf_noright> and C<AMGf_unary> flags.
+
+=cut
+*/
+
 #define AMG_CALLunary(sv,meth) \
     amagic_call(sv,&PL_sv_undef, meth, AMGf_noright | AMGf_unary)
+
+#define AMG_CALLunary_flags(sv,meth, flags) \
+    amagic_call(sv,&PL_sv_undef, meth, AMGf_noright | AMGf_unary | (flags))
 
 /* No longer used in core. Use AMG_CALLunary instead */
 #define AMG_CALLun(sv,meth) AMG_CALLunary(sv, CAT2(meth,_amg))

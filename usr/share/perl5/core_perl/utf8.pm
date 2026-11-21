@@ -1,13 +1,13 @@
-package utf8;
+package utf8 1.29;
 
-use strict;
-use warnings;
+# This file only defines the import/unimport subs, the rest are implemented by
+# always-present functions in the perl interpreter itself.
+# See also `universal.c` in the perl source
+
+use v5.40;
 
 our $utf8_hint_bits  = 0x00800000;
 our $ascii_hint_bits = 0x00000010;  # Turned off when utf8 turned on
-
-our $VERSION = '1.27';
-our $AUTOLOAD;
 
 sub import {
     $^H |= $utf8_hint_bits;
@@ -18,13 +18,6 @@ sub unimport {
     $^H &= ~$utf8_hint_bits;
 }
 
-sub AUTOLOAD {
-    goto &$AUTOLOAD if defined &$AUTOLOAD;
-    require Carp;
-    Carp::croak("Undefined subroutine $AUTOLOAD called");
-}
-
-1;
 __END__
 
 =head1 NAME

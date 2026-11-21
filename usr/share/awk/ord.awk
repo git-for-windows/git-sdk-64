@@ -20,10 +20,6 @@ function _ord_init(    low, high, i, t)
     if (low == "\a") {    # regular ascii
         low = 0
         high = 127
-    } else if (sprintf("%c", 128 + 7) == "\a") {
-        # ascii, mark parity
-        low = 128
-        high = 255
     } else {        # ebcdic(!)
         low = 0
         high = 255

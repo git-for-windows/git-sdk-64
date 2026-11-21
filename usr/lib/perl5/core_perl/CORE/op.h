@@ -64,12 +64,14 @@ typedef PERL_BITFIELD16 Optype;
     U8		op_private;
 #endif
 
+#define o1_     PERL_UNIQUE_NAME(o)
+#define type1_  PERL_UNIQUE_NAME(type)
 #define OpTYPE_set(o,type)                      \
     STMT_START {                                \
-        OP *o_ = (OP *)o;                       \
-        OPCODE type_ = type;                    \
-        o_->op_type = type_;                    \
-        o_->op_ppaddr = PL_ppaddr[type_];       \
+        OP *o1_ = (OP *)o;                      \
+        OPCODE type1_ = type;                   \
+        o1_->op_type = type1_;                  \
+        o1_->op_ppaddr = PL_ppaddr[type1_];     \
     } STMT_END
 
 /* If op_type:9 is changed to :10, also change cx_pusheval()
@@ -164,6 +166,8 @@ Deprecated.  Use C<GIMME_V> instead.
                                 /*  On OP_RETURN, module_true is in effect */
                                 /*  On OP_NEXT/OP_LAST/OP_REDO, there is no
                                  *  loop label */
+                                /*  On OP_COND_EXPR, indicates that an empty
+                                 *  "else" condition was optimized away. */
 /* There is no room in op_flags for this one, so it has its own bit-
    field member (op_folded) instead.  The flag is only used to tell
    op_convert_list to set op_folded.  */
@@ -300,12 +304,12 @@ struct pmop {
  * processing or asserts */
 #ifdef USE_ITHREADS
 #define PM_GETRE_raw(o)	(REGEXP*)(PL_regex_pad[(o)->op_pmoffset])
-#define PM_GETRE(o)	(SvTYPE(PL_regex_pad[(o)->op_pmoffset]) == SVt_REGEXP \
-                         ? (REGEXP*)(PL_regex_pad[(o)->op_pmoffset]) : NULL)
+#define PM_GETRE(o)	(SvTYPE(PM_GETRE_raw(o)) == SVt_REGEXP      \
+                         ? PM_GETRE_raw(o) : NULL)
 
-#define PM_SETRE_raw(o,r)	STMT_START {					\
-                            PL_regex_pad[(o)->op_pmoffset] = MUTABLE_SV(r); \
-                        } STMT_END
+#define PM_SETRE_raw(o,r)  STMT_START {					     \
+                              PL_regex_pad[(o)->op_pmoffset] = MUTABLE_SV(r);\
+                           } STMT_END
 /* The assignment is just to enforce type safety (or at least get a warning).
  */
 /* With first class regexps not via a reference one needs to assign
@@ -315,20 +319,20 @@ struct pmop {
 /* BEWARE - something that calls this macro passes (r) which has a side
    effect.  */
 #define PM_SETRE(o,r)	STMT_START {					\
-                            REGEXP *const _pm_setre = (r);		\
-                            assert(_pm_setre);				\
-                            PL_regex_pad[(o)->op_pmoffset] = MUTABLE_SV(_pm_setre); \
+                            REGEXP *const pm_setre_ = (r);		\
+                            assert(pm_setre_);				\
+                            PM_SETRE_raw(o, pm_setre_);                 \
                         } STMT_END
 #else
 #define PM_GETRE_raw(o) ((o)->op_pmregexp)
-#define PM_GETRE(o)     ((o)->op_pmregexp)
+#define PM_GETRE(o)     PM_GETRE_raw(o)
 #define PM_SETRE_raw(o,r) ((o)->op_pmregexp = (r))
-#define PM_SETRE(o,r)   ((o)->op_pmregexp = (r))
+#define PM_SETRE(o,r)   PM_SETRE_raw(o,r)
 #endif
 
 /* Currently these PMf flags occupy a single 32-bit word.  Not all bits are
  * currently used.  The lower bits are shared with their corresponding RXf flag
- * bits, up to but not including _RXf_PMf_SHIFT_NEXT.  The unused bits
+ * bits, up to but not including RXf_PMf_SHIFT_NEXT_.  The unused bits
  * immediately follow; finally the used Pmf-only (unshared) bits, so that the
  * highest bit in the word is used.  This gathers all the unused bits as a pool
  * in the middle, like so: 11111111111111110000001111111111
@@ -339,7 +343,7 @@ struct pmop {
  * breaking binary compatibility.
  *
  * To add shared bits, do so in op_reg_common.h.  This should change
- * _RXf_PMf_SHIFT_NEXT so that things won't compile.  Then come to regexp.h and
+ * RXf_PMf_SHIFT_NEXT_ so that things won't compile.  Then come to regexp.h and
  * op.h and adjust the constant adders in the definitions of PMf_BASE_SHIFT and
  * Pmf_BASE_SHIFT down by the number of shared bits you added.  That's it.
  * Things should be binary compatible.  But if either of these gets to having
@@ -356,7 +360,7 @@ struct pmop {
  * allocate off the low end until you get to PMf_BASE_SHIFT+0.  If that isn't
  * enough, move PMf_BASE_SHIFT down (if possible) and add the new bit at the
  * other end instead; this preserves binary compatibility. */
-#define PMf_BASE_SHIFT (_RXf_PMf_SHIFT_NEXT+2)
+#define PMf_BASE_SHIFT (RXf_PMf_SHIFT_NEXT_+2)
 
 /* Set by the parser if it discovers an error, so the regex shouldn't be
  * compiled */
@@ -909,7 +913,7 @@ Exactly like C<XopENTRY(XopENTRY(Perl_custom_op_xop(aTHX_ o), which)> but more
 efficient.  The C<which> parameter is identical to L</XopENTRY>.
 
 =for apidoc Amu|void|XopENTRY_set|XOP *xop|token which|value
-Set a member of the XOP structure.  C<which> is a cpp token
+Set a member of the XOP structure to C<value>.  C<which> is a cpp token
 indicating which entry to set.  See L<perlguts/"Custom Operators">
 for details about the available members and how
 they are used.  This macro evaluates its argument
@@ -1094,7 +1098,7 @@ C<sib> is non-null. For a higher-level interface, see C<L</op_sibling_splice>>.
 #define OP_IS_STAT(op) (OP_IS_FILETEST(op) || (op) == OP_LSTAT || (op) == OP_STAT)
 
 #define OpHAS_SIBLING(o)	(cBOOL((o)->op_moresib))
-#define OpSIBLING(o)		(0 + (o)->op_moresib ? (o)->op_sibparent : NULL)
+#define OpSIBLING(o)		((o)->op_moresib ? (o)->op_sibparent : NULL)
 #define OpMORESIB_set(o, sib) ((o)->op_moresib = 1, (o)->op_sibparent = (sib))
 #define OpLASTSIB_set(o, parent) \
     ((o)->op_moresib = 0, (o)->op_sibparent = (parent))
@@ -1185,6 +1189,35 @@ struct op_argcheck_aux {
     UV   params;     /* number of positional parameters */
     UV   opt_params; /* number of optional positional parameters */
     char slurpy;     /* presence of slurpy: may be '\0', '@' or '%' */
+};
+
+/* for OP_MULTIPARAM */
+
+struct op_multiparam_named_aux {
+    PADOFFSET   padix;
+    const char *namepv;
+    STRLEN      namelen;
+    U32         namehash;
+
+    bool is_required : 1;
+};
+
+struct op_multiparam_aux {
+    /* This struct will be allocated in one big chunk, containing this header
+     * itself, followed an array whose size is given by n_positional. The
+     * pointer at the end will point into the same malloc block
+     */
+    size_t min_args;     /* = the number of mandatory scalar parameters */
+    size_t n_positional; /* = the number of mandatory + optional positional scalar parameters, not counting a final slurpy */
+    size_t n_named;      /* = the number of (mandatory or optional) named scalar parameters */
+    char  slurpy;
+    PADOFFSET slurpy_padix;
+
+    /* The following points at storage allocated along with the struct itself, immediately afterwards */
+    PADOFFSET *param_padix;
+
+    /* The following may be separately allocated */
+    struct op_multiparam_named_aux *named;
 };
 
 #define MI_INIT_WORKAROUND_PACK "Module::Install::DSL"

@@ -1,20 +1,12 @@
-package B::Concise;
+package B::Concise 1.012;
 # Copyright (C) 2000-2003 Stephen McCamant. All rights reserved.
 # This program is free software; you can redistribute and/or modify it
 # under the same terms as Perl itself.
 
-# Note: we need to keep track of how many use declarations/BEGIN
-# blocks this module uses, so we can avoid printing them when user
-# asks for the BEGIN blocks in her program. Update the comments and
-# the count in concise_specials if you add or delete one. The
-# -MO=Concise counts as use #1.
+use v5.40;
 
-use strict; # use #2
-use warnings; # uses #3 and #4, since warnings uses Carp
+use Exporter 'import';
 
-use Exporter 'import'; # use #5
-
-our $VERSION   = "1.007";
 our @EXPORT_OK = qw( set_style set_style_standard add_callback
 		     concise_subref concise_cv concise_main
 		     add_style walk_output compile reset_sequence );
@@ -24,7 +16,6 @@ our %EXPORT_TAGS =
       cb	=> [qw( add_callback )],
       mech	=> [qw( concise_subref concise_cv concise_main )],  );
 
-# use #6
 use B qw(class ppname main_start main_root main_cv cstring svref_2object
 	 SVf_IOK SVf_NOK SVf_POK SVf_IVisUV SVf_FAKE OPf_KIDS OPf_SPECIAL
          OPf_STACKED
@@ -83,6 +74,7 @@ our @callbacks;		# allow external management
 
 set_style_standard("concise");
 
+my $begin_count;
 my $curcv;
 my $cop_seq_base;
 
@@ -152,9 +144,9 @@ sub concise_stashref {
 		    : ref\$h->{$k} eq 'GLOB' ? *{$h->{$k}}{CODE} || next
 		    : next;
 	reset_sequence();
-	print "FUNC: *", $name, "::", $k, "\n";
+	print $walkHandle "FUNC: *", $name, "::", $k, "\n";
 	my $codeobj = svref_2object($coderef);
-	next unless ref $codeobj eq 'B::CV';
+	next unless $codeobj isa B::CV;
 	eval { concise_cv_obj($order, $codeobj, $k) };
 	warn "err $@ on $codeobj" if $@;
     }
@@ -198,7 +190,7 @@ sub concise_cv_obj {
     elsif ($order eq "basic") {
 	# walk_topdown($cv->ROOT, sub { $_[0]->concise($_[1]) }, 0);
 	my $root = $cv->ROOT;
-	unless (ref $root eq 'B::NULL') {
+	unless ($root isa B::NULL) {
 	    walk_topdown($root, sub { $_[0]->concise($_[1]) }, 0);
 	} else {
 	    print $walkHandle "B::NULL encountered doing ROOT on $cv. avoiding disaster\n";
@@ -228,8 +220,9 @@ sub concise_main {
 sub concise_specials {
     my($name, $order, @cv_s) = @_;
     my $i = 1;
+
     if ($name eq "BEGIN") {
-	splice(@cv_s, 0, 8); # skip 7 BEGIN blocks in this file. NOW 8 ??
+	splice(@cv_s, 0, $begin_count); # skip our BEGIN blocks from this file
     } elsif ($name eq "CHECK") {
 	pop @cv_s; # skip the CHECK block that calls us
     }
@@ -338,23 +331,23 @@ sub compile {
 
 	    if ($objname eq "BEGIN") {
 		concise_specials("BEGIN", $order,
-				 B::begin_av->isa("B::AV") ?
+				 B::begin_av isa B::AV ?
 				 B::begin_av->ARRAY : ());
 	    } elsif ($objname eq "INIT") {
 		concise_specials("INIT", $order,
-				 B::init_av->isa("B::AV") ?
+				 B::init_av isa B::AV ?
 				 B::init_av->ARRAY : ());
 	    } elsif ($objname eq "CHECK") {
 		concise_specials("CHECK", $order,
-				 B::check_av->isa("B::AV") ?
+				 B::check_av isa B::AV ?
 				 B::check_av->ARRAY : ());
 	    } elsif ($objname eq "UNITCHECK") {
 		concise_specials("UNITCHECK", $order,
-				 B::unitcheck_av->isa("B::AV") ?
+				 B::unitcheck_av isa B::AV ?
 				 B::unitcheck_av->ARRAY : ());
 	    } elsif ($objname eq "END") {
 		concise_specials("END", $order,
-				 B::end_av->isa("B::AV") ?
+				 B::end_av isa B::AV ?
 				 B::end_av->ARRAY : ());
 	    }
 	    else {
@@ -406,7 +399,7 @@ my %opclass = ('OP' => "0", 'UNOP' => "1", 'BINOP' => "2", 'LOGOP' => "|",
 	       'PVOP' => '"', 'LOOP' => "{", 'COP' => ";", 'PADOP' => "#",
 	       'METHOP' => '.', UNOP_AUX => '+');
 
-no warnings 'qw'; # "Possible attempt to put comments..."; use #7
+no warnings 'qw'; # "Possible attempt to put comments..."
 my @linenoise =
   qw'#  () sc (  @? 1  $* gv *{ m$ m@ m% m? p/ *$ $  $# & a& pt \\ s\\ rf bl
      `  *? <> ?? ?/ r/ c/ // qr s/ /c y/ =  @= C  sC Cp sp df un BM po +1 +I
@@ -476,12 +469,11 @@ sub walk_topdown {
     }
     if (class($op) eq "PMOP") {
 	my $maybe_root = $op->code_list;
-	if ( ref($maybe_root) and $maybe_root->isa("B::OP")
-	 and not $op->flags & OPf_KIDS) {
+	if ($maybe_root isa B::OP and not $op->flags & OPf_KIDS) {
 	    walk_topdown($maybe_root, $sub, $level + 1);
 	}
 	$maybe_root = $op->pmreplroot;
-	if (ref($maybe_root) and $maybe_root->isa("B::OP")) {
+	if ($maybe_root isa B::OP) {
 	    # It really is the root of the replacement, not something
 	    # else stored here for lack of space elsewhere
 	    walk_topdown($maybe_root, $sub, $level + 1);
@@ -662,11 +654,7 @@ sub private_flags {
 
             if (defined $enum) {
                 # try to convert numeric $val into symbolic
-                my @enum = @$enum;
-                while (@enum) {
-                    my $ix    = shift @enum;
-                    my $name  = shift @enum;
-                    my $label = shift @enum;
+                for my ($ix, $name, $label) (@$enum) {
                     if ($val == $ix) {
                         $val = $label;
                         last;
@@ -697,7 +685,10 @@ sub concise_sv {
     $hr->{svclass} = class($sv);
     $hr->{svclass} = "UV"
       if $hr->{svclass} eq "IV" and $sv->FLAGS & SVf_IVisUV;
-    Carp::cluck("bad concise_sv: $sv") unless $sv and $$sv;
+    unless ($sv and $$sv) {
+        require Carp;
+        Carp::cluck("bad concise_sv: $sv");
+    }
     $hr->{svaddr} = sprintf("%#x", $$sv);
     if ($hr->{svclass} eq "GV" && $sv->isGV_with_GP()) {
 	my $gv = $sv;
@@ -759,7 +750,7 @@ sub concise_sv {
 	    }
 	}
 
-	$hr->{svval} = 'undef' unless defined $hr->{svval};
+	$hr->{svval} //= 'undef';
 	my $out = $hr->{svclass};
 	return $out .= " $hr->{svval}" ; 
     }
@@ -1087,6 +1078,10 @@ sub tree {
            map(" " x (length($name)+$size) . $_, @lines));
 }
 
+# Count how many BEGIN blocks have been used to avoid printing them when a
+# user asks for the BEGIN blocks in their program. Must be our last BEGIN.
+BEGIN { $begin_count =()= B::begin_av isa B::AV ? B::begin_av->ARRAY : () }
+
 # *** Warning: fragile kludge ahead ***
 # Because the B::* modules run in the same interpreter as the code
 # they're compiling, their presence tends to distort the view we have of
@@ -1121,8 +1116,6 @@ sub tree {
 
 my $cop_seq_mnum = 12;
 $cop_seq_base = svref_2object(eval 'sub{0;}')->START->cop_seq + $cop_seq_mnum;
-
-1;
 
 __END__
 
@@ -1773,13 +1766,13 @@ Identifies _POSIX_ARG_MAX as a constant sub, optimized to an IV.
 Although POSIX isn't entirely consistent across platforms, this is
 likely to be present in virtually all of them.
 
-=item perl -MPOSIX -MO=Concise,a -e 'print _POSIX_SAVED_IDS'
+=item perl -MPOSIX -MO=Concise -e 'print _POSIX_SAVED_IDS'
 
 This renders a print statement, which includes a call to the function.
 It's identical to rendering a file with a use call and that single
 statement, except for the filename which appears in the nextstate ops.
 
-=item perl -MPOSIX -MO=Concise,a -e 'sub a{_POSIX_SAVED_IDS}'
+=item perl -MPOSIX -MO=Concise,a -e 'sub a{print _POSIX_SAVED_IDS}'
 
 This is B<very> similar to previous, only the first two ops differ.  This
 subroutine rendering is more representative, insofar as a single main

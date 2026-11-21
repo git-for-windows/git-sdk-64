@@ -107,7 +107,7 @@ struct mro_meta {
    Don't access this directly.
 */
 
-union _xhvnameu {
+union xhvnameu_ {
     HEK *xhvnameu_name;		/* When xhv_name_count is 0 */
     HEK **xhvnameu_names;	/* When xhv_name_count is non-0 */
 };
@@ -116,7 +116,7 @@ union _xhvnameu {
 struct suspended_compcv;
 
 struct xpvhv_aux {
-    union _xhvnameu xhv_name_u;	/* name, if a symbol table */
+    union xhvnameu_ xhv_name_u;	/* name, if a symbol table */
     AV		*xhv_backreferences; /* back references for weak references */
     HE		*xhv_eiter;	/* current entry of iterator */
     I32		xhv_riter;	/* current root of iterator */
@@ -137,12 +137,15 @@ struct xpvhv_aux {
     U32         xhv_aux_flags;      /* assorted extra flags */
 
     /* The following fields are only valid if we have the flag HvAUXf_IS_CLASS */
+    U32         xhv_class_flags;
     HV          *xhv_class_superclass;         /* STASH of the :isa() base class */
     CV          *xhv_class_initfields_cv;      /* CV for running initfields */
     AV          *xhv_class_adjust_blocks;      /* CVs containing the ADJUST blocks */
     PADNAMELIST *xhv_class_fields;             /* PADNAMEs with PadnameIsFIELD() */
     PADOFFSET    xhv_class_next_fieldix;
     HV          *xhv_class_param_map;          /* Maps param names to field index stored in UV */
+    AV          *xhv_class_subclasses_pending_seal;
+                                               /* STASHes of subclasses that are awaiting seal after this */
 
     struct suspended_compcv
                 *xhv_class_suspended_initfields_compcv;
@@ -155,18 +158,23 @@ struct xpvhv_aux {
 #define HvSTASH_IS_CLASS(hv) \
     (HvHasAUX(hv) && HvAUX(hv)->xhv_aux_flags & HvAUXf_IS_CLASS)
 
+#define HvCLASSf_SEALED     0x1   /* class seal operation has been invoked */
+
+#define HvCLASS_IS_SEALED(hv) \
+    (HvSTASH_IS_CLASS(hv) && HvAUX(hv)->xhv_class_flags & HvCLASSf_SEALED)
+
 /* hash structure: */
 /* This structure must match the beginning of struct xpvmg in sv.h. */
 struct xpvhv {
     HV*		xmg_stash;	/* class package */
-    union _xmgu	xmg_u;
+    union xmgu_	xmg_u;
     STRLEN      xhv_keys;       /* total keys, including placeholders */
     STRLEN      xhv_max;        /* subscript of last element of xhv_array */
 };
 
 struct xpvhv_with_aux {
     HV         *xmg_stash;      /* class package */
-    union _xmgu xmg_u;
+    union xmgu_ xmg_u;
     STRLEN      xhv_keys;       /* total keys, including placeholders */
     STRLEN      xhv_max;        /* subscript of last element of xhv_array */
     struct xpvhv_aux xhv_aux;
@@ -208,7 +216,10 @@ See C<L</SvSTASH>>, C<L</CvSTASH>>.
 =for apidoc Am|STRLEN|HvNAMELEN|HV *stash
 Returns the length of the stash's name.
 
+=cut
+
 Disfavored forms of HvNAME and HvNAMELEN; suppress mention of them
+
 =for apidoc Cmh|char*|HvNAME_get|HV* stash
 =for apidoc Amh|I32|HvNAMELEN_get|HV* stash
 
@@ -246,8 +257,8 @@ Returns the value slot (type C<SV*>)
 stored in the hash entry.  Can be assigned
 to.
 
-  SV *foo= HeVAL(hv);
-  HeVAL(hv)= sv;
+  SV *foo= HeVAL(he);
+  HeVAL(he)= sv;
 
 
 =for apidoc Am|U32|HeHASH|HE* he
@@ -555,10 +566,12 @@ whether it is valid to call C<HvAUX()>.
 #define hv_exists(hv, key, klen)					\
     cBOOL(hv_common_key_len((hv), (key), (klen), HV_FETCH_ISEXISTS, NULL, 0))
 
-#define hv_fetch(hv, key, klen, lval)					\
-    ((SV**) hv_common_key_len((hv), (key), (klen), (lval)		\
-                              ? (HV_FETCH_JUST_SV | HV_FETCH_LVALUE)	\
-                              : HV_FETCH_JUST_SV, NULL, 0))
+#define hv_fetch(hv, key, klen, lval)					    \
+    ((SV**) hv_common_key_len((hv), (key), (klen),                          \
+                              (HV_FETCH_JUST_SV | ((lval)                   \
+                                                   ? HV_FETCH_LVALUE        \
+                                                   : 0)),                   \
+                              NULL, 0))
 
 #define hv_delete(hv, key, klen, flags)					\
     (MUTABLE_SV(hv_common_key_len((hv), (key), (klen),			\
@@ -579,6 +592,7 @@ whether it is valid to call C<HvAUX()>.
 =for apidoc_defn Am|SV**|hv_fetchs|HV* hv|"key"|I32 lval
 =for apidoc_defn Am|SV *|hv_deletes|HV *hv|"key"|U32 flags
 =for apidoc_defn Am|void|hv_name_sets|HV *hv|"name"|U32 flags
+=for apidoc_defn Am|SV**|hv_stores|HV *hv|"name"|U32 flags
 =cut
 */
 #define hv_fetchs(hv, key, lval) \
@@ -647,26 +661,8 @@ struct refcounted_he {
     char                  refcounted_he_data[1];
 };
 
-/*
-=for apidoc m|SV *|refcounted_he_fetch_pvs|const struct refcounted_he *chain|"key"|U32 flags
-
-Like L</refcounted_he_fetch_pvn>, but takes a literal string
-instead of a string/length pair, and no precomputed hash.
-
-=cut
-*/
-
 #define refcounted_he_fetch_pvs(chain, key, flags) \
     Perl_refcounted_he_fetch_pvn(aTHX_ chain, STR_WITH_LEN(key), 0, flags)
-
-/*
-=for apidoc m|struct refcounted_he *|refcounted_he_new_pvs|struct refcounted_he *parent|"key"|SV *value|U32 flags
-
-Like L</refcounted_he_new_pvn>, but takes a literal string
-instead of a string/length pair, and no precomputed hash.
-
-=cut
-*/
 
 #define refcounted_he_new_pvs(parent, key, value, flags) \
     Perl_refcounted_he_new_pvn(aTHX_ parent, STR_WITH_LEN(key), 0, value, flags)

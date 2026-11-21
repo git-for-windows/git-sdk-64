@@ -47,7 +47,7 @@ bytes.
 =cut
 */
 
-#define UNICODE_MAJOR_VERSION   16
+#define UNICODE_MAJOR_VERSION   17
 #define UNICODE_DOT_VERSION     0
 #define UNICODE_DOT_DOT_VERSION 0
 
@@ -57,6 +57,7 @@ bytes.
 
 #   define COMBINING_GRAVE_ACCENT_UTF8  "\xCC\x80"    /* U+0300 */
 #   define COMBINING_DOT_ABOVE_UTF8  "\xCC\x87"    /* U+0307 */
+#   define COMBINING_GREEK_YPOGEGRAMMENI_UTF8  "\xCD\x85"    /* U+0345 */
 
 #   define LATIN_CAPITAL_LETTER_SHARP_S_UTF8  "\xE1\xBA\x9E"    /* U+1E9E */
 
@@ -75,6 +76,7 @@ bytes.
 
 #   define MAX_UNICODE_UTF8  "\xF4\x8F\xBF\xBF"    /* U+10FFFF */
 
+#   define SHY_NATIVE  0xAD    /* U+00AD */
 #   define NBSP_NATIVE  0xA0    /* U+00A0 */
 #   define NBSP_UTF8  "\xC2\xA0"    /* U+00A0 */
 
@@ -122,6 +124,7 @@ bytes.
 
 #   define COMBINING_GRAVE_ACCENT_UTF8  "\xAF\x41"    /* U+0300 */
 #   define COMBINING_DOT_ABOVE_UTF8  "\xAF\x48"    /* U+0307 */
+#   define COMBINING_GREEK_YPOGEGRAMMENI_UTF8  "\xB1\x46"    /* U+0345 */
 
 #   define LATIN_CAPITAL_LETTER_SHARP_S_UTF8  "\xBF\x63\x72"    /* U+1E9E */
 
@@ -140,6 +143,7 @@ bytes.
 
 #   define MAX_UNICODE_UTF8  "\xEE\x42\x73\x73\x73"    /* U+10FFFF */
 
+#   define SHY_NATIVE  0xCA    /* U+00AD */
 #   define NBSP_NATIVE  0x41    /* U+00A0 */
 #   define NBSP_UTF8  "\x80\x41"    /* U+00A0 */
 
@@ -187,6 +191,7 @@ bytes.
 
 #   define COMBINING_GRAVE_ACCENT_UTF8  "\xAD\x41"    /* U+0300 */
 #   define COMBINING_DOT_ABOVE_UTF8  "\xAD\x48"    /* U+0307 */
+#   define COMBINING_GREEK_YPOGEGRAMMENI_UTF8  "\xAF\x46"    /* U+0345 */
 
 #   define LATIN_CAPITAL_LETTER_SHARP_S_UTF8  "\xBF\x62\x71"    /* U+1E9E */
 
@@ -205,6 +210,7 @@ bytes.
 
 #   define MAX_UNICODE_UTF8  "\xEE\x42\x72\x72\x72"    /* U+10FFFF */
 
+#   define SHY_NATIVE  0xCA    /* U+00AD */
 #   define NBSP_NATIVE  0x41    /* U+00A0 */
 #   define NBSP_UTF8  "\x78\x41"    /* U+00A0 */
 
@@ -246,7 +252,7 @@ bytes.
 
 /* The number of code points not matching \pC */
 #ifdef PERL_IN_REGCOMP_ANY
-#  define NON_OTHER_COUNT  154828
+#  define NON_OTHER_COUNT  159631
 #endif
 
 /* The highest code point that has any type of case change */

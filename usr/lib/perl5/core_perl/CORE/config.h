@@ -9,7 +9,7 @@
 
 /* Package name      : perl5
  * Source directory  : .
- * Configuration time: Mon Nov 16 19:04:41 UTC 2026
+ * Configuration time: Fri Nov 20 07:17:24 UTC 2026
  * Configured by     : runneradmin
  * Target system     : cygwin_nt-10.0-20348 runnervm9zap3 3.6.12-50c44b7c.x86_64 2026-10-30 16:46 utc x86_64 cygwin 
  */
@@ -106,12 +106,6 @@
  *	the fcntl() function exists.
  */
 #define HAS_FCNTL		/**/
-
-/* HAS_FDOPENDIR:
- * This symbol, if defined, indicates that the fdopendir routine is
- * available to open a directory descriptor.
- */
-#define HAS_FDOPENDIR		/**/
 
 /* HAS_FGETPOS:
  *	This symbol, if defined, indicates that the fgetpos routine is
@@ -764,9 +758,14 @@
  *	This symbol contains the value of sizeof(short) so that the C
  *	preprocessor can make decisions based on it.
  */
+/* INTMAXSIZE:
+ *	This symbol contains the value of sizeof(intmax_t) so that the C
+ *	preprocessor can make decisions based on it.
+ */
 #define INTSIZE 4		/**/
 #define LONGSIZE 8		/**/
 #define SHORTSIZE 2		/**/
+#define INTMAXSIZE 8		/**/
 
 /* MULTIARCH:
  *	This symbol, if defined, signifies that the build
@@ -2491,6 +2490,13 @@
  */
 #define HAS_FDIM		/**/
 
+/* HAS_FDOPENDIR:
+ *	This symbol, if defined, indicates that the fdopendir() routine is
+ *	available to open directories using an opened file descriptor already
+ *	referring to that directory.
+ */
+#define HAS_FDOPENDIR		/**/
+
 /* HAS_FEGETROUND:
  *	This symbol, if defined, indicates that the fegetround routine is
  *	available to return the macro corresponding to the current rounding
@@ -2731,6 +2737,12 @@
  *	available to get the current working directory.
  */
 #define HAS_GETCWD		/**/
+
+/* HAS_GETENTROPY:
+ *	This symbol, if defined, indicates that the getentropy system call
+ *	is available to retrieve fill a buffer with random bytes.
+ */
+#define HAS_GETENTROPY		/**/
 
 /* HAS_GETESPWNAM:
  *	This symbol, if defined, indicates that the getespwnam system call is
@@ -3807,6 +3819,12 @@
  */
 #define I_STDBOOL		/**/
 
+/* I_STDCKDINT:
+ *	This symbol, if defined, indicates that <stdckdint.h> exists and
+ *	can be included.
+ */
+#define I_STDCKDINT		/**/
+
 /* I_STDINT:
  *	This symbol, if defined, indicates that <stdint.h> exists and
  *	should be included.
@@ -3836,6 +3854,12 @@
  *	should be included.
  */
 #define I_SYS_MOUNT		/**/
+
+/* I_SYS_RANDOM:
+ *	This symbol, if defined, indicates that <sys/random.h> exists and
+ *	should be included.
+ */
+#define I_SYS_RANDOM		/**/
 
 /* I_SYS_STATFS:
  *	This symbol, if defined, indicates that <sys/statfs.h> exists.

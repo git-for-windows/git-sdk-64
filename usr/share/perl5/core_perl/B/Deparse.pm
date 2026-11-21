@@ -7,8 +7,9 @@
 # This is based on the module of the same name by Malcolm Beattie,
 # but essentially none of his code remains.
 
-package B::Deparse 1.85;
+package B::Deparse 1.89;
 use strict;
+use builtin qw( true false );
 use Carp;
 use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
 	 OPf_WANT OPf_WANT_VOID OPf_WANT_SCALAR OPf_WANT_LIST
@@ -26,6 +27,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
          OPpMULTICONCAT_APPEND OPpMULTICONCAT_STRINGIFY OPpMULTICONCAT_FAKE
          OPpTRUEBOOL OPpINDEX_BOOLNEG OPpDEFER_FINALLY
          OPpARG_IF_UNDEF OPpARG_IF_FALSE
+         OPpPARAM_IF_UNDEF OPpPARAM_IF_FALSE
 	 SVf_IOK SVf_NOK SVf_ROK SVf_POK SVf_FAKE SVs_RMG SVs_SMG
 	 SVs_PADTMP
          CVf_NOWARN_AMBIGUOUS CVf_LVALUE CVf_IsMETHOD
@@ -54,6 +56,7 @@ use B qw(class main_root main_start main_cv svref_2object opnumber perlstring
         MDEREF_FLAG_last
         MDEREF_MASK
         MDEREF_SHIFT
+        OPpSTATEMENT
     );
 
 our $AUTOLOAD;
@@ -67,7 +70,7 @@ BEGIN {
     # Easiest way to keep this code portable between version looks to
     # be to fake up a dummy constant that will never actually be true.
     foreach (qw(OPpSORT_INPLACE OPpSORT_DESCEND OPpITER_INDEXED
-		OPpITER_REVERSED OPpCONST_NOVER
+		OPpITER_REVERSED OPpITER_REFALIAS OPpCONST_NOVER
 		OPpPAD_STATE PMf_SKIPWHITE RXf_SKIPWHITE
 		PMf_CHARSET PMf_KEEPCOPY PMf_NOCAPTURE CVf_ANONCONST
 		CVf_LOCKED OPpREVERSE_INPLACE OPpSUBSTR_REPL_FIRST
@@ -273,7 +276,7 @@ BEGIN {
 #  - indent() removes semicolons wherever it sees \cK.
 
 
-BEGIN { for (qw[ const stringify rv2sv list glob pushmark null aelem
+BEGIN { for (qw[ const stringify rv2sv list glob pushmark null stub aelem
 		 kvaslice kvhslice padsv argcheck
                  nextstate dbstate rv2av rv2hv helem pushdefer leavetrycatch
                  custom ]) {
@@ -919,7 +922,8 @@ sub compile {
 	    my $kid;
 	    if ( $root->name eq 'leave'
 	     and ($kid = $root->first)->name eq 'enter'
-	     and !null($kid = $kid->sibling) and $kid->name eq 'stub'
+	     and !null($kid = $kid->sibling) and ($kid->name eq 'stub'
+             or $kid->name eq 'null' and $kid->targ == OP_STUB)
 	     and !null($kid = $kid->sibling) and $kid->name eq 'null'
 	     and class($kid) eq 'COP' and null $kid->sibling )
 	    {
@@ -1067,6 +1071,16 @@ sub ambient_pragmas {
     $self->{'ambient_hinthash'} = $hinthash;
 }
 
+sub ambient_pragmas_from_caller {
+    my $self = shift;
+    my ($hint_bits, $warning_bits, $hinthash) = (caller(0))[8, 9, 10];
+    $self->ambient_pragmas(
+        hint_bits    => $hint_bits,
+        warning_bits => $warning_bits,
+        '%^H'        => $hinthash,
+    );
+}
+
 # This method is the inner loop, so try to keep it simple
 sub deparse {
     my $self = shift;
@@ -1180,6 +1194,181 @@ sub pad_subs {
 }
 
 
+# deparse_multiparam(): deparse, if possible, a sequence of ops into a
+# subroutine signature. If possible, returns either:
+#   (if $use_feature_sig is true): a string representing the signature syntax,
+#     minus the surrounding parentheses.
+#   (if $use_feature_sig is false): a string of perl code that approximates
+#     the behaviour of the signature.
+
+sub deparse_multiparam {
+    my ($self, $topop, $cv, $use_feature_sig) = @_;
+
+    $topop = $topop->first;
+    return unless $$topop and $topop->name eq 'lineseq';
+
+    # last op should be nextstate
+    my $last = $topop->last;
+    return unless $$last
+                    and (   _op_is_or_was($last, OP_NEXTSTATE)
+                         or _op_is_or_was($last, OP_DBSTATE));
+
+    # first OP_NEXTSTATE
+
+    my $o = $topop->first;
+    return unless $$o;
+    return if $o->label;
+
+    # OP_MULTIPARAM
+
+    $o = $o->sibling;
+    return unless $$o and $o->name eq 'multiparam';
+
+    my ($min_args, $max_args, $slurpy, @rest) = $o->aux_list($cv);
+    my $nparams = $max_args;
+    my @param_padix = splice @rest, 0, $nparams, ();
+    my ($slurpy_padix) = @rest;
+
+    my @param_padname    = map { $_ ? $self->padname($_) : '$' } @param_padix;
+    my ($slurpy_padname) = map { $_ ? $self->padname($_) : $slurpy } $slurpy_padix;
+
+    my %parami_for_padix;
+
+    # Initial scalars
+    foreach my $parami ( 0 .. $max_args-1 ) {
+        my $padix = $param_padix[$parami];
+        $parami_for_padix{$padix} = $parami;
+    }
+
+    my @param_defmode;
+    my @param_defexpr;
+
+    $o = $o->sibling;
+    for (; $o and !null $o; $o = $o->sibling) {
+        # Look for OP_NULL[OP_PARAMTEST[OP_PARAMSTORE]]
+        my $ofirst;
+        if ($o->name eq 'null' and $o->flags & OPf_KIDS and
+                ($ofirst = $o->first)->name eq 'paramtest' and
+                $ofirst->first->name eq 'paramstore') {
+            # A defaulting expression
+
+            my $parami = $parami_for_padix{$ofirst->targ};
+
+            my $defmode = "=";
+            $defmode = "//=" if $ofirst->private == OPpPARAM_IF_UNDEF;
+            $defmode = "||=" if $ofirst->private == OPpPARAM_IF_FALSE;
+            $param_defmode[$parami] = $defmode;
+
+            my $defop = $ofirst->first->first;
+            if ($defop->name ne "stub") {
+                my $expr = $self->deparse($defop, 7);
+                $expr = "($expr)" if $defop->flags & OPf_PARENS;
+
+                $param_defexpr[$parami] = $expr;
+            }
+        }
+    }
+
+    if ($cv->CvFLAGS & CVf_IsMETHOD) {
+        # Remove the implied `$self` argument
+        warn "Expected first signature argument to be named \$self"
+            unless @param_padname and $param_padname[0] eq '$self';
+
+        shift @param_padix;
+        shift @param_padname;
+        shift @param_defmode;
+        shift @param_defexpr;
+    }
+
+    if ($use_feature_sig) {
+        my @sig;
+
+        foreach my $parami ( 0 .. $#param_padix ) {
+            my $param_sig = $param_padname[$parami];
+            if ($param_defmode[$parami]) {
+                length $param_sig > 1 ?
+                    ( $param_sig .= ' ' ) :
+                    ( $param_sig = '$' ); # intentionally no trailing space
+
+                $param_sig .= $param_defmode[$parami];
+
+                my $defexpr = $param_defexpr[$parami];
+                $param_sig .= " $defexpr" if defined $defexpr;
+            }
+
+            push @sig, $param_sig;
+        }
+
+        push @sig, $slurpy_padname if $slurpy;
+
+        return join(", ", @sig);
+    }
+
+    # Approximate the behaviour using plain perl code
+    my $code = "";
+
+    $code .= <<"EOF" if !$slurpy_padix;
+die sprintf("Too many arguments for subroutine at %s line %d.\\n", (caller)[1, 2]) unless \@_ <= $nparams;
+EOF
+
+    $code .= <<"EOF" if $min_args > 0;
+die sprintf("Too few arguments for subroutine at %s line %d.\\n", (caller)[1, 2]) unless \@_ >= $min_args;
+EOF
+
+    $code .= <<EOF if $slurpy and $slurpy eq '%';
+die sprintf("Odd name/value argument for subroutine at %s line %d.\\n", (caller)[1, 2]) if \@_ > $nparams && ((\@_ - $nparams) & 1);
+EOF
+
+    foreach my $parami ( 0 .. $#param_padix ) {
+        my $argix = $parami;
+
+        my $stmt = "my $param_padname[$parami] = ";
+
+        if (my $defmode = $param_defmode[$parami]) {
+            my $defexpr = $param_defexpr[$parami];
+            # Optional parameter
+
+            if (length $param_padname[$parami] > 1) {
+                # Named optional param
+                if ($defmode eq "=") {
+                    $stmt .= "\@_ > $argix ? \$_[$argix] : $defexpr";
+                }
+                else {
+                    $defmode =~ s/=\z//;
+                    $stmt .= "\$_[$argix] $defmode $defexpr";
+                }
+            }
+            else {
+                # Anonymous optional param. This does not create or assign a
+                # variable but we still evaluate the defaulting expression for
+                # side-effects
+                my $cond = ( $defmode eq "//=" ) ? "defined \$_[$argix]" :
+                           ( $defmode eq "||=" ) ? "\$_[$argix]" :
+                                                   "\@_ > $argix";
+                $stmt = "$defexpr unless $cond";
+            }
+        }
+        else {
+            # Mandatory parameter
+
+            # Anonymous mandatory params can be entirely ignored. Their pad
+            # index will be zero.
+            $param_padix[$parami] or next;
+
+            $stmt .= "\$_[$argix]";
+        }
+
+        $code .= "$stmt;\n";
+    }
+
+    if ($slurpy) {
+        $code .= "my $slurpy_padname = \@_[$nparams..\$#_];\n";
+    }
+
+    $code =~ s/;\n\z//;
+    return $code;
+}
+
 # deparse_argops(): deparse, if possible, a sequence of argcheck + argelem
 # ops into a subroutine signature. If successful, return the first op
 # following the signature ops plus the signature string; else return the
@@ -1237,6 +1426,8 @@ sub deparse_argops {
 
         # skip trailing nextstate
         last if $$o == $$last;
+
+        next if $cv->CvFLAGS & CVf_IsMETHOD and $o->name eq "methstart";
 
         # OP_NEXTSTATE
         return unless $o->name =~ /^(next|db)state$/;
@@ -1296,6 +1487,13 @@ sub deparse_argops {
 
     }
 
+    if ($cv->CvFLAGS & CVf_IsMETHOD) {
+        # Remove the implied `$self` argument
+        warn "Expected first signature argument to be named \$self"
+            unless @sig and $sig[0] eq '$self';
+        shift @sig;
+    }
+
     while (++$last_ix < $params) {
         push @sig, $last_ix <  $mandatory ? '$' : '$=';
     }
@@ -1326,10 +1524,10 @@ Carp::confess("NULL in deparse_sub") if !defined($cv) || $cv->isa("B::NULL");
 Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
     local $self->{'curcop'} = $self->{'curcop'};
 
-    my $has_sig = $self->feature_enabled('signatures');
+    my $use_feature_sig = $self->feature_enabled('signatures');
     if ($cv->FLAGS & SVf_POK) {
 	my $myproto = $cv->PV;
-	if ($has_sig) {
+	if ($use_feature_sig) {
             push @attrs, "prototype($myproto)";
         }
         else {
@@ -1349,7 +1547,7 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
     local($self->{'curcvlex'});
     local(@$self{qw'curstash warnings hints hinthash'})
 		= @$self{qw'curstash warnings hints hinthash'};
-    my $body;
+    my $body = "";
     my $root = $cv->ROOT;
     local $B::overlay = {};
     if (not null $root) {
@@ -1361,21 +1559,23 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
         my $is_list = ($lineseq->name eq "lineseq");
         my $firstop = $is_list ? $lineseq->first : $lineseq;
 
-        if ($is_method and $firstop->name eq "methstart") {
-            $firstop = $firstop->sibling;
-        }
-
         # Try to deparse first subtree as a signature if possible.
         # Top of signature subtree has an ex-argcheck as a placeholder
-        if (    $has_sig
-            and $$firstop
-            and $firstop->name eq 'null'
-            and $firstop->targ == OP_ARGCHECK
-        ) {
-            my ($mysig) = $self->deparse_argops($firstop, $cv);
-            if (defined $mysig) {
-                $sig = $mysig;
-                $firstop = $is_list ? $firstop->sibling : undef;
+        if ($$firstop and $firstop->name eq 'null' and $firstop->targ == OP_ARGCHECK) {
+            if ($use_feature_sig) {
+                my ($mysig) = $self->deparse_multiparam($firstop, $cv, true) //
+                              $self->deparse_argops($firstop, $cv);
+                if (defined $mysig) {
+                    $sig = $mysig;
+                    $firstop = $is_list ? $firstop->sibling : undef;
+                }
+            }
+            else {
+                my $prelude = $self->deparse_multiparam($firstop, $cv, false);
+                if (defined $prelude) {
+                    $body .= $prelude;
+                    $firstop = $is_list ? $firstop->sibling : undef;
+                }
             }
         }
 
@@ -1384,8 +1584,8 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
 	    for (my $o = $firstop; $$o; $o=$o->sibling) {
 		push @ops, $o;
 	    }
-	    $body = $self->lineseq(undef, 0, @ops).";";
-            if (!$has_sig and $ops[-1]->name =~ /^(next|db)state$/) {
+	    $body .= $self->lineseq(undef, 0, @ops).";";
+            if (!$use_feature_sig and $ops[-1]->name =~ /^(next|db)state$/) {
                 # this handles void context in
                 #   use feature signatures; sub ($=1) {}
                 $body .= "\n()";
@@ -1397,10 +1597,10 @@ Carp::confess("SPECIAL in deparse_sub") if $cv->isa("B::SPECIAL");
 	    }
 	}
 	elsif ($firstop) {
-	    $body = $self->deparse($root->first, 0);
+	    $body .= $self->deparse($root->first, 0);
 	}
         else {
-            $body = ';'; # stub sub
+            $body .= ';'; # stub sub
         }
 
         my $l = '';
@@ -1720,7 +1920,6 @@ sub lineseq {
 	if defined($self->{'limit_seq'})
 	&& (!defined($limit_seq) || $self->{'limit_seq'} < $limit_seq);
     local $self->{'limit_seq'} = $limit_seq;
-
     $self->walk_lineseq($root, \@ops,
 		       sub { push @exprs, $_[0]} );
 
@@ -1737,6 +1936,7 @@ sub scopeop {
     my($real_block, $self, $op, $cx) = @_;
     my $kid;
     my @kids;
+    my $leadingstub = '';
 
     local(@$self{qw'curstash warnings hints hinthash'})
 		= @$self{qw'curstash warnings hints hinthash'} if $real_block;
@@ -1767,6 +1967,10 @@ sub scopeop {
         }
     } else {
 	$kid = $op->first;
+        if ($kid->name eq "null" && $kid->targ == OP_STUB) {
+            $leadingstub = "();";
+            $kid = $kid->sibling;
+        }
     }
     for (; !null($kid); $kid = $kid->sibling) {
 	push @kids, $kid;
@@ -1779,7 +1983,10 @@ sub scopeop {
 		 . " {\n\t$body\n\b}";
     } else {
 	my $lineseq = $self->lineseq($op, $cx, @kids);
-	return (length ($lineseq) ? "$lineseq;" : "");
+	return (length ($lineseq) ? "$lineseq;"
+                                  : $leadingstub
+                                      ? $leadingstub
+                                      : "");
     }
 }
 
@@ -3292,25 +3499,33 @@ sub logop {
     my $left = $op->first;
     my $right = $op->first->sibling;
     $blockname &&= $self->keyword($blockname);
-    if ($cx < 1 and is_scope($right) and $blockname
-	and $self->{'expand'} < 7)
-    { # if ($a) {$b}
-	$left = $self->deparse($left, 1);
-	$right = $self->deparse($right, 0);
-	return "$blockname ($left) {\n\t$right\n\b}\cK";
-    } elsif ($cx < 1 and $blockname and not $self->{'parens'}
-	     and $self->{'expand'} < 7) { # $b if $a
-	$right = $self->deparse($right, 1);
-	$left = $self->deparse($left, 1);
-	return "$right $blockname $left";
-    } elsif ($cx > $lowprec and $highop) { # $a && $b
-	$left = $self->deparse_binop_left($op, $left, $highprec);
-	$right = $self->deparse_binop_right($op, $right, $highprec);
-	return $self->maybe_parens("$left $highop $right", $cx, $highprec);
-    } else { # $a and $b
-	$left = $self->deparse_binop_left($op, $left, $lowprec);
-	$right = $self->deparse_binop_right($op, $right, $lowprec);
-	return $self->maybe_parens("$left $lowop $right", $cx, $lowprec);
+
+    if ($op->private & OPpSTATEMENT) {
+        if (is_scope($right)) {
+            # if ($a) {$b}
+            $left = $self->deparse($left, 1);
+            $right = $self->deparse($right, 0);
+            return "$blockname ($left) {\n\t$right\n\b}\cK";
+        }
+        else {
+             # $b if $a
+            $right = $self->deparse($right, 1);
+            $left = $self->deparse($left, 1);
+            return "$right $blockname $left";
+        }
+    }
+    else {
+        if ($cx > $lowprec and $highop) {
+            # $a && $b
+            $left = $self->deparse_binop_left($op, $left, $highprec);
+            $right = $self->deparse_binop_right($op, $right, $highprec);
+            return $self->maybe_parens("$left $highop $right", $cx, $highprec);
+        } else {
+            # $a and $b
+            $left = $self->deparse_binop_left($op, $left, $lowprec);
+            $right = $self->deparse_binop_right($op, $right, $lowprec);
+            return $self->maybe_parens("$left $lowop $right", $cx, $lowprec);
+        }
     }
 }
 
@@ -4034,20 +4249,42 @@ sub pp_cond_expr {
     my $true = $cond->sibling;
     my $false = $true->sibling;
     my $cuddle = $self->{'cuddle'};
-    unless ($cx < 1 and (is_scope($true) and $true->name ne "null") and
-	    (is_scope($false) || is_ifelse_cont($false))
-	    and $self->{'expand'} < 7) {
-	$cond = $self->deparse($cond, 8);
-	$true = $self->deparse($true, 6);
-	$false = $self->deparse($false, 8);
-	return $self->maybe_parens("$cond ? $true : $false", $cx, 8);
+    my $no_true = 0;
+
+    # Note that when an empty true or false block is optimised away,
+    # cond_expr only has two children: a conditional and a single block,
+    # rather than the usual two. When the false branch is empty and is
+    # optimised away, OPf_SPECIAL is set.
+
+    if (class($false) eq "NULL" && !($op->flags & OPf_SPECIAL)) {
+        # It was an empty true block
+        $no_true = 1;
     }
 
+    unless ($op->private & OPpSTATEMENT) {
+        # it's a ?: rather than an if/else
+
+        $cond = $self->deparse($cond, 8);
+        $true = $self->deparse($true, 6);
+        # has one of the two branches has been optimised away?
+        $false = class($false) eq "NULL" ? '()' : $self->deparse($false, 8);
+        ($true, $false) = ($false, $true) if $no_true;
+        return $self->maybe_parens("$cond ? $true : $false", $cx, 8);
+    }
+
+    # if/elseif/else etc
+
+    ($true, $false) = ($false, $true) if $no_true;
+
     $cond = $self->deparse($cond, 1);
-    $true = $self->deparse($true, 0);
-    my $head = $self->keyword("if") . " ($cond) {\n\t$true\n\b}";
+    $true = ($no_true) ? "\b" : $self->deparse($true, 0);
+    my $head = ($no_true)
+                ? $self->keyword("if") . " ($cond) {\n\t();\n\b}"
+                : $self->keyword("if") . " ($cond) {\n\t$true\n\b}";
     my @elsifs;
     my $elsif;
+
+    # keep processing chained elsif's until final else (if present)
     while (!null($false) and is_ifelse_cont($false)) {
 	my $newop = $false->first;
 	my $newcond = $newop->first;
@@ -4060,16 +4297,32 @@ sub pp_cond_expr {
 	    $newcond = $newcond->first->sibling;
 	}
 	$newcond = $self->deparse($newcond, 1);
-	$newtrue = $self->deparse($newtrue, 0);
+
+        if (   $op->name eq 'cond'
+            && null($false)
+            && ! ($newop->flags & OPf_SPECIAL))
+        {
+            # An empty elsif "true" block has been optimised away
+            my $temp = $false; $false = $newtrue; $newtrue = $temp;
+            $newtrue = "();";
+        } else {
+            $newtrue = $self->deparse($newtrue, 0);
+        }
+
 	$elsif ||= $self->keyword("elsif");
 	push @elsifs, "$elsif ($newcond) {\n\t$newtrue\n\b}";
     }
+
     if (!null($false)) {
 	$false = $cuddle . $self->keyword("else") . " {\n\t" .
 	  $self->deparse($false, 0) . "\n\b}\cK";
+    } elsif ($op->flags & OPf_SPECIAL) {
+        $false = $cuddle . $self->keyword("else") . " {\n\t" .
+          "();\n\b}\cK";
     } else {
 	$false = "\cK";
     }
+
     return $head . join($cuddle, "", @elsifs) . $false;
 }
 
@@ -4127,17 +4380,29 @@ sub loop_common {
             # for my ($x, $y, ...) ...
             # for my ($foo, $bar) () stores the count (less 1) in the targ of
             # the ITER op. For the degenerate case of 1 var ($x), the
-            # TARG is zero, so it works anyway
+            # TARG is zero, so it works anyway. In the presence of
+            # OPpITER_REFALIAS, the lower 8 bits is the var count, and the
+            # upper 24 bits is a mask indicating which of the variables
+            # have refalias behaviour.
             my $iter_targ = $kid->first->first->targ;
+            my $mask = 0;
+            if ($iter->private & OPpITER_REFALIAS) {
+                $mask = $iter_targ >> 8;
+                $iter_targ &= 0xff;
+            }
             my @vars;
             my $targ = $enter->targ;
             while ($iter_targ-- >= 0) {
-                push @vars, $self->padname_sv($targ)->PVX;
+                my $v = $self->padname_sv($targ)->PVX;
+                $v = "\\$v" if $mask & 1;
+                push @vars, $v;
                 ++$targ;
+                $mask >>= 1;
             }
             $var = 'my (' . join(', ', @vars) . ')';
         } elsif (null $var) {
             $var = $self->pp_padsv($enter, 1, 1);
+            $var = "\\" . $var if $iter->private & OPpITER_REFALIAS;
 	} elsif ($var->name eq "rv2gv") {
 	    $var = $self->pp_rv2sv($var, 1);
 	    if ($enter->private & OPpOUR_INTRO) {
@@ -4150,22 +4415,32 @@ sub loop_common {
 	} else {
 	    $var = $self->deparse($var, 1);
 	}
+
 	$body = $iter->sibling;
-	if (!is_state $body->first and $body->first->name !~ /^(?:stub|leave|scope)$/) {
-	    confess unless $var eq '$_';
+
+	if (!(   is_state $body->first
+              or _op_is_or_was($body->first, OP_STUB)
+              or ($body->first->name =~ /^(?:leave|scope)$/)))
+        {
+            # postfix for
+            die "Unexpected 'for' statement modifier with non-\$_ loop variable '$var'\n"
+                unless $var eq '$_';
 	    $body = $body->first;
 	    return $self->deparse($body, 2) . " "
 		 . $self->keyword("foreach") . " ($ary)";
 	}
 	$head = "foreach $var ($ary) ";
-    } elsif ($kid->name eq "null") { # while/until
+    }
+    elsif (_op_is_or_was($kid, OP_STUB)) { # bare and empty
+	return "{;}"; # {} could be a hashref
+    }
+    elsif ($kid->name eq "null") { # while/until
 	$kid = $kid->first;
 	$name = {"and" => "while", "or" => "until"}->{$kid->name};
 	$cond = $kid->first;
 	$body = $kid->first->sibling;
-    } elsif ($kid->name eq "stub") { # bare and empty
-	return "{;}"; # {} could be a hashref
     }
+
     # If there isn't a continue block, then the next pointer for the loop
     # will point to the unstack, which is kid's last child, except
     # in a bare loop, when it will point to the leaveloop. When neither of
@@ -4295,6 +4570,8 @@ sub pp_null {
     if ($op->targ == OP_LIST) {
         my $my_attr = maybe_var_attr($self, $op, $cx);
         return $my_attr if defined $my_attr;
+    } elsif ($op->targ == OP_STUB) {
+        return "()";
     }
 
     if (class($op) eq "OP") {
@@ -6703,7 +6980,7 @@ sub pp_subst {
 }
 
 sub is_lexical_subs {
-    my (@ops) = shift;
+    my (@ops) = @_;
     for my $op (@ops) {
         return 0 if $op->name !~ /\A(?:introcv|clonecv)\z/;
     }
@@ -6839,6 +7116,11 @@ sub pp_argdefelem {
 }
 
 
+sub pp_multiparam {
+    die "Unable to handle PP_MULTIPARAM outside of a regular subroutine signature position";
+}
+
+
 sub pp_pushdefer {
     my $self = shift;
     my($op, $cx) = @_;
@@ -6881,9 +7163,9 @@ B<perl> B<-MO=Deparse>[B<,-d>][B<,-f>I<FILE>][B<,-p>][B<,-q>][B<,-l>]
 
 =head1 DESCRIPTION
 
-B::Deparse is a backend module for the Perl compiler that generates
+C<B::Deparse> is a backend module for the Perl compiler that generates
 perl source code, based on the internal compiled structure that perl
-itself creates after parsing a program.  The output of B::Deparse won't
+itself creates after parsing a program.  The output of C<B::Deparse> won't
 be exactly the same as the original source, since perl doesn't keep
 track of comments or whitespace, and there isn't a one-to-one
 correspondence between perl's syntactical constructions and their
@@ -6892,34 +7174,34 @@ option, the output also includes parentheses even when they are not
 required by precedence, which can make it easy to see if perl is
 parsing your expressions the way you intended.
 
-While B::Deparse goes to some lengths to try to figure out what your
+While C<B::Deparse> goes to some lengths to try to figure out what your
 original program was doing, some parts of the language can still trip
 it up; it still fails even on some parts of Perl's own test suite.  If
 you encounter a failure other than the most common ones described in
-the BUGS section below, you can help contribute to B::Deparse's
+the BUGS section below, you can help contribute to C<B::Deparse>'s
 ongoing development by submitting a bug report with a small
 example.
 
 =head1 OPTIONS
 
 As with all compiler backend options, these must follow directly after
-the '-MO=Deparse', separated by a comma but not any white space.
+the C<-MO=Deparse>, separated by a comma but not any white space.
 
 =over 4
 
 =item B<-d>
 
-Output data values (when they appear as constants) using Data::Dumper.
-Without this option, B::Deparse will use some simple routines of its
-own for the same purpose.  Currently, Data::Dumper is better for some
+Output data values (when they appear as constants) using L<Data::Dumper>.
+Without this option, C<B::Deparse> will use some simple routines of its
+own for the same purpose.  Currently, L<Data::Dumper> is better for some
 kinds of data (such as complex structures with sharing and
 self-reference) while the built-in routines are better for others
 (such as odd floating-point values).
 
 =item B<-f>I<FILE>
 
-Normally, B::Deparse deparses the main code of a program, and all the subs
-defined in the same file.  To include subs defined in
+Normally, C<B::Deparse> deparses the main code of a program, and all the
+subs defined in the same file.  To include subs defined in
 other files, pass the B<-f> option with the filename.
 You can pass the B<-f> option several times, to
 include more than one secondary file.  (Most of the time you don't want to
@@ -6928,12 +7210,12 @@ defined in the scope of a B<#line> directive with two parameters.
 
 =item B<-l>
 
-Add '#line' declarations to the output based on the line and file
+Add C<#line> declarations to the output based on the line and file
 locations of the original code.
 
 =item B<-p>
 
-Print extra parentheses.  Without this option, B::Deparse includes
+Print extra parentheses.  Without this option, C<B::Deparse> includes
 parentheses in its output only when they are needed, based on the
 structure of your program.  With B<-p>, it uses parentheses (almost)
 whenever they would be legal.  This can be useful if you are used to
@@ -6973,8 +7255,8 @@ making clear how the parameters are actually passed to C<foo>.
 =item B<-q>
 
 Expand double-quoted strings into the corresponding combinations of
-concatenation, uc, ucfirst, lc, lcfirst, quotemeta, and join.  For
-instance, print
+concatenation, C<uc>, C<ucfirst>, C<lc>, C<lcfirst>, C<quotemeta>, and
+C<join>.  For instance, print
 
     print "Hello, $world, @ladies, \u$gentlemen\E, \u\L$me!";
 
@@ -6985,13 +7267,13 @@ as
 
 Note that the expanded form represents the way perl handles such
 constructions internally -- this option actually turns off the reverse
-translation that B::Deparse usually does.  On the other hand, note that
+translation that C<B::Deparse> usually does.  On the other hand, note that
 C<$x = "$y"> is not the same as C<$x = $y>: the former makes the value
-of $y into a string before doing the assignment.
+of C<$y> into a string before doing the assignment.
 
 =item B<-s>I<LETTERS>
 
-Tweak the style of B::Deparse's output.  The letters should follow
+Tweak the style of C<B::Deparse>'s output.  The letters should follow
 directly after the 's', with no space or punctuation.  The following
 options are available:
 
@@ -7041,7 +7323,7 @@ conventional values include 0, 1, 42, '', 'foo', and
 'Useless use of constant omitted' (which may need to be
 B<-sv"'Useless use of constant omitted'.">
 or something similar depending on your shell).  The default is '???'.
-If you're using B::Deparse on a module or other file that's require'd,
+If you're using C<B::Deparse> on a module or other file that's C<require>'d,
 you shouldn't use a value that evaluates to false, since the customary
 true constant at the end of a module will be in void context when the
 file is compiled as a main program.
@@ -7053,7 +7335,7 @@ file is compiled as a main program.
 Expand conventional syntax constructions into equivalent ones that expose
 their internal operation.  I<LEVEL> should be a digit, with higher values
 meaning more expansion.  As with B<-q>, this actually involves turning off
-special cases in B::Deparse's normal operations.
+special cases in C<B::Deparse>'s normal operations.
 
 If I<LEVEL> is at least 3, C<for> loops will be translated into equivalent
 while loops with continue blocks; for instance
@@ -7110,7 +7392,7 @@ turns into
     $nice ? do { print 'hi' } : do { print 'bye' };
 
 Long sequences of elsifs will turn into nested ternary operators, which
-B::Deparse doesn't know how to indent nicely.
+C<B::Deparse> doesn't know how to indent nicely.
 
 =back
 
@@ -7125,7 +7407,7 @@ B::Deparse doesn't know how to indent nicely.
 
 =head2 Description
 
-B::Deparse can also be used on a sub-by-sub basis from other perl
+C<B::Deparse> can also be used on a sub-by-sub basis from other perl
 programs.
 
 =head2 new
@@ -7176,15 +7458,16 @@ use re;
 
 =back
 
-Ordinarily, if you use B::Deparse on a subroutine which has
+Ordinarily, if you use C<B::Deparse> on a subroutine which has
 been compiled in the presence of one or more of these pragmas,
 the output will include statements to turn on the appropriate
-directives.  So if you then compile the code returned by coderef2text,
-it will behave the same way as the subroutine which you deparsed.
+directives.  So if you then compile the code returned by
+L</coderef2text>, it will behave the same way as the subroutine
+which you deparsed.
 
 However, you may know that you intend to use the results in a
 particular context, where some pragmas are already in scope.  In
-this case, you use the B<ambient_pragmas> method to describe the
+this case, you use the L</ambient_pragmas> method to describe the
 assumptions you wish to make.
 
 Not all of the options currently have any useful effect.  See
@@ -7204,7 +7487,7 @@ expect.
 
 =item $[
 
-Takes a number, the value of the array base $[.
+Takes a number, the value of the array base C<$[>.
 Obsolete: cannot be non-zero.
 
 =item bytes
@@ -7251,7 +7534,7 @@ See L<warnings> for more information about lexical warnings.
 =item warning_bits
 
 These two parameters are used to specify the ambient pragmas in
-the format used by the special variables $^H and ${^WARNING_BITS}.
+the format used by the special variables C<$^H> and C<${^WARNING_BITS}>.
 
 They exist principally so that you can write code like:
 
@@ -7264,7 +7547,8 @@ They exist principally so that you can write code like:
     ); }
 
 which specifies that the ambient pragmas are exactly those which
-are in scope at the point of calling.
+are in scope at the point of calling.  However, see also
+L</ambient_pragmas_from_caller>.
 
 =item %^H
 
@@ -7272,6 +7556,16 @@ This parameter is used to specify the ambient pragmas which are
 stored in the special hash %^H.
 
 =back
+
+=head2 ambient_pragmas_from_caller
+
+    $deparse->ambient_pragmas_from_caller()
+
+A convenient shortcut for setting the hints and warnings ambient pragmas to
+those of the immediately calling code.  This uses the
+L<caller|perlfunc/caller> function to determine the hints and warnings bits in
+effect at the callsite to this method, and sets those as the ambient settings
+for the deparser.
 
 =head2 coderef2text
 
@@ -7286,6 +7580,31 @@ want to eval the result, you should prepend "sub subname ", or "sub "
 for an anonymous function constructor.  Unless the sub was defined in
 the main:: package, the code will include a package declaration.
 
+Normally, C<B::Deparse> will emit code that includes the L<feature> pragma
+if required to enable features that are used in the fragment that follows.
+However, as L</coderef2text> emits only the body of a subroutine and expects
+the caller to prepend the C<sub> and optional name onto the beginning of it,
+it will not have the opportunity to emit a C<use feature 'signatures'> if the
+subroutine uses a signature, and the signatures feature is not enabled in the
+ambient pragmas.
+
+In the particular situation of a subroutine that uses the C<signatures>
+feature to parse its arguments being passed to L</coderef2text> when the
+feature is B<not> enabled in L</ambient_pragmas>, C<B::Deparse> will attempt
+to emit pure-perl code that emulates the behaviour of the signature as closely
+as possible.  This is performed on a B<best-effort> basis.  It is not
+guaranteed to perfectly capture the semantics of the signature's behaviour,
+only to offer a human-readable suggestion as to what it might do.
+Furthermore, it is not guaranteed to be able to reproduce every possible
+behaviour of signatures in future versions of Perl.  It may be that a future
+version introduces a behaviour that does not have a tidy way to express it in
+this pure-perl emulation code without using the C<signatures> feature.
+
+If this is of importance to you, make sure to use the L</ambient_pragmas> or
+L</ambient_pragmas_from_caller> method to enable the C<signatures> feature,
+ensuring that C<B::Deparse> will use it to deparse subroutines that use
+signatures.
+
 =head1 BUGS
 
 =over 4
@@ -7298,7 +7617,7 @@ C<use strict>, C<use bytes>, C<use integer>
 and C<use feature>.
 
 Excepting those listed above, we're currently unable to guarantee that
-B::Deparse will produce a pragma at the correct point in the program.
+C<B::Deparse> will produce a pragma at the correct point in the program.
 (Specifically, pragmas at the beginning of a block often appear right
 before the start of the block instead.)
 Since the effects of pragmas are often lexically scoped, this can mean
@@ -7308,7 +7627,7 @@ than in the input file.
 =item *
 
 In fact, the above is a specific instance of a more general problem:
-we can't guarantee to produce BEGIN blocks or C<use> declarations in
+we can't guarantee to produce C<BEGIN> blocks or C<use> declarations in
 exactly the right place.  So if you use a module which affects compilation
 (such as by over-riding keywords, overloading constants or whatever)
 then the output code might not work as intended.
@@ -7316,8 +7635,8 @@ then the output code might not work as intended.
 =item *
 
 Some constants don't print correctly either with or without B<-d>.
-For instance, neither B::Deparse nor Data::Dumper know how to print
-dual-valued scalars correctly, as in:
+For instance, neither C<B::Deparse> nor L<Data::Dumper> know how to
+print dual-valued scalars correctly, as in:
 
     use constant E2BIG => ($!=7); $y = E2BIG; print $y, 0+$y;
 
@@ -7347,7 +7666,7 @@ which is not, consequently, deparsed correctly.
 =item *
 
 Lexical (my) variables declared in scopes external to a subroutine
-appear in coderef2text output text as package variables.  This is a tricky
+appear in L</coderef2text> output text as package variables.  This is a tricky
 problem, as perl has no native facility for referring to a lexical variable
 defined within a different scope, although L<PadWalker> is a good start.
 

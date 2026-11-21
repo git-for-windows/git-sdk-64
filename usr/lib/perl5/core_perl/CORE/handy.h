@@ -334,6 +334,22 @@ don't, so that you can portably take advantage of this C99 feature.
 #  endif
 #endif
 
+/*
+=for apidoc_section $numeric_scn
+=for apidoc      Em|bool|isEVEN|UV a
+=for apidoc_item   |bool|isODD|UV a
+
+These return a boolean as to whether or not the integer value given by the
+argument is even or odd, respectively.
+
+=cut
+*/
+
+#if defined(PERL_CORE) || defined(PERL_EXT_RE_BUILD)
+#  define isODD(a) ((a) & 1)
+#  define isEVEN(a) (! isODD(a))
+#endif
+
 /* Returns a boolean as to whether the input unsigned number is a power of 2
  * (2**0, 2**1, etc).  In other words if it has just a single bit set.
  * If not, subtracting 1 would leave the uppermost bit set, so the & would
@@ -342,33 +358,18 @@ don't, so that you can portably take advantage of this C99 feature.
 #  define isPOWER_OF_2(n) ((n) && ((n) & ((n)-1)) == 0)
 #endif
 
-/* Returns a mask with the lowest n bits set */
-#define nBIT_MASK(n) ((UINTMAX_C(1) << (n)) - 1)
+/* Returns a mask with the lowest n bits set.  Avoids undefined behavior if n
+ * is, say, 64 on a 64-bit system, by:
+ *  1) shifting only 63 yielding 1000000...000
+ *  2) subtracting 1, yielding   0111111...111
+ *  3) shifting by 1, yielding   1111111...110
+ *  4) adding the final bit yielding all 1's */
+#define nBIT_MASK(n)                                                        \
+       (((n) == 0) ? 0 : (((UINTMAX_C(1) << ((n) - 1)) - 1) << 1) | 1)
+  /*                       |_________________________|                   */
 
 /* The largest unsigned number that will fit into n bits */
 #define nBIT_UMAX(n)  nBIT_MASK(n)
-
-/*
-=for apidoc_section $directives
-=for apidoc Am||__ASSERT_|bool expr
-
-This is a helper macro to avoid preprocessor issues, replaced by nothing
-unless under DEBUGGING, where it expands to an assert of its argument,
-followed by a comma (hence the comma operator).  If we just used a straight
-assert(), we would get a comma with nothing before it when not DEBUGGING.
-
-=cut
-
-We also use empty definition under Coverity since the __ASSERT_
-checks often check for things that Really Cannot Happen, and Coverity
-detects that and gets all excited. */
-
-#if   defined(DEBUGGING) && !defined(__COVERITY__)                        \
- && ! defined(PERL_SMALL_MACRO_BUFFER)
-#   define __ASSERT_(statement)  assert(statement),
-#else
-#   define __ASSERT_(statement)
-#endif
 
 /*
 =for apidoc_section $SV
@@ -384,10 +385,6 @@ a string/length pair.
 =for apidoc Ama|SV*|newSVpvs_share|"literal string"
 Like C<newSVpvn_share>, but takes a literal string instead of
 a string/length pair and omits the hash parameter.
-
-=for apidoc Am|SV *|sv_setref_pvs|SV *const rv|const char *const classname|"literal string"
-Like C<sv_setref_pvn>, but takes a literal string instead of
-a string/length pair.
 
 =cut
 */
@@ -440,6 +437,12 @@ Perl_xxx(aTHX_ ...) form for any API calls where it's used.
 #define sv_setpvs(dsv, str) Perl_sv_setpvn(aTHX_ dsv, STR_WITH_LEN(str))
 #define sv_setpvs_mg(dsv, str) Perl_sv_setpvn_mg(aTHX_ dsv, STR_WITH_LEN(str))
 
+/*
+=for apidoc_defn Am|SV *|sv_setref_pvs|SV *const rv|const char *const classname|"literal string"
+a string/length pair.
+
+=cut
+*/
 #define sv_setref_pvs(rv, classname, str) \
     Perl_sv_setref_pvn(aTHX_ rv, classname, STR_WITH_LEN(str))
 
@@ -470,7 +473,7 @@ Perl_xxx(aTHX_ ...) form for any API calls where it's used.
 
 
 /*
-=for apidoc_defn mx|void|lex_stuff_pvs|"pv"|U32 flags
+=for apidoc_defn Amx|void|lex_stuff_pvs|"pv"|U32 flags
 
 =cut
 */
@@ -703,8 +706,8 @@ based on the underlying C library functions):
 #define strnNE(s1,s2,l) (strncmp(s1,s2,l) != 0)
 #define strnEQ(s1,s2,l) (strncmp(s1,s2,l) == 0)
 
-#define memEQ(s1,s2,l) (memcmp(((const void *) (s1)), ((const void *) (s2)), l) == 0)
-#define memNE(s1,s2,l) (! memEQ(s1,s2,l))
+#define memNE(s1,s2,l) (memcmp(s1,s2,l) != 0)
+#define memEQ(s1,s2,l) (memcmp(s1,s2,l) == 0)
 
 /* memEQ and memNE where second comparand is a string constant */
 #define memEQs(s1, l, s2) \
@@ -1434,7 +1437,24 @@ or casts
  *
  * NOT suitable for void*
  */
-#define ASSERT_IS_PTR(x) (__ASSERT_(sizeof(*(x))) (x))
+#define ASSERT_IS_PTR(x) (assert(sizeof(*(x))), (x))
+
+/*
+=for apidoc_section $directives_scn
+=for apidoc Em|bool|PREVENT_LVALUE|x
+
+This returns its input C<x>, but forces a compilation error if called from an
+lvalue context.  Its main use is to be placed in a macro that otherwise could 
+be used to change the value of C<x>, but doing so is undesirable.
+
+A common example is when there are getter and setter macros for C<x>, and the
+setter has error checking that shouldn't be short circuited.  Wrapping C<x>
+with this macro in the getter call forces the setter one to be used to change
+C<x>.
+
+=cut
+*/
+#define PREVENT_LVALUE(x)  ((x) | 0)
 
 /* FITS_IN_8_BITS(c) returns true if c doesn't have  a bit set other than in
  * the lower 8.  It is designed to be hopefully bomb-proof, making sure that no
@@ -1459,8 +1479,8 @@ or casts
  * needed.  (The NV casts stop any warnings about comparison always being true
  * if called with an unsigned.  The cast preserves the sign, which is all we
  * care about.) */
-#define withinCOUNT(c, l, n)  (__ASSERT_((NV) (l) >= 0)                 \
-                               __ASSERT_((NV) (n) >= 0)                 \
+#define withinCOUNT(c, l, n)  (assert((NV) (l) >= 0),                   \
+                               assert((NV) (n) >= 0),                   \
                                withinCOUNT_KNOWN_VALID_((c), (l), (n)))
 
 /* For internal use only, this can be used in places where it is known that the
@@ -1475,11 +1495,11 @@ or casts
 /* Returns true if c is in the range l..u, where 'l' is non-negative
  * Written this way so that after optimization, only one conditional test is
  * needed. */
-#define inRANGE(c, l, u) (__ASSERT_((NV) (l) >= 0) __ASSERT_((u) >= (l))    \
+#define inRANGE(c, l, u) (assert((NV) (l) >= 0), assert((u) >= (l)),        \
    (  (sizeof(c) == sizeof(U8))  ? inRANGE_helper_(U8, (c), (l), ((u)))     \
     : (sizeof(c) == sizeof(U16)) ? inRANGE_helper_(U16,(c), (l), ((u)))     \
     : (sizeof(c) == sizeof(U32)) ? inRANGE_helper_(U32,(c), (l), ((u)))     \
-             : (__ASSERT_(sizeof(c) == sizeof(WIDEST_UTYPE))                \
+             : (assert(sizeof(c) == sizeof(WIDEST_UTYPE)),                  \
                           inRANGE_helper_(WIDEST_UTYPE,(c), (l), ((u))))))
 
 /* For internal use, this is used by machine-generated code which generates
@@ -1562,8 +1582,10 @@ or casts
 #  define CC_BINDIGIT_                 23
 #  define CC_OCTDIGIT_                 24
 #  define CC_MNEMONIC_CNTRL_           25
+#  define CC_MAGICAL_                  26
+#  define CC_UNDERSCORE_               27
 
-/* Unused: 26-31
+/* Unused: 28-31
  * If more bits are needed, one could add a second word for non-64bit
  * QUAD_IS_INT systems, using some #ifdefs to distinguish between having a 2nd
  * word or not.  The IS_IN_SOME_FOLD bit is the most easily expendable, as it
@@ -1613,10 +1635,28 @@ END_EXTERN_C
     /* The 1U keeps Solaris from griping when shifting sets the uppermost bit */
 #   define CC_mask_(classnum) (1U << (classnum))
 
+/*
+=for apidoc_section $classification
+=for apidoc Cm|U32|CC_mask_|U8 c|U8 classnum
+
+This translates C<classnum> into a bit pattern to use in conjunction with
+entries in C<PL_charclass[]>, and operations such is C<L</Perl_isCC_by_bit>>.
+C<classnum> is one of the classes defined in F<handy.h> for this purpose.
+
+=for apidoc Cm|bool|Perl_isCC_by_bit|U8 c|U32 bit_pattern
+
+Returns a boolean as to whether or not the character C<c> in the Latin1 range
+is a member of the class(es) given by C<bit_pattern>, as formed by
+C<L</CC_mask_>>.
+
+=cut
+*/
+#  define Perl_isCC_by_bit(c, bit_pattern)                              \
+       (FITS_IN_8_BITS(c) && (PL_charclass[(U8) (c)] & (bit_pattern)))
+
     /* For internal core Perl use only: the base macro for defining macros like
      * isALPHA */
-#   define generic_isCC_(c, classnum) cBOOL(FITS_IN_8_BITS(c)    \
-                && (PL_charclass[(U8) (c)] & CC_mask_(classnum)))
+#   define generic_isCC_(c, classnum)  Perl_isCC_by_bit(c, CC_mask_(classnum))
 
     /* The mask for the _A versions of the macros; it just adds in the bit for
      * ASCII. */
@@ -1672,6 +1712,13 @@ END_EXTERN_C
 #   define isWORDCHAR_L1(c) generic_isCC_(c, CC_WORDCHAR_)
 #   define isIDFIRST_L1(c) generic_isCC_(c, CC_IDFIRST_)
 
+#define isFOO_or_UNDERSCORE_(c, lookup_bit)                                   \
+    (FITS_IN_8_BITS(c) && ( PL_charclass[(U8) (c)]                            \
+                           & (CC_mask_(lookup_bit)|CC_mask_(CC_UNDERSCORE_))))
+#ifdef PERL_CORE    /* Keep local for now */
+#  define isDIGIT_or_UNDERSCORE(c)  isFOO_or_UNDERSCORE_(c, CC_DIGIT_)
+#endif
+
 #   ifdef EBCDIC
 #       define isASCII(c) generic_isCC_(c, CC_ASCII_)
 #   endif
@@ -1691,7 +1738,9 @@ END_EXTERN_C
       (   (! cBOOL(FITS_IN_8_BITS(c)))                                      \
        || (PL_charclass[(U8) (c)] & CC_mask_(CC_NONLATIN1_FOLD_)))
 
-#   define _isQUOTEMETA(c) generic_isCC_(c, CC_QUOTEMETA_)
+#  if defined(PERL_CORE) || defined(PERL_IN_XS_APITEST)
+#    define isQUOTEMETA(c) generic_isCC_(c, CC_QUOTEMETA_)
+#  endif
 
 /* is c a control character for which we have a mnemonic? */
 #  if defined(PERL_CORE) || defined(PERL_EXT)
@@ -1822,7 +1871,9 @@ END_EXTERN_C
     /* The following are not fully accurate in the above-ASCII range.  I (khw)
      * don't think it's necessary to be so for the purposes where this gets
      * compiled */
-#   define isQUOTEMETA_(c)      (FITS_IN_8_BITS(c) && ! isWORDCHAR_L1(c))
+#   if defined(PERL_CORE) || defined(PERL_IN_XS_APITEST)
+#     define isQUOTEMETA(c)      (FITS_IN_8_BITS(c) && ! isWORDCHAR_L1(c))
+#   endif
 
     /* Many of the macros later in this file are defined in terms of these.  By
      * implementing them with a function, which converts the class number into
@@ -2114,7 +2165,7 @@ END_EXTERN_C
            : ((UNLIKELY(((U8) (c)) == LATIN_SMALL_LETTER_Y_WITH_DIAERESIS)  \
               ? LATIN_CAPITAL_LETTER_Y_WITH_DIAERESIS                       \
               : (UNLIKELY(((U8)(c)) == LATIN_SMALL_LETTER_SHARP_S)          \
-                ? (__ASSERT_(0) (c)) /* Fail on Sharp S in DEBUGGING */     \
+                ? (assert(0), (c)) /* Fail on Sharp S in DEBUGGING */       \
                 : PL_mod_latin1_uc[ (U8) (c) ]))))))
 
 /* In this macro, note that the result can be larger than a byte in a UTF-8
@@ -2126,8 +2177,8 @@ END_EXTERN_C
 #  define toFOLD_LC(c)                                                      \
                 ((UNLIKELY((c) == MICRO_SIGN) && IN_UTF8_CTYPE_LOCALE)      \
                  ? GREEK_SMALL_LETTER_MU                                    \
-                 : (__ASSERT_(   ! IN_UTF8_CTYPE_LOCALE                     \
-                              || LIKELY((c) != LATIN_SMALL_LETTER_SHARP_S)) \
+                 : (assert(   ! IN_UTF8_CTYPE_LOCALE                        \
+                           || LIKELY((c) != LATIN_SMALL_LETTER_SHARP_S)),   \
                     toLOWER_LC(c)))
 #endif
 
@@ -2156,7 +2207,7 @@ END_EXTERN_C
                                              : above_latin1(c))
 #define generic_invlist_uvchr_(classnum, c) ((c) < 256                      \
                                              ? generic_isCC_(c, classnum)   \
-                                             : _is_uni_FOO(classnum, c))
+                                             : is_uni_FOO_(classnum, c))
 #define isALPHA_uvchr(c)      generic_invlist_uvchr_(CC_ALPHA_, c)
 #define isALPHANUMERIC_uvchr(c) generic_invlist_uvchr_(CC_ALPHANUMERIC_, c)
 #define isASCII_uvchr(c)      isASCII(c)
@@ -2165,9 +2216,9 @@ END_EXTERN_C
 #define isDIGIT_uvchr(c)      generic_invlist_uvchr_(CC_DIGIT_, c)
 #define isGRAPH_uvchr(c)      generic_invlist_uvchr_(CC_GRAPH_, c)
 #define isIDCONT_uvchr(c)                                                   \
-                    generic_uvchr_(CC_WORDCHAR_, _is_uni_perl_idcont, c)
+                    generic_uvchr_(CC_WORDCHAR_, is_uni_perl_idcont_, c)
 #define isIDFIRST_uvchr(c)                                                  \
-                    generic_uvchr_(CC_IDFIRST_, _is_uni_perl_idstart, c)
+                    generic_uvchr_(CC_IDFIRST_, is_uni_perl_idstart_, c)
 #define isLOWER_uvchr(c)      generic_invlist_uvchr_(CC_LOWER_, c)
 #define isPRINT_uvchr(c)      generic_invlist_uvchr_(CC_PRINT_, c)
 
@@ -2218,7 +2269,7 @@ END_EXTERN_C
 #define generic_LC_uvchr_(latin1, above_latin1, c)                            \
                                     (c < 256 ? latin1(c) : above_latin1(c))
 #define generic_LC_invlist_uvchr_(latin1, classnum, c)                        \
-                            (c < 256 ? latin1(c) : _is_uni_FOO(classnum, c))
+                            (c < 256 ? latin1(c) : is_uni_FOO_(classnum, c))
 
 #define isALPHA_LC_uvchr(c)  generic_LC_invlist_uvchr_(isALPHA_LC, CC_ALPHA_, c)
 #define isALPHANUMERIC_LC_uvchr(c)  generic_LC_invlist_uvchr_(isALPHANUMERIC_LC, \
@@ -2230,9 +2281,9 @@ END_EXTERN_C
 #define isDIGIT_LC_uvchr(c)  generic_LC_invlist_uvchr_(isDIGIT_LC, CC_DIGIT_, c)
 #define isGRAPH_LC_uvchr(c)  generic_LC_invlist_uvchr_(isGRAPH_LC, CC_GRAPH_, c)
 #define isIDCONT_LC_uvchr(c) generic_LC_uvchr_(isIDCONT_LC,                   \
-                                                  _is_uni_perl_idcont, c)
+                                                  is_uni_perl_idcont_, c)
 #define isIDFIRST_LC_uvchr(c) generic_LC_uvchr_(isIDFIRST_LC,                 \
-                                                  _is_uni_perl_idstart, c)
+                                                  is_uni_perl_idstart_, c)
 #define isLOWER_LC_uvchr(c)  generic_LC_invlist_uvchr_(isLOWER_LC, CC_LOWER_, c)
 #define isPRINT_LC_uvchr(c)  generic_LC_invlist_uvchr_(isPRINT_LC, CC_PRINT_, c)
 #define isPSXSPC_LC_uvchr(c)  isSPACE_LC_uvchr(c)
@@ -2265,50 +2316,59 @@ END_EXTERN_C
  * bunch of code in toke.c assumes that this is true, so the assertion allows
  * for that */
 #ifdef PERL_IN_TOKE_C
-#  define _utf8_safe_assert(p,e) ((e) > (p) || ((e) == (p) && *(p) == '\0'))
+#  define utf8_safe_assert_(p,e) ((e) > (p) || ((e) == (p) && *(p) == '\0'))
 #else
-#  define _utf8_safe_assert(p,e) ((e) > (p))
+#  define utf8_safe_assert_(p,e) ((e) > (p))
 #endif
 
 #define generic_utf8_safe_(classnum, p, e, above_latin1)                    \
-    ((! _utf8_safe_assert(p, e))                                            \
-      ? (force_out_malformed_utf8_message_((U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0)\
+    ((! utf8_safe_assert_(p, e))                                            \
+      ? (force_out_malformed_utf8_message_((U8 *) (p), (U8 *) (e), 0,       \
+                                           MALFORMED_UTF8_DIE), 0)          \
       : (UTF8_IS_INVARIANT(*(p)))                                           \
           ? generic_isCC_(*(p), classnum)                                   \
-          : (UTF8_IS_DOWNGRADEABLE_START(*(p))                              \
-             ? ((LIKELY((e) - (p) > 1 && UTF8_IS_CONTINUATION(*((p)+1))))   \
-                ? generic_isCC_(EIGHT_BIT_UTF8_TO_NATIVE(*(p), *((p)+1 )),  \
-                                classnum)                                   \
-                : (force_out_malformed_utf8_message_(                       \
-                                        (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0))  \
-             : above_latin1))
-/* Like the above, but calls 'above_latin1(p)' to get the utf8 value.
+          : (UTF8_IS_ABOVE_LATIN1_START(*(p))                               \
+             ? above_latin1                                                 \
+             : ((LIKELY((e) - (p) > 1 && UTF8_IS_CONTINUATION(*((p)+1))))   \
+                  /* Multiply by 2 to return byte length of matched         \
+                   * character */                                           \
+                ? 2 * generic_isCC_(EIGHT_BIT_UTF8_TO_NATIVE(*(p),*((p)+1)),\
+                                    classnum)                               \
+                : (force_out_malformed_utf8_message_((U8 *) (p), (U8 *) (e),\
+                                                     0, MALFORMED_UTF8_DIE),\
+                   0))))
+
+/* Like the above, but calls 'above_latin1(p, e)' to get the utf8 value.
  * 'above_latin1' can be a macro */
 #define generic_func_utf8_safe_(classnum, above_latin1, p, e)               \
                     generic_utf8_safe_(classnum, p, e, above_latin1(p, e))
+
 #define generic_non_invlist_utf8_safe_(classnum, above_latin1, p, e)        \
-          generic_utf8_safe_(classnum, p, e,                                \
-                             (UNLIKELY((e) - (p) < UTF8SKIP(p))             \
-                              ? (force_out_malformed_utf8_message_(         \
-                                      (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0) \
-                              : above_latin1(p)))
+    generic_utf8_safe_(classnum, p, e,                                      \
+                       (LIKELY((e) - (p) >= UTF8SKIP(p))                    \
+                        ? above_latin1(p)                                   \
+                        : (force_out_malformed_utf8_message_(               \
+                                                        (U8 *) (p),         \
+                                                        (U8 *) (e),         \
+                                                        0,                  \
+                                                        MALFORMED_UTF8_DIE),\
+                           0)))
 /* Like the above, but passes classnum to _isFOO_utf8(), instead of having an
  * 'above_latin1' parameter */
 #define generic_invlist_utf8_safe_(classnum, p, e)                          \
-            generic_utf8_safe_(classnum, p, e, _is_utf8_FOO(classnum, p, e))
+            generic_utf8_safe_(classnum, p, e, is_utf8_FOO_(classnum, p, e))
 
 /* Like the above, but should be used only when it is known that there are no
  * characters in the upper-Latin1 range (128-255 on ASCII platforms) which the
  * class is TRUE for.  Hence it can skip the tests for this range.
  * 'above_latin1' should include its arguments */
 #define generic_utf8_safe_no_upper_latin1_(classnum, p, e, above_latin1)    \
-         (__ASSERT_(_utf8_safe_assert(p, e))                                \
+         (assert(utf8_safe_assert_(p, e)),                                  \
          (isASCII(*(p)))                                                    \
           ? generic_isCC_(*(p), classnum)                                   \
-          : (UTF8_IS_DOWNGRADEABLE_START(*(p)))                             \
-             ? 0 /* Note that doesn't check validity for latin1 */          \
-             : above_latin1)
-
+          : (UTF8_IS_ABOVE_LATIN1_START(*(p))                               \
+             ? above_latin1                                                 \
+             : 0)) /* Note that doesn't check validity for latin1 */
 
 #define isALPHA_utf8(p, e)         isALPHA_utf8_safe(p, e)
 #define isALPHANUMERIC_utf8(p, e)  isALPHANUMERIC_utf8_safe(p, e)
@@ -2335,7 +2395,7 @@ END_EXTERN_C
 #define isASCII_utf8_safe(p, e)                                             \
     /* Because ASCII is invariant under utf8, the non-utf8 macro            \
     * works */                                                              \
-    (__ASSERT_(_utf8_safe_assert(p, e)) isASCII(*(p)))
+    (assert_(utf8_safe_assert_(p, e)) isASCII(*(p)))
 #define isBLANK_utf8_safe(p, e)                                             \
         generic_non_invlist_utf8_safe_(CC_BLANK_, is_HORIZWS_high, p, e)
 
@@ -2343,17 +2403,17 @@ END_EXTERN_C
     /* Because all controls are UTF-8 invariants in EBCDIC, we can use this
      * more efficient macro instead of the more general one */
 #   define isCNTRL_utf8_safe(p, e)                                          \
-                    (__ASSERT_(_utf8_safe_assert(p, e)) isCNTRL_L1(*(p)))
+                    (assert_(utf8_safe_assert_(p, e)) isCNTRL_L1(*(p)))
 #else
 #   define isCNTRL_utf8_safe(p, e)  generic_utf8_safe_(CC_CNTRL_, p, e, 0)
 #endif
 
 #define isDIGIT_utf8_safe(p, e)                                             \
             generic_utf8_safe_no_upper_latin1_(CC_DIGIT_, p, e,             \
-                                            _is_utf8_FOO(CC_DIGIT_, p, e))
+                                            is_utf8_FOO_(CC_DIGIT_, p, e))
 #define isGRAPH_utf8_safe(p, e)    generic_invlist_utf8_safe_(CC_GRAPH_, p, e)
 #define isIDCONT_utf8_safe(p, e)   generic_func_utf8_safe_(CC_WORDCHAR_,    \
-                                                 _is_utf8_perl_idcont, p, e)
+                                                 is_utf8_perl_idcont_, p, e)
 
 /* To prevent S_scan_word in toke.c from hanging, we have to make sure that
  * IDFIRST is an alnum.  See
@@ -2363,7 +2423,7 @@ END_EXTERN_C
  * modern Unicode definition */
 #define isIDFIRST_utf8_safe(p, e)                                           \
     generic_func_utf8_safe_(CC_IDFIRST_,                                    \
-                            _is_utf8_perl_idstart, (U8 *) (p), (U8 *) (e))
+                            is_utf8_perl_idstart_, (U8 *) (p), (U8 *) (e))
 
 #define isLOWER_utf8_safe(p, e)     generic_invlist_utf8_safe_(CC_LOWER_, p, e)
 #define isPRINT_utf8_safe(p, e)     generic_invlist_utf8_safe_(CC_PRINT_, p, e)
@@ -2389,15 +2449,15 @@ END_EXTERN_C
 #define toUPPER_utf8(p,e,s,l)	toUPPER_utf8_safe(p,e,s,l)
 
 /* For internal core use only, subject to change */
-#define _toFOLD_utf8_flags(p,e,s,l,f)  _to_utf8_fold_flags (p,e,s,l,f)
-#define _toLOWER_utf8_flags(p,e,s,l,f) _to_utf8_lower_flags(p,e,s,l,f)
-#define _toTITLE_utf8_flags(p,e,s,l,f) _to_utf8_title_flags(p,e,s,l,f)
-#define _toUPPER_utf8_flags(p,e,s,l,f) _to_utf8_upper_flags(p,e,s,l,f)
+#define toFOLD_utf8_flags_(p,e,s,l,f)  to_utf8_fold_flags_(p,e,s,l,f)
+#define toLOWER_utf8_flags_(p,e,s,l,f) to_utf8_lower_flags_(p,e,s,l,f)
+#define toTITLE_utf8_flags_(p,e,s,l,f) to_utf8_title_flags_(p,e,s,l,f)
+#define toUPPER_utf8_flags_(p,e,s,l,f) to_utf8_upper_flags_(p,e,s,l,f)
 
-#define toFOLD_utf8_safe(p,e,s,l)   _toFOLD_utf8_flags(p,e,s,l, FOLD_FLAGS_FULL)
-#define toLOWER_utf8_safe(p,e,s,l)  _toLOWER_utf8_flags(p,e,s,l, 0)
-#define toTITLE_utf8_safe(p,e,s,l)  _toTITLE_utf8_flags(p,e,s,l, 0)
-#define toUPPER_utf8_safe(p,e,s,l)  _toUPPER_utf8_flags(p,e,s,l, 0)
+#define toFOLD_utf8_safe(p,e,s,l)   toFOLD_utf8_flags_(p,e,s,l, FOLD_FLAGS_FULL)
+#define toLOWER_utf8_safe(p,e,s,l)  toLOWER_utf8_flags_(p,e,s,l, 0)
+#define toTITLE_utf8_safe(p,e,s,l)  toTITLE_utf8_flags_(p,e,s,l, 0)
+#define toUPPER_utf8_safe(p,e,s,l)  toUPPER_utf8_flags_(p,e,s,l, 0)
 
 #define isALPHA_LC_utf8(p, e)         isALPHA_LC_utf8_safe(p, e)
 #define isALPHANUMERIC_LC_utf8(p, e)  isALPHANUMERIC_LC_utf8_safe(p, e)
@@ -2422,29 +2482,29 @@ END_EXTERN_C
  * point in 'p' is within the 0-255 range, it uses locale rules from the
  * passed-in 'macro' parameter */
 #define generic_LC_utf8_safe_(macro, p, e, above_latin1)                    \
-         (__ASSERT_(_utf8_safe_assert(p, e))                                \
+         (assert_(utf8_safe_assert_(p, e))                                  \
          (UTF8_IS_INVARIANT(*(p)))                                          \
           ? macro(*(p))                                                     \
-          : (UTF8_IS_DOWNGRADEABLE_START(*(p))                              \
-             ? ((LIKELY((e) - (p) > 1 && UTF8_IS_CONTINUATION(*((p)+1))))   \
+          : (UTF8_IS_ABOVE_LATIN1_START(*(p))                               \
+             ? above_latin1                                                 \
+             : ((LIKELY((e) - (p) > 1 && UTF8_IS_CONTINUATION(*((p)+1))))   \
                 ? macro(EIGHT_BIT_UTF8_TO_NATIVE(*(p), *((p)+1)))           \
                 : (force_out_malformed_utf8_message_(                       \
-                                        (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0)) \
-              : above_latin1))
+                                        (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0))))
 
 #define generic_LC_invlist_utf8_safe_(macro, classnum, p, e)                  \
             generic_LC_utf8_safe_(macro, p, e,                              \
-                                            _is_utf8_FOO(classnum, p, e))
+                                            is_utf8_FOO_(classnum, p, e))
 
 #define generic_LC_func_utf8_safe_(macro, above_latin1, p, e)               \
             generic_LC_utf8_safe_(macro, p, e, above_latin1(p, e))
 
 #define generic_LC_non_invlist_utf8_safe_(classnum, above_latin1, p, e)       \
           generic_LC_utf8_safe_(classnum, p, e,                             \
-                             (UNLIKELY((e) - (p) < UTF8SKIP(p))             \
-                              ? (force_out_malformed_utf8_message_(         \
-                                      (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0) \
-                              : above_latin1(p)))
+                             (LIKELY((e) - (p) >= UTF8SKIP(p))              \
+                              ? above_latin1(p)                             \
+                              : (force_out_malformed_utf8_message_(         \
+                                      (U8 *) (p), (U8 *) (e), 0, MALFORMED_UTF8_DIE), 0)))
 
 #define isALPHANUMERIC_LC_utf8_safe(p, e)                                   \
             generic_LC_invlist_utf8_safe_(isALPHANUMERIC_LC,                \
@@ -2452,7 +2512,7 @@ END_EXTERN_C
 #define isALPHA_LC_utf8_safe(p, e)                                          \
             generic_LC_invlist_utf8_safe_(isALPHA_LC, CC_ALPHA_, p, e)
 #define isASCII_LC_utf8_safe(p, e)                                          \
-                    (__ASSERT_(_utf8_safe_assert(p, e)) isASCII_LC(*(p)))
+                    (assert_(utf8_safe_assert_(p, e)) isASCII_LC(*(p)))
 #define isBLANK_LC_utf8_safe(p, e)                                          \
         generic_LC_non_invlist_utf8_safe_(isBLANK_LC, is_HORIZWS_high, p, e)
 #define isCNTRL_LC_utf8_safe(p, e)                                          \
@@ -2463,10 +2523,10 @@ END_EXTERN_C
             generic_LC_invlist_utf8_safe_(isGRAPH_LC, CC_GRAPH_, p, e)
 #define isIDCONT_LC_utf8_safe(p, e)                                         \
             generic_LC_func_utf8_safe_(isIDCONT_LC,                         \
-                                                _is_utf8_perl_idcont, p, e)
+                                                is_utf8_perl_idcont_, p, e)
 #define isIDFIRST_LC_utf8_safe(p, e)                                        \
             generic_LC_func_utf8_safe_(isIDFIRST_LC,                        \
-                                               _is_utf8_perl_idstart, p, e)
+                                               is_utf8_perl_idstart_, p, e)
 #define isLOWER_LC_utf8_safe(p, e)                                          \
             generic_LC_invlist_utf8_safe_(isLOWER_LC, CC_LOWER_, p, e)
 #define isPRINT_LC_utf8_safe(p, e)                                          \
@@ -2510,19 +2570,81 @@ END_EXTERN_C
 #define isALNUMC_utf8_safe(p,e)  isALPHANUMERIC_utf8_safe(p,e)
 #define isALNUMC_LC_utf8_safe(p,e) isALPHANUMERIC_LC_utf8_safe(p,e)
 
-/* On EBCDIC platforms, CTRL-@ is 0, CTRL-A is 1, etc, just like on ASCII,
- * except that they don't necessarily mean the same characters, e.g. CTRL-D is
- * 4 on both systems, but that is EOT on ASCII;  ST on EBCDIC.
- * '?' is special-cased on EBCDIC to APC, which is the control there that is
- * the outlier from the block that contains the other controls, just like
- * toCTRL('?') on ASCII yields DEL, the control that is the outlier from the C0
- * block.  If it weren't special cased, it would yield a non-control.
- * The conversion works both ways, so toCTRL('D') is 4, and toCTRL(4) is D,
- * etc. */
+/*
+=for apidoc_section $casing_scn
+=for apidoc      Am|U8|toCTRL|U8 cp
+=for apidoc_item   ||fromCTRL|U8 cp
+
+C<toCTRL> converts the character C<cp> into its equivalent control character,
+I<i.e.>, what the Perl construct C<\cI<cp>> would do given the same input.
+
+For example, C<toCTRL('A')> yields 1.
+
+C<fromCTRL> goes the other way.
+
+The original motivation behind this is that most keyboards for languages based
+on the Latin script will have keys labelled with the ASCII alphabetic
+characters.  "G" is one such key.  (That key should really be labelled "g",
+because that's what generally gets transmitted to the computer when that key is
+pressed.  Getting "G" transmitted instead usually requires the "Shift" key to
+simultaneously be held down.)  There is typically a "Ctrl" key on such
+keyboards, and C<toCTRL('G')> returns what gets transmitted when the "Ctrl" key
+and the "G" key are simultaneously pressed, hence its name.  That value in this
+case is 7, which is an ASCII ALERT (or BEL).  Hence, typing CTRL-G at the
+command line will typically trigger the computer's bell sound.
+
+The values are (fairly) standardized only for the following keys:
+
+ @       0
+ A-Z  1-26
+ [      27
+ \      28
+ ]      29
+ ^      30
+ _      31
+
+The Perl language includes the C<\c> construct to be able to express this
+mapping, (See L<perlop/Quote and Quote-like Operators> and
+L<perlebcdic/OPERATOR DIFFERENCES>), and the C<toCTRL> macro is the XS and C
+language equivalent of that.
+
+It has been ported to work on EBCDIC as well, so that the conversion is
+numerical, not semantic; that is, on EBCDIC platforms, CTRL-@ is 0, CTRL-A is
+1, etc, just like on ASCII, except that they don't necessarily mean the same
+character.  For example, C<toCTRL('D')> yields 4 on both platforms, which
+happens to mean C<EOT> (C<END OF TRANSMISSION>) on ASCII platforms (which is
+why CTRL-D is often used to exit out of a shell), and C<SEL> (Select) on
+EBCDIC. (See perlebcdic/Unicode code points versus EBCDIC code points.)  But
+Perl itself does not ascribe any meaning beyond it being 4.  (If your need is
+to get to C<EOT> from "D", no matter which platform, wrap it thusly:
+C<LATIN1_TO_NATIVE(toCTRL('D'))>.)
+
+A lowercase argument yields the same result as its upper case equivalent, hence
+C<toCTRL('b')> returns 2.
+
+To go the other direction, starting with a value in the range 0..31, and
+yielding a character like 'A", you can use C<fromCTRL()>.  For alphabetic
+results, this will always be the uppercase form.
+
+The macros also map between the "?" character and a defined value.  But it is
+not possible to do this portably between ASCII and EBCDIC.  On ASCII platforms,
+it is mapped to 127, which happens to be C<DELETE>.  On EBCDIC, it is mapped to
+the C<APC> control, whatever value this happens to be for the flavor of EBCDIC
+used on the platform.  What these all have in common is that the value chosen
+is the only control that isn't in the same contiguous block of controls that
+the others are in.
+
+Using any other values than those mentioned yields an undefined result.
+
+(It turns out that the conversion works both ways (except for lowercase inputs),
+so C<toCTRL('E')> is 5, and C<toCTRL(5)> is E.  But you shouldn't have to know that, so just use C<fromCTRL> to get from 5 to "E".)
+
+=cut
+*/
 #ifndef EBCDIC
-#  define toCTRL(c)    (__ASSERT_(FITS_IN_8_BITS(c)) toUPPER(((U8)(c))) ^ 64)
+#  define toCTRL(c)    (assert(FITS_IN_8_BITS(c)), toUPPER(((U8)(c))) ^ 64)
 #else
-#  define toCTRL(c)   (__ASSERT_(FITS_IN_8_BITS(c))                     \
+#  define toCTRL(c)   (assert(FITS_IN_8_BITS(c)),                       \
                       ((isPRINT_A(c))                                   \
                        ? (UNLIKELY((c) == '?')                          \
                          ? QUESTION_MARK_CTRL                           \
@@ -2531,10 +2653,14 @@ END_EXTERN_C
                          ? '?'                                          \
                          : (LATIN1_TO_NATIVE(((U8) (c)) ^ 64)))))
 #endif
+#define fromCTRL(c) toCTRL(c)
 
 /*
+=for apidoc_section $warning_scn
 =for apidoc Ay||line_t
 The typedef to use to declare variables that are to hold line numbers.
+
+Use the C<LINE_Tf> format to display these.
 
 =cut
 
@@ -2560,16 +2686,18 @@ typedef U32 line_t;
 /* Converts a character KNOWN to represent a hexadecimal digit (0-9, A-F, or
  * a-f) to its numeric value without using any branches.  The input is
  * validated only by an assert() in DEBUGGING builds.
- *
  * It works by right shifting and isolating the bit that is 0 for the digits,
  * and 1 for at least the alphas A-F, a-f.  The bit is shifted to the ones
  * position, and then to the eights position.  Both are added together to form
  * 0 if the input is '0'-'9' and to form 9 if alpha.  This is added to the
  * final four bits of the input to form the correct value. */
-#define XDIGIT_VALUE(c) (__ASSERT_(isXDIGIT(c))                             \
-           ((NATIVE_TO_LATIN1(c) >> 6) & 1)  /* 1 if alpha; 0 if not */     \
-         + ((NATIVE_TO_LATIN1(c) >> 3) & 8)  /* 8 if alpha; 0 if not */     \
-         + ((c) & 0xF))   /* 0-9 if input valid hex digit */
+
+#define XDIGIT_VALUE(c)                                                     \
+        (assert(isXDIGIT(c)),                                               \
+         ( (  (NATIVE_TO_LATIN1(c) & 0x40) >> 3) /* 8 if alpha; 0 if not */ \
+            | (NATIVE_TO_LATIN1(c) & 0x40) >> 6) /* 1 if alpha; 0 if not */ \
+                                       /* After OR: 9 if alpha, 0 if not */ \
+          + ((c) & 0xF))                 /* 0-9 if input valid hex digit */
 
 /* The argument is a string pointer, which is advanced. */
 #define READ_XDIGIT(s)  ((s)++, XDIGIT_VALUE(*((s) - 1)))
@@ -2577,7 +2705,7 @@ typedef U32 line_t;
 /* Converts a character known to represent an octal digit (0-7) to its numeric
  * value.  The input is validated only by an assert() in DEBUGGING builds.  In
  * both ASCII and EBCDIC the last 3 bits of the octal digits range from 0-7. */
-#define OCTAL_VALUE(c) (__ASSERT_(isOCTAL(c)) (7 & (c)))
+#define OCTAL_VALUE(c) (assert(isOCTAL(c)), (7 & (c)))
 
 /* Efficiently returns a boolean as to if two native characters are equivalent
  * case-insensitively.  At least one of the characters must be one of [A-Za-z];
@@ -2594,7 +2722,7 @@ typedef U32 line_t;
  * just a single 0, in the bit position where the upper- and lowercase differ.
  * */
 #define isALPHA_FOLD_EQ(c1, c2)                                         \
-                      (__ASSERT_(isALPHA_A(c1) || isALPHA_A(c2))        \
+                      (assert(isALPHA_A(c1) || isALPHA_A(c2)),          \
                       ((c1) & ~('A' ^ 'a')) ==  ((c2) & ~('A' ^ 'a')))
 #define isALPHA_FOLD_NE(c1, c2) (! isALPHA_FOLD_EQ((c1), (c2)))
 
@@ -2686,6 +2814,7 @@ optimise.
 This is an architecture-independent macro that does a shallow copy of one
 structure to another.
 
+=for apidoc_section $debugging
 =for apidoc Am|void|PoisonWith|void* dest|int nitems|type|U8 byte
 
 Fill up memory with a byte pattern (a byte repeated over and over
@@ -2709,7 +2838,7 @@ These each call C<PoisonWith(0xEF)> for catching access to freed memory.
 
 #define MEM_SIZE_MAX ((MEM_SIZE)-1)
 
-#define _PERL_STRLEN_ROUNDUP_UNCHECKED(n) (((n) - 1 + PERL_STRLEN_ROUNDUP_QUANTUM) & ~((MEM_SIZE)PERL_STRLEN_ROUNDUP_QUANTUM - 1))
+#define PERL_STRLEN_ROUNDUP_UNCHECKED_(n) (((n) - 1 + PERL_STRLEN_ROUNDUP_QUANTUM) & ~((MEM_SIZE)PERL_STRLEN_ROUNDUP_QUANTUM - 1))
 
 #ifdef PERL_MALLOC_WRAP
 
@@ -2724,13 +2853,13 @@ These each call C<PoisonWith(0xEF)> for catching access to freed memory.
  */
 
 
-#  define _MEM_WRAP_NEEDS_RUNTIME_CHECK(n,t) \
+#  define MEM_WRAP_NEEDS_RUNTIME_CHECK_(n,t) \
     (  sizeof(MEM_SIZE) < sizeof(n) \
     || sizeof(t) > ((MEM_SIZE)1 << 8*(sizeof(MEM_SIZE) - sizeof(n))))
 
 /* This is written in a slightly odd way to avoid various spurious
  * compiler warnings. We *want* to write the expression as
- *    _MEM_WRAP_NEEDS_RUNTIME_CHECK(n,t) && (n > C)
+ *    MEM_WRAP_NEEDS_RUNTIME_CHECK_(n,t) && (n > C)
  * (for some compile-time constant C), but even when the LHS
  * constant-folds to false at compile-time, g++ insists on emitting
  * warnings about the RHS (e.g. "comparison is always false"), so instead
@@ -2745,26 +2874,26 @@ These each call C<PoisonWith(0xEF)> for catching access to freed memory.
  * for X and hope that nothing else whines.
  */
 
-#  define _MEM_WRAP_WILL_WRAP(n,t) \
-      ((_MEM_WRAP_NEEDS_RUNTIME_CHECK(n,t) ? (MEM_SIZE)(n) : \
+#  define MEM_WRAP_WILL_WRAP_(n,t) \
+      ((MEM_WRAP_NEEDS_RUNTIME_CHECK_(n,t) ? (MEM_SIZE)(n) : \
             MEM_SIZE_MAX/sizeof(t)) > MEM_SIZE_MAX/sizeof(t))
 
 #  define MEM_WRAP_CHECK(n,t) \
-        (void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
+        (void)(UNLIKELY(MEM_WRAP_WILL_WRAP_(n,t)) \
         && (croak_memory_wrap(),0))
 
 #  define MEM_WRAP_CHECK_1(n,t,a) \
-        (void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
+        (void)(UNLIKELY(MEM_WRAP_WILL_WRAP_(n,t)) \
         && (Perl_croak_nocontext("%s",(a)),0))
 
 /* "a" arg must be a string literal */
 #  define MEM_WRAP_CHECK_s(n,t,a) \
-        (   (void) (UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t))          \
+        (   (void) (UNLIKELY(MEM_WRAP_WILL_WRAP_(n,t))          \
          && (Perl_croak_nocontext(ASSERT_IS_LITERAL(a)), 0)))
 
 #  define MEM_WRAP_CHECK_(n,t) MEM_WRAP_CHECK(n,t),
 
-#  define PERL_STRLEN_ROUNDUP(n) ((void)(((n) > MEM_SIZE_MAX - 2 * PERL_STRLEN_ROUNDUP_QUANTUM) ? (croak_memory_wrap(),0) : 0), _PERL_STRLEN_ROUNDUP_UNCHECKED(n))
+#  define PERL_STRLEN_ROUNDUP(n) ((void)(((n) > MEM_SIZE_MAX - 2 * PERL_STRLEN_ROUNDUP_QUANTUM) ? (croak_memory_wrap(),0) : 0), PERL_STRLEN_ROUNDUP_UNCHECKED_(n))
 #else
 
 #  define MEM_WRAP_CHECK(n,t)
@@ -2772,7 +2901,7 @@ These each call C<PoisonWith(0xEF)> for catching access to freed memory.
 #  define MEM_WRAP_CHECK_s(n,t,a)
 #  define MEM_WRAP_CHECK_(n,t)
 
-#  define PERL_STRLEN_ROUNDUP(n) _PERL_STRLEN_ROUNDUP_UNCHECKED(n)
+#  define PERL_STRLEN_ROUNDUP(n) PERL_STRLEN_ROUNDUP_UNCHECKED_(n)
 
 #endif
 
@@ -2856,10 +2985,10 @@ enum mem_log_type {
           (v = (MEM_WRAP_CHECK_(n,t) (c*)MEM_LOG_REALLOC(n,t,v,saferealloc((Malloc_t)(v),(MEM_SIZE)((n)*sizeof(t))))))
 
 #ifdef PERL_POISON
-#define Safefree(d) \
+#  define Safefree(d) \
   ((d) ? (void)(safefree(MEM_LOG_FREE((Malloc_t)(d))), Poison(&(d), 1, Malloc_t)) : (void) 0)
 #else
-#define Safefree(d)	safefree(MEM_LOG_FREE((Malloc_t)(d)))
+#  define Safefree(d)	safefree(MEM_LOG_FREE((Malloc_t)(d)))
 #endif
 
 /* assert that a valid ptr has been supplied - use this instead of assert(ptr)  *
@@ -2868,14 +2997,31 @@ enum mem_log_type {
 #define perl_assert_ptr(p) assert( ((void*)(p)) != 0 )
 
 
-#define Move(s,d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), perl_assert_ptr(s), (void)memmove((char*)(d),(const char*)(s), (n) * sizeof(t)))
-#define Copy(s,d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), perl_assert_ptr(s), (void)memcpy((char*)(d),(const char*)(s), (n) * sizeof(t)))
-#define Zero(d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), (void)memzero((char*)(d), (n) * sizeof(t)))
+#define Move(s,d,n,t)	((void)MoveD(s, d, n, t))
+#define Copy(s,d,n,t)	((void)CopyD(s, d, n, t))
+#define Zero(d,n,t)	((void)ZeroD(d, n, t))
 
 /* Like above, but returns a pointer to 'd' */
-#define MoveD(s,d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), perl_assert_ptr(s), memmove((char*)(d),(const char*)(s), (n) * sizeof(t)))
-#define CopyD(s,d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), perl_assert_ptr(s), memcpy((char*)(d),(const char*)(s), (n) * sizeof(t)))
-#define ZeroD(d,n,t)	(MEM_WRAP_CHECK_(n,t) perl_assert_ptr(d), memzero((char*)(d), (n) * sizeof(t)))
+#define MoveD(s,d,n,t)	\
+    ( \
+        MEM_WRAP_CHECK_(n,t) \
+        perl_assert_ptr(d), \
+        perl_assert_ptr(s), \
+        memmove((char*)(d),(const char*)(s), (n) * sizeof(t)) \
+    )
+#define CopyD(s,d,n,t)	\
+    ( \
+        MEM_WRAP_CHECK_(n,t) \
+        perl_assert_ptr(d), \
+        perl_assert_ptr(s), \
+        memcpy((char*)(d),(const char*)(s), (n) * sizeof(t)) \
+    )
+#define ZeroD(d,n,t)	\
+    ( \
+        MEM_WRAP_CHECK_(n,t) \
+        perl_assert_ptr(d), \
+        memzero((char*)(d), (n) * sizeof(t)) \
+    )
 
 #define NewCopy(s,d,n,t) STMT_START {   \
     Newx(d,n,t);                        \
@@ -2955,31 +3101,34 @@ last-inclusive range.
  CPAN::Unpack show any users outside the core.
 
 =for apidoc_section $warning
-=for apidoc Cdm||deprecate|U32 category|"message"
-Wrapper around Perl_ck_warner_d() to produce a deprecated warning in the
-given category with an appropriate message. The C<message> argument must
-be a C string. The string " is deprecated" will automatically be added
-to the end of the C<message>.
+=for apidoc   dm||deprecate|U32 category|"message"
+=for apidoc_item||deprecate_disappears_in|U32 category|"when"|"message"
+=for apidoc_item||deprecate_fatal_in|U32 category|"when"|"message"
 
-=for apidoc Cdm||deprecate_disappears_in|U32 category|"when"|"message"
-Wrapper around Perl_ck_warner_d() to produce a deprecated warning in the
-given category with an appropriate message that the construct referred
-to by the message will disappear in a specific release.  The C<when> and
-C<message> arguments must be a C string.  The C<when> string is expected
-to be of the form "5.40", with no minor element in the version.  The actual
-message output will be the result of the following expression C<message
-" is deprecated, and will disappear in Perl " when> which is why C<message>
-and C<when> must be literal C strings.
+These each are wrappers around Perl_ck_warner_d() to produce a deprecated
+warning in the single category given by C<category>, with an appropriate
+message.
 
-=for apidoc Cdm||deprecate_fatal_in|U32 category|"when"|"message"
-Wrapper around Perl_ck_warner_d() to produce a deprecated warning in the
-given category with an appropriate message that the construct referred
-to by the message will become fatal in a specific release.  The C<when>
-and C<message> arguments must be a C string.  The C<when> string is expected
-to be of the form "5.40", with no minor element in the version.  The actual
-message output will be the result of the following expression C<message " is
-deprecated, and will become fatal in Perl " when> which is why C<message>
-and C<when> must be literal C strings.
+They differ in the details of the message output, but all use as a base, the
+C<message> argument, which must be a literal C string enclosed in
+double-quotes.
+
+In plain C<deprecate>, the string " is deprecated" will automatically be
+added to the end of C<message>, yielding
+
+ <message> is deprecated
+
+The other two take a third argument C<when>, which is a literal C string in the
+form like "5.40".  C<when> indicates in what release the axe is scheduled to
+fall.
+
+In C<<deprecate_disappears_in>, the actual message output will be of the form:
+
+ <message> is deprecated, and will disappear in Perl <when>
+
+In C<deprecate_fatal_in>, the message will be of the form:
+
+ <message> is deprecated, and will become fatal in Perl <when>
 
 =cut
 */

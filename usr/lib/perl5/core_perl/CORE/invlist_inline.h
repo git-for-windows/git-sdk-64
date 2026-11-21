@@ -29,15 +29,18 @@
 PERL_STATIC_INLINE bool
 S_is_invlist(const SV* const invlist)
 {
+    PERL_ARGS_ASSERT_IS_INVLIST;
+
     return invlist != NULL && SvTYPE(invlist) == SVt_INVLIST;
 }
 
 PERL_STATIC_INLINE bool*
 S_get_invlist_offset_addr(SV* invlist)
 {
+    PERL_ARGS_ASSERT_GET_INVLIST_OFFSET_ADDR;
+
     /* Return the address of the field that says whether the inversion list is
      * offset (it contains 1) or not (contains 0) */
-    PERL_ARGS_ASSERT_GET_INVLIST_OFFSET_ADDR;
 
     assert(is_invlist(invlist));
 
@@ -45,12 +48,12 @@ S_get_invlist_offset_addr(SV* invlist)
 }
 
 PERL_STATIC_INLINE UV
-S__invlist_len(SV* const invlist)
+S_invlist_len_(SV* const invlist)
 {
+    PERL_ARGS_ASSERT_INVLIST_LEN_;
+
     /* Returns the current number of elements stored in the inversion list's
      * array */
-
-    PERL_ARGS_ASSERT__INVLIST_LEN;
 
     assert(is_invlist(invlist));
 
@@ -60,13 +63,13 @@ S__invlist_len(SV* const invlist)
 }
 
 PERL_STATIC_INLINE bool
-S__invlist_contains_cp(SV* const invlist, const UV cp)
+S_invlist_contains_cp_(SV* const invlist, const UV cp)
 {
+    PERL_ARGS_ASSERT_INVLIST_CONTAINS_CP_;
+
     /* Does <invlist> contain code point <cp> as part of the set? */
 
-    IV index = _invlist_search(invlist, cp);
-
-    PERL_ARGS_ASSERT__INVLIST_CONTAINS_CP;
+    IV index = invlist_search_(invlist, cp);
 
     return index >= 0 && ELEMENT_RANGE_MATCHES_INVLIST(index);
 }
@@ -74,15 +77,15 @@ S__invlist_contains_cp(SV* const invlist, const UV cp)
 PERL_STATIC_INLINE UV*
 S_invlist_array(SV* const invlist)
 {
+    PERL_ARGS_ASSERT_INVLIST_ARRAY;
+
     /* Returns the pointer to the inversion list's array.  Every time the
      * length changes, this needs to be called in case malloc or realloc moved
      * it */
 
-    PERL_ARGS_ASSERT_INVLIST_ARRAY;
-
     /* Must not be empty.  If these fail, you probably didn't check for <len>
      * being non-zero before trying to get the array */
-    assert(_invlist_len(invlist));
+    assert(invlist_len_(invlist));
 
     /* The very first element always contains zero, The array begins either
      * there, or if the inversion list is offset, at the element after it.
@@ -98,9 +101,9 @@ S_invlist_array(SV* const invlist)
 PERL_STATIC_INLINE void
 S_invlist_extend(pTHX_ SV* const invlist, const UV new_max)
 {
-    /* Grow the maximum size of an inversion list */
-
     PERL_ARGS_ASSERT_INVLIST_EXTEND;
+
+    /* Grow the maximum size of an inversion list */
 
     assert(SvTYPE(invlist) == SVt_INVLIST);
 
@@ -112,10 +115,11 @@ S_invlist_extend(pTHX_ SV* const invlist, const UV new_max)
 PERL_STATIC_INLINE void
 S_invlist_set_len(pTHX_ SV* const invlist, const UV len, const bool offset)
 {
+    PERL_ARGS_ASSERT_INVLIST_SET_LEN;
+
     /* Sets the current number of elements stored in the inversion list.
      * Updates SvCUR correspondingly */
     PERL_UNUSED_CONTEXT;
-    PERL_ARGS_ASSERT_INVLIST_SET_LEN;
 
     assert(SvTYPE(invlist) == SVt_INVLIST);
 
@@ -127,22 +131,25 @@ S_invlist_set_len(pTHX_ SV* const invlist, const UV len, const bool offset)
 }
 
 PERL_STATIC_INLINE SV*
-S_add_cp_to_invlist(pTHX_ SV* invlist, const UV cp) {
-    return _add_range_to_invlist(invlist, cp, cp);
+S_add_cp_to_invlist(pTHX_ SV* invlist, const UV cp)
+{
+    PERL_ARGS_ASSERT_ADD_CP_TO_INVLIST;
+
+    return add_range_to_invlist_(invlist, cp, cp);
 }
 
 PERL_STATIC_INLINE UV
 S_invlist_highest(SV* const invlist)
 {
+    PERL_ARGS_ASSERT_INVLIST_HIGHEST;
+
     /* Returns the highest code point that matches an inversion list.  This API
      * has an ambiguity, as it returns 0 under either the highest is actually
      * 0, or if the list is empty.  If this distinction matters to you, check
      * for emptiness before calling this function */
 
-    UV len = _invlist_len(invlist);
+    UV len = invlist_len_(invlist);
     UV *array;
-
-    PERL_ARGS_ASSERT_INVLIST_HIGHEST;
 
     if (len == 0) {
         return 0;
@@ -166,16 +173,23 @@ S_invlist_highest(SV* const invlist)
 PERL_STATIC_INLINE UV
 S_invlist_highest_range_start(SV* const invlist)
 {
-    /* Returns the lowest code point of the highest range in the inversion
-     * list parameter.  This API has an ambiguity: it returns 0 either when
-     * the lowest such point is actually 0 or when the list is empty.  If this
-     * distinction matters to you, check for emptiness before calling this
-     * function. */
-
-    UV len = _invlist_len(invlist);
-    UV *array;
-
     PERL_ARGS_ASSERT_INVLIST_HIGHEST_RANGE_START;
+
+/*
+=for apidoc invlist_highest_range_start
+
+Returns the lowest code point of the highest range in the inversion list
+given by its parameter.
+
+This API has an ambiguity: it returns 0 either when the lowest such
+point is actually 0 or when the list is empty.  If this distinction matters to
+you, check for emptiness before calling this function.
+
+=cut
+*/
+
+    UV len = invlist_len_(invlist);
+    UV *array;
 
     if (len == 0) {
         return 0;
@@ -187,7 +201,7 @@ S_invlist_highest_range_start(SV* const invlist)
      * range that goes to infinity.  That range may be for code points that are
      * matched in the inversion list, or it may be for ones that aren't
      * matched.  In the first case, the lowest code point in the matching range
-     * is that the one that started the range.  If the other case, the final
+     * is the one that started the range.  In the other case, the final
      * matching range begins at the next element down (which may be 0 in the
      * edge case). */
     return (ELEMENT_RANGE_MATCHES_INVLIST(len - 1))
@@ -204,10 +218,10 @@ S_invlist_highest_range_start(SV* const invlist)
 PERL_STATIC_INLINE STRLEN*
 S_get_invlist_iter_addr(SV* invlist)
 {
+    PERL_ARGS_ASSERT_GET_INVLIST_ITER_ADDR;
+
     /* Return the address of the UV that contains the current iteration
      * position */
-
-    PERL_ARGS_ASSERT_GET_INVLIST_ITER_ADDR;
 
     assert(is_invlist(invlist));
 
@@ -225,6 +239,8 @@ S_invlist_iterinit(SV* invlist)	/* Initialize iterator for invlist */
 PERL_STATIC_INLINE void
 S_invlist_iterfinish(SV* invlist)
 {
+    PERL_ARGS_ASSERT_INVLIST_ITERFINISH;
+
     /* Terminate iterator for invlist.  This is to catch development errors.
      * Any iteration that is interrupted before completed should call this
      * function.  Functions that add code points anywhere else but to the end
@@ -233,14 +249,14 @@ S_invlist_iterfinish(SV* invlist)
      * problematical: if the iteration hadn't reached the place where things
      * were being added, it would be ok */
 
-    PERL_ARGS_ASSERT_INVLIST_ITERFINISH;
-
     *get_invlist_iter_addr(invlist) = (STRLEN) UV_MAX;
 }
 
-STATIC bool
+static bool
 S_invlist_iternext(SV* invlist, UV* start, UV* end)
 {
+    PERL_ARGS_ASSERT_INVLIST_ITERNEXT;
+
     /* An C<invlist_iterinit> call on <invlist> must be used to set this up.
      * This call sets in <*start> and <*end>, the next range in <invlist>.
      * Returns <TRUE> if successful and the next call will return the next
@@ -249,10 +265,8 @@ S_invlist_iternext(SV* invlist, UV* start, UV* end)
      * will start over at the beginning of the list */
 
     STRLEN* pos = get_invlist_iter_addr(invlist);
-    UV len = _invlist_len(invlist);
+    UV len = invlist_len_(invlist);
     UV *array;
-
-    PERL_ARGS_ASSERT_INVLIST_ITERNEXT;
 
     if (*pos >= len) {
         *pos = (STRLEN) UV_MAX;	/* Force iterinit() to be required next time */
@@ -299,6 +313,8 @@ PERL_STATIC_INLINE
 SV *
 S_invlist_contents(pTHX_ SV* const invlist, const bool traditional_style)
 {
+    PERL_ARGS_ASSERT_INVLIST_CONTENTS;
+
     /* Get the contents of an inversion list into a string SV so that they can
      * be printed out.  If 'traditional_style' is TRUE, it uses the format
      * traditionally done for debug tracing; otherwise it uses a format
@@ -316,8 +332,6 @@ S_invlist_contents(pTHX_ SV* const invlist, const bool traditional_style)
     else {
         output = newSVpvs("");
     }
-
-    PERL_ARGS_ASSERT_INVLIST_CONTENTS;
 
     assert(! invlist_is_iterating(invlist));
 
@@ -351,15 +365,22 @@ PERL_STATIC_INLINE
 UV
 S_invlist_lowest(SV* const invlist)
 {
-    /* Returns the lowest code point that matches an inversion list.  This API
-     * has an ambiguity, as it returns 0 under either the lowest is actually
-     * 0, or if the list is empty.  If this distinction matters to you, check
-     * for emptiness before calling this function */
-
-    UV len = _invlist_len(invlist);
-    UV *array;
-
     PERL_ARGS_ASSERT_INVLIST_LOWEST;
+
+/*
+=for apidoc invlist_lowest
+
+Returns the lowest code point that matches an inversion list.
+
+This API has an ambiguity, as it returns 0 under either the lowest is actually
+0, or if the list is empty.  If this distinction matters to you, check for
+emptiness before calling this function
+
+=cut
+*/
+
+    UV len = invlist_len_(invlist);
+    UV *array;
 
     if (len == 0) {
         return 0;

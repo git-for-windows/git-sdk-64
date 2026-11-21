@@ -45,7 +45,7 @@ use warnings;
 
 package Pod::Simple::XHTML;
 use strict;
-our $VERSION = '3.45';
+our $VERSION = '3.48';
 use Pod::Simple::Methody ();
 our @ISA = ('Pod::Simple::Methody');
 
@@ -70,10 +70,11 @@ sub encode_entities {
       $ents =~ s,(?<!\\)([]/]),\\$1,g;
       $ents =~ s,(?<!\\)\\\z,\\\\,;
   } else {
-      $ents = join '', keys %entities;
+      # the same set of characters as in HTML::Entities
+      $ents = '^\n\r\t !\#\$%\(-;=?-~';
   }
   my $str = $_[0];
-  $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', ord $1) . ';'/ge;
+  $str =~ s/([$ents])/'&' . ($entities{$1} || sprintf '#x%X', unpack('U', $1)) . ';'/ge;
   return $str;
 }
 
@@ -94,12 +95,17 @@ sub decode_entities {
   return $string;
 }
 
+sub HAVE_UTF8_ENCODE ();
+BEGIN {
+  *HAVE_UTF8_ENCODE = defined &utf8::encode ? sub () { 1 } : sub () { 0 };
+}
+my %percent_enc = map +( chr($_) => sprintf('%%%02X', $_) ), 0 .. 255;
+
 sub encode_url {
   my ($self, $string) = @_;
 
-  $string =~ s{([^-_.!~*()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZZ0123456789])}{
-    sprintf('%%%02X', ord($1))
-  }eg;
+  utf8::encode($string) if HAVE_UTF8_ENCODE;
+  $string =~ s{([^-_.!~*()a-zA-Z0-9])}{$percent_enc{$1}}g;
 
   return $string;
 }
@@ -118,7 +124,7 @@ the call to C<parse_file>:
 
 =head2 perldoc_url_prefix
 
-In turning L<Foo::Bar> into http://whatever/Foo%3a%3aBar, what
+In turning LE<lt>Foo::BarE<gt> into http://whatever/Foo%3a%3aBar, what
 to put before the "Foo%3a%3aBar". The default value is
 "https://metacpan.org/pod/".
 
@@ -129,13 +135,14 @@ default.
 
 =head2 man_url_prefix
 
-In turning C<< L<crontab(5)> >> into http://whatever/man/1/crontab, what
-to put before the "1/crontab". The default value is
-"http://man.he.net/man".
+In turning C<< LE<lt>crontab(5)E<gt> >> into http://whatever/man/1/crontab.1, what
+to put before the "1/crontab.1". The default value is
+"https://man7.org/linux/man-pages/man".
 
 =head2 man_url_postfix
 
-What to put after "1/crontab" in the URL. This option is not set by default.
+What to put after "1/crontab.1" in the URL.
+This option is set to ".html" by default.
 
 =head2 title_prefix, title_postfix
 
@@ -276,7 +283,8 @@ sub new {
   my $new = $self->SUPER::new(@_);
   $new->{'output_fh'} ||= *STDOUT{IO};
   $new->perldoc_url_prefix('https://metacpan.org/pod/');
-  $new->man_url_prefix('http://man.he.net/man');
+  $new->man_url_prefix('https://man7.org/linux/man-pages/man');
+  $new->man_url_postfix('.html');
   $new->html_charset('ISO-8859-1');
   $new->nix_X_codes(1);
   $new->{'scratch'} = '';
@@ -458,7 +466,7 @@ sub start_item_text   {
 }
 
 sub start_over_bullet { $_[0]{'scratch'} = '<ul>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
-sub start_over_block  { $_[0]{'scratch'} = '<ul>'; $_[0]->emit }
+sub start_over_block  { $_[0]{'scratch'} = '<blockquote>'; $_[0]->emit }
 sub start_over_number { $_[0]{'scratch'} = '<ol>'; push @{$_[0]{'in_li'}}, 0; $_[0]->emit }
 sub start_over_text   {
     $_[0]{'scratch'} = '<dl>';
@@ -467,7 +475,7 @@ sub start_over_text   {
     $_[0]->emit
 }
 
-sub end_over_block  { $_[0]{'scratch'} .= '</ul>'; $_[0]->emit }
+sub end_over_block  { $_[0]{'scratch'} .= '</blockquote>'; $_[0]->emit }
 
 sub end_over_number   {
     $_[0]{'scratch'} = "</li>\n" if ( pop @{$_[0]{'in_li'}} );
@@ -699,6 +707,9 @@ sub end_F   { $_[0]{'scratch'} .= '</i>' }
 sub start_I { $_[0]{'scratch'} .= '<i>' }
 sub end_I   { $_[0]{'scratch'} .= '</i>' }
 
+sub start_U { $_[0]{'scratch'} .= '<u>' }
+sub end_U   { $_[0]{'scratch'} .= '</u>' }
+
 sub start_L {
   my ($self, $flags) = @_;
     my ($type, $to, $section) = @{$flags}{'type', 'to', 'section'};
@@ -771,26 +782,34 @@ sub resolve_pod_page_link {
 Resolves a man page link target and numeric section to a URL. The resulting
 link will be returned for the above examples as:
 
-    http://man.he.net/man5/crontab
-    http://man.he.net/man1/crontab
+    https://man7.org/linux/man-pages/man5/crontab.5.html
+    https://man7.org/linux/man-pages/man1/crontab.1.html
 
 Note that the first argument is required. The section number will be parsed
 from it, and if it's missing will default to 1. The second argument is
-currently ignored, as L<man.he.net|http://man.he.net> does not currently
-include linkable IDs or anchor names in its pages. Subclass to link to a
-different man page HTTP server.
+currently ignored. Subclass to link to a different man page HTTP server.
 
 =cut
 
 sub resolve_man_page_link {
     my ($self, $to, $section) = @_;
     return undef unless defined $to;
+
     my ($page, $part) = $to =~ /^([^(]+)(?:[(](\d+)[)])?$/;
     return undef unless $page;
+
+    if (defined $section) {
+        $section =~ s/\s+/_/g;
+        my $id = $self->idify($section, 1);
+        $section = '#' . $self->encode_url($id);
+    } else {
+        $section = ''
+    }
+
     return ($self->man_url_prefix || '')
         . ($part || 1) . "/" . $self->encode_entities($page)
-        . ($self->man_url_postfix || '');
-
+        . "." . ($part || 1) . ($self->man_url_postfix || '')
+        . $section;
 }
 
 =head2 idify
@@ -902,17 +921,9 @@ This program is distributed in the hope that it will be useful, but
 without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose.
 
-=head1 ACKNOWLEDGEMENTS
-
-Thanks to L<Hurricane Electric|http://he.net/> for permission to use its
-L<Linux man pages online|http://man.he.net/> site for man page links.
-
-Thanks to L<search.cpan.org|http://search.cpan.org/> for permission to use the
-site for Perl module links.
-
 =head1 AUTHOR
 
-Pod::Simpele::XHTML was created by Allison Randal <allison@perl.org>.
+Pod::Simple::XHTML was created by Allison Randal <allison@perl.org>.
 
 Pod::Simple was created by Sean M. Burke <sburke@cpan.org>.
 But don't bother him, he's retired.

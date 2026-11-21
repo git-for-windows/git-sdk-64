@@ -144,7 +144,7 @@ modify it under the same terms as Perl itself.
 =cut
 
 use strict;
-our $VERSION = '3.86';
+our $VERSION = '3.87';
 our (%entity2char, %char2entity);
 
 require 5.008;

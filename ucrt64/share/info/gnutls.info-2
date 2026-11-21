@@ -1,6 +1,7 @@
-This is gnutls.info, produced by makeinfo version 7.2 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 7.3 from gnutls.texi.
 
-This manual is last updated 29 April 2026 for version 3.8.13 of GnuTLS.
+This manual is last updated 18 November 2026 for version 3.8.14 of
+GnuTLS.
 
 Copyright © 2001-2026 Free Software Foundation, Inc.\\ Copyright ©
 2001-2026 Nikos Mavrogiannopoulos
@@ -1447,7 +1448,7 @@ explicitly calling *note gnutls_global_init::.(1)
 
 Note that, on Glibc systems, unless the application is explicitly linked
 with the libpthread library, no mutex locks are used and setup by
-GnuTLS. It will use the Glibc mutex stubs.
+GnuTLS.  It will use the Glibc mutex stubs.
 
    ---------- Footnotes ----------
 
@@ -3338,7 +3339,9 @@ transmission.  The following functions provide that functionality.
      If the flag ‘GNUTLS_RECORD_WAIT’ is not specified and the function
      is interrupted then the ‘GNUTLS_E_AGAIN’ or ‘GNUTLS_E_INTERRUPTED’
      errors will be returned.  To obtain the data left in the corked
-     buffer use ‘gnutls_record_check_corked()’ .
+     buffer use ‘gnutls_record_check_corked()’ .  The session will
+     remain in a corked state and ‘gnutls_record_uncork()’ must be
+     called again to flush the pending data.
 
      *Returns:* On success the number of transmitted data is returned,
      or otherwise a negative error code.
@@ -3486,8 +3489,8 @@ Keyword        Description
                That is used to impose system-specific policies.
                It may be followed by additional options that
                will be appended to the system string (e.g.,
-               "@SYSTEM:+SRP"). The system file should have the
-               format 'KEYWORD=VALUE', e.g.,
+               "@SYSTEM:+SRP").  The system file should have
+               the format 'KEYWORD=VALUE', e.g.,
                'SYSTEM=NORMAL:+ARCFOUR-128'.
                
                Since version 3.5.1 it is allowed to specify
@@ -3525,13 +3528,13 @@ LEGACY         This sets the NORMAL settings that were used for
                
 PFS            Means all the known to be secure ciphersuites
                that support perfect forward secrecy (ECDHE and
-               DHE). The ciphers are sorted by security margin,
-               although the 256-bit ciphers are included as a
-               fallback only.  The message authenticity
-               security level is of 80 bits or more, and the
-               certificate verification profile is set to
-               GNUTLS_PROFILE_LOW (80-bits).  This option is
-               available since 3.2.4 or later.
+               DHE).  The ciphers are sorted by security
+               margin, although the 256-bit ciphers are
+               included as a fallback only.  The message
+               authenticity security level is of 80 bits or
+               more, and the certificate verification profile
+               is set to GNUTLS_PROFILE_LOW (80-bits).  This
+               option is available since 3.2.4 or later.
                
 SECURE128      Means all known to be secure ciphersuites that
                offer a security level 128-bit or more.  The
@@ -3632,12 +3635,13 @@ Ciphers        Examples are AES-128-GCM, AES-256-GCM,
 Key exchange   RSA, RSA-PSK, RSA-EXPORT, DHE-RSA, DHE-DSS, SRP,
                SRP-RSA, SRP-DSS, PSK, DHE-PSK, ECDHE-PSK,
                ECDHE-RSA, ECDHE-ECDSA, VKO-GOST-12, ANON-ECDH,
-               ANON-DH. Catch all name is KX-ALL which will add
-               all the algorithms from NORMAL priority.  Under
-               TLS1.3, the DHE-PSK and ECDHE-PSK strings are
-               equivalent and instruct for a Diffie-Hellman key
-               exchange using the enabled groups.  The shortcut
-               for secure GOST algorithms is KX-GOST-ALL.
+               ANON-DH.  Catch all name is KX-ALL which will
+               add all the algorithms from NORMAL priority.
+               Under TLS1.3, the DHE-PSK and ECDHE-PSK strings
+               are equivalent and instruct for a Diffie-Hellman
+               key exchange using the enabled groups.  The
+               shortcut for secure GOST algorithms is
+               KX-GOST-ALL.
                
 MAC            MD5, SHA1, SHA256, SHA384, GOST28147-TC26Z-IMIT,
                AEAD (used with GCM ciphers only).  All

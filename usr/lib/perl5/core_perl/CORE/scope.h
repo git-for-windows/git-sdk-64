@@ -157,12 +157,12 @@ scope has the given name. C<name> must be a literal string.
         if (PL_savestack_ix > old) leave_scope(old); \
     } STMT_END
 
+/* N.B. These are documented in pad.h */
 #define SAVEI8(i)                   save_I8((I8*)&(i))
 #define SAVEI16(i)                  save_I16((I16*)&(i))
 #define SAVEI32(i)                  save_I32((I32*)&(i))
 #define SAVEINT(i)                  save_int((int*)&(i))
 #define SAVEIV(i)                   save_iv((IV*)&(i))
-#define SAVELONG(l)                 save_long((long*)&(l))
 #define SAVESTRLEN(l)               Perl_save_strlen(aTHX_ (STRLEN*)&(l))
 #define SAVEBOOL(b)                 save_bool(&(b))
 #define SAVESPTR(s)                 save_sptr((SV**)&(s))
@@ -250,7 +250,7 @@ scope has the given name. C<name> must be a literal string.
         CopFILE_debug((c),"SAVECOPFILE_FREE",0);   \
     } STMT_END
 #else
-#  /* XXX not refcounted */
+  /* XXX not refcounted */
 #  define SAVECOPSTASH_FREE(c)	SAVESPTR(CopSTASH(c))
 #  define SAVECOPFILE(c)	SAVESPTR(CopFILEGV(c))
 #  define SAVECOPFILE_FREE(c)	SAVEGENERICSV(CopFILEGV(c))
@@ -304,10 +304,10 @@ casts it to a pointer of that C<type>.
 
 # define save_freeop(op)                    \
 STMT_START {                                 \
-      OP * const _o = (OP *)(op);             \
-      assert(!_o->op_savefree);               \
-      _o->op_savefree = 1;                     \
-      save_pushptr((void *)(_o), SAVEt_FREEOP); \
+      OP * const o_ = (OP *)(op);             \
+      assert(!o_->op_savefree);               \
+      o_->op_savefree = 1;                     \
+      save_pushptr((void *)(o_), SAVEt_FREEOP); \
     } STMT_END
 #define save_freepv(pv)		save_pushptr((void *)(pv), SAVEt_FREEPV)
 

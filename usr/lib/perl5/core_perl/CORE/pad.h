@@ -57,7 +57,7 @@ struct padnamelist {
 
 struct padname_fieldinfo;
 
-#define _PADNAME_BASE \
+#define PADNAME_BASE_ \
     char *	xpadn_pv;		\
     HV *	xpadn_ourstash;		\
     union {				\
@@ -73,19 +73,19 @@ struct padname_fieldinfo;
     U8		xpadn_flags
 
 struct padname {
-    _PADNAME_BASE;
+    PADNAME_BASE_;
 };
 
 struct padname_with_str {
 #ifdef PERL_PADNAME_MINIMAL
-    _PADNAME_BASE;
+    PADNAME_BASE_;
 #else
     struct padname	xpadn_padname;
 #endif
     char		xpadn_str[1];
 };
 
-#undef _PADNAME_BASE
+#undef PADNAME_BASE_
 
 #define PADNAME_FROM_PV(s) \
     ((PADNAME *)((s) - STRUCT_OFFSET(struct padname_with_str, xpadn_str)))
@@ -126,6 +126,10 @@ struct padname_fieldinfo {
 
 #define PAD_FAKELEX_ANON   1 /* the lex is declared in an ANON, or ... */
 #define PAD_FAKELEX_MULTI  2 /* the lex can be instantiated multiple times */
+
+/* flags for pad_alloc */
+
+#define padalloc_NO_SV  0x0001  /* this needs to not collide with SVs_PADTMP or SVf_READONLY */
 
 /* flags for the pad_new() function */
 
@@ -178,7 +182,7 @@ typedef enum {
  * indirectly affect pads. */
 
 /*
-=for apidoc m|void|SAVEPADSV	|PADOFFSET po
+=for apidoc m|void|SAVEPADSVANDMORTALIZE|PADOFFSET po
 Save a pad slot (used to restore after an iteration)
 
 =cut
@@ -528,15 +532,6 @@ Clone the state variables associated with running and compiling pads.
     PL_padix_floor		= proto_perl->Ipadix_floor;		\
     PL_pad_reset_pending	= proto_perl->Ipad_reset_pending;	\
     PL_cop_seqmax		= proto_perl->Icop_seqmax;
-
-/*
-=for apidoc Am|PADOFFSET|pad_add_name_pvs|"name"|U32 flags|HV *typestash|HV *ourstash
-
-Exactly like L</pad_add_name_pvn>, but takes a literal string
-instead of a string/length pair.
-
-=cut
-*/
 
 #define pad_add_name_pvs(name,flags,typestash,ourstash) \
     Perl_pad_add_name_pvn(aTHX_ STR_WITH_LEN(name), flags, typestash, ourstash)

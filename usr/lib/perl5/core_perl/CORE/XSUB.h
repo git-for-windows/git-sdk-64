@@ -30,7 +30,7 @@ C<L</THIS>>.
 =for apidoc Amnu|type|RETVAL
 Variable which is setup by C<xsubpp> to hold the return value for an
 XSUB.  This is always the proper type for the XSUB.  See
-L<perlxs/"The RETVAL Variable">.
+L<perlxs>.
 
 =for apidoc Amnu|type|THIS
 Variable which is setup by C<xsubpp> to designate the object in a C++
@@ -44,7 +44,7 @@ must be called prior to setup the C<MARK> variable.
 
 =for apidoc Amn|Stack_off_t|items
 Variable which is setup by C<xsubpp> to indicate the number of
-items on the stack.  See L<perlxs/"Variable-length Parameter Lists">.
+items on the stack.  See L<perlxs/"Ellipsis: variable-length parameter lists">.
 
 =for apidoc Amn|I32|ix
 Variable which is setup by C<xsubpp> to indicate which of an
@@ -53,12 +53,12 @@ XSUB's aliases was used to invoke it.  See L<perlxs/"The ALIAS: Keyword">.
 =for apidoc Am|SV*|ST|int ix
 Used to access elements on the XSUB's stack.
 
-=for apidoc Ay||XS|name
+=for apidoc Am||XS|name
 Macro to declare an XSUB and its C parameter list.  This is handled by
 C<xsubpp>.  It is the same as using the more explicit C<XS_EXTERNAL> macro; the
 latter is preferred.
 
-=for apidoc Ayu||XS_INTERNAL|name
+=for apidoc Amu||XS_INTERNAL|name
 Macro to declare an XSUB and its C parameter list without exporting the symbols.
 This is handled by C<xsubpp> and generally preferable over exporting the XSUB
 symbols unnecessarily.
@@ -67,10 +67,10 @@ symbols unnecessarily.
 XS_INTERNAL marked 'u' because declaring a function static within our test
 function doesn't work
 
-=for apidoc Ay||XS_EXTERNAL|name
+=for apidoc Am||XS_EXTERNAL|name
 Macro to declare an XSUB and its C parameter list explicitly exporting the symbols.
 
-=for apidoc Ay||XSPROTO|name
+=for apidoc Am||XSPROTO|name
 Macro used by C<L</XS_INTERNAL>> and C<L</XS_EXTERNAL>> to declare a function
 prototype.  You probably shouldn't be using this directly yourself.
 
@@ -128,7 +128,7 @@ is a lexical C<$_> in scope.
  * XS macro.
  *
  * XS_EXTERNAL is the same as XS_INTERNAL except it does not include
- * "STATIC", ie. it exports XSUB symbols. You probably don't want that.
+ * "static", ie. it exports XSUB symbols. You probably don't want that.
  */
 
 #define XSPROTO(name) void name(pTHX_ CV* cv __attribute__unused__)
@@ -143,7 +143,7 @@ is a lexical C<$_> in scope.
 #else
 #  define XS_EXTERNAL(name) XSPROTO(name)
 #endif
-#define XS_INTERNAL(name) STATIC XSPROTO(name)
+#define XS_INTERNAL(name) static XSPROTO(name)
 
 /* We do export xsub symbols by default for the public XS macro.
  * Try explicitly using XS_INTERNAL/XS_EXTERNAL instead, please. */

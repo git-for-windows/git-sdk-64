@@ -8,7 +8,7 @@
 
 # Returns a string in the format of output of date(1)
 # Populates the array argument time with individual values:
-#    time["second"]       -- seconds (0 - 59)
+#    time["second"]       -- seconds (0 - 60)
 #    time["minute"]       -- minutes (0 - 59)
 #    time["hour"]         -- hours (0 - 23)
 #    time["althour"]      -- hours (0 - 12)
@@ -28,10 +28,11 @@
 #    time["weeknum"]      -- week number, Sunday first day
 #    time["altweeknum"]   -- week number, Monday first day
 
-function getlocaltime(time,    ret, now, i)
+function getlocaltime(time, now,    ret, i)
 {
     # get time once, avoids unnecessary system calls
-    now = systime()
+    if (now == 0)   # no time was passed in
+        now = systime()
 
     # return date(1)-style output
     ret = strftime("%a %b %e %H:%M:%S %Z %Y", now)

@@ -18,9 +18,11 @@
 /* saves machine code for a common noreturn idiom typically used in Newx*() */
 GCC_DIAG_IGNORE_DECL(-Wunused-function);
 
-STATIC void
+static void
 Perl_croak_memory_wrap(void)
 {
+    PERL_ARGS_ASSERT_CROAK_MEMORY_WRAP;
+
     Perl_croak_nocontext("%s",PL_memory_wrap);
 }
 

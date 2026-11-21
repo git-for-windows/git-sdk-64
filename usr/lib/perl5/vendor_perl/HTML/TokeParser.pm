@@ -4,7 +4,7 @@ use strict;
 
 require HTML::PullParser;
 our @ISA = qw(HTML::PullParser);
-our $VERSION = '3.86';
+our $VERSION = '3.87';
 
 use Carp ();
 use HTML::Entities qw(decode_entities);

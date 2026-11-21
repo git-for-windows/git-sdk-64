@@ -204,6 +204,8 @@ int gnutls_pubkey_export_gost_raw2(gnutls_pubkey_t key,
 				   gnutls_datum_t *x, gnutls_datum_t *y,
 				   unsigned int flags);
 
+int gnutls_pubkey_export_mldsa_raw(gnutls_pubkey_t key, gnutls_datum_t *pub);
+
 #define gnutls_pubkey_get_pk_ecc_raw gnutls_pubkey_export_ecc_raw
 int gnutls_pubkey_export_ecc_raw(gnutls_pubkey_t key, gnutls_ecc_curve_t *curve,
 				 gnutls_datum_t *x, gnutls_datum_t *y);
@@ -260,6 +262,10 @@ int gnutls_pubkey_import_gost_raw(gnutls_pubkey_t key, gnutls_ecc_curve_t curve,
 				  gnutls_gost_paramset_t paramset,
 				  const gnutls_datum_t *x,
 				  const gnutls_datum_t *y);
+
+int gnutls_pubkey_import_mldsa_raw(gnutls_pubkey_t key,
+				   gnutls_pk_algorithm_t algo,
+				   const gnutls_datum_t *pub);
 
 int gnutls_pubkey_encrypt_data(gnutls_pubkey_t key, unsigned int flags,
 			       const gnutls_datum_t *plaintext,

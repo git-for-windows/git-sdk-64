@@ -30,7 +30,7 @@ our @EXPORT_OK = qw(
 our ($canonical, $forgive_me);
 
 BEGIN {
-    our $VERSION = '3.37_01';
+    our $VERSION = '3.41';
 }
 
 our $recursion_limit;
@@ -1426,9 +1426,8 @@ and huge object support.
 
 =head1 AUTHOR
 
-Storable was written by Raphael Manfredi
-F<E<lt>Raphael_Manfredi@pobox.comE<gt>>
-Maintenance is now done by cperl L<http://perl11.org/cperl>
+Storable was written by Raphael Manfredi C<< <Raphael_Manfredi@pobox.com> >>
+Maintenance is now done as part of Perl core, by the Perl 5 Porters.
 
 Please e-mail us with problems, bug fixes, comments and complaints,
 although if you have compliments you should send them to Raphael.

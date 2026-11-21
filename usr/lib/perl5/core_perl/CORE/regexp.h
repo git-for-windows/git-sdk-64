@@ -92,12 +92,12 @@ typedef struct regexp_paren_pair {
 } regexp_paren_pair;
 
 #  if defined(PERL_IN_REGCOMP_ANY) || defined(PERL_IN_UTF8_C)
-#    define _invlist_union(a, b, output) _invlist_union_maybe_complement_2nd(a, b, FALSE, output)
-#    define _invlist_intersection(a, b, output) _invlist_intersection_maybe_complement_2nd(a, b, FALSE, output)
+#    define invlist_union_(a, b, output) invlist_union_maybe_complement_2nd_(a, b, FALSE, output)
+#    define invlist_intersection_(a, b, output) invlist_intersection_maybe_complement_2nd_(a, b, FALSE, output)
 
 /* Subtracting b from a leaves in a everything that was there that isn't in b,
  * that is the intersection of a with b's complement */
-#    define _invlist_subtract(a, b, output) _invlist_intersection_maybe_complement_2nd(a, b, TRUE, output)
+#    define invlist_subtract_(a, b, output) invlist_intersection_maybe_complement_2nd_(a, b, TRUE, output)
 #  endif
 
 /* record the position of a (?{...}) within a pattern */
@@ -139,7 +139,7 @@ typedef struct regexp {
     /*----------------------------------------------------------------------
      * Fields required for compatibility with SV types
      */
-    _XPV_HEAD;
+    XPV_HEAD_;
 
     /*----------------------------------------------------------------------
      * Operational fields
@@ -484,7 +484,7 @@ and check for NULL.
 
 /* Currently the regex flags occupy a single 32-bit word.  Not all bits are
  * currently used.  The lower bits are shared with their corresponding PMf flag
- * bits, up to but not including _RXf_PMf_SHIFT_NEXT.  The unused bits
+ * bits, up to but not including RXf_PMf_SHIFT_NEXT_.  The unused bits
  * immediately follow; finally the used RXf-only (unshared) bits, so that the
  * highest bit in the word is used.  This gathers all the unused bits as a pool
  * in the middle, like so: 11111111111111110000001111111111
@@ -495,7 +495,7 @@ and check for NULL.
  * breaking binary compatibility.
  *
  * To add shared bits, do so in op_reg_common.h.  This should change
- * _RXf_PMf_SHIFT_NEXT so that things won't compile.  Then come to regexp.h and
+ * RXf_PMf_SHIFT_NEXT_ so that things won't compile.  Then come to regexp.h and
  * op.h and adjust the constant adders in the definitions of RXf_BASE_SHIFT and
  * Pmf_BASE_SHIFT down by the number of shared bits you added.  That's it.
  * Things should be binary compatible.  But if either of these gets to having
@@ -515,7 +515,7 @@ and check for NULL.
  * For the regexp bits, PL_reg_extflags_name[] in regnodes.h has a comment
  * giving which bits are used/unused */
 
-#  define RXf_BASE_SHIFT (_RXf_PMf_SHIFT_NEXT + 2)
+#  define RXf_BASE_SHIFT (RXf_PMf_SHIFT_NEXT_ + 2)
 
 /* What we have seen */
 #  define RXf_NO_INPLACE_SUBST  (1U<<(RXf_BASE_SHIFT+2))
@@ -741,16 +741,16 @@ and check for NULL.
 #  define ReREFCNT_inc(re)						\
     ({									\
         /* This is here to generate a casting warning if incorrect.  */	\
-        REGEXP *const _rerefcnt_inc = (re);				\
-        assert(SvTYPE(_rerefcnt_inc) == SVt_REGEXP);			\
-        SvREFCNT_inc(_rerefcnt_inc);					\
-        _rerefcnt_inc;							\
+        REGEXP *const rerefcnt_inc_ = (re);				\
+        assert(SvTYPE(rerefcnt_inc_) == SVt_REGEXP);			\
+        SvREFCNT_inc(rerefcnt_inc_);					\
+        rerefcnt_inc_;							\
     })
 #  define ReREFCNT_dec(re)						\
     ({									\
         /* This is here to generate a casting warning if incorrect.  */	\
-        REGEXP *const _rerefcnt_dec = (re);				\
-        SvREFCNT_dec(_rerefcnt_dec);					\
+        REGEXP *const rerefcnt_dec_ = (re);				\
+        SvREFCNT_dec(rerefcnt_dec_);					\
     })
 #else
 #  define ReREFCNT_dec(re)	SvREFCNT_dec(re)
@@ -791,6 +791,7 @@ typedef struct {
     SV      *sv;        /* $_  during (?{}) */
     MAGIC   *pos_magic; /* pos() magic attached to $_ */
     SSize_t pos;        /* the original value of pos() in pos_magic */
+    SV   *final_replsv; /* the final value of $^R. */
     U8      pos_flags;  /* flags to be restored; currently only MGf_BYTES*/
 } regmatch_info_aux_eval;
 

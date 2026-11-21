@@ -49,14 +49,14 @@
 extern "C" {
 #endif
 
-#define GNUTLS_VERSION "3.8.13"
+#define GNUTLS_VERSION "3.8.14"
 
 /* clang-format off */
 #define GNUTLS_VERSION_MAJOR 3
 #define GNUTLS_VERSION_MINOR 8
-#define GNUTLS_VERSION_PATCH 13
+#define GNUTLS_VERSION_PATCH 14
 
-#define GNUTLS_VERSION_NUMBER 0x03080d
+#define GNUTLS_VERSION_NUMBER 0x03080e
 /* clang-format on */
 
 #define GNUTLS_CIPHER_RIJNDAEL_128_CBC GNUTLS_CIPHER_AES_128_CBC
@@ -2713,14 +2713,20 @@ typedef enum gnutls_x509_subject_alt_name_t {
 	GNUTLS_SAN_OTHERNAME = 5,
 	GNUTLS_SAN_DN = 6,
 	GNUTLS_SAN_REGISTERED_ID = 7,
+	GNUTLS_SAN_MIN = GNUTLS_SAN_DNSNAME,
 	GNUTLS_SAN_MAX = GNUTLS_SAN_REGISTERED_ID,
 	/* The following are "virtual" subject alternative name types, in
 	   that they are represented by an otherName value and an OID.
-	   Used by gnutls_x509_crt_get_subject_alt_othername_oid.  */
+	   Used by gnutls_x509_crt_get_subject_alt_othername_oid.
+	   For historical reasons,
+	   these are not in the GNUTLS_SAN_MIN..GNUTLS_SAN_MAX range.
+	   They should probably deserve a separate enum type. */
 	GNUTLS_SAN_OTHERNAME_XMPP = 1000,
 	GNUTLS_SAN_OTHERNAME_KRB5PRINCIPAL,
 	GNUTLS_SAN_OTHERNAME_MSUSERPRINCIPAL,
-	GNUTLS_SAN_OTHERNAME_SRV
+	GNUTLS_SAN_OTHERNAME_SRV,
+	GNUTLS_SAN_OTHERNAME_MIN = GNUTLS_SAN_OTHERNAME_XMPP,
+	GNUTLS_SAN_OTHERNAME_MAX = GNUTLS_SAN_OTHERNAME_SRV
 } gnutls_x509_subject_alt_name_t;
 
 struct gnutls_openpgp_crt_int;

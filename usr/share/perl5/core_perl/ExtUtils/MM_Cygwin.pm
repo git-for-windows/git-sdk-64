@@ -10,7 +10,7 @@ require ExtUtils::MM_Unix;
 require ExtUtils::MM_Win32;
 our @ISA = qw( ExtUtils::MM_Unix );
 
-our $VERSION = '7.76';
+our $VERSION = '7.78_01';
 $VERSION =~ tr/_//d;
 
 
@@ -109,26 +109,6 @@ sub init_others {
     $self->{LDLOADLIBS} ||= $Config{perllibs};
 
     return;
-}
-
-=item maybe_command
-
-Determine whether a file is native to Cygwin by checking whether it
-resides inside the Cygwin installation (using Windows paths). If so,
-use L<ExtUtils::MM_Unix> to determine if it may be a command.
-Otherwise use the tests from L<ExtUtils::MM_Win32>.
-
-=cut
-
-sub maybe_command {
-    my ($self, $file) = @_;
-
-    my $cygpath = Cygwin::posix_to_win_path('/', 1);
-    my $filepath = Cygwin::posix_to_win_path($file, 1);
-
-    return (substr($filepath,0,length($cygpath)) eq $cygpath)
-    ? $self->SUPER::maybe_command($file) # Unix
-    : ExtUtils::MM_Win32->maybe_command($file); # Win32
 }
 
 =item dynamic_lib

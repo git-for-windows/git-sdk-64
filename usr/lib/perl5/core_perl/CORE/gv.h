@@ -46,37 +46,37 @@ the need to cast the result to the appropriate type.
 
 #if defined (DEBUGGING) && defined(PERL_USE_GCC_BRACE_GROUPS) && !defined(__INTEL_COMPILER)
 #  define GvGP(gv)							\
-        ((GP *)(*({GV *const _gvgp = (GV *) (gv);				\
-            assert(SvTYPE(_gvgp) == SVt_PVGV || SvTYPE(_gvgp) == SVt_PVLV); \
-            assert(isGV_with_GP(_gvgp));				\
-            &((_gvgp)->sv_u.svu_gp);})))
+        ((GP *)(*({GV *const gvgp_ = (GV *) (gv);				\
+            assert(SvTYPE(gvgp_) == SVt_PVGV || SvTYPE(gvgp_) == SVt_PVLV); \
+            assert(isGV_with_GP(gvgp_));				\
+            &((gvgp_)->sv_u.svu_gp);})))
 #  define GvGP_set(gv,gp)						\
-        {GV *const _gvgp = (GV *) (gv);				\
-            assert(SvTYPE(_gvgp) == SVt_PVGV || SvTYPE(_gvgp) == SVt_PVLV); \
-            assert(isGV_with_GP(_gvgp));				\
-            (_gvgp)->sv_u.svu_gp = (gp); }
+        {GV *const gvgp_ = (GV *) (gv);				\
+            assert(SvTYPE(gvgp_) == SVt_PVGV || SvTYPE(gvgp_) == SVt_PVLV); \
+            assert(isGV_with_GP(gvgp_));				\
+            (gvgp_)->sv_u.svu_gp = (gp); }
 #  define GvFLAGS(gv)							\
-        (*({GV *const _gvflags = (GV *) (gv);				\
-            assert(SvTYPE(_gvflags) == SVt_PVGV || SvTYPE(_gvflags) == SVt_PVLV); \
-            assert(isGV_with_GP(_gvflags));				\
-            &(GvXPVGV(_gvflags)->xpv_cur);}))
+        (*({GV *const gvflags_ = (GV *) (gv);				\
+            assert(SvTYPE(gvflags_) == SVt_PVGV || SvTYPE(gvflags_) == SVt_PVLV); \
+            assert(isGV_with_GP(gvflags_));				\
+            &(GvXPVGV(gvflags_)->xpv_cur);}))
 #  define GvSTASH(gv)							\
-        (*({ GV * const _gvstash = (GV *) (gv);				\
-            assert(isGV_with_GP(_gvstash));				\
-            assert(SvTYPE(_gvstash) == SVt_PVGV || SvTYPE(_gvstash) >= SVt_PVLV); \
-            &(GvXPVGV(_gvstash)->xnv_u.xgv_stash);			\
+        (*({ GV * const gvstash_ = (GV *) (gv);				\
+            assert(isGV_with_GP(gvstash_));				\
+            assert(SvTYPE(gvstash_) == SVt_PVGV || SvTYPE(gvstash_) >= SVt_PVLV); \
+            &(GvXPVGV(gvstash_)->xnv_u.xgv_stash);			\
          }))
 #  define GvNAME_HEK(gv)						\
-    (*({ GV * const _gvname_hek = (GV *) (gv);				\
-           assert(isGV_with_GP(_gvname_hek));				\
-           assert(SvTYPE(_gvname_hek) == SVt_PVGV || SvTYPE(_gvname_hek) >= SVt_PVLV); \
-           &(GvXPVGV(_gvname_hek)->xiv_u.xivu_namehek);			\
+    (*({ GV * const gvname_hek_ = (GV *) (gv);				\
+           assert(isGV_with_GP(gvname_hek_));				\
+           assert(SvTYPE(gvname_hek_) == SVt_PVGV || SvTYPE(gvname_hek_) >= SVt_PVLV); \
+           &(GvXPVGV(gvname_hek_)->xiv_u.xivu_namehek);			\
          }))
 #  define GvNAME_get(gv)	({ assert(GvNAME_HEK(gv)); (char *)HEK_KEY(GvNAME_HEK(gv)); })
 #  define GvNAMELEN_get(gv)	({ assert(GvNAME_HEK(gv)); HEK_LEN(GvNAME_HEK(gv)); })
 #  define GvNAMEUTF8(gv)	({ assert(GvNAME_HEK(gv)); HEK_UTF8(GvNAME_HEK(gv)); })
 #else
-#  define GvGP(gv)	(0+(gv)->sv_u.svu_gp)
+#  define GvGP(gv)              ((GP *)(gv)->sv_u.svu_gp)
 #  define GvGP_set(gv,gp)	((gv)->sv_u.svu_gp = (gp))
 #  define GvFLAGS(gv)	(GvXPVGV(gv)->xpv_cur)
 #  define GvSTASH(gv)	(GvXPVGV(gv)->xnv_u.xgv_stash)
@@ -94,9 +94,8 @@ the need to cast the result to the appropriate type.
 
 Return the SV from the GV.
 
-Prior to Perl v5.9.3, this would add a scalar if none existed.  Nowadays, use
-C<L</GvSVn>> for that, or compile perl with S<C<-DPERL_CREATE_GVSV>>.  See
-L<perl5100delta>.
+Use C<L</GvSVn>> if you wish to create an empty scalar when the SV slot is
+empty.
 
 =for apidoc Am|SV*|GvSVn|GV* gv
 Like C<L</GvSV>>, but creates an empty scalar if none already exists.
@@ -117,13 +116,9 @@ Return the CV from the GV.
 */
 
 #define GvSV(gv)	(GvGP(gv)->gp_sv)
-#ifdef PERL_DONT_CREATE_GVSV
 #define GvSVn(gv)	(*(GvGP(gv)->gp_sv ? \
                          &(GvGP(gv)->gp_sv) : \
                          &(GvGP(gv_SVadd(gv))->gp_sv)))
-#else
-#define GvSVn(gv)	GvSV(gv)
-#endif
 
 #define GvREFCNT(gv)	(GvGP(gv)->gp_refcnt)
 #define GvIO(gv)                         \

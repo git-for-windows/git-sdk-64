@@ -13,7 +13,7 @@ use Config;
 "x86_64\-cygwin\-thread\-multi-3\.6\.12\-50c44b7c\.x86_64" or
 	die "Errno architecture (x86_64\-cygwin\-thread\-multi-3\.6\.12\-50c44b7c\.x86_64) does not match executable architecture ($Config{'archname'}-$Config{'osvers'})";
 
-our $VERSION = "1.38";
+our $VERSION = "1.39";
 $VERSION = eval $VERSION;
 
 my %err;

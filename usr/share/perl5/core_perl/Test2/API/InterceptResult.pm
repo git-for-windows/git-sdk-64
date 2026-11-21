@@ -2,7 +2,7 @@ package Test2::API::InterceptResult;
 use strict;
 use warnings;
 
-our $VERSION = '1.302210';
+our $VERSION = '1.302219';
 
 use Scalar::Util qw/blessed/;
 use Test2::Util  qw/pkg_to_file/;
@@ -186,7 +186,7 @@ needing a deep understanding of the event/facet model.
 Usually you get an instance of this class when you use C<intercept()> from
 L<Test2::API>.
 
-    use Test2::V0;
+    use Test2::V1 '-iPp';
     use Test2::API qw/intercept/;
 
     my $events = intercept {
@@ -483,7 +483,7 @@ These are essentially:
     $events->grep(causes_failure => @{$PARAMS{args}})
 
 B<Note:> C<causes_fail()> and C<causes_failure()> are both aliases for
-eachother in events, so these methods are effectively aliases here as well.
+each other in events, so these methods are effectively aliases here as well.
 
 It returns a new instance containing only the events that cause failure.
 

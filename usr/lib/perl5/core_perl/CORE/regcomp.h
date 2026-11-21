@@ -386,7 +386,7 @@ struct regnode_ssc {
 #define set_ANYOF_SYNTHETIC(n)  \
     STMT_START{                 \
         OP(n) = ANYOF;          \
-        NEXT_OFF(n) = 1;        \
+        NEXT_OFF_set(n, 1);     \
     } STMT_END
 
 #define is_ANYOF_SYNTHETIC(n) (REGNODE_TYPE(OP(n)) == ANYOF && NEXT_OFF(n) == 1)
@@ -481,16 +481,22 @@ struct regnode_ssc {
 #undef NEXT_OFF
 #undef NODE_ALIGN
 
-#define NEXT_OFF(p)     ((p)->head.data.next_off)
+#define NEXT_OFF_base(p)((p)->head.data.next_off)
 #define OP(p)           ((p)->head.data.type)
 #define STR_LEN_U8(p)   ((p)->head.data.u_8.str_len_u8)
 #define FIRST_BYTE(p)   ((p)->head.data.u_8.first_byte)
-#define FLAGS(p)        ((p)->head.data.u_8.flags) /* Caution: Doesn't apply to all      \
-                                           regnode types.  For some, it's the \
-                                           character set of the regnode */
-#define STR_LENs(p)	(__ASSERT_(OP(p) != LEXACT && OP(p) != LEXACT_REQ8)  \
+
+/* Caution: Doesn't apply to all regnode types.  For some, it's the character
+ * set of the regnode */
+#define FLAGS(p)        ((p)->head.data.u_8.flags)
+
+#define NEXT_OFF_set(p, v)                                                  \
+                (assert(inRANGE((v), 0, U16_MAX)), NEXT_OFF_base(p) = (v))
+#define NEXT_OFF(p)  PREVENT_LVALUE(NEXT_OFF_base(p))
+
+#define STR_LENs(p)	(assert(OP(p) != LEXACT && OP(p) != LEXACT_REQ8),   \
                                     STR_LEN_U8((struct regnode_string *)p))
-#define STRINGs(p)	(__ASSERT_(OP(p) != LEXACT && OP(p) != LEXACT_REQ8)  \
+#define STRINGs(p)	(assert(OP(p) != LEXACT && OP(p) != LEXACT_REQ8),   \
                                     ((struct regnode_string *)p)->string)
 #define OPERANDs(p)	STRINGs(p)
 
@@ -510,9 +516,9 @@ struct regnode_ssc {
  * node to be an ARG2L, using the second 32 bit field for the length, and not
  * using the flags nor next_off fields at all.  One could have an llstring node
  * and even an lllstring type. */
-#define STR_LENl(p)	(__ASSERT_(OP(p) == LEXACT || OP(p) == LEXACT_REQ8)  \
+#define STR_LENl(p)	(assert(OP(p) == LEXACT || OP(p) == LEXACT_REQ8),   \
                                     (((struct regnode_lstring *)p)->str_len_u32))
-#define STRINGl(p)	(__ASSERT_(OP(p) == LEXACT || OP(p) == LEXACT_REQ8)  \
+#define STRINGl(p)	(assert(OP(p) == LEXACT || OP(p) == LEXACT_REQ8),   \
                                     (((struct regnode_lstring *)p)->string))
 #define OPERANDl(p)	STRINGl(p)
 
@@ -666,7 +672,7 @@ struct regnode_ssc {
 #define FILL_NODE(offset, op)                                           \
     STMT_START {                                                        \
                     OP(REGNODE_p(offset)) = op;                         \
-                    NEXT_OFF(REGNODE_p(offset)) = 0;                    \
+                    NEXT_OFF_set(REGNODE_p(offset), 0);                 \
     } STMT_END
 #define FILL_ADVANCE_NODE(offset, op)                                   \
     STMT_START {                                                        \
@@ -1189,24 +1195,24 @@ struct reg_data {
    field.  the next field determines which state
    is to be transitioned to if any.
 */
-struct _reg_trie_trans {
+struct reg_trie_trans_ {
   U32 next;
   U32 check;
 };
 
 /* a transition list element for the list based representation */
-struct _reg_trie_trans_list_elem {
+struct reg_trie_trans_list_elem_ {
     U16 forid;
     U32 newstate;
 };
-typedef struct _reg_trie_trans_list_elem reg_trie_trans_le;
+typedef struct reg_trie_trans_list_elem_ reg_trie_trans_le;
 
 /* a state for compressed nodes. base is an offset
   into an array of reg_trie_trans array. If wordnum is
   nonzero the state is accepting. if base is zero then
   the state has no children (and will be accepting)
 */
-struct _reg_trie_state {
+struct reg_trie_state_ {
   U16 wordnum;
   union {
     U32                base;
@@ -1225,15 +1231,15 @@ typedef struct {
 } reg_trie_wordinfo;
 
 
-typedef struct _reg_trie_state    reg_trie_state;
-typedef struct _reg_trie_trans    reg_trie_trans;
+typedef struct reg_trie_state_    reg_trie_state;
+typedef struct reg_trie_trans_    reg_trie_trans;
 
 
 /* anything in here that needs to be freed later
    should be dealt with in pregfree.
-   refcount is first in both this and _reg_ac_data to allow a space
+   refcount is first in both this and reg_ac_data_ to allow a space
    optimisation in Perl_regdupe.  */
-struct _reg_trie_data {
+struct reg_trie_data_ {
     U32             refcount;        /* number of times this trie is referenced */
     U32             lasttrans;       /* last valid transition element */
     U16             *charmap;        /* byte to charid lookup array */
@@ -1274,17 +1280,17 @@ struct _reg_trie_data {
 
 #define TRIE_WORDS_OFFSET 2
 
-typedef struct _reg_trie_data reg_trie_data;
+typedef struct reg_trie_data_ reg_trie_data;
 
-/* refcount is first in both this and _reg_trie_data to allow a space
+/* refcount is first in both this and reg_trie_data_ to allow a space
    optimisation in Perl_regdupe.  */
-struct _reg_ac_data {
+struct reg_ac_data_ {
     U32              refcount;
     U32              trie;
     U32              *fail;
     reg_trie_state   *states;
 };
-typedef struct _reg_ac_data reg_ac_data;
+typedef struct reg_ac_data_ reg_ac_data;
 
 /* ANY_BIT doesn't use the structure, so we can borrow it here.
    This is simpler than refactoring all of it as wed end up with

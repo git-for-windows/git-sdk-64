@@ -120,8 +120,8 @@ typedef struct jmpenv JMPENV;
             int i = 0;                                                  \
             JMPENV *p = PL_top_env;                                     \
             while (p) { i++; p = p->je_prev; }				\
-            Perl_deb(aTHX_ "JMPENV_PUSH pre level=%d in %s at %s:%d\n", \
-                         i,  SAFE_FUNCTION__, __FILE__, __LINE__);      \
+            deb("JMPENV_PUSH pre level=%d in %s at %s:%d\n",            \
+                i,  SAFE_FUNCTION__, __FILE__, __LINE__);               \
         });                                                             \
         cur_env.je_prev = PL_top_env;					\
         JE_OLD_STACK_HWM_save(cur_env);                                 \
@@ -142,8 +142,8 @@ typedef struct jmpenv JMPENV;
             int i = 0;                                                  \
             JMPENV *p = PL_top_env;                                     \
             while (p) { i++; p = p->je_prev; }				\
-            Perl_deb(aTHX_ "JMPENV_PUSH level=%d ret=%d in %s at %s:%d\n",    \
-                         i, cur_env.je_ret, SAFE_FUNCTION__,  __FILE__, __LINE__); \
+            deb("JMPENV_PUSH level=%d ret=%d in %s at %s:%d\n",         \
+                i, cur_env.je_ret, SAFE_FUNCTION__,  __FILE__, __LINE__); \
         });                                                             \
         (v) = cur_env.je_ret;						\
     } STMT_END
@@ -153,8 +153,8 @@ typedef struct jmpenv JMPENV;
         DEBUG_l({                                                       \
             int i = -1; JMPENV *p = PL_top_env;				\
             while (p) { i++; p = p->je_prev; }				\
-            Perl_deb(aTHX_ "JMPENV_POP level=%d in %s at %s:%d\n",        \
-                         i, SAFE_FUNCTION__, __FILE__, __LINE__);})        \
+            deb("JMPENV_POP level=%d in %s at %s:%d\n",                 \
+                i, SAFE_FUNCTION__, __FILE__, __LINE__);})              \
         assert(PL_top_env == &cur_env);					\
         PL_delaymagic = cur_env.je_old_delaymagic;			\
         PL_top_env = cur_env.je_prev;					\
@@ -165,8 +165,8 @@ typedef struct jmpenv JMPENV;
         DEBUG_l({                                               \
             int i = -1; JMPENV *p = PL_top_env;			\
             while (p) { i++; p = p->je_prev; }			\
-            Perl_deb(aTHX_ "JMPENV_JUMP(%d) level=%d in %s at %s:%d\n",         \
-                         (int)(v), i, SAFE_FUNCTION__, __FILE__, __LINE__);})   \
+            deb("JMPENV_JUMP(%d) level=%d in %s at %s:%d\n",    \
+                (int)(v), i, SAFE_FUNCTION__, __FILE__, __LINE__);}) \
         if (PL_top_env->je_prev) {				\
             assert((v) >= 0 && (v) <= 3);			\
             PerlProc_longjmp(PL_top_env->je_buf, (v));		\
@@ -181,8 +181,7 @@ typedef struct jmpenv JMPENV;
 #define CATCH_SET(v) \
     STMT_START {							\
         DEBUG_l(                                                        \
-            Perl_deb(aTHX_						\
-                "JUMPLEVEL set catch %d => %d (for %p) in %s at %s:%d\n",   \
+            deb("JUMPLEVEL set catch %d => %d (for %p) in %s at %s:%d\n", \
                  PL_top_env->je_mustcatch, (v), (void*)PL_top_env,      \
                  SAFE_FUNCTION__, __FILE__, __LINE__);)			\
         PL_top_env->je_mustcatch = (v);					\
@@ -202,31 +201,38 @@ typedef struct refcounted_he COPHH;
 =for apidoc_item|SV *|cophh_fetch_pvn|const COPHH *cophh|const char *key|STRLEN keylen|U32 hash|U32 flags
 =for apidoc_item|SV *|cophh_fetch_pvs|const COPHH *cophh|           "key"                      |U32 flags
 =for apidoc_item|SV *|cophh_fetch_sv |const COPHH *cophh|        SV *key              |U32 hash|U32 flags
+=for apidoc_flag COPHH_KEY_UTF8
 
-These look up the entry in the cop hints hash C<cophh> with the key specified by
-C<key> (and C<keylen> in the C<pvn> form), returning that value as a mortal
-scalar copy, or C<&PL_sv_placeholder> if there is no value associated with the
-key.
+These each look up the entry in the cop hints hash C<cophh> with the specified
+key, returning that value as a mortal scalar copy, or C<&PL_sv_placeholder> if
+there is no value associated with the key.
 
-The forms differ in how the key is specified.
-In the plain C<pv> form, the key is a C language NUL-terminated string.
-In the C<pvs> form, the key is a C language string literal.
-In the C<pvn> form, an additional parameter, C<keylen>, specifies the length of
-the string, which hence, may contain embedded-NUL characters.
-In the C<sv> form, C<*key> is an SV, and the key is the PV extracted from that.
-using C<L</SvPV_const>>.
+You should probably be instead using the wrappers for these functions that take
+a C<COP*>, see L</cop_hints_fetch_pv>.
+
+The forms here differ only in how the key is specified.
+
+In C<cophh_fetch_pv>, C<key> is a C language NUL-terminated string.
+
+In C<cophh_fetch_pvs>, C<key> is a C language string literal, enclosed in
+double quotes.
+
+In C<cophh_fetch_pvn>, C<key> points to the first byte of the string
+specifying the key, and an additional parameter, C<keylen>, specifies its
+length in bytes.  Hence, C<key> may contain embedded-NUL characters.
+
+In C<cophh_fetch_sv>, C<*key> is an SV, and the key is the PV extracted from
+that.  using C<L</SvPV_const>>.
 
 C<hash> is a precomputed hash of the key string, or zero if it has not been
-precomputed.  This parameter is omitted from the C<pvs> form, as it is computed
-automatically at compile time.
+precomputed.  This parameter is omitted from C<cophh_fetch_pvs>, which behaves
+as if zero had been specified.
 
 The only flag currently used from the C<flags> parameter is C<COPHH_KEY_UTF8>.
-It is illegal to set this in the C<sv> form.  In the C<pv*> forms, it specifies
-whether the key octets are interpreted as UTF-8 (if set) or as Latin-1 (if
-cleared).  The C<sv> form uses the underlying SV to determine the UTF-8ness of
-the octets.
-
-=for apidoc Amnh||COPHH_KEY_UTF8
+It is illegal to set this in C<cophh_fetch_sv>.  In the C<pv*> forms, it
+specifies whether the key octets are interpreted as UTF-8 (if set) or as
+Latin-1 (if cleared).  The C<sv> form uses the underlying SV to determine the
+UTF-8ness of the octets.
 
 =cut
 
@@ -249,29 +255,40 @@ the octets.
                                       (flags & COPHH_KEY_UTF8))
 
 /*
-=for apidoc Amx|bool|cophh_exists_pvn|const COPHH *cophh|const char *key|STRLEN keylen|U32 hash|U32 flags
+=for apidoc  Amx|bool|cophh_exists_pv |const COPHH *cophh|const char *key              |U32 hash|U32 flags
+=for apidoc_item|bool|cophh_exists_pvn|const COPHH *cophh|const char *key|STRLEN keylen|U32 hash|U32 flags
+=for apidoc_item|bool|cophh_exists_pvs|const COPHH *cophh|           "key"                      |U32 flags
+=for apidoc_item|bool|cophh_exists_sv |const COPHH *cophh|        SV *key              |U32 hash|U32 flags
 
-These look up the hint entry in the cop C<cop> with the key specified by
-C<key> (and C<keylen> in the C<pvn> form), returning true if a value exists,
-and false otherwise.
+These each look up the entry in the cop hints hash C<cophh> with the specified
+key, returning true if a value exists, and false otherwise.
 
-The forms differ in how the key is specified.
-In the plain C<pv> form, the key is a C language NUL-terminated string.
-In the C<pvs> form, the key is a C language string literal.
-In the C<pvn> form, an additional parameter, C<keylen>, specifies the length of
-the string, which hence, may contain embedded-NUL characters.
-In the C<sv> form, C<*key> is an SV, and the key is the PV extracted from that.
-using C<L</SvPV_const>>.
+You should probably be instead using the wrappers for these functions that take
+a C<COP*>, see L</cop_hints_exists_pv>.
+
+The forms here differ only in how the key is specified.
+
+In C<cophh_exists_pv>, C<key> is a C language NUL-terminated string.
+
+In C<cophh_exists_pvs>, C<key> is a C language string literal, enclosed in
+double quotes.
+
+In C<cophh_exists_pvn>, C<key> points to the first byte of the string
+specifying the key, and an additional parameter, C<keylen>, specifies its
+length in bytes.  Hence, C<key> may contain embedded-NUL characters.
+
+In C<cophh_exists_sv>, C<*key> is an SV, and the key is the PV extracted from
+that.  using C<L</SvPV_const>>.
 
 C<hash> is a precomputed hash of the key string, or zero if it has not been
-precomputed.  This parameter is omitted from the C<pvs> form, as it is computed
-automatically at compile time.
+precomputed.  This parameter is omitted from C<cophh_exists_pvs>, which behaves
+as if zero had been specified.
 
 The only flag currently used from the C<flags> parameter is C<COPHH_KEY_UTF8>.
-It is illegal to set this in the C<sv> form.  In the C<pv*> forms, it specifies
-whether the key octets are interpreted as UTF-8 (if set) or as Latin-1 (if
-cleared).  The C<sv> form uses the underlying SV to determine the UTF-8ness of
-the octets.
+It is illegal to set this in C<cophh_exists_sv>.  In the C<pv*> forms, it
+specifies whether the key octets are interpreted as UTF-8 (if set) or as
+Latin-1 (if cleared).  The C<sv> form uses the underlying SV to determine the
+UTF-8ness of the octets.
 
 =cut
 */
@@ -338,30 +355,36 @@ Generate and return a fresh cop hints hash containing no entries.
 =for apidoc_item|COPHH *|cophh_store_pvs|COPHH *cophh|           "key"                      |SV *value|U32 flags
 =for apidoc_item|COPHH *|cophh_store_sv |COPHH *cophh|        SV *key              |U32 hash|SV *value|U32 flags
 
-These store a value, associated with a key, in the cop hints hash C<cophh>,
-and return the modified hash.  The returned hash pointer is in general
-not the same as the hash pointer that was passed in.  The input hash is
-consumed by the function, and the pointer to it must not be subsequently
-used.  Use L</cophh_copy> if you need both hashes.
+These each store a value associated with the specified key.  The value is
+stored into the cop hints hash C<cophh>, and a pointer to the modified
+structure returned.  The returned pointer is in general not the same as the
+pointer that was passed in.  The input C<cophh> is consumed by the function,
+and the pointer to it must not be subsequently used.  Use L</cophh_copy> first
+if you need both structures.
 
 C<value> is the scalar value to store for this key.  C<value> is copied
 by these functions, which thus do not take ownership of any reference
 to it, and hence later changes to the scalar will not be reflected in the value
-visible in the cop hints hash.  Complex types of scalar will not be stored with
+visible in C<cophh>.  Complex types of scalar will not be stored with
 referential integrity, but will be coerced to strings.
 
-The forms differ in how the key is specified.  In all forms, the key is pointed
-to by C<key>.
-In the plain C<pv> form, the key is a C language NUL-terminated string.
-In the C<pvs> form, the key is a C language string literal.
-In the C<pvn> form, an additional parameter, C<keylen>, specifies the length of
-the string, which hence, may contain embedded-NUL characters.
-In the C<sv> form, C<*key> is an SV, and the key is the PV extracted from that.
-using C<L</SvPV_const>>.
+The forms differ only in how the key is specified.
+
+In C<cophh_store_pv>, C<key> is a C language NUL-terminated string.
+
+In C<cophh_store_pvs>, C<key> is a C language string literal, enclosed in
+double quotes.
+
+In C<cophh_store_pvn>, C<key> points to the first byte of the string
+specifying the key, and an additional parameter, C<keylen>, specifies its
+length in bytes.  Hence, C<key> may contain embedded-NUL characters.
+
+In C<cophh_store_sv>, C<*key> is an SV, and the key is the PV extracted from
+that, using C<L</SvPV_const>>.
 
 C<hash> is a precomputed hash of the key string, or zero if it has not been
-precomputed.  This parameter is omitted from the C<pvs> form, as it is computed
-automatically at compile time.
+precomputed.  This parameter is omitted from C<cophh_store_pvs>, which behaves
+as if zero had been specified.
 
 The only flag currently used from the C<flags> parameter is C<COPHH_KEY_UTF8>.
 It is illegal to set this in the C<sv> form.  In the C<pv*> forms, it specifies
@@ -390,24 +413,31 @@ the octets.
 =for apidoc_item|COPHH *|cophh_delete_pvs|COPHH *cophh|           "key"                      |U32 flags
 =for apidoc_item|COPHH *|cophh_delete_sv |COPHH *cophh|        SV *key              |U32 hash|U32 flags
 
-These delete a key and its associated value from the cop hints hash C<cophh>,
-and return the modified hash.  The returned hash pointer is in general
-not the same as the hash pointer that was passed in.  The input hash is
-consumed by the function, and the pointer to it must not be subsequently
-used.  Use L</cophh_copy> if you need both hashes.
+These each delete a key and its associated value from the cop hints hash
+C<cophh>, and return a pointer to the modified structure.  The returned pointer
+is in general not the same as the pointer that was passed in.  The input
+C<cophh> is consumed by the function, and the pointer to it must not be
+subsequently used.
 
-The forms differ in how the key is specified.  In all forms, the key is pointed
-to by C<key>.
-In the plain C<pv> form, the key is a C language NUL-terminated string.
-In the C<pvs> form, the key is a C language string literal.
-In the C<pvn> form, an additional parameter, C<keylen>, specifies the length of
-the string, which hence, may contain embedded-NUL characters.
-In the C<sv> form, C<*key> is an SV, and the key is the PV extracted from that.
-using C<L</SvPV_const>>.
+Use L</cophh_copy> first if you need both structures.
+
+The forms differ only in how the key is specified.
+
+In C<cophh_delete_pv>, C<key> is a C language NUL-terminated string.
+
+In C<cophh_delete_pvs>, C<key> is a C language string literal, enclosed in
+double quotes.
+
+In C<cophh_delete_pvn>, C<key> points to the first byte of the string
+specifying the key, and an additional parameter, C<keylen>, specifies its
+length in bytes.  Hence, C<key> may contain embedded-NUL characters.
+
+In C<cophh_delete_sv>, C<*key> is an SV, and the key is the PV extracted from
+that.  using C<L</SvPV_const>>.
 
 C<hash> is a precomputed hash of the key string, or zero if it has not been
-precomputed.  This parameter is omitted from the C<pvs> form, as it is computed
-automatically at compile time.
+precomputed.  This parameter is omitted from C<cophh_delete_pvs>, which behaves
+as if zero had been specified.
 
 The only flag currently used from the C<flags> parameter is C<COPHH_KEY_UTF8>.
 It is illegal to set this in the C<sv> form.  In the C<pv*> forms, it specifies
@@ -1036,15 +1066,15 @@ struct block {
 
 #define CX_DEBUG(cx, action)						\
     DEBUG_l(								\
-        Perl_deb(aTHX_ "CX %ld %s %s (scope %ld,%ld) (save %ld,%ld) in %s at %s:%d\n",\
-                    (long)cxstack_ix,					\
-                    action,						\
-                    PL_block_type[CxTYPE(cx)],	                        \
-                    (long)PL_scopestack_ix,				\
-                    (long)(cx->blk_oldscopesp),		                \
-                    (long)PL_savestack_ix,				\
-                    (long)(cx->blk_oldsaveix),                          \
-                    SAFE_FUNCTION__, __FILE__, __LINE__));
+        deb("CX %ld %s %s (scope %ld,%ld) (save %ld,%ld) in %s at %s:%d\n",\
+            (long)cxstack_ix,					        \
+            action,						        \
+            PL_block_type[CxTYPE(cx)],	                                \
+            (long)PL_scopestack_ix,				        \
+            (long)(cx->blk_oldscopesp),		                        \
+            (long)PL_savestack_ix,				        \
+            (long)(cx->blk_oldsaveix),                                  \
+            SAFE_FUNCTION__, __FILE__, __LINE__));
 
 
 
@@ -1167,7 +1197,7 @@ struct context {
 /* this is only set in conjunction with CXp_FOR_GV */
 #define CXp_FOR_DEF	0x10	/* foreach using $_ */
 /* these 3 are mutually exclusive */
-#define CXp_FOR_LVREF	0x20	/* foreach using \$var */
+#define CXp_FOR_LVREF	0x20	/* foreach using \our $var */
 #define CXp_FOR_GV	0x40	/* foreach using package var */
 #define CXp_FOR_PAD	0x80	/* foreach using lexical var */
 
@@ -1398,8 +1428,8 @@ See L<perlcall/LIGHTWEIGHT CALLBACKS>.
 #define PUSH_MULTICALL_FLAGS(the_cv, flags) \
     STMT_START {							\
         PERL_CONTEXT *cx;						\
-        CV * const _nOnclAshIngNamE_ = the_cv;				\
-        CV * const cv = _nOnclAshIngNamE_;				\
+        CV * const nOnclAshIngNamE_ = the_cv;				\
+        CV * const cv = nOnclAshIngNamE_;				\
         PADLIST * const padlist = CvPADLIST(cv);			\
         multicall_oldcatch = CATCH_GET;					\
         CATCH_SET(TRUE);						\
@@ -1442,8 +1472,8 @@ See L<perlcall/LIGHTWEIGHT CALLBACKS>.
 
 #define CHANGE_MULTICALL_FLAGS(the_cv, flags) \
     STMT_START {							\
-        CV * const _nOnclAshIngNamE_ = the_cv;				\
-        CV * const cv = _nOnclAshIngNamE_;				\
+        CV * const nOnclAshIngNamE_ = the_cv;				\
+        CV * const cv = nOnclAshIngNamE_;				\
         PADLIST * const padlist = CvPADLIST(cv);			\
         PERL_CONTEXT *cx = CX_CUR();					\
         assert(CxMULTICALL(cx));                                        \

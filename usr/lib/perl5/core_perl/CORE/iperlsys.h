@@ -9,8 +9,8 @@
  * GSAR 21-JUN-98
  */
 
-#ifndef __Inc__IPerl___
-#define __Inc__IPerl___
+#ifndef IPERLSYS_H
+#define IPERLSYS_H
 
 /*
  *      PerlXXX_YYY explained - DickH and DougL @ ActiveState.com
@@ -770,21 +770,8 @@ struct IPerlLIOInfo
 #    define PerlLIO_lstat(name, buf)    PerlLIO_stat((name), (buf))
 #  endif
 #  define PerlLIO_mktemp(file)          mktemp((file))
-#  if defined(OEMVS)
-#    if (__CHARSET_LIB == 1)
-    int asciiopen(const char* path, int oflag);
-    int asciiopen3(const char* path, int oflag, int perm);
-
-#      define PerlLIO_open(file, flag)          asciiopen((file), (flag))
-#      define PerlLIO_open3(file, flag, perm)   asciiopen3((file), (flag), (perm))
-#    else
-#      define PerlLIO_open(file, flag)          open((file), (flag))
-#      define PerlLIO_open3(file, flag, perm)   open((file), (flag), (perm))
-#    endif
-#  else
-#    define PerlLIO_open(file, flag)            open((file), (flag))
-#    define PerlLIO_open3(file, flag, perm)     open((file), (flag), (perm))
-#  endif
+#  define PerlLIO_open(file, flag)            open((file), (flag))
+#  define PerlLIO_open3(file, flag, perm)     open((file), (flag), (perm))
 #  define PerlLIO_read(fd, buf, count)  read((fd), (buf), (count))
 #  define PerlLIO_rename(old, new)      rename((old), (new))
 #  define PerlLIO_setmode(fd, mode)     setmode((fd), (mode))

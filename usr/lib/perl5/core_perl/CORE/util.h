@@ -11,6 +11,29 @@
 #ifndef PERL_UTIL_H_
 #define PERL_UTIL_H_
 
+/*  Calling Perl_(croak|die)_nocontext instead of plain Perl_(croak|die) is one
+ *  less argument to pass under threads, so each instance takes up fewer bytes
+ *  (but the nocontext function has to derive the thread context itself, taking
+ *  more time).  We trade time for less space here, because time is rarely a
+ *  critical resource when you are about to throw an exception. */
+#define croak(...)  Perl_croak_nocontext(__VA_ARGS__)
+#define die(...)    Perl_die_nocontext(__VA_ARGS__)
+#ifndef MULTIPLICITY
+#  define Perl_croak_nocontext  Perl_croak
+#  define Perl_die_nocontext  Perl_die
+#endif
+
+/*
+=for apidoc_section $warning
+
+=for apidoc qerror
+
+A deprecated alias for L</defer_error>.
+
+=cut
+*/
+
+#define qerror(err) defer_error(err)
 
 #ifdef VMS
 #  define PERL_FILE_IS_ABSOLUTE(f) \
@@ -240,13 +263,16 @@ returning NULL if not found.  The terminating NUL bytes are not compared.
 =cut
 */
 
-
-#define Perl_instr(haystack, needle) strstr(haystack, needle)
+/* The casting away const is because some implementations of strstr() have
+ * haystack not declared const, even though POSIX requires it to be const.
+ * This allows them to compile; we've never had a problem with the function
+ * zapping the 'haystack' */
+#define instr(haystack, needle) strstr( (char *) haystack, needle)
 
 #ifdef HAS_MEMMEM
 #   define ninstr(big, bigend, little, lend)                                \
-            (__ASSERT_(bigend >= big)                                       \
-             __ASSERT_(lend >= little)                                      \
+            (assert(bigend >= big),                                         \
+             assert(lend >= little),                                        \
              (char *) memmem((big), (bigend) - (big),                       \
                              (little), (lend) - (little)))
 #else

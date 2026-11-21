@@ -94,7 +94,7 @@ PERLVAR(I, delaymagic,	U16)		/* ($<,$>) = ... */
 
 /*
 =for apidoc_section $warning
-=for apidoc mn|U8|PL_dowarn
+=for apidoc Amn|U8|PL_dowarn
 
 The C variable that roughly corresponds to Perl's C<$^W> warning variable.
 However, C<$^W> is treated as a boolean, whereas C<PL_dowarn> is a
@@ -349,6 +349,10 @@ PERLVARI(I, dumpindent,	U16,	4)	/* number of blanks per dump
 /*
 =for apidoc_section $embedding
 =for apidoc Amn|U8|PL_exit_flags
+=for apidoc_flag PERL_EXIT_EXPECTED
+=for apidoc_flag PERL_EXIT_ABORT
+=for apidoc_flag PERL_EXIT_DESTRUCT_END
+=for apidoc_flag PERL_EXIT_WARN
 
 Contains flags controlling perl's behaviour on exit():
 
@@ -374,11 +378,6 @@ Warn on exit.
 Set by the L<perlfunc/exit> operator.
 
 =back
-
-=for apidoc Amnh||PERL_EXIT_EXPECTED
-=for apidoc Amnh||PERL_EXIT_ABORT
-=for apidoc Amnh||PERL_EXIT_DESTRUCT_END
-=for apidoc Amnh||PERL_EXIT_WARN
 
 On threaded perls, each thread has an independent copy of this variable;
 each initialized at creation time with the current value of the creating
@@ -552,11 +551,11 @@ PERLVAR(I, DBline,	GV *)		/*  *DB::line   */
 
 /*
 =for apidoc_section $debugging
-=for apidoc mn|GV *|PL_DBsub
+=for apidoc Amn|GV *|PL_DBsub
 When Perl is run in debugging mode, with the B<-d> switch, this GV contains
 the SV which holds the name of the sub being debugged.  This is the C
 variable which corresponds to Perl's $DB::sub variable.  See
-C<L</PL_DBsingle>>.
+L<perlintern/PL_DBsingle>>.
 
 On threaded perls, each thread has an independent copy of this variable;
 each initialized at creation time with the current value of the creating
@@ -567,7 +566,7 @@ When Perl is run in debugging mode, with the B<-d> switch, this SV is a
 boolean which indicates whether subs are being single-stepped.
 Single-stepping is automatically turned on after every step.  This is the C
 variable which corresponds to Perl's $DB::single variable.  See
-C<L</PL_DBsub>>.
+L<perlapi/C<PL_DBsub>>.
 
 On threaded perls, each thread has an independent copy of this variable;
 each initialized at creation time with the current value of the creating
@@ -936,13 +935,7 @@ PERLVARI(I, lockhook,	share_proc_t, Perl_sv_nosharing)
 GCC_DIAG_IGNORE(-Wdeprecated-declarations)
 MSVC_DIAG_IGNORE(4996)
 
-#ifdef NO_MATHOMS
-#  define PERL_UNLOCK_HOOK Perl_sv_nosharing
-#else
-/* This reference ensures that the mathoms are linked with perl */
-#  define PERL_UNLOCK_HOOK Perl_sv_nounlocking
-#endif
-PERLVARI(I, unlockhook,	share_proc_t, PERL_UNLOCK_HOOK)
+PERLVARI(I, unlockhook,	share_proc_t, Perl_sv_nosharing)
 
 MSVC_DIAG_RESTORE
 GCC_DIAG_RESTORE
@@ -1100,6 +1093,18 @@ PERLVAR(I, prevailing_version, U16)
 
 PERLVARI(I, in_diehook, bool, FALSE)
 PERLVARI(I, in_warnhook, bool, FALSE)
+
+/* Perl_load_mathoms is defined in mathoms.c, so this forces the loading of the
+ * functions in that file when NO_MATHOMS isn't defined.  Otherwise, it is just
+ * a pointer to a function that is always going to exist.  The use of
+ * Perl_noshutdownhook is solely because there is a typedef for its signature
+ * and has no arguments that need to be passed */
+#ifdef NO_MATHOMS
+#  define PERL_LOAD_MATHOMS_HOOK  Perl_noshutdownhook
+#else
+#  define PERL_LOAD_MATHOMS_HOOK  Perl_load_mathoms
+#endif
+PERLVARI(I, load_mathoms, shutdown_proc_t, PERL_LOAD_MATHOMS_HOOK)
 
 /* If you are adding a U8 or U16, check to see if there are 'Space' comments
  * above on where there are gaps which currently will be structure padding.  */

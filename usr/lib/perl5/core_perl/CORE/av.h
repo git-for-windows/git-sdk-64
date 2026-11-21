@@ -10,7 +10,7 @@
 
 struct xpvav {
     HV*		xmg_stash;	/* class package */
-    union _xmgu	xmg_u;
+    union xmgu_	xmg_u;
     SSize_t	xav_fill;       /* Index of last element present */
     SSize_t	xav_max;        /* max index for which array has space */
     SV**	xav_alloc;	/* pointer to beginning of C array of SVs */
@@ -114,8 +114,7 @@ If all you need is to look up an array element, then prefer C<av_fetch>.
 =for apidoc_defn ARm|SSize_t|av_top_index |NN AV *av
 =cut
 */
-#define AvFILL(av)	((SvRMAGICAL((const SV *) (av))) \
-                         ? mg_size(MUTABLE_SV(av)) : AvFILLp(av))
+#define AvFILL(av)       AvFILL_(MUTABLE_AV(av))
 #define av_top_index(av) AvFILL(av)
 #define av_tindex(av)    av_top_index(av)
 
@@ -123,7 +122,7 @@ If all you need is to look up an array element, then prefer C<av_fetch>.
  *      SvGETMAGIC(av); IV x = av_tindex_nomg(av);
  */
 #   define av_top_index_skip_len_mg(av)                                     \
-                            (__ASSERT_(SvTYPE(av) == SVt_PVAV) AvFILLp(av))
+                            (assert(SvTYPE(av) == SVt_PVAV), AvFILLp(av))
 #   define av_tindex_skip_len_mg(av)  av_top_index_skip_len_mg(av)
 
 #define NEGATIVE_INDICES_VAR "NEGATIVE_INDICES"
@@ -139,7 +138,7 @@ Note that there are both real and fake AVs; see the beginning of this file and
 =for apidoc_item newAV_alloc_xz
 
 These all create a new AV, setting the reference count to 1.  If you also know
-the initial elements of the array with, see L</C<av_make>>.
+the initial elements of the array, see L</C<av_make>>.
 
 As background, an array consists of three things:
 

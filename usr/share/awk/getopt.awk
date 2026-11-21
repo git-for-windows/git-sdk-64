@@ -39,15 +39,15 @@ function getopt(argc, argv, options, longopts,    thisopt, i, j)
     }
     if (argv[Optind] !~ /^--/) {        # if this is a short option
         if (_opti == 0)
-            _opti = 2
-        thisopt = substr(argv[Optind], _opti, 1)
+            _opti = 2                   # starting point in string
+        thisopt = substr(argv[Optind], _opti, 1)    # current letter
         Optopt = thisopt
         i = index(options, thisopt)
-        if (i == 0) {
+        if (i == 0) {                   # unknown option
             if (Opterr)
                 printf("%c -- invalid option\n", thisopt) > "/dev/stderr"
             if (_opti >= length(argv[Optind])) {
-                Optind++
+                Optind++                # move on to next ARGV element
                 _opti = 0
             } else
                 _opti++

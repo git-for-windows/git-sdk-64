@@ -1,4 +1,4 @@
-package File::stat 1.14;
+package File::stat 1.15;
 use v5.38;
 
 use warnings::register;
@@ -16,12 +16,12 @@ our ( $st_dev, $st_ino, $st_mode,
 
 use Exporter 'import';
 our @EXPORT      = qw(stat lstat);
-our @fields      = qw( $st_dev	   $st_ino    $st_mode
-		       $st_nlink   $st_uid    $st_gid 
-		       $st_rdev    $st_size 
-		       $st_atime   $st_mtime  $st_ctime 
-		       $st_blksize $st_blocks
-		    );
+our @fields      = qw( $st_dev     $st_ino    $st_mode
+                       $st_nlink   $st_uid    $st_gid
+                       $st_rdev    $st_size
+                       $st_atime   $st_mtime  $st_ctime
+                       $st_blksize $st_blocks
+                    );
 our @EXPORT_OK   = ( @fields, "stat_cando" );
 our %EXPORT_TAGS = ( FIELDS => [ @fields, @EXPORT ] );
 
@@ -73,7 +73,7 @@ sub _ingroup {
 # and interpreting it later would require this module to have an XS
 # component (at which point we might as well just call Perl_cando and
 # have done with it).
-    
+
 if (grep $^O eq $_, qw/os2 MSWin32/) {
 
     # from doio.c
@@ -152,7 +152,7 @@ my %op = (
 use constant HINT_FILETEST_ACCESS => 0x00400000;
 
 # we need fallback=>1 or stringifying breaks
-use overload 
+use overload
     fallback => 1,
     -X => sub {
         my ($s, $op) = @_;
@@ -179,35 +179,37 @@ use overload
 use Class::Struct qw(struct);
 struct 'File::stat' => [
      map { $_ => '$' } qw{
-	 dev ino mode nlink uid gid rdev size
-	 atime mtime ctime blksize blocks
+         dev ino mode nlink uid gid rdev size
+         atime mtime ctime blksize blocks
      }
 ];
 
 sub populate {
-    return unless @_;
+    return undef unless @_;
     my $stob = new();
     @$stob = (
-	$st_dev, $st_ino, $st_mode, $st_nlink, $st_uid, $st_gid, $st_rdev,
-        $st_size, $st_atime, $st_mtime, $st_ctime, $st_blksize, $st_blocks ) 
-	    = @_;
+        $st_dev, $st_ino, $st_mode, $st_nlink, $st_uid, $st_gid, $st_rdev,
+        $st_size, $st_atime, $st_mtime, $st_ctime, $st_blksize, $st_blocks )
+            = @_;
     return $stob;
-} 
+}
 
-sub lstat :prototype($) { populate(CORE::lstat(shift)) }
+sub lstat :prototype(_) ($arg) {
+    populate(CORE::lstat $arg)
+}
 
-sub stat :prototype($) {
-    my $arg = shift;
+sub stat :prototype(_) ($arg) {
     my $st = populate(CORE::stat $arg);
-    return $st if defined $st;
-	my $fh;
+    return $st if defined $st || ref $arg;
+    # ... maybe $arg is the name of a bareword handle?
+    my $fh;
     {
-		local $!;
-		no strict 'refs';
-		require Symbol;
-		$fh = \*{ Symbol::qualify( $arg, caller() )};
-		return unless defined fileno $fh;
-	}
+        local $!;
+        no strict 'refs';
+        require Symbol;
+        $fh = \*{ Symbol::qualify( $arg, caller() )};
+        return undef unless defined fileno $fh;
+    }
     return populate(CORE::stat $fh);
 }
 
@@ -219,34 +221,34 @@ File::stat - by-name interface to Perl's built-in stat() functions
 
 =head1 SYNOPSIS
 
- use File::stat;
- my $st = stat($file) or die "No $file: $!";
- if ( ($st->mode & 0111) && ($st->nlink > 1) ) {
-     print "$file is executable with lotsa links\n";
- } 
+    use File::stat;
+    my $st = stat($file) or die "No $file: $!";
+    if ( ($st->mode & 0111) && ($st->nlink > 1) ) {
+        print "$file is executable with lotsa links\n";
+    }
 
- if ( -x $st ) {
-     print "$file is executable\n";
- }
+    if ( -x $st ) {
+        print "$file is executable\n";
+    }
 
- use Fcntl "S_IRUSR";
- if ( $st->cando(S_IRUSR, 1) ) {
-     print "My effective uid can read $file\n";
- }
+    use Fcntl "S_IRUSR";
+    if ( $st->cando(S_IRUSR, 1) ) {
+        print "My effective uid can read $file\n";
+    }
 
- use File::stat qw(:FIELDS);
- stat($file) or die "No $file: $!";
- if ( ($st_mode & 0111) && ($st_nlink > 1) ) {
-     print "$file is executable with lotsa links\n";
- } 
+    use File::stat qw(:FIELDS);
+    stat($file) or die "No $file: $!";
+    if ( ($st_mode & 0111) && ($st_nlink > 1) ) {
+        print "$file is executable with lotsa links\n";
+    }
 
 =head1 DESCRIPTION
 
-This module's default exports override the core stat() 
-and lstat() functions, replacing them with versions that return 
+This module's default exports override the core stat()
+and lstat() functions, replacing them with versions that return
 "File::stat" objects.  This object has methods that
 return the similarly named structure field name from the
-stat(2) function; namely,
+L<stat(2)> function; namely,
 dev,
 ino,
 mode,
@@ -260,13 +262,13 @@ mtime,
 ctime,
 blksize,
 and
-blocks.  
+blocks.
 
 As of version 1.02 (provided with perl 5.12) the object provides C<"-X">
 overloading, so you can call filetest operators (C<-f>, C<-x>, and so
 on) on it. It also provides a C<< ->cando >> method, called like
 
- $st->cando( ACCESS, EFFECTIVE )
+    $st->cando( ACCESS, EFFECTIVE )
 
 where I<ACCESS> is one of C<S_IRUSR>, C<S_IWUSR> or C<S_IXUSR> from the
 L<Fcntl|Fcntl> module, and I<EFFECTIVE> indicates whether to use
@@ -286,23 +288,41 @@ variables named with a preceding C<st_> in front their method names.
 Thus, C<$stat_obj-E<gt>dev()> corresponds to $st_dev if you import
 the fields.
 
-To access this functionality without the core overrides,
-pass the C<use> an empty import list, and then access
-function functions with their full qualified names.
-On the other hand, the built-ins are still available
-via the C<CORE::> pseudo-package.
+To access this functionality without the core overrides, pass the C<use>
+an empty import list, and then access functions with their full qualified
+names:
+
+    use File::stat ();
+    my $st = File::stat::stat($file);
+
+On the other hand, the built-ins are still available via the C<CORE::>
+pseudo-package even if you let File::stat override them:
+
+    use File::stat;
+    my ($dev, $ino, $mode) = CORE::stat($file);
+
+As of version 1.15 (provided with perl 5.44) C<stat> and C<lstat> can be
+called without arguments, in which case C<$_> is used (just like the
+built-in C<stat>/C<lstat> functions):
+
+    my $st_1 = stat;   # stat($_)
+    my $st_2 = lstat;  # lstat($_)
 
 =head1 BUGS
 
-As of Perl 5.8.0 after using this module you cannot use the implicit
-C<$_> or the special filehandle C<_> with stat() or lstat(), trying
-to do so leads into strange errors.  The workaround is for C<$_> to
-be explicit
+The built-in C<stat> and C<lstat> functions recognize the special
+filehandle C<_> (underscore) to indicate that no actual C<stat> be done;
+instead the results of the last C<stat> or C<lstat> or filetest operation
+should be returned.  This syntax does not work with File::stat, but the
+same result can be achieved by passing C<stat> a reference to the C<*_>
+typeglob:
 
-    my $stat_obj = stat $_;
+    use File::stat;
+    my $stat_obj = stat \*_;  # reuse results of last stat operation
 
-and for C<_> to explicitly populate the object using the unexported
-and undocumented populate() function with CORE::stat():
+Alternatively, another workaround is to explicitly populate the object
+using the unexported and undocumented populate() function with
+CORE::stat():
 
     my $stat_obj = File::stat::populate(CORE::stat(_));
 
@@ -342,7 +362,7 @@ do not, since the information required is not available.
 
 =head1 NOTE
 
-While this class is currently implemented using the Class::Struct
+While this class is currently implemented using the L<Class::Struct>
 module to build a struct-like class, you shouldn't rely upon this.
 
 =head1 AUTHOR

@@ -1,6 +1,7 @@
-This is gnutls.info, produced by makeinfo version 7.2 from gnutls.texi.
+This is gnutls.info, produced by makeinfo version 7.3 from gnutls.texi.
 
-This manual is last updated 29 April 2026 for version 3.8.13 of GnuTLS.
+This manual is last updated 18 November 2026 for version 3.8.14 of
+GnuTLS.
 
 Copyright © 2001-2026 Free Software Foundation, Inc.\\ Copyright ©
 2001-2026 Nikos Mavrogiannopoulos
@@ -3874,7 +3875,7 @@ handshake process to send and receive supplemental data, as shown below.
 
      int
      _gnutls_foobar_recv_params (gnutls_session_t session, const opaque * data,
-                                      size_t _data_size)
+                                      size_t data_size)
      {
         ...
         gnutls_supplemental_recv(session, 1);
@@ -3903,33 +3904,32 @@ The following example code shows how to send a "Hello World" string in
 the supplemental data handshake message.
 
      int
-     _foobar_supp_recv_params(gnutls_session_t session, const opaque *data, size_t _data_size)
+     _foobar_supp_recv_params(gnutls_session_t session, const opaque *data, size_t data_size)
      {
-        uint8_t len = _data_size;
         unsigned char *msg;
 
-        msg = gnutls_malloc(len);
+        msg = gnutls_malloc(data_size);
         if (msg == NULL) return GNUTLS_E_MEMORY_ERROR;
 
-        memcpy(msg, data, len);
-        msg[len]='\0';
+        memcpy(msg, data, data_size);
+        msg[data_size] = '\0';
 
         /* do something with msg */
         gnutls_free(msg);
 
-        return len;
+        return 0;
      }
 
      int
      _foobar_supp_send_params(gnutls_session_t session, gnutls_buffer_t buf)
      {
         unsigned char *msg = "hello world";
-        int len = strlen(msg);
+        size_t len = strlen(msg);
 
         if (gnutls_buffer_append_data(buf, msg, len) < 0)
             abort();
 
-        return len;
+        return 0;
      }
 
 Afterwards, register the new supplemental data using *note
@@ -7107,16 +7107,15 @@ gnutls_certificate_set_verify_limits
           unsigned int MAX_DEPTH)
      RES: is a gnutls_certificate_credentials type
 
-     MAX_BITS: is the number of bits of an acceptable certificate
-     (default 8200)
+     MAX_BITS: unused; retained for backwards compatibility
 
-     MAX_DEPTH: is maximum depth of the verification of a certificate
-     chain (default 5)
+     MAX_DEPTH: is the maximum number of certificates in the peer's
+     chain (default 101)
 
-     This function will set some upper limits for the default
-     verification function, ‘gnutls_certificate_verify_peers2()’ , to
-     avoid denial of service attacks.  You can set them to zero to
-     disable limits.
+     This function will set an upper limit for the default verification
+     function, ‘gnutls_certificate_verify_peers2()’ , to avoid denial of
+     service attacks.  You can set ‘max_depth’ to zero to disable the
+     limit.
 
 gnutls_certificate_set_x509_crl
 -------------------------------
@@ -7800,9 +7799,9 @@ gnutls_certificate_verify_peers
      otherwise verification status will have the
      ‘GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE’ flag set.
 
-     To avoid denial of service attacks some default upper limits
-     regarding the certificate key size and chain size are set.  To
-     override them use ‘gnutls_certificate_set_verify_limits()’ .
+     To avoid denial of service attacks, a default upper limit on the
+     certificate chain size is set.  To override it use
+     ‘gnutls_certificate_set_verify_limits()’ .
 
      Note that when using raw public-keys verification will not work
      because there is no corresponding certificate body belonging to the
@@ -7844,9 +7843,9 @@ gnutls_certificate_verify_peers2
      ‘gnutls_x509_crt_check_hostname()’ , or use
      ‘gnutls_certificate_verify_peers3()’ .
 
-     To avoid denial of service attacks some default upper limits
-     regarding the certificate key size and chain size are set.  To
-     override them use ‘gnutls_certificate_set_verify_limits()’ .
+     To avoid denial of service attacks, a default upper limit on the
+     certificate chain size is set.  To override it use
+     ‘gnutls_certificate_set_verify_limits()’ .
 
      Note that when using raw public-keys verification will not work
      because there is no corresponding certificate body belonging to the
@@ -7893,9 +7892,9 @@ gnutls_certificate_verify_peers3
      In order to verify the purpose of the end-certificate (by checking
      the extended key usage), use ‘gnutls_certificate_verify_peers()’ .
 
-     To avoid denial of service attacks some default upper limits
-     regarding the certificate key size and chain size are set.  To
-     override them use ‘gnutls_certificate_set_verify_limits()’ .
+     To avoid denial of service attacks, a default upper limit on the
+     certificate chain size is set.  To override it use
+     ‘gnutls_certificate_set_verify_limits()’ .
 
      Note that when using raw public-keys verification will not work
      because there is no corresponding certificate body belonging to the
@@ -12708,7 +12707,9 @@ gnutls_record_uncork
      If the flag ‘GNUTLS_RECORD_WAIT’ is not specified and the function
      is interrupted then the ‘GNUTLS_E_AGAIN’ or ‘GNUTLS_E_INTERRUPTED’
      errors will be returned.  To obtain the data left in the corked
-     buffer use ‘gnutls_record_check_corked()’ .
+     buffer use ‘gnutls_record_check_corked()’ .  The session will
+     remain in a corked state and ‘gnutls_record_uncork()’ must be
+     called again to flush the pending data.
 
      *Returns:* On success the number of transmitted data is returned,
      or otherwise a negative error code.

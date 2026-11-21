@@ -6,8 +6,8 @@
  * If USE_HASH_SEED is defined, hash randomisation is done by default
  * (see also perl.c:perl_parse() and S_init_tls_and_interp() and util.c:get_hash_seed())
  */
-#ifndef PERL_SEEN_HV_FUNC_H_ /* compile once */
-#define PERL_SEEN_HV_FUNC_H_
+#ifndef PERL_HV_FUNC_H_ /* compile once */
+#define PERL_HV_FUNC_H_
 #include "hv_macro.h"
 
 #if !( 0 \
@@ -176,7 +176,8 @@
 #endif
 
 PERL_STATIC_INLINE U32
-S_perl_hash_with_seed(const U8 * seed, const U8 *str, STRLEN len) {
+S_perl_hash_with_seed(const U8 * seed, const U8 *str, STRLEN len)
+{
     PVT__PERL_HASH_WORD_TYPE state[PERL_HASH_STATE_WORDS];
     PVT_PERL_HASH_SEED_STATE(seed,(U8*)state);
     return PVT_PERL_HASH_WITH_STATE((U8*)state,str,len);

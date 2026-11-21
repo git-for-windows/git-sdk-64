@@ -53,9 +53,13 @@ the following will be displayed when the problem is triggered:
 
     C:\cygwin\bin\python.exe: *** unable to remap C:\cygwin\bin\cygssl.dll to same address as parent(0xDF0000) != 0xE00000
 
-Note that rebaseall is only a stop-gap measure.  Eventually the rebase
-functionality will be added to Cygwin's setup.exe, so that rebasing will
-happen automatically.
+On Cygwin, rebaseall has been replaced by the postinstall script
+/etc/postinstall/0p_000_autorebase.dash, provided by the _autorebase
+package.  This script runs every time Cygwin's setup program is run.
+See /usr/share/doc/Cygwin/_autorebase.README.
+
+For the convenience of users who may wish to rebase between runs of
+setup, rebaseall is now a wrapper around that postinstall script.
 
 On Vista and newer, it is possible to employ the Address Space Layout
 Randomization facility to help solve the image load address clashing
@@ -73,7 +77,7 @@ problem:
     memory where the DLL is being mapped. When the same DLL
     is loaded in another process, its section object is reused
     and it is mapped at the same virtual addresses.
-    http://taossa.com.nyud.net:8080/archive/bh08sotirovdowd.pdf
+    https://web.archive.org/web/20080913064223/http%3A%2F%2Ftaossa.com%2Farchive%2Fbh08sotirovdowd.pdf
 
 Thus, IF all cygwin dlls (except cygwin1.dll) -- or, at least the
 ones for which you often get the *** unable to remap *** error --
@@ -163,7 +167,7 @@ the next section.
 Command line syntax
 ================================================================================
 
-rebaseall
+rebaseall (MinGW and MSYS only)
 --------------------------------------------------------------------------------
 The following is the rebaseall command line syntax:
 
@@ -358,31 +362,25 @@ Issues:
 ================================================================================
 The following are the known Cygwin rebase issues:
 
-1. rebase should be integrated with Cygwin's setup.exe.
+1. rebase does not handle in-use DLLs.
 
-2. rebase does not handle in-use DLLs.
+2. rebase skips read-only DLLs.
 
-3. rebase skips read-only DLLs.
-
-Issues #1, #2, and #3 also apply to the peflags utility.
+These issues also apply to the peflags utility.
 
 
 Homepage:
 ================================================================================
 The primary rebase web site is:
 
-    http://www.tishler.net/jason/software/rebase/
+    https://sourceware.org/cygwin-apps/
 
 
 Download:
 ================================================================================
-The primary rebase download site is:
+Access to the git development sources is available:
 
-    http://www.tishler.net/jason/software/rebase/
-
-Access to the CVS development sources is available:
-
-    cvs -d:pserver:anoncvs@cygwin.com:/cvs/cygwin-apps co rebase
+    git clone https://cygwin.com/git/cygwin-apps/rebase.git
 
 
 Mailing Lists:

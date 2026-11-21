@@ -790,7 +790,7 @@ int ASN1_STRING_cmp(const ASN1_STRING *a, const ASN1_STRING *b);
 #if !defined(OPENSSL_NO_DEPRECATED_4_1)
 OSSL_DEPRECATEDIN_4_1_FOR("use ASN1_STRING_set1_data() or ASN1_STRING_set1_string()")
 int ASN1_STRING_set(ASN1_STRING *str, const void *data, int len);
-OSSL_DEPRECATEDIN_4_1_FOR("use ASN1_STRING_get_length()")
+// OSSL_DEPRECATEDIN_4_1_FOR("use ASN1_STRING_get_length()")
 int ASN1_STRING_length(const ASN1_STRING *x);
 #endif /* !defined(OPENSSL_NO_DEPRECATED_4_1) */
 void ASN1_STRING_set0(ASN1_STRING *str, void *data, int len);

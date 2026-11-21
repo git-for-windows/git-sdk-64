@@ -52,6 +52,32 @@ cleanup()
     exit ${ExitCode}
 }
 
+# Determine platform
+Platform=`uname -s`
+case $Platform in
+ *MINGW*  | *mingw*  ) Platform=mingw  ;;
+ *CYGWIN* | *cygwin* ) Platform=cygwin ;;
+ *MSYS*   | *msys*   ) Platform=msys   ;;
+ * )
+    echo "Unsupported platform: $Platform" 1>&2
+    exit 1
+    ;;
+esac
+
+# On Cygwin, just call the _autorebase postinstall script
+case $Platform in
+  cygwin)
+    if [ "$#" -gt 0 ]
+    then
+      echo "usage: ${ProgramName}"
+      exit 1
+    fi
+    exec /etc/postinstall/0p_000_autorebase.dash
+    ;;
+  *)
+    ;;
+esac
+
 # Set traps
 trap cleanup 1 2 15
 
@@ -77,27 +103,6 @@ case `uname -m` in
 	;;
 esac
 
-# Determine platform
-Platform=`uname -s`
-case $Platform in
- *MINGW*  | *mingw*  ) Platform=mingw  ;;
- *CYGWIN* | *cygwin* ) Platform=cygwin ;;
- *MSYS*   | *msys*   ) Platform=msys   ;;
- * )
-    echo "Unsupported platform: $Platform" 1>&2
-    exit 1
-    ;;
-esac
-
-# On x86_64 Cygwin, set DefaultAddressBase to 0x4:00000000
-case $Platform in
-  cygwin | msys )
-    [ `uname -m` = "x86_64" ] && DefaultBaseAddress=0x400000000
-    ;;
-  * )
-    ;;
-esac
-  
 # Parse command line arguments
 while getopts "${ProgramOptions}" Option "$@"
 do
@@ -135,9 +140,7 @@ done
 if [ "${check_for_dash_only}" != "no" ]
 then
   ProcessResult=0
-  case $Platform in
-    mingw|msys )
-      /usr/bin/ps -s | /usr/bin/gawk '\
+  /usr/bin/ps -s | /usr/bin/gawk '\
 	# Count number of running ash or dash. \
 	/\/usr\/bin\/(d)?ash(\.exe)?$/{ ash_cnt++; } \
 	# Count number of ps and gawk. \
@@ -156,13 +159,7 @@ then
 	  # All is well. \
 	  exit 1; \
 	}'
-      ProcessResult=$?
-      ;;
-    cygwin )
-      grep -E -q -i -v '/d?ash(.exe)?$' /proc/[0-9]*/exename
-      ProcessResult=$?
-      ;;
-  esac
+  ProcessResult=$?
   if [ $ProcessResult -eq 0 -a -z "${RebaseDebug}" ]
   then
       echo "${ProgramName}: only ash or dash processes are allowed during rebasing"
@@ -218,54 +215,27 @@ else
 fi
 
 # Create rebase list
-case $Platform in
-  cygwin)
-    find /etc/setup -name '*.lst.gz' | xargs gzip -d -c |
-      grep -E "\.($Suffixes)\$" |
-      sed -e '/\/cygwin1\.dll$/d' -e '/\/cyglsa.*\.dll$/d' \
-          -e '/sys-root\/mingw/d' -e 's/^/\//' \
-          -e '/\/d\?ash\.exe$/d' -e '/\/rebase\.exe$/d' >>"${TmpFile}"
-    # some interpreters include a method for installing addons outside of the
-    # package manager, such as CPAN and RubyGems.
-    for d in /usr/lib/perl5/site_perl /usr/lib/py*/site-packages \
-             /usr/lib/py*/lib-dynload \
-             /usr/lib/php /usr/lib/R/site-library /usr/lib/rub*/gems \
-             /usr/lib/octave/site
-    do
-      if [ -d $d ]
-      then
-        find $d -type f | grep -E "\.($Suffixes)\$" >>"${TmpFile}"
-      fi
-    done
-    # Unconditionally add the -n flag so rebased DLLs get the
-    # dynamicbase flag removed.
-    NoDyn='-n'
-    ;;
-  mingw|msys)
-    for f in /usr/bin /usr/lib
-    do
-      find $f -type f |
-        grep -E "\.($Suffixes)\$" |
-	sed -e '/\/msys-2\.0.*\.dll$/d' -e '/\/cygwin1\.dll$/d' \
-	    -e '/\/cyglsa.*\.dll$/d' -e '/\/d\?ash\.exe$/d' \
-	    -e '/\/rebase\.exe$/d' >>"$TmpFile"
-    done
-	# some interpreters include a method for installing addons outside of the
-    # package manager, such as CPAN and RubyGems.
-    for d in /usr/lib/perl5/site_perl /usr/lib/py*/site-packages \
-             /usr/lib/php /usr/lib/R/site-library /usr/lib/rub*/gems \
-             /usr/lib/octave/site
-    do
-      if [ -d $d ]
-      then
-        find $d -type f | grep -E "\.($Suffixes)\$" >>"${TmpFile}"
-      fi
-    done
-    # Unconditionally add the -n flag so rebased DLLs get the
-    # dynamicbase flag removed.
-    NoDyn='-n'
-    ;;
-esac
+for f in /usr/bin /usr/lib
+do
+  find $f -type f |
+    grep -E "\.($Suffixes)\$" |
+    sed -e '/\/msys-2\.0.*\.dll$/d' -e '/\/cygwin1\.dll$/d' \
+	-e '/\/cyglsa.*\.dll$/d' -e '/\/d\?ash\.exe$/d' \
+	-e '/\/rebase\.exe$/d' >>"$TmpFile"
+done
+# some interpreters include a method for installing addons outside of the
+# package manager, such as CPAN and RubyGems.
+for d in /usr/lib/perl5/site_perl /usr/lib/py*/site-packages \
+	 /usr/lib/py*/lib-dynload /usr/lib/rub*/gems
+do
+  if [ -d $d ]
+  then
+    find $d -type f | grep -E "\.($Suffixes)\$" >>"${TmpFile}"
+  fi
+done
+# Unconditionally add the -n flag so rebased DLLs get the
+# dynamicbase flag removed.
+NoDyn='-n'
 
 if [ -z "${BaseAddress}" ]
 then

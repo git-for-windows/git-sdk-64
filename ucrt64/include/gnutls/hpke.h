@@ -138,6 +138,14 @@ int gnutls_hpke_export(gnutls_hpke_context_t ctx,
 		       const gnutls_datum_t *exporter_context, size_t length,
 		       gnutls_datum_t *secret);
 
+int gnutls_hpke_import_pubkey(const gnutls_hpke_context_t ctx,
+			      gnutls_pubkey_t pubkey,
+			      const gnutls_datum_t *pubkey_raw);
+
+int gnutls_hpke_export_pubkey(const gnutls_hpke_context_t ctx,
+			      const gnutls_pubkey_t pubkey,
+			      gnutls_datum_t *pubkey_raw);
+
 #ifdef __cplusplus
 }
 #endif

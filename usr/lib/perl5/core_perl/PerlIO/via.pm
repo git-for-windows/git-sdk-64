@@ -1,5 +1,5 @@
 package PerlIO::via;
-our $VERSION = '0.19';
+our $VERSION = '0.21';
 require XSLoader;
 XSLoader::load();
 1;
@@ -28,9 +28,9 @@ One example module, L<PerlIO::via::QuotedPrint>, is included with Perl
 L<PerlIO::via::StripHTML> and L<PerlIO::via::Base64>.  The
 PerlIO::via::StripHTML module for instance, allows you to say:
 
-	use PerlIO::via::StripHTML;
-	open( my $fh, "<:via(StripHTML)", "index.html" );
-        my @line = <$fh>;
+    use PerlIO::via::StripHTML;
+    open( my $fh, "<:via(StripHTML)", "index.html" );
+    my @line = <$fh>;
 
 to obtain the text of an HTML-file in an array with all the HTML-tags
 automagically removed.
