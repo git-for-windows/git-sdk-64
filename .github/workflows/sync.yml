@@ -35,6 +35,7 @@ jobs:
         shell: bash
         run: |
           set -x &&
+          PATH=$PATH:/ucrt64/bin &&
           sh -x .github/commit-sdk.sh commit &&
           git push origin ${{ github.ref }}
       - name: use MSYS2 for tmate
