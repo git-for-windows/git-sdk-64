@@ -466,7 +466,7 @@ typedef	chtype	attr_t;		/* ...must be at least as wide as chtype */
 #include <libutf8.h>
 #endif
 
-#if 1 /* NEED_WCHAR_H */
+#if 0 /* NEED_WCHAR_H */
 #include <wchar.h>		/* ...to get mbstate_t, etc. */
 #endif
 
