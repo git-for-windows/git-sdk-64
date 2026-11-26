@@ -196,6 +196,20 @@ jobs:
           path: artifacts
           retention-days: 5
 
+      - name: Prepare a clean install for UI tests
+        id: ui-tests
+        if: matrix.artifact == 'installer'
+        shell: pwsh
+        run: |
+          $uninstaller = "$env:ProgramFiles\Git\unins000.exe"
+          if (Test-Path $uninstaller) {
+            $process = Start-Process -PassThru -Wait -FilePath $uninstaller -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES'
+            if ($process.ExitCode -ne 0) { exit $process.ExitCode }
+          }
+          # Start menu shortcuts launch with the signed-in user's profile.
+          $profile = [Environment]::GetFolderPath('UserProfile')
+          if (-not $profile) { throw 'Could not find the Windows user profile' }
+          "profile=$profile" >> $env:GITHUB_OUTPUT
       - name: Run the installer
         if: matrix.artifact == 'installer'
         shell: pwsh
@@ -216,9 +230,20 @@ jobs:
           name: installer.log
           path: installer.log
           retention-days: 5
+      - name: Prepare installer UI tests
+        if: matrix.artifact == 'installer'
+        uses: git-for-windows/build-extra/installer/ui-tests@fdce41ecd3af6a48cb4dc9e972282b640d47fa7b
+        env:
+          HOME: ${{ steps.ui-tests.outputs.profile }}
+          USERPROFILE: ${{ steps.ui-tests.outputs.profile }}
       - name: Validate
         if: matrix.artifact == 'installer'
+        timeout-minutes: 20
         shell: bash
+        env:
+          HOME: ${{ steps.ui-tests.outputs.profile }}
+          USERPROFILE: ${{ steps.ui-tests.outputs.profile }}
+          REQUIRE_UI_TESTS: true
         run: |
           echo '::group::installer.log'
           cat installer.log
@@ -235,3 +260,10 @@ jobs:
           # cannot test SSH keys in read-only mode, skip test for now
           sed -i 's|git@ssh.dev.azure.com:v3/git-for-windows/git/git|https://github.com/git/git|' $checklist &&
           sh -x $checklist
+      - name: Upload installer UI test artifacts
+        if: always() && steps.ui-tests.outputs.profile != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-tests-${{ env.ARCH_NAME }}
+          path: build-installers/usr/src/build-extra/installer/ui-tests/
+          retention-days: 5
