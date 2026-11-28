@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   libffi 3.8.1
+   libffi 3.8.2
      - Copyright (c) 2011, 2014, 2019, 2021, 2022, 2024, 2025, 2026 Anthony Green
      - Copyright (c) 1996-2003, 2007, 2008 Red Hat, Inc.
 
@@ -324,8 +324,8 @@ size_t ffi_java_raw_size (ffi_cif *cif) __attribute__((deprecated));
 
 /* ---- Version API ------------------------------------------------------ */
 
-#define FFI_VERSION_STRING "3.8.1"
-#define FFI_VERSION_NUMBER 30801
+#define FFI_VERSION_STRING "3.8.2"
+#define FFI_VERSION_NUMBER 30802
 
 #ifndef LIBFFI_ASM
 /* Return a version string. */

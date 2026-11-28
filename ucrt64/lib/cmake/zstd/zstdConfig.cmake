@@ -29,6 +29,9 @@ if(ON AND "")
   find_dependency(Threads)
 endif()
 
+foreach(lib_suffix IN ITEMS "_shared" "_static")
+    include("${CMAKE_CURRENT_LIST_DIR}/zstdTargets${lib_suffix}.cmake" OPTIONAL)
+endforeach()
 include("${CMAKE_CURRENT_LIST_DIR}/zstdTargets.cmake")
 
 check_required_components("zstd")
